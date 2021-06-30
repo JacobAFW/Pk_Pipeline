@@ -1,0 +1,3125 @@
+---
+title: "Pk Variant Calling Workflow"
+author: "Jacob Westaway"
+date: "Last updated on `r Sys.Date()`"
+output:
+  pdf_document:
+    toc: yes
+    toc_depth: 1
+  html_document:
+    df_print: paged
+    toc: yes
+header-includes:
+  \usepackage{float}
+  \floatplacement{figure}{H}
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+\newpage
+
+# About.
+ - This workflow is run both on a remote HPC server and local machine. Chunks with PBS scripts are those run on the remote server. 
+ - The server used is Cheetah, Charles Darwin University's high performance computing infrastructure.
+ - There are three sets of data used in this workflow:
+  - 'Sanger Subset' = 14 samples - an initial subset of samples sequenced by Sanger. **CORRECTION:** Not actually Sanger, but the name has not been changed as this would create too much of a burden.
+  - 'Sanger 100' = 14 samples - a subset of 100 samples sequenced by Sanger (full dataset = pk_pipeline/Sanger_100/pk_data/reads/).
+  - 'ZB 100' = 14 samples - a subset of 100 samples sequenced by ZB's group in Singapore. (full dataset = pk_pipeline/ZB_100/pk_data/batch*.zip)
+
+# Quality Control
+
+## FastQC
+
+File = 01_QC.pbs 
+Version(s) = 0.10.1
+
+[FastQC](https://github.com/s-andrews/FastQC) was run using the shared folder (/usr/local/) on Cheetah.
+
+```{r, eval=F}
+#!/bin/bash
+#PBS -N fastqc
+#PBS -j oe
+#PBS -m ae
+#PBS -l select=1:ncpus=10:mem=40gb
+#PBS -l walltime=24:00:00
+#PBS -M jacob.westaway@menzies.edu.au
+
+echo "---------------------------------------"
+echo "PBS: Job identifier is $PBS_JOBID"
+echo "PBS: Job name is $PBS_JOBNAME"
+
+echo "---------------------------------------"
+echo "Export path to fastqc"
+export PATH=$PATH:/usr/local/FastQC
+
+echo "---------------------------------------"
+echo "Change to current working directory"
+cd pk_pipeline
+
+echo "---------------------------------------"
+echo "Set environment variable"
+INPUTDIR="pk_data/fastq"
+OUTDIR="outputs/fastqc"
+mkdir $OUTDIR
+
+echo "---------------------------------------"
+echo "Execute fastqc"
+fastqc -t 1 -o $OUTDIR $INPUTDIR/*.fastq.gz
+
+echo "---------------------------------------"
+echo "Finsihed!"
+```
+
+## MultiQC 
+
+File = 02_MultiQC.pbs
+Version(s) = 0.1.9
+
+Due to software limitations on Cheetah, [MultiQC](https://github.com/ewels/MultiQC) was run using a singularity image: `singularity pull library://kgillinder/analysis_pipelines/multiqc:v0.1.9`, that was downloaded into a directory called tools. This will serve as a directory for resources not available on Cheetah.
+
+```{r, eval=F}
+#!/bin/bash
+#PBS -N multiqc
+#PBS -j oe
+#PBS -m ae
+#PBS -l nodes=1
+#PBS -l ncpus=10
+#PBS -l mem=40gb
+#PBS -l walltime=04:00:00
+#PBS -M jacob.westaway@menzies.edu.au
+
+echo "---------------------------------------"
+echo "PBS: Job identifier is $PBS_JOBID"
+echo "PBS: Job name is $PBS_JOBNAME"
+
+echo "---------------------------------------"
+echo "Export path to multiqc"
+export PATH=$PATH:/usr/local/singularity/latest/bin
+
+echo "---------------------------------------"
+echo "Set environment variable"
+OUTDIR="pk_pipeline/outputs/fastqc"
+
+echo "---------------------------------------"
+echo "Change to output directory"
+cd $OUTDIR
+
+echo "---------------------------------------"
+echo "Execute multiqc using singularity"
+singularity exec ~/pk_pipeline/tools/singularity/multiqc_v0.1.9.sif multiqc .
+
+echo "---------------------------------------"
+echo "Finsihed!"
+```
+
+## Trimming 
+
+File = 03_Trim.pbs
+Version(s) = 3.1.0 (singularity), 0.6.4 (trim-galore) & 20171222 (parallel)
+
+Next was quality and adaptor trimming, which was executed with [Trim_Galore](https://github.com/FelixKrueger/TrimGalore/blob/master/Docs/Trim_Galore_User_Guide.md), a wrapper around Cutadapt and FastQC written by Felix Krueger. 
+Trim_Galore was used in combination with [GNU parallel](https://www.gnu.org/software/parallel/parallel_tutorial.html), which is needed to handle the multiple file inputs.
+Both tools are available on Cheetah under (/usr/local/).
+Trim_Galore arguments: 
+  • Illumina - Illumina specific (Nextera) adaptors
+  • Paired - "Using this option lets you discard too short read pairs without disturbing the sequence-by-sequence order of FastQ files which is required by many aligners."
+  • FastQC - to get a fastqc output after.
+  • All other paramaters were default.
+parallel arguments
+  • xapply - runs each pair (if not included then Trim_Galore will run every combination).
+  • ::: - specifies input files to parallel, and is needed to supply the correct sample pairs to Trim_Galore.
+  • j - running n jobs in parallel.
+
+Due to software limitations on Cheetah, Trim Galore was run using a singularity image: `singularity pull library://jemten/mip_containers/trim-galore:0.6.4`.
+
+```{r, eval=F}
+#!/bin/bash
+#PBS -N trim
+#PBS -j oe
+#PBS -m ae
+#PBS -l nodes=1
+#PBS -l ncpus=20
+#PBS -l mem=40gb
+#PBS -l walltime=24:00:00
+#PBS -M jacob.westaway@menzies.edu.au
+
+echo "---------------------------------------"
+echo "PBS: Job identifier is $PBS_JOBID"
+echo "PBS: Job name is $PBS_JOBNAME"
+
+echo "---------------------------------------"
+echo "Export paths and load modules"
+export PATH=$PATH:/usr/local/singularity/latest/bin
+export PATH=$PATH:/usr/local/parallel_20171222/bin/
+
+echo "---------------------------------------"
+echo 'Change to current working directory' 
+cd pk_pipeline
+
+echo "---------------------------------------"
+echo 'Set environment vars'
+OUTDIR="outputs/trimmed"
+INPUTDIR="pk_data/fastq"
+
+echo "---------------------------------------"
+echo 'Make output dirs'
+mkdir -p $OUTDIR
+
+echo "---------------------------------------"
+echo 'Exectue trim_galore for quality and adapter trimming'
+parallel -j15 --xapply singularity exec ~/pk_pipeline/tools/singularity/trim-galore_0.6.4.sif trim_galore --illumina --paired --fastqc -o $OUTDIR ::: $INPUTDIR/*1.fastq.gz ::: $INPUTDIR/*2.fastq.gz
+
+echo "---------------------------------------"
+echo "Finsihed!"
+```
+
+## MultiQC on trimmed reads
+
+File = 04_MultiQC_trimmed.pbs
+Version(s) = 0.1.9
+
+Due to software limitations on Cheetah, [MultiQC](https://github.com/ewels/MultiQC) was run using a singularity image: `singularity pull library://kgillinder/analysis_pipelines/multiqc:v0.1.9`.
+
+```{R, eval=F}
+#!/bin/bash
+#PBS -N multiqc
+#PBS -j oe
+#PBS -m ae
+#PBS -l ndoes=1
+#PBS -l ncpus=10
+#PBS -l mem=40gb
+#PBS -l walltime=04:00:00
+#PBS -M jacob.westaway@menzies.edu.au
+
+echo "---------------------------------------"
+echo "PBS: Job identifier is $PBS_JOBID"
+echo "PBS: Job name is $PBS_JOBNAME"
+
+echo "---------------------------------------"
+echo "Export path to multiqc"
+export PATH=$PATH:/usr/local/singularity/latest/bin
+
+echo "---------------------------------------"
+echo "Set environment variable"
+OUTDIR="pk_pipeline/outputs/trimmed"
+
+echo "---------------------------------------"
+echo "Change to output directory"
+cd $OUTDIR
+
+echo "---------------------------------------"
+echo "Execute multiqc using singularity"
+singularity exec ~/pk_pipeline/tools/singularity/multiqc_v0.1.9.sif multiqc .
+
+echo "---------------------------------------"
+echo "Finsihed!"
+```
+
+# Mapping/Alignment
+
+Using [BWA](http://bio-bwa.sourceforge.net/bwa.shtml), with `bwa index` for indexing and `bwa mem` for alignments.
+For `bwa index`, -p represents the prefix of the output database, and -a the algorithm for constructing the index. 
+
+Comparing 2 methods:
+	• Alignment with human first (samtools or bmtagger)
+		○ Initial Sanger dataset
+		○ New Sanger dataset
+    ○ ZB dataset
+	• Direct alignment to Pk genome without removing human contamination 
+		○ Initial Sanger dataset
+    ○ New Sanger dataset
+    ○ ZB dataset
+
+## Index host genome
+
+File = 05_Index_hg.pbs
+Version(s) = 0.7.10
+
+Reference genome was downloaded prior to script submission.
+
+```{R, eval=F}
+#!/bin/bash
+#PBS -N Index_hg
+#PBS -j oe
+#PBS -m ae
+#PBS -l nodes=1
+#PBS -l ncpus=10
+#PBS -l mem=100gb
+#PBS -l walltime=24:00:00
+#PBS -M jacob.westaway@menzies.edu.au
+
+echo "---------------------------------------"
+echo "PBS: Job identifier is $PBS_JOBID"
+echo "PBS: Job name is $PBS_JOBNAME"
+
+echo "---------------------------------------"
+echo "Export path to bwa"
+export PATH=$PATH:/usr/local/bwa-0.7.10 
+
+echo "---------------------------------------"
+echo 'Create and change to working directory' 
+cd pk_pipeline/ref_genomes/human
+
+echo "---------------------------------------"
+echo 'gunzip fasta file'
+tar zvfx GRCh38.tar.gz
+
+echo "---------------------------------------"
+echo 'Execute indexing with BWA'
+bwa index -p human_index -a bwtsw GRCh38d1_noalt.fa
+
+echo "---------------------------------------"
+echo "Finsihed!"
+```
+
+## Index Pk reference genome
+
+File = 06_Index_Reference.pbs
+Version(s) = 0.7.10
+
+Arguments 
+  • a - Algorithm for constructing BWT index. Available options are:
+    • is	- Linear-time algorithm for constructing suffix array. It requires 5.37N memory where N is the size of the database. IS is moderately fast, but does not work with database larger than 2GB. IS is the default algorithm due to its simplicity. The current codes for IS algorithm are reimplemented by Yuta Mori.
+    • bwtsw	- Algorithm implemented in BWT-SW. This method works with the whole human genome.
+
+```{R, eval=F}
+#!/bin/bash
+#PBS -N Index_Ref
+#PBS -j oe
+#PBS -m ae
+#PBS -l nodes=1
+#PBS -l ncpus=10
+#PBS -l mem=50gb
+#PBS -l walltime=6:00:00
+#PBS -M jacob.westaway@menzies.edu.au
+
+echo "---------------------------------------"
+echo "PBS: Job identifier is $PBS_JOBID"
+echo "PBS: Job name is $PBS_JOBNAME"
+
+echo "---------------------------------------"
+echo "Export path to bwa"
+export PATH=$PATH:/usr/local/bwa-0.7.10 
+
+echo "---------------------------------------"
+echo 'Change to current working directory' 
+cd pk_pipeline/ref_genomes/PKA1H1/fasta
+
+echo "---------------------------------------"
+echo 'gunzip fasta file'
+gzip -d strain_A1_H.1.Icor.fasta.gz
+
+echo "---------------------------------------"
+echo 'Execute indexing with BWA'
+bwa index -p PKA1H1_index -a is strain_A1_H.1.Icor.fasta
+
+echo "---------------------------------------"
+echo "Finsihed!"
+```
+
+### Initial Sanger Subset
+
+### Direct Pk Alignment
+
+File = 07_Alignment_pk_direct.pbs
+Version(s) = 0.7.10 (bwa) & 1.12 (samtools)
+
+BWA was used for the alignment, with the outputs converted into bam format and sorted by [samtools](https://www.htslib.org/).
+
+BWA arguments 
+  • M - Mark shorter split hits as secondary (for Picard compatibility).
+  • R - Complete read group header line. ’\t’ can be used in STR and will be converted to a TAB in the output SAM/BAM. The read group ID will be attached to every read in the output. An example is ’@RG\tID:foo\tSM:bar’. 
+
+Samtools view arguments
+  • u - Output uncompressed BAM. This option saves time spent on compression/decompression and is thus preferred when the output is piped to another samtools command.
+  • S - sam file compatibility.
+
+Samtools sort arguments
+  • n - Sort by name.
+  • o - Write final sorted output to FILE (rather than standard output).
+
+```{R,eval=F}
+#!/bin/bash
+#PBS -N Align_pk_direct
+#PBS -j oe
+#PBS -m ae
+#PBS -l nodes=1
+#PBS -l ncpus=10
+#PBS -l mem=100gb
+#PBS -l walltime=24:00:00
+#PBS -M jacob.westaway@menzies.edu.au
+
+echo "---------------------------------------"
+echo "PBS: Job identifier is $PBS_JOBID"
+echo "PBS: Job name is $PBS_JOBNAME"
+
+echo "---------------------------------------"
+echo "Define paths to bwa and samtools"
+export PATH=$PATH:/usr/local/miniconda3/envs/assembly/bin/
+export PATH=$PATH:/usr/local/bwa-0.7.10 
+
+echo "---------------------------------------"
+echo 'Set environment vars'
+OUTDIR="/home/jwestaway/pk_pipeline/outputs/alignment/direct_alignment/"
+INDEXTDIR="/home/jwestaway/pk_pipeline/ref_genomes/PKA1H1/fasta/strain_A1_H.1.Icor.fasta"
+mkdir -p $OUTDIR
+
+echo "---------------------------------------"
+echo 'Change to working directory' 
+cd pk_pipeline/outputs/trimmed
+
+echo "---------------------------------------"
+echo 'Exectue alignment with bwa to hg and sort to bam'
+bwa mem -t 10 -M -R "@RG\tID:PKAS01_124\tPL:ILLUMINA" $INDEXTDIR PKAS01_124_1_val_1.fq.gz PKAS01_124_2_val_2.fq.gz | samtools view -u -S - | samtools sort -n -o $OUTDIR/PKAS01_124.bam
+bwa mem -t 10 -M -R "@RG\tID:PKAS02_124\tPL:ILLUMINA" $INDEXTDIR PKAS02_124_1_val_1.fq.gz PKAS02_124_2_val_2.fq.gz | samtools view -u -S - | samtools sort -n -o $OUTDIR/PKAS02_124.bam
+bwa mem -t 10 -M -R "@RG\tID:PKAS04_124\tPL:ILLUMINA" $INDEXTDIR PKAS04_124_1_val_1.fq.gz PKAS04_124_2_val_2.fq.gz | samtools view -u -S - | samtools sort -n -o $OUTDIR/PKAS04_124.bam
+bwa mem -t 10 -M -R "@RG\tID:PKAS05_124\tPL:ILLUMINA" $INDEXTDIR PKAS05_124_1_val_1.fq.gz PKAS05_124_2_val_2.fq.gz | samtools view -u -S - | samtools sort -n -o $OUTDIR/PKAS05_124.bam
+bwa mem -t 10 -M -R "@RG\tID:PKAS06_124\tPL:ILLUMINA" $INDEXTDIR PKAS06_124_1_val_1.fq.gz PKAS06_124_2_val_2.fq.gz | samtools view -u -S - | samtools sort -n -o $OUTDIR/PKAS06_124.bam
+bwa mem -t 10 -M -R "@RG\tID:PKAS07_124\tPL:ILLUMINA" $INDEXTDIR PKAS07_124_1_val_1.fq.gz PKAS07_124_2_val_2.fq.gz | samtools view -u -S - | samtools sort -n -o $OUTDIR/PKAS07_124.bam
+bwa mem -t 10 -M -R "@RG\tID:PKAS08_124\tPL:ILLUMINA" $INDEXTDIR PKAS08_124_1_val_1.fq.gz PKAS08_124_2_val_2.fq.gz | samtools view -u -S - | samtools sort -n -o $OUTDIR/PKAS08_124.bam
+bwa mem -t 10 -M -R "@RG\tID:PKAS09_124\tPL:ILLUMINA" $INDEXTDIR PKAS09_124_1_val_1.fq.gz PKAS09_124_2_val_2.fq.gz | samtools view -u -S - | samtools sort -n -o $OUTDIR/PKAS09_124.bam
+bwa mem -t 10 -M -R "@RG\tID:PKAS10_124\tPL:ILLUMINA" $INDEXTDIR PKAS10_124_1_val_1.fq.gz PKAS10_124_2_val_2.fq.gz | samtools view -u -S - | samtools sort -n -o $OUTDIR/PKAS10_124.bam
+bwa mem -t 10 -M -R "@RG\tID:PKAS11_124\tPL:ILLUMINA" $INDEXTDIR PKAS11_124_1_val_1.fq.gz PKAS11_124_2_val_2.fq.gz | samtools view -u -S - | samtools sort -n -o $OUTDIR/PKAS11_124.bam
+bwa mem -t 10 -M -R "@RG\tID:PKAS12_124\tPL:ILLUMINA" $INDEXTDIR PKAS12_124_1_val_1.fq.gz PKAS12_124_2_val_2.fq.gz | samtools view -u -S - | samtools sort -n -o $OUTDIR/PKAS12_124.bam
+bwa mem -t 10 -M -R "@RG\tID:PKAS13_124\tPL:ILLUMINA" $INDEXTDIR PKAS13_124_1_val_1.fq.gz PKAS13_124_2_val_2.fq.gz | samtools view -u -S - | samtools sort -n -o $OUTDIR/PKAS13_124.bam
+bwa mem -t 10 -M -R "@RG\tID:PKAS14_124\tPL:ILLUMINA" $INDEXTDIR PKAS14_124_1_val_1.fq.gz PKAS14_124_2_val_2.fq.gz | samtools view -u -S - | samtools sort -n -o $OUTDIR/PKAS14_124.bam
+bwa mem -t 10 -M -R "@RG\tID:PKAS15_124\tPL:ILLUMINA" $INDEXTDIR PKAS15_124_1_val_1.fq.gz PKAS15_124_2_val_2.fq.gz | samtools view -u -S - | samtools sort -n -o $OUTDIR/PKAS15_124.bam
+
+echo "---------------------------------------"
+echo "Finsihed!"
+```
+
+### Mapping to host genome first
+
+#### Alignment and sort to BAM 
+
+File = 08_Align_to_hg.pbs
+Version(s) = 0.7.10 (bwa) & 1.12 (samtools)
+
+```{R, eval=F}
+#!/bin/bash
+#PBS -N Align_Pk_no_host
+#PBS -j oe
+#PBS -m ae
+#PBS -l nodes=1
+#PBS -l ncpus=21
+#PBS -l mem=200gb
+#PBS -l walltime=48:00:00
+#PBS -M jacob.westaway@menzies.edu.au
+echo "---------------------------------------"
+echo "PBS: Job identifier is $PBS_JOBID"
+echo "PBS: Job name is $PBS_JOBNAME"
+
+echo "---------------------------------------"
+echo "Define paths to bwa and samtools"
+export PATH=$PATH:/usr/local/miniconda3/envs/assembly/bin/
+export PATH=$PATH:/usr/local/bwa-0.7.10 
+
+echo "---------------------------------------"
+echo 'Change to working directory' 
+cd /home/jwestaway/pk_pipeline/outputs/alignment/hg_removed_alignment/hg_rem_fastq/
+
+echo "---------------------------------------"
+echo 'Set environment vars'
+OUTDIR="/home/jwestaway/pk_pipeline/outputs/alignment/hg_removed_alignment/pk_alignment/"
+INDEXTDIR="/home/jwestaway/pk_pipeline/ref_genomes/PKA1H1/fasta/strain_A1_H.1.Icor.fasta"
+mkdir -p $OUTDIR
+
+echo "---------------------------------------"
+echo 'Exectue alignment with bwa to hg and sort to bam'
+bwa mem -t 20 -M -R "@RG\tID:PKAS01_124\tPL:ILLUMINA" $INDEXTDIR PKAS01_124_unmapped_R1.fq.gz PKAS01_124_unmapped_R2.fq.gz | samtools view -u -S - | samtools sort -n -o $OUTDIR/PKAS01_124.bam
+bwa mem -t 20 -M -R "@RG\tID:PKAS01_124\tPL:ILLUMINA" $INDEXTDIR PKAS02_124_unmapped_R1.fq.gz PKAS02_124_unmapped_R2.fq.gz | samtools view -u -S - | samtools sort -n -o $OUTDIR/PKAS02_124.bam
+bwa mem -t 20 -M -R "@RG\tID:PKAS01_124\tPL:ILLUMINA" $INDEXTDIR PKAS04_124_unmapped_R1.fq.gz PKAS04_124_unmapped_R2.fq.gz | samtools view -u -S - | samtools sort -n -o $OUTDIR/PKAS04_124.bam
+bwa mem -t 20 -M -R "@RG\tID:PKAS01_124\tPL:ILLUMINA" $INDEXTDIR PKAS05_124_unmapped_R1.fq.gz PKAS05_124_unmapped_R2.fq.gz | samtools view -u -S - | samtools sort -n -o $OUTDIR/PKAS05_124.bam
+bwa mem -t 20 -M -R "@RG\tID:PKAS01_124\tPL:ILLUMINA" $INDEXTDIR PKAS06_124_unmapped_R1.fq.gz PKAS06_124_unmapped_R2.fq.gz | samtools view -u -S - | samtools sort -n -o $OUTDIR/PKAS06_124.bam
+bwa mem -t 20 -M -R "@RG\tID:PKAS01_124\tPL:ILLUMINA" $INDEXTDIR PKAS07_124_unmapped_R1.fq.gz PKAS07_124_unmapped_R2.fq.gz | samtools view -u -S - | samtools sort -n -o $OUTDIR/PKAS07_124.bam
+bwa mem -t 20 -M -R "@RG\tID:PKAS01_124\tPL:ILLUMINA" $INDEXTDIR PKAS08_124_unmapped_R1.fq.gz PKAS08_124_unmapped_R2.fq.gz | samtools view -u -S - | samtools sort -n -o $OUTDIR/PKAS08_124.bam
+bwa mem -t 20 -M -R "@RG\tID:PKAS01_124\tPL:ILLUMINA" $INDEXTDIR PKAS09_124_unmapped_R1.fq.gz PKAS09_124_unmapped_R2.fq.gz | samtools view -u -S - | samtools sort -n -o $OUTDIR/PKAS09_124.bam
+bwa mem -t 20 -M -R "@RG\tID:PKAS01_124\tPL:ILLUMINA" $INDEXTDIR PKAS10_124_unmapped_R1.fq.gz PKAS10_124_unmapped_R2.fq.gz | samtools view -u -S - | samtools sort -n -o $OUTDIR/PKAS10_124.bam
+bwa mem -t 20 -M -R "@RG\tID:PKAS01_124\tPL:ILLUMINA" $INDEXTDIR PKAS11_124_unmapped_R1.fq.gz PKAS11_124_unmapped_R2.fq.gz | samtools view -u -S - | samtools sort -n -o $OUTDIR/PKAS11_124.bam
+bwa mem -t 20 -M -R "@RG\tID:PKAS01_124\tPL:ILLUMINA" $INDEXTDIR PKAS12_124_unmapped_R1.fq.gz PKAS12_124_unmapped_R2.fq.gz | samtools view -u -S - | samtools sort -n -o $OUTDIR/PKAS12_124.bam
+bwa mem -t 20 -M -R "@RG\tID:PKAS01_124\tPL:ILLUMINA" $INDEXTDIR PKAS13_124_unmapped_R1.fq.gz PKAS13_124_unmapped_R2.fq.gz | samtools view -u -S - | samtools sort -n -o $OUTDIR/PKAS13_124.bam
+bwa mem -t 20 -M -R "@RG\tID:PKAS01_124\tPL:ILLUMINA" $INDEXTDIR PKAS14_124_unmapped_R1.fq.gz PKAS14_124_unmapped_R2.fq.gz | samtools view -u -S - | samtools sort -n -o $OUTDIR/PKAS14_124.bam
+bwa mem -t 20 -M -R "@RG\tID:PKAS01_124\tPL:ILLUMINA" $INDEXTDIR PKAS15_124_unmapped_R1.fq.gz PKAS15_124_unmapped_R2.fq.gz | samtools view -u -S - | samtools sort -n -o $OUTDIR/PKAS15_124.bam
+
+echo "---------------------------------------"
+echo "Finsihed!"
+```
+
+#### Get unaligned read pairs and fastqs
+File = 09_Fastq_from_hg_align.pbs
+Version = 0.7.10 (bwa) & 1.12 (samtools)
+
+After aligning samples to the human genome, we get the reads that did not align (-f 12 -F 256) and store them as bam files. 
+These bam fies are then converted into fastq files to undergo alignment to the Pk genome.
+
+Samtools view arguments
+  • b - Output BAM. 
+  • f - Only output alignments with all bits set in INT present in the FLAG field. 
+  • F - Do not output alignments with any bits set in INT present in the FLAG field.
+
+Samtools bam2fq arguments
+  • N - don't append /1 and /2 to the read name.
+
+```{R,eval=F}
+#!/bin/bash
+#PBS -N fastq_from_hg_align
+#PBS -j oe
+#PBS -m ae
+#PBS -l nodes=1
+#PBS -l ncpus=10
+#PBS -l mem=50gb
+#PBS -l walltime=24:00:00
+#PBS -M jacob.westaway@menzies.edu.au
+
+echo "---------------------------------------"
+echo "PBS: Job identifier is $PBS_JOBID"
+echo "PBS: Job name is $PBS_JOBNAME"
+
+echo "---------------------------------------"
+echo "Define paths to bwa and samtools"
+export PATH=$PATH:/usr/local/miniconda3/envs/assembly/bin/
+export PATH=$PATH:/usr/local/bwa-0.7.10 
+
+echo "---------------------------------------"
+echo 'Change to working directory' 
+cd /home/jwestaway/pk_pipeline/Sanger_Subset/outputs/alignment/hg_removed_alignment/sortedbam/
+
+echo "---------------------------------------"
+echo 'Set environment vars for bam file step'
+OUTDIR="/home/jwestaway/pk_pipeline/Sanger_Subset/outputs/alignment/hg_removed_alignment/unaligned_pairs/"
+mkdir -p $OUTDIR
+
+echo "---------------------------------------"
+echo 'Get un-aligned reads (Pk reads)'
+
+samtools view -@ 10 -b -f 12 -F 256 -o $OUTDIR/PKAS01_124_unaligned.bam PKAS01_124.bam
+samtools view -@ 10 -b -f 12 -F 256 -o $OUTDIR/PKAS02_124_unaligned.bam PKAS02_124.bam
+samtools view -@ 10 -b -f 12 -F 256 -o $OUTDIR/PKAS04_124_unaligned.bam PKAS04_124.bam
+samtools view -@ 10 -b -f 12 -F 256 -o $OUTDIR/PKAS05_124_unaligned.bam PKAS05_124.bam
+samtools view -@ 10 -b -f 12 -F 256 -o $OUTDIR/PKAS06_124_unaligned.bam PKAS06_124.bam
+samtools view -@ 10 -b -f 12 -F 256 -o $OUTDIR/PKAS07_124_unaligned.bam PKAS07_124.bam
+samtools view -@ 10 -b -f 12 -F 256 -o $OUTDIR/PKAS08_124_unaligned.bam PKAS08_124.bam
+samtools view -@ 10 -b -f 12 -F 256 -o $OUTDIR/PKAS09_124_unaligned.bam PKAS09_124.bam
+samtools view -@ 10 -b -f 12 -F 256 -o $OUTDIR/PKAS10_124_unaligned.bam PKAS10_124.bam
+samtools view -@ 10 -b -f 12 -F 256 -o $OUTDIR/PKAS11_124_unaligned.bam PKAS11_124.bam
+samtools view -@ 10 -b -f 12 -F 256 -o $OUTDIR/PKAS12_124_unaligned.bam PKAS12_124.bam
+samtools view -@ 10 -b -f 12 -F 256 -o $OUTDIR/PKAS13_124_unaligned.bam PKAS13_124.bam
+samtools view -@ 10 -b -f 12 -F 256 -o $OUTDIR/PKAS14_124_unaligned.bam PKAS14_124.bam
+samtools view -@ 10 -b -f 12 -F 256 -o $OUTDIR/PKAS15_124_unaligned.bam PKAS15_124.bam
+
+echo "---------------------------------------"
+echo 'Set environment vars for fastq file step'
+cd $OUTDIR
+INDEXTDIR="/home/jwestaway/pk_pipeline/ref_genomes/human/GRCh38d1_noalt.fa"
+
+echo "---------------------------------------"
+echo 'Get fastqs from unaligned pk read pairs'
+samtools bam2fq -@ 10 -1 PKAS01_124_unmapped_R1.fq.gz -2 PKAS01_124_unmapped_R2.fq.gz -N --reference $INDEXTDIR  -s /dev/null PKAS01_124_unaligned.bam
+samtools bam2fq -@ 10 -1 PKAS02_124_unmapped_R1.fq.gz -2 PKAS02_124_unmapped_R2.fq.gz -N --reference $INDEXTDIR  -s /dev/null PKAS02_124_unaligned.bam
+samtools bam2fq -@ 10 -1 PKAS04_124_unmapped_R1.fq.gz -2 PKAS04_124_unmapped_R2.fq.gz -N --reference $INDEXTDIR  -s /dev/null PKAS04_124_unaligned.bam
+samtools bam2fq -@ 10 -1 PKAS05_124_unmapped_R1.fq.gz -2 PKAS05_124_unmapped_R2.fq.gz -N --reference $INDEXTDIR  -s /dev/null PKAS05_124_unaligned.bam
+samtools bam2fq -@ 10 -1 PKAS06_124_unmapped_R1.fq.gz -2 PKAS06_124_unmapped_R2.fq.gz -N --reference $INDEXTDIR  -s /dev/null PKAS06_124_unaligned.bam
+samtools bam2fq -@ 10 -1 PKAS07_124_unmapped_R1.fq.gz -2 PKAS07_124_unmapped_R2.fq.gz -N --reference $INDEXTDIR  -s /dev/null PKAS07_124_unaligned.bam
+samtools bam2fq -@ 10 -1 PKAS08_124_unmapped_R1.fq.gz -2 PKAS08_124_unmapped_R2.fq.gz -N --reference $INDEXTDIR  -s /dev/null PKAS08_124_unaligned.bam
+samtools bam2fq -@ 10 -1 PKAS09_124_unmapped_R1.fq.gz -2 PKAS09_124_unmapped_R2.fq.gz -N --reference $INDEXTDIR  -s /dev/null PKAS09_124_unaligned.bam
+samtools bam2fq -@ 10 -1 PKAS10_124_unmapped_R1.fq.gz -2 PKAS10_124_unmapped_R2.fq.gz -N --reference $INDEXTDIR  -s /dev/null PKAS10_124_unaligned.bam
+samtools bam2fq -@ 10 -1 PKAS11_124_unmapped_R1.fq.gz -2 PKAS11_124_unmapped_R2.fq.gz -N --reference $INDEXTDIR  -s /dev/null PKAS11_124_unaligned.bam
+samtools bam2fq -@ 10 -1 PKAS12_124_unmapped_R1.fq.gz -2 PKAS12_124_unmapped_R2.fq.gz -N --reference $INDEXTDIR  -s /dev/null PKAS12_124_unaligned.bam
+samtools bam2fq -@ 10 -1 PKAS13_124_unmapped_R1.fq.gz -2 PKAS13_124_unmapped_R2.fq.gz -N --reference $INDEXTDIR  -s /dev/null PKAS13_124_unaligned.bam
+samtools bam2fq -@ 10 -1 PKAS14_124_unmapped_R1.fq.gz -2 PKAS14_124_unmapped_R2.fq.gz -N --reference $INDEXTDIR  -s /dev/null PKAS14_124_unaligned.bam
+samtools bam2fq -@ 10 -1 PKAS15_124_unmapped_R1.fq.gz -2 PKAS15_124_unmapped_R2.fq.gz -N --reference $INDEXTDIR  -s /dev/null PKAS15_124_unaligned.bam
+
+echo "---------------------------------------"
+echo "Finsihed!"
+```
+
+#### Alignment to Pk reference genome
+
+File = 10_Alignment_hg_removed.pbs
+Version = 0.7.10 (bwa) & 1.12 (samtools)
+
+```{R,eval=F}
+#!/bin/bash
+#PBS -N Align_Pk_no_host
+#PBS -j oe
+#PBS -m ae
+#PBS -l nodes=1
+#PBS -l ncpus=10
+#PBS -l mem=100gb
+#PBS -l walltime=24:00:00
+#PBS -M jacob.westaway@menzies.edu.au
+echo "---------------------------------------"
+echo "PBS: Job identifier is $PBS_JOBID"
+echo "PBS: Job name is $PBS_JOBNAME"
+
+echo "---------------------------------------"
+echo "Define paths to bwa and samtools"
+export PATH=$PATH:/usr/local/miniconda3/envs/assembly/bin/
+export PATH=$PATH:/usr/local/bwa-0.7.10 
+
+echo "---------------------------------------"
+echo 'Change to working directory' 
+cd /home/jwestaway/pk_pipeline/Sanger_Subset/outputs/alignment/hg_removed_alignment/unaligned_pairs/
+
+echo "---------------------------------------"
+echo 'Set environment vars'
+OUTDIR="/home/jwestaway/pk_pipeline/Sanger_Subset/outputs/alignment/hg_removed_alignment/pk_alignment/"
+INDEXTDIR="/home/jwestaway/pk_pipeline/ref_genomes/PKA1H1/fasta/strain_A1_H.1.Icor.fasta"
+mkdir -p $OUTDIR
+
+echo "---------------------------------------"
+echo 'Exectue alignment with bwa to hg and sort to bam'
+bwa mem -t 10 -M -R "@RG\tID:PKAS01_124\tPL:ILLUMINA" $INDEXTDIR PKAS01_124_unmapped_R1.fq.gz PKAS01_124_unmapped_R2.fq.gz | samtools view -u -S - | samtools sort -n -o $OUTDIR/PKAS01_124.bam
+bwa mem -t 10 -M -R "@RG\tID:PKAS01_124\tPL:ILLUMINA" $INDEXTDIR PKAS02_124_unmapped_R1.fq.gz PKAS02_124_unmapped_R2.fq.gz | samtools view -u -S - | samtools sort -n -o $OUTDIR/PKAS02_124.bam
+bwa mem -t 10 -M -R "@RG\tID:PKAS01_124\tPL:ILLUMINA" $INDEXTDIR PKAS04_124_unmapped_R1.fq.gz PKAS04_124_unmapped_R2.fq.gz | samtools view -u -S - | samtools sort -n -o $OUTDIR/PKAS04_124.bam
+bwa mem -t 10 -M -R "@RG\tID:PKAS01_124\tPL:ILLUMINA" $INDEXTDIR PKAS05_124_unmapped_R1.fq.gz PKAS05_124_unmapped_R2.fq.gz | samtools view -u -S - | samtools sort -n -o $OUTDIR/PKAS05_124.bam
+bwa mem -t 10 -M -R "@RG\tID:PKAS01_124\tPL:ILLUMINA" $INDEXTDIR PKAS06_124_unmapped_R1.fq.gz PKAS06_124_unmapped_R2.fq.gz | samtools view -u -S - | samtools sort -n -o $OUTDIR/PKAS06_124.bam
+bwa mem -t 10 -M -R "@RG\tID:PKAS01_124\tPL:ILLUMINA" $INDEXTDIR PKAS07_124_unmapped_R1.fq.gz PKAS07_124_unmapped_R2.fq.gz | samtools view -u -S - | samtools sort -n -o $OUTDIR/PKAS07_124.bam
+bwa mem -t 10 -M -R "@RG\tID:PKAS01_124\tPL:ILLUMINA" $INDEXTDIR PKAS08_124_unmapped_R1.fq.gz PKAS08_124_unmapped_R2.fq.gz | samtools view -u -S - | samtools sort -n -o $OUTDIR/PKAS08_124.bam
+bwa mem -t 10 -M -R "@RG\tID:PKAS01_124\tPL:ILLUMINA" $INDEXTDIR PKAS09_124_unmapped_R1.fq.gz PKAS09_124_unmapped_R2.fq.gz | samtools view -u -S - | samtools sort -n -o $OUTDIR/PKAS09_124.bam
+bwa mem -t 10 -M -R "@RG\tID:PKAS01_124\tPL:ILLUMINA" $INDEXTDIR PKAS10_124_unmapped_R1.fq.gz PKAS10_124_unmapped_R2.fq.gz | samtools view -u -S - | samtools sort -n -o $OUTDIR/PKAS10_124.bam
+bwa mem -t 10 -M -R "@RG\tID:PKAS01_124\tPL:ILLUMINA" $INDEXTDIR PKAS11_124_unmapped_R1.fq.gz PKAS11_124_unmapped_R2.fq.gz | samtools view -u -S - | samtools sort -n -o $OUTDIR/PKAS11_124.bam
+bwa mem -t 10 -M -R "@RG\tID:PKAS01_124\tPL:ILLUMINA" $INDEXTDIR PKAS12_124_unmapped_R1.fq.gz PKAS12_124_unmapped_R2.fq.gz | samtools view -u -S - | samtools sort -n -o $OUTDIR/PKAS12_124.bam
+bwa mem -t 10 -M -R "@RG\tID:PKAS01_124\tPL:ILLUMINA" $INDEXTDIR PKAS13_124_unmapped_R1.fq.gz PKAS13_124_unmapped_R2.fq.gz | samtools view -u -S - | samtools sort -n -o $OUTDIR/PKAS13_124.bam
+bwa mem -t 10 -M -R "@RG\tID:PKAS01_124\tPL:ILLUMINA" $INDEXTDIR PKAS14_124_unmapped_R1.fq.gz PKAS14_124_unmapped_R2.fq.gz | samtools view -u -S - | samtools sort -n -o $OUTDIR/PKAS14_124.bam
+bwa mem -t 10 -M -R "@RG\tID:PKAS01_124\tPL:ILLUMINA" $INDEXTDIR PKAS15_124_unmapped_R1.fq.gz PKAS15_124_unmapped_R2.fq.gz | samtools view -u -S - | samtools sort -n -o $OUTDIR/PKAS15_124.bam
+
+echo "---------------------------------------"
+echo "Finsihed!"
+```
+
+
+### Get mapping quality
+
+File = 11_Map_Stats_pk_direct.pbs 
+Version(s) = 38.90 (BBMap), 1.12 (samtools), 1.8.0_171 (java) & 0.6.3 (sambamba)
+
+samtools was used to pipe the bam files into [BBMap](https://jgi.doe.gov/data-and-tools/bbtools/bb-tools-user-guide/bbmap-guide/), to get statisitcs on the alignment to the different genomes.
+Both [java](https://www.java.com/en/) and [sambamba](https://lomereiter.github.io/sambamba/) are dependencies for BBmap.
+
+Samtools view arguments
+  • h - Include header in output. 
+
+```{R,evalF}
+#!/bin/bash
+#PBS -N Map_Stats
+#PBS -j oe
+#PBS -m ae
+#PBS -l nodes=1
+#PBS -l ncpus=16
+#PBS -l mem=50gb
+#PBS -l walltime=24:00:00
+#PBS -M jacob.westaway@menzies.edu.au
+
+echo "---------------------------------------"
+echo "PBS: Job identifier is $PBS_JOBID"
+echo "PBS: Job name is $PBS_JOBNAME"
+
+echo "---------------------------------------"
+echo "Define paths to bbmap, samtools & sambamba, & load java"
+export Path=$PATH:/home/jwestaway/pk_pipeline/tools/bbmap
+export PATH=$PATH:/usr/local/miniconda3/envs/assembly/bin/  
+export PATH=$PATH:/usr/local/miniconda3/pkgs/quast-5.0.2-py37pl526hb5aa323_2/lib/python3.7/site-packages/quast_libs/sambamba
+module load java/1.8.0_171
+
+echo "---------------------------------------"
+echo 'Alignment - direct to Pk'
+
+echo "---------------------------------------"
+echo 'Change to working directory and set env variables'
+cd /home/jwestaway/pk_pipeline/Sanger_Subset/outputs/alignment/direct_alignment/
+PILEUP="/home/jwestaway/pk_pipeline/tools/bbmap/pileup.sh"
+
+echo "---------------------------------------"
+echo 'Exectue samtools & bbmap for direct alignment'
+for i in *_124.bam
+do
+samtools view -h --threads 15 $i | $PILEUP in=stdin 2> ${i%_124.bam}.mapstats
+done 
+
+echo "---------------------------------------"
+echo 'Alignment - to Hg'
+
+echo "---------------------------------------"
+echo 'Change to working directory and set env variables'
+cd /home/jwestaway/pk_pipeline/Sanger_Subset/outputs/alignment/hg_removed_alignment/sortedbam/
+
+echo "---------------------------------------"
+echo 'Exectue samtools & bbmap'
+for i in *_124.bam
+do
+samtools view -h --threads 15 $i | $PILEUP in=stdin 2> ${i%_124.bam}.mapstats
+done 
+
+echo "---------------------------------------"
+echo 'Alignment - to Pk post Hg removal'
+
+echo "---------------------------------------"
+echo 'Change to working directory and set env variables'
+cd /home/jwestaway/pk_pipeline/Sanger_Subset/outputs/alignment/hg_removed_alignment/pk_alignment/
+
+echo "---------------------------------------"
+echo 'Exectue samtools & bbmap'
+for i in *_124.bam
+do
+samtools view -h --threads 15 $i | $PILEUP in=stdin 2> ${i%_124.bam}.mapstats
+done 
+
+echo "---------------------------------------"
+echo "Finsihed!"
+```
+
+### Get read depth
+
+File = 12_Read_depth.pbs
+Version(s) = 1.12 (samtools)
+
+[samtools depth](http://www.htslib.org/doc/samtools-depth.html) was used to get read depth for each of the alignments. 
+The command requires a BED file as part of the input. This can be created using the indexed genomes using the .fai files:
+
+`awk 'BEGIN {FS="\t"}; {print $1 FS "0" FS $2}' GRCh38d1_noalt.fa.fai > GRCh38d1_noalt.fa.bed`
+`awk 'BEGIN {FS="\t"}; {print $1 FS "0" FS $2}' strain_A1_H.1.Icor.fasta.fai > strain_A1_H.1.Icor.fasta.bed`
+
+If a .fai file has not been created, `samtools faidx $fasta` can be used to create one.
+
+Samtools depth arguments
+  • a - Output all positions (including those with zero depth). 
+  • b - Compute depth at list of positions or regions in specified BED FILE. 
+  • f - Use the BAM files specified in the FILE (a file of filenames, one file per line).
+
+```{R, eval=F}
+#!/bin/bash
+#PBS -N S_read_depth
+#PBS -j oe
+#PBS -m ae
+#PBS -l nodes=1
+#PBS -l ncpus=11
+#PBS -l mem=50gb
+#PBS -l walltime=24:00:00
+#PBS -M jacob.westaway@menzies.edu.au
+
+echo "---------------------------------------"
+echo "PBS: Job identifier is $PBS_JOBID"
+echo "PBS: Job name is $PBS_JOBNAME"
+
+echo "---------------------------------------"
+echo "Define paths to samtools"
+export PATH=$PATH:/usr/local/miniconda3/envs/assembly/bin/
+
+echo "---------------------------------------"
+echo 'DIRECT ALIGNMENT'
+
+echo "---------------------------------------"
+echo 'Change to working directory and set env variables'
+cd /home/jwestaway/pk_pipeline/Sanger_Subset/outputs/alignment/direct_alignment/
+BED='/home/jwestaway/pk_pipeline/ref_genomes/PKA1H1/strain_A1_H.1.Icor.fasta.bed'
+
+echo "---------------------------------------"
+echo 'Sort bam files'
+
+for i in *.bam
+do
+samtools sort -@ 10 $i > ${i%.bam}.sorted.bam
+done 
+
+echo "---------------------------------------"
+echo 'Index bam files'
+
+for i in *.sorted.bam
+do
+samtools index -@ 10 $i 
+done 
+
+echo "---------------------------------------"
+echo 'Create file with list of filenames'
+ls *sorted.bam > filenames.txt
+
+echo "---------------------------------------"
+echo 'Exectue samtools depth'
+samtools depth -a -b $BED -f filenames.txt -o SS_direct_depth_summary.depth
+
+echo "---------------------------------------"
+echo 'INDIRECT ALIGNMENT'
+
+echo "---------------------------------------"
+echo 'Change to working directory and set env variables'
+cd /home/jwestaway/pk_pipeline/Sanger_Subset/outputs/alignment/hg_removed_alignment/pk_alignment/
+
+echo "---------------------------------------"
+echo 'Sort bam files'
+
+for i in *.bam
+do
+samtools sort -@ 10 $i > ${i%.bam}.sorted.bam
+done 
+
+echo "---------------------------------------"
+echo 'Index bam files'
+
+for i in *.sorted.bam
+do
+samtools index -@ 10 $i 
+done 
+
+echo "---------------------------------------"
+echo 'Create file with list of filenames'
+ls *sorted.bam > filenames.txt
+
+echo "---------------------------------------"
+echo 'Exectue samtools depth'
+samtools depth -a -b $BED -f filenames.txt -o SS_indirect_depth_summary.depth
+
+echo "---------------------------------------"
+echo "Finsihed!"
+```
+
+##################################################################################################################################
+
+## Updated Sanger dataset
+
+## FastQC
+
+File = 01_QC.pbs 
+Version(s) = 0.10.1
+
+```{r, eval=F}
+#!/bin/bash
+#PBS -N fastqc
+#PBS -j oe
+#PBS -m ae
+#PBS -l nodes=1
+#PBS -l ncpus=10
+#PBS -l mem=40gb
+#PBS -l walltime=24:00:00
+#PBS -M jacob.westaway@menzies.edu.au
+
+echo "---------------------------------------"
+echo "PBS: Job identifier is $PBS_JOBID"
+echo "PBS: Job name is $PBS_JOBNAME"
+
+echo "---------------------------------------"
+echo "Export path to fastqc"
+export PATH=$PATH:/usr/local/FastQC
+
+echo "---------------------------------------"
+echo "Change to current working directory"
+cd pk_pipeline
+
+echo "---------------------------------------"
+echo "Set environment variable"
+INPUTDIR="Sanger_100/pk_data/subset/"
+OUTDIR="Sanger_100/outputs/fastqc/"
+mkdir $OUTDIR
+
+echo "---------------------------------------"
+echo "Execute fastqc"
+fastqc -t 10 -o $OUTDIR $INPUTDIR/*.fastq.gz
+
+echo "---------------------------------------"
+echo "Finsihed!"
+```
+
+## MultiQC 
+
+File = 02_MultiQC.pbs
+Version(s) = 0.1.9
+
+```{r, eval=F}
+#!/bin/bash
+#PBS -N multiqc
+#PBS -j oe
+#PBS -m ae
+#PBS -l select=1:ncpus=10:mem=40gb
+#PBS -l walltime=04:00:00
+#PBS -M jacob.westaway@menzies.edu.au
+
+echo "---------------------------------------"
+echo "PBS: Job identifier is $PBS_JOBID"
+echo "PBS: Job name is $PBS_JOBNAME"
+
+echo "---------------------------------------"
+echo "Export path to singularity"
+export PATH=$PATH:/usr/local/singularity/latest/bin/
+
+echo "---------------------------------------"
+echo "Set environment variable"
+OUTDIR="/home/jwestaway/pk_pipeline/Sanger_100/outputs/fastqc/"
+
+echo "---------------------------------------"
+echo "Change to output directory"
+cd $OUTDIR
+
+echo "---------------------------------------"
+echo "Execute multiqc using singularity"
+singularity exec /home/jwestaway/pk_pipeline/tools/singularity/multiqc_v0.1.9.sif multiqc .
+
+echo "---------------------------------------"
+echo "Finsihed!"
+```
+
+## Trimming 
+
+File = 03_Trim.pbs
+Version(s) = 3.1.0 (singularity), 0.6.4 (trim-galore) & 20171222 (parallel)
+
+
+```{r, eval=F}
+#!/bin/bash
+#PBS -N trim
+#PBS -j oe
+#PBS -m ae
+#PBS -l nodes=1
+#PBS -l ncpus=20
+#PBS -l mem=40gb
+#PBS -l walltime=24:00:00
+#PBS -M jacob.westaway@menzies.edu.au
+
+echo "---------------------------------------"
+echo "PBS: Job identifier is $PBS_JOBID"
+echo "PBS: Job name is $PBS_JOBNAME"
+
+echo "---------------------------------------"
+echo "Export paths and load modules"
+export PATH=$PATH:/usr/local/singularity/latest/bin
+export PATH=$PATH:/usr/local/parallel_20171222/bin/
+
+echo "---------------------------------------"
+echo 'Change to current working directory' 
+cd pk_pipeline
+
+echo "---------------------------------------"
+echo 'Set environment vars'
+OUTDIR="Sanger_100/outputs/trimmed"
+INPUTDIR="Sanger_100/pk_data/subset"
+mkdir -p $OUTDIR
+
+echo "---------------------------------------"
+echo 'Exectue trim_galore for quality and adapter trimming'
+parallel -j15 --xapply singularity exec ~/pk_pipeline/tools/singularity/trim-galore_0.6.4.sif trim_galore --illumina --paired --fastqc -o $OUTDIR ::: $INPUTDIR/*1.fastq.gz ::: $INPUTDIR/*2.fastq.gz
+
+echo "---------------------------------------"
+echo "Finsihed!"
+```
+
+## MultiQC on trimmed reads
+
+File = 04_MultiQC_trimmed.pbs
+Version(s) = 0.1.9
+
+```{R, eval=F}
+#!/bin/bash
+#PBS -N multiqc
+#PBS -j oe
+#PBS -m ae
+#PBS -l select=1:ncpus=10:mem=40gb
+#PBS -l walltime=04:00:00
+#PBS -M jacob.westaway@menzies.edu.au
+
+echo "---------------------------------------"
+echo "PBS: Job identifier is $PBS_JOBID"
+echo "PBS: Job name is $PBS_JOBNAME"
+
+echo "---------------------------------------"
+echo "Export path to singularity"
+export PATH=$PATH:/usr/local/singularity/latest/bin/
+
+echo "---------------------------------------"
+echo "Set environment variable"
+OUTDIR="/home/jwestaway/pk_pipeline/Sanger_100/outputs/fastqc/"
+
+echo "---------------------------------------"
+echo "Change to output directory"
+cd $OUTDIR
+
+echo "---------------------------------------"
+echo "Execute multiqc using singularity"
+singularity exec /home/jwestaway/pk_pipeline/tools/singularity/multiqc_v0.1.9.sif multiqc .
+
+echo "---------------------------------------"
+echo "Finsihed!"
+```
+
+# Mapping/Alignment
+
+### Direct Pk Alignment
+
+File = 07_Alignment_pk_direct.pbs
+Version(s) = 0.7.10 (bwa) & 1.12 (samtools)
+
+```{R,eval=F}
+#!/bin/bash
+#PBS -N Align_pk_Sanger
+#PBS -j oe
+#PBS -m ae
+#PBS -l nodes=1
+#PBS -l ncpus=16
+#PBS -l mem=100gb
+#PBS -l walltime=24:00:00
+#PBS -M jacob.westaway@menzies.edu.au
+
+echo "---------------------------------------"
+echo "PBS: Job identifier is $PBS_JOBID"
+echo "PBS: Job name is $PBS_JOBNAME"
+
+echo "---------------------------------------"
+echo "Define paths to bwa and samtools"
+export PATH=$PATH:/usr/local/miniconda3/envs/assembly/bin/
+export PATH=$PATH:/usr/local/bwa-0.7.10 
+
+
+echo "---------------------------------------"
+echo 'Set environment vars'
+OUTDIR="/home/jwestaway/pk_pipeline/Sanger_100/outputs/direct_alignment/"
+INDEXTDIR="/home/jwestaway/pk_pipeline/ref_genomes/PKA1H1/fasta/strain_A1_H.1.Icor.fasta"
+mkdir -p $OUTDIR
+
+echo "---------------------------------------"
+echo 'Change to working directory' 
+cd pk_pipeline/Sanger_100/outputs/trimmed
+
+echo "---------------------------------------"
+echo 'Exectue bwa and samtools'
+for i in *_val_1.fq.gz
+do
+bwa mem -t 15 -M -R "@RG\tID:${i%_1_val_1.fq.gz}\tPL:ILLUMINA" $INDEXTDIR $i ${i%_1_val_1.fq.gz}_2_val_2.fq.gz | samtools view -u -S - | samtools sort -n -o $OUTDIR/${i%_1_val_1.fq.gz}.bam
+done 
+
+echo "---------------------------------------"
+echo 'Finished!'
+```
+
+### Mapping to host genome first
+
+#### Alignment and sort to BAM 
+
+File = 08_Align_to_hg.pbs
+Version(s) = 0.7.10 (bwa) & 1.12 (samtools)
+
+```{R, eval=F}
+#!/bin/bash
+#PBS -N Align_host
+#PBS -j oe
+#PBS -m ae
+#PBS -l nodes=1
+#PBS -l ncpus=21
+#PBS -l mem=200gb
+#PBS -l walltime=48:00:00
+#PBS -M jacob.westaway@menzies.edu.au
+
+echo "---------------------------------------"
+echo "PBS: Job identifier is $PBS_JOBID"
+echo "PBS: Job name is $PBS_JOBNAME"
+
+echo "---------------------------------------"
+echo "Define paths to bwa and samtools"
+export PATH=$PATH:/usr/local/miniconda3/envs/assembly/bin/
+export PATH=$PATH:/usr/local/bwa-0.7.10 
+
+echo "---------------------------------------"
+echo 'Set environment vars'
+OUTDIR="/home/jwestaway/pk_pipeline/Sanger_100/outputs/hg_removed_alignment/sortedbam/"
+INDEXTDIR="/home/jwestaway/pk_pipeline/ref_genomes/human/GRCh38d1_noalt.fa"
+mkdir -p $OUTDIR
+
+echo "---------------------------------------"
+echo 'Change to working directory' 
+cd pk_pipeline/Sanger_100/outputs/trimmed/
+
+echo "---------------------------------------"
+echo 'Exectue alignment with bwa to hg and sort to bam'
+echo "---------------------------------------"
+for i in *_val_1.fq.gz
+do
+bwa mem -t 20 -M -R "@RG\tID:${i%_1_val_1.fq.gz}\tPL:ILLUMINA" $INDEXTDIR $i ${i%_1_val_1.fq.gz}_2_val_2.fq.gz | samtools view -u -S - | samtools sort -n -o $OUTDIR/${i%_1_val_1.fq.gz}.bam
+done 
+
+echo "---------------------------------------"
+echo 'Finished!'
+```
+
+#### Get unaligned read pairs and fastqs
+File = 09_Fastq_from_hg_align.pbs
+Version = 0.7.10 (bwa) & 1.12 (samtools)
+
+```{R,eval=F}
+#!/bin/bash
+#PBS -N fastq_from_hg_align
+#PBS -j oe
+#PBS -m ae
+#PBS -l nodes=1
+#PBS -l ncpus=16
+#PBS -l mem=100gb
+#PBS -l walltime=24:00:00
+#PBS -M jacob.westaway@menzies.edu.au
+
+echo "---------------------------------------"
+echo "PBS: Job identifier is $PBS_JOBID"
+echo "PBS: Job name is $PBS_JOBNAME"
+
+echo "---------------------------------------"
+echo "Define paths to bwa and samtools"
+export PATH=$PATH:/usr/local/miniconda3/envs/assembly/bin/
+export PATH=$PATH:/usr/local/bwa-0.7.10 
+
+echo "---------------------------------------"
+echo 'Change to working directory' 
+cd /home/jwestaway/pk_pipeline/outputs/alignment/hg_removed_alignment/sortedbam/
+
+echo "---------------------------------------"
+echo 'Set environment vars for bam file step'
+OUTDIR="/home/jwestaway/pk_pipeline/outputs/alignment/hg_removed_alignment/unaligned_pairs/"
+mkdir -p $OUTDIR
+
+echo "---------------------------------------"
+echo 'Get un-aligned reads (Pk reads)'
+for i in *_124.bam
+do
+samtools -@ 15 view -b -f 12 -F 256 -o $OUTDIR/${i%_124.bam}.unaligned.bam $i
+done 
+
+echo "---------------------------------------"
+echo 'Set environment vars for fastq file step'
+cd $OUTDIR
+INDEXTDIR="/home/jwestaway/pk_pipeline/ref_genomes/human/GRCh38d1_noalt.fa"
+OUTDIR="/home/jwestaway/pk_pipeline/Sanger_100/outputs/hg_removed_alignment/hg_rem_fastq/"
+mkdir -p $OUTDIR
+
+echo "---------------------------------------"
+echo 'Get fastqs from unaligned pk read pairs'
+for i in *.unaligned.bam
+do
+samtools bam2fq -@ 15 -1 $OUTDIR/${i%.unaligned.bam}_unmapped_R1.fq.gz -2 $OUTDIR/${i%.unaligned.bam}_unmapped_R2.fq.gz -N --reference $INDEXTDIR -s /dev/null $i
+ 
+done 
+echo "---------------------------------------"
+echo "Finsihed!"
+```
+
+#### Alignment to Pk reference genome
+
+File = 10_Alignment_hg_removed.pbs
+Version = 0.7.10 (bwa) & 1.12 (samtools)
+
+```{R,eval=F}
+#!/bin/bash
+#PBS -N Align_Pk_no_host
+#PBS -j oe
+#PBS -m ae
+#PBS -l nodes=1
+#PBS -l ncpus=16
+#PBS -l mem=100gb
+#PBS -l walltime=24:00:00
+#PBS -M jacob.westaway@menzies.edu.au
+echo "---------------------------------------"
+echo "PBS: Job identifier is $PBS_JOBID"
+echo "PBS: Job name is $PBS_JOBNAME"
+
+echo "---------------------------------------"
+echo "Define paths to bwa and samtools"
+export PATH=$PATH:/usr/local/miniconda3/envs/assembly/bin/
+export PATH=$PATH:/usr/local/bwa-0.7.10 
+
+echo "---------------------------------------"
+echo 'Change to working directory' 
+cd /home/jwestaway/pk_pipeline/Sanger_100/outputs/hg_removed_alignment/hg_rem_fastq/
+
+echo "---------------------------------------"
+echo 'Set environment vars'
+OUTDIR="/home/jwestaway/pk_pipeline/Sanger_100/outputs/hg_removed_alignment/pk_alignment/"
+INDEXTDIR="/home/jwestaway/pk_pipeline/ref_genomes/PKA1H1/fasta/strain_A1_H.1.Icor.fasta"
+mkdir -p $OUTDIR
+
+echo "---------------------------------------"
+echo 'Exectue alignment with bwa to hg and sort to bam'
+for i in *_unmapped_R1.fq.gz
+do
+bwa mem -t 15 -M -R "@RG\tID:${i%_unmapped_R1.fq.gz}\tPL:ILLUMINA" $INDEXTDIR $i ${i%_unmapped_R1.fq.gz}_unmapped_R2.fq.gz | samtools view -u -S - | samtools sort -n -o $OUTDIR/${i%_unmapped_R1.fq.gz}.bam
+done 
+
+echo "---------------------------------------"
+echo "Finsihed!"
+```
+
+### Get mapping quality
+
+File = 11_Map_Stats_pk_direct.pbs 
+Version(s) = 38.90 (BBMap) & 1.12 (samtools)
+
+bbmap was run on all alignments (direct to the Pk, to the Hg, and to Pk post Hg removal) within the same submission.
+
+```{R,eval=F}
+#!/bin/bash
+#PBS -N Map_Stats
+#PBS -j oe
+#PBS -m ae
+#PBS -l nodes=1
+#PBS -l ncpus=16
+#PBS -l mem=50gb
+#PBS -l walltime=4:00:00
+#PBS -M jacob.westaway@menzies.edu.au
+
+echo "---------------------------------------"
+echo "PBS: Job identifier is $PBS_JOBID"
+echo "PBS: Job name is $PBS_JOBNAME"
+
+echo "---------------------------------------"
+echo "Define paths to bbmap and samtools"
+export Path=$PATH:/home/jwestaway/pk_pipeline/tools/bbmap
+export PATH=$PATH:/usr/local/miniconda3/envs/assembly/bin/  
+export PATH=$PATH:/usr/local/miniconda3/pkgs/quast-5.0.2-py37pl526hb5aa323_2/lib/python3.7/site-packages/quast_libs/sambamba
+module load java/1.8.0_171
+
+echo "---------------------------------------"
+echo 'Alignment - direct to Pk'
+
+echo "---------------------------------------"
+echo 'Change to working directory and set env variables'
+cd /home/jwestaway/pk_pipeline/Sanger_100/outputs/direct_alignment/
+PILEUP="/home/jwestaway/pk_pipeline/tools/bbmap/pileup.sh"
+
+echo "---------------------------------------"
+echo 'Exectue samtools & bbmap'
+for i in *.bam
+do
+samtools view -h --threads 15 $i | $PILEUP in=stdin 2> ${i%.bam}.mapstats
+done 
+
+echo "---------------------------------------"
+echo 'Alignment - to Hg'
+
+echo "---------------------------------------"
+echo 'Change to working directory and set env variables'
+cd /home/jwestaway/pk_pipeline/Sanger_100/outputs/hg_removed_alignment/sortedbam/
+
+echo "---------------------------------------"
+echo 'Exectue samtools & bbmap'
+for i in *.bam
+do
+samtools view -h --threads 15 $i | $PILEUP in=stdin 2> ${i%.bam}.mapstats
+done 
+
+echo "---------------------------------------"
+echo 'Alignment - to Pk post Hg removal'
+
+echo "---------------------------------------"
+echo 'Change to working directory and set env variables'
+cd /home/jwestaway/pk_pipeline/Sanger_100/outputs/hg_removed_alignment/pk_alignment/
+
+echo "---------------------------------------"
+echo 'Exectue samtools & bbmap'
+for i in *.bam
+do
+samtools view -h --threads 15 $i | $PILEUP in=stdin 2> ${i%.bam}.mapstats
+done 
+
+echo "---------------------------------------"
+echo "Finsihed!"
+```
+
+### Get read depth
+
+
+```{R, eval=F}
+#!/bin/bash
+#PBS -N S100_read_depth
+#PBS -j oe
+#PBS -m ae
+#PBS -l nodes=1
+#PBS -l ncpus=11
+#PBS -l mem=50gb
+#PBS -l walltime=24:00:00
+#PBS -M jacob.westaway@menzies.edu.au
+
+echo "---------------------------------------"
+echo "PBS: Job identifier is $PBS_JOBID"
+echo "PBS: Job name is $PBS_JOBNAME"
+
+echo "---------------------------------------"
+echo "Define paths to samtools"
+export PATH=$PATH:/usr/local/miniconda3/envs/assembly/bin/
+
+echo "---------------------------------------"
+echo 'DIRECT ALIGNMENT'
+
+echo "---------------------------------------"
+echo 'Change to working directory and set env variables'
+cd /home/jwestaway/pk_pipeline/Sanger_100/outputs/direct_alignment/
+BED='/home/jwestaway/pk_pipeline/ref_genomes/PKA1H1/strain_A1_H.1.Icor.fasta.bed'
+
+echo "---------------------------------------"
+echo 'Sort bam files'
+
+for i in *.bam
+do
+samtools sort -@ 10 $i > ${i%.bam}.sorted.bam
+done 
+
+echo "---------------------------------------"
+echo 'Index bam files'
+
+for i in *.sorted.bam
+do
+samtools index -@ 10 $i 
+done 
+
+echo "---------------------------------------"
+echo 'Create file with list of filenames'
+ls *sorted.bam > filenames.txt
+
+echo "---------------------------------------"
+echo 'Exectue samtools depth'
+samtools depth -a -b $BED -f filenames.txt -o S100_direct_depth_summary.depth
+
+echo "---------------------------------------"
+echo 'INDIRECT ALIGNMENT'
+
+echo "---------------------------------------"
+echo 'Change to working directory and set env variables'
+cd /home/jwestaway/pk_pipeline/Sanger_100/outputs/hg_removed_alignment/pk_alignment/
+
+echo "---------------------------------------"
+echo 'Sort bam files'
+
+for i in *.bam
+do
+samtools sort -@ 10 $i > ${i%.bam}.sorted.bam
+done 
+
+echo "---------------------------------------"
+echo 'Index bam files'
+
+for i in *.sorted.bam
+do
+samtools index -@ 10 $i 
+done 
+
+echo "---------------------------------------"
+echo 'Create file with list of filenames'
+ls *sorted.bam > filenames.txt
+
+echo "---------------------------------------"
+echo 'Exectue samtools depth'
+samtools depth -a -b $BED -f filenames.txt -o S100_indirect_depth_summary.depth
+
+echo "---------------------------------------"
+echo "Finsihed!"
+```
+
+
+##################################################################################################################################
+
+## ZB dataset
+
+
+## FastQC
+
+File = 01_QC.pbs 
+Version(s) = 0.10.1
+
+```{r, eval=F}
+#!/bin/bash
+#PBS -N fastqc
+#PBS -j oe
+#PBS -m ae
+#PBS -l nodes=1
+#PBS -l ncpus=11
+#PBS -l mem=40gb
+#PBS -l walltime=24:00:00
+#PBS -M jacob.westaway@menzies.edu.au
+
+echo "---------------------------------------"
+echo "PBS: Job identifier is $PBS_JOBID"
+echo "PBS: Job name is $PBS_JOBNAME"
+
+echo "---------------------------------------"
+echo "Export path to fastqc"
+export PATH=$PATH:/usr/local/FastQC
+
+echo "---------------------------------------"
+echo "Change to current working directory"
+cd pk_pipeline
+
+echo "---------------------------------------"
+echo "Set environment variable"
+INPUTDIR="ZB_100/pk_data/subset/"
+OUTDIR="ZB_100/outputs/fastqc/"
+mkdir $OUTDIR
+
+echo "---------------------------------------"
+echo "Execute fastqc"
+fastqc -t 10 -o $OUTDIR $INPUTDIR/*.fq.gz
+
+echo "---------------------------------------"
+echo "Finsihed!"
+```
+
+## MultiQC 
+
+File = 02_MultiQC.pbs
+Version(s) = 0.1.9
+
+```{r, eval=F}
+#!/bin/bash
+#PBS -N multiqc
+#PBS -j oe
+#PBS -m ae
+#PBS -l nodes=1
+#PBS -l ncpus=10
+#PBS -l mem=40gb
+#PBS -l walltime=04:00:00
+#PBS -M jacob.westaway@menzies.edu.au
+
+echo "---------------------------------------"
+echo "PBS: Job identifier is $PBS_JOBID"
+echo "PBS: Job name is $PBS_JOBNAME"
+
+echo "---------------------------------------"
+echo "Export path to singularity"
+export PATH=$PATH:/usr/local/singularity/latest/bin
+
+echo "---------------------------------------"
+echo "Set environment variable"
+OUTDIR="/home/jwestaway/pk_pipeline/ZB_100/outputs/fastqc"
+
+echo "---------------------------------------"
+echo "Change to output directory"
+cd $OUTDIR
+
+echo "---------------------------------------"
+echo "Execute multiqc using singularity"
+singularity exec /home/jwestaway/pk_pipeline/tools/singularity/multiqc_v0.1.9.sif multiqc .
+
+echo "---------------------------------------"
+echo "Finsihed!"
+```
+
+## Trimming 
+
+File = 03_Trim.pbs
+Version(s) = 3.1.0 (singularity), 0.6.4 (trim-galore) & 20171222 (parallel)
+
+```{r, eval=F}
+#!/bin/bash
+#PBS -N trim
+#PBS -j oe
+#PBS -m ae
+#PBS -l nodes=1
+#PBS -l ncpus=21
+#PBS -l mem=100gb
+#PBS -l walltime=24:00:00
+#PBS -M jacob.westaway@menzies.edu.au
+
+echo "---------------------------------------"
+echo "PBS: Job identifier is $PBS_JOBID"
+echo "PBS: Job name is $PBS_JOBNAME"
+
+echo "---------------------------------------"
+echo "Export paths and load modules"
+export PATH=$PATH:/usr/local/singularity/latest/bin
+export PATH=$PATH:/usr/local/parallel_20171222/bin/
+
+echo "---------------------------------------"
+echo 'Change to current working directory' 
+cd pk_pipeline
+
+echo "---------------------------------------"
+echo 'Set environment vars'
+OUTDIR="ZB_100/outputs/trimmed"
+INPUTDIR="ZB_100/pk_data/subset"
+mkdir -p $OUTDIR
+
+echo "---------------------------------------"
+echo 'Exectue trim_galore for quality and adapter trimming'
+parallel -j20 --xapply singularity exec ~/pk_pipeline/tools/singularity/trim-galore_0.6.4.sif trim_galore --illumina --paired --fastqc -o $OUTDIR ::: $INPUTDIR/*1.fq.gz ::: $INPUTDIR/*2.fq.gz
+
+echo "---------------------------------------"
+echo "Finsihed!"
+```
+
+## MultiQC on trimmed reads
+
+File = 04_MultiQC_trimmed.pbs
+Version(s) = 0.1.9
+
+```{R, eval=F}
+#!/bin/bash
+#PBS -N multiqc
+#PBS -j oe
+#PBS -m ae
+#PBS -l nodes=1
+#PBS -l ncpus=10
+#PBS -l mem=40gb
+#PBS -l walltime=04:00:00
+#PBS -M jacob.westaway@menzies.edu.au
+
+echo "---------------------------------------"
+echo "PBS: Job identifier is $PBS_JOBID"
+echo "PBS: Job name is $PBS_JOBNAME"
+
+echo "---------------------------------------"
+echo "Export path to multiqc"
+export PATH=$PATH:/usr/local/singularity/latest/bin
+
+echo "---------------------------------------"
+echo "Set environment variable"
+OUTDIR="/home/jwestaway/pk_pipeline/ZB_100/outputs/trimmed"
+
+echo "---------------------------------------"
+echo "Change to output directory"
+cd $OUTDIR
+
+echo "---------------------------------------"
+echo "Execute multiqc using singularity"
+singularity exec ~/pk_pipeline/tools/singularity/multiqc_v0.1.9.sif multiqc .
+
+echo "---------------------------------------"
+echo "Finsihed!"
+```
+
+# Mapping/Alignment
+
+### Direct Pk Alignment
+
+File = 07_Alignment_pk_direct.pbs
+Version(s) = 0.7.10 (bwa) & 1.12 (samtools)
+
+```{R,eval=F}
+#!/bin/bash
+#PBS -N Align_pk_ZB
+#PBS -j oe
+#PBS -m ae
+#PBS -l nodes=1
+#PBS -l ncpus=16
+#PBS -l mem=100gb
+#PBS -l walltime=24:00:00
+#PBS -M jacob.westaway@menzies.edu.au
+
+echo "---------------------------------------"
+echo "PBS: Job identifier is $PBS_JOBID"
+echo "PBS: Job name is $PBS_JOBNAME"
+
+echo "---------------------------------------"
+echo "Define paths to bwa and samtools"
+export PATH=$PATH:/usr/local/miniconda3/envs/assembly/bin/
+export PATH=$PATH:/usr/local/bwa-0.7.10 
+
+
+echo "---------------------------------------"
+echo 'Set environment vars'
+OUTDIR="/home/jwestaway/pk_pipeline/ZB_100/outputs/direct_alignment/"
+INDEXTDIR="/home/jwestaway/pk_pipeline/ref_genomes/PKA1H1/fasta/strain_A1_H.1.Icor.fasta"
+mkdir -p $OUTDIR
+
+echo "---------------------------------------"
+echo 'Change to working directory' 
+cd /home/jwestaway/pk_pipeline/ZB_100/outputs/trimmed
+
+echo "---------------------------------------"
+echo 'Exectue bwa and samtools'
+for i in *_val_1.fq.gz
+do
+bwa mem -t 15 -M -R "@RG\tID:${i%_1_val_1.fq.gz}\tPL:ILLUMINA" $INDEXTDIR $i ${i%_1_val_1.fq.gz}_2_val_2.fq.gz | samtools view -u -S - | samtools sort -n -o $OUTDIR/${i%_1_val_1.fq.gz}.bam
+done 
+
+echo "---------------------------------------"
+echo 'Finished!'
+```
+
+### Mapping to host genome first
+
+#### Alignment and sort to BAM 
+
+File = 08_Align_to_hg.pbs
+Version(s) = 0.7.10 (bwa) & 1.12 (samtools)
+
+```{R, eval=F}
+#!/bin/bash
+#PBS -N Align_host
+#PBS -j oe
+#PBS -m ae
+#PBS -l nodes=1
+#PBS -l ncpus=21
+#PBS -l mem=200gb
+#PBS -l walltime=48:00:00
+#PBS -M jacob.westaway@menzies.edu.au
+
+echo "---------------------------------------"
+echo "PBS: Job identifier is $PBS_JOBID"
+echo "PBS: Job name is $PBS_JOBNAME"
+
+echo "---------------------------------------"
+echo "Define paths to bwa and samtools"
+export PATH=$PATH:/usr/local/miniconda3/envs/assembly/bin/
+export PATH=$PATH:/usr/local/bwa-0.7.10 
+
+echo "---------------------------------------"
+echo 'Set environment vars'
+OUTDIR="/home/jwestaway/pk_pipeline/ZB_100/outputs/hg_removed_alignment/sortedbam/"
+INDEXTDIR="/home/jwestaway/pk_pipeline/ref_genomes/human/GRCh38d1_noalt.fa"
+mkdir -p $OUTDIR
+
+echo "---------------------------------------"
+echo 'Change to working directory' 
+cd /home/jwestaway/pk_pipeline/ZB_100/outputs/trimmed/
+
+echo "---------------------------------------"
+echo 'Exectue alignment with bwa to hg and sort to bam'
+echo "---------------------------------------"
+for i in *_val_1.fq.gz
+do
+bwa mem -t 20 -M -R "@RG\tID:${i%_1_val_1.fq.gz}\tPL:ILLUMINA" $INDEXTDIR $i ${i%_1_val_1.fq.gz}_2_val_2.fq.gz | samtools view -u -S - | samtools sort -n -o $OUTDIR/${i%_1_val_1.fq.gz}.bam
+done 
+
+echo "---------------------------------------"
+echo 'Finished!'
+```
+
+#### Get unaligned read pairs and fastqs
+File = 09_Fastq_from_hg_align.pbs
+Version = 0.7.10 (bwa) & 1.12 (samtools)
+
+```{R,eval=F}
+#!/bin/bash
+#PBS -N fastq_from_hg_align
+#PBS -j oe
+#PBS -m ae
+#PBS -l nodes=1
+#PBS -l ncpus=16
+#PBS -l mem=100gb
+#PBS -l walltime=4:00:00
+#PBS -M jacob.westaway@menzies.edu.au
+
+echo "---------------------------------------"
+echo "PBS: Job identifier is $PBS_JOBID"
+echo "PBS: Job name is $PBS_JOBNAME"
+
+echo "---------------------------------------"
+echo "Define paths to bwa and samtools"
+export PATH=$PATH:/usr/local/miniconda3/envs/assembly/bin/
+export PATH=$PATH:/usr/local/bwa-0.7.10 
+
+echo "---------------------------------------"
+echo 'Change to working directory' 
+cd /home/jwestaway/pk_pipeline/ZB_100/outputs/hg_removed_alignment/sortedbam/
+
+echo "---------------------------------------"
+echo 'Set environment vars for bam file step'
+OUTDIR="/home/jwestaway/pk_pipeline/ZB_100/outputs/hg_removed_alignment/unaligned_pairs/"
+mkdir -p $OUTDIR
+
+echo "---------------------------------------"
+echo 'Get un-aligned reads (Pk reads)'
+for i in *.bam
+do
+samtools view -@ 15 -b -f 12 -F 256 -o $OUTDIR/${i%.bam}.unaligned.bam $i 
+done 
+
+echo "---------------------------------------"
+echo 'Set environment vars for fastq file step'
+cd $OUTDIR
+INDEXTDIR="/home/jwestaway/pk_pipeline/ref_genomes/human/GRCh38d1_noalt.fa"
+OUTDIR="/home/jwestaway/pk_pipeline/ZB_100/outputs/hg_removed_alignment/hg_rem_fastq/"
+mkdir -p $OUTDIR
+
+echo "---------------------------------------"
+echo 'Get fastqs from unaligned pk read pairs'
+for i in *.unaligned.bam
+do
+samtools bam2fq -@ 15 -1 $OUTDIR/${i%.unaligned.bam}_unmapped_R1.fq.gz -2 $OUTDIR/${i%.unaligned.bam}_unmapped_R2.fq.gz -N --reference $INDEXTDIR -s /dev/null $i
+ 
+done 
+echo "---------------------------------------"
+echo "Finsihed!"
+```
+
+#### Alignment to Pk reference genome
+
+File = 10_Alignment_hg_removed.pbs
+Version = 0.7.10 (bwa) & 1.12 (samtools)
+
+```{R,eval=F}
+#!/bin/bash
+#PBS -N Align_Pk_no_host
+#PBS -j oe
+#PBS -m ae
+#PBS -l nodes=1
+#PBS -l ncpus=16
+#PBS -l mem=100gb
+#PBS -l walltime=24:00:00
+#PBS -M jacob.westaway@menzies.edu.au
+echo "---------------------------------------"
+echo "PBS: Job identifier is $PBS_JOBID"
+echo "PBS: Job name is $PBS_JOBNAME"
+
+echo "---------------------------------------"
+echo "Define paths to bwa and samtools"
+export PATH=$PATH:/usr/local/miniconda3/envs/assembly/bin/
+export PATH=$PATH:/usr/local/bwa-0.7.10 
+
+echo "---------------------------------------"
+echo 'Change to working directory' 
+cd /home/jwestaway/pk_pipeline/ZB_100/outputs/hg_removed_alignment/hg_rem_fastq/
+
+echo "---------------------------------------"
+echo 'Set environment vars'
+OUTDIR="/home/jwestaway/pk_pipeline/ZB_100/outputs/hg_removed_alignment/pk_alignment/"
+INDEXTDIR="/home/jwestaway/pk_pipeline/ref_genomes/PKA1H1/fasta/strain_A1_H.1.Icor.fasta"
+mkdir -p $OUTDIR
+
+echo "---------------------------------------"
+echo 'Exectue alignment with bwa to hg and sort to bam'
+for i in *_unmapped_R1.fq.gz
+do
+bwa mem -t 15 -M -R "@RG\tID:${i%_unmapped_R1.fq.gz}\tPL:ILLUMINA" $INDEXTDIR $i ${i%_unmapped_R1.fq.gz}_unmapped_R2.fq.gz | samtools view -u -S - | samtools sort -n -o $OUTDIR/${i%_unmapped_R1.fq.gz}.bam
+done 
+
+echo "---------------------------------------"
+echo "Finsihed!"
+```
+
+### Get mapping quality
+
+File = 11_Map_Stats_pk_direct.pbs 
+Version(s) = 38.90 (BBMap), 1.12 (samtools), 1.8.0_171 (java) & 0.6.3 (sambamba)
+
+```{R,eval=F}
+#!/bin/bash
+#PBS -N Map_Stats
+#PBS -j oe
+#PBS -m ae
+#PBS -l nodes=1
+#PBS -l ncpus=16
+#PBS -l mem=50gb
+#PBS -l walltime=4:00:00
+#PBS -M jacob.westaway@menzies.edu.au
+
+echo "---------------------------------------"
+echo "PBS: Job identifier is $PBS_JOBID"
+echo "PBS: Job name is $PBS_JOBNAME"
+
+echo "---------------------------------------"
+echo "Define paths to bbmap and samtools"
+export Path=$PATH:/home/jwestaway/pk_pipeline/tools/bbmap
+export PATH=$PATH:/usr/local/miniconda3/envs/assembly/bin/  
+export PATH=$PATH:/usr/local/miniconda3/pkgs/quast-5.0.2-py37pl526hb5aa323_2/lib/python3.7/site-packages/quast_libs/sambamba
+module load java/1.8.0_171
+
+echo "---------------------------------------"
+echo 'Alignment - direct to Pk'
+
+echo "---------------------------------------"
+echo 'Change to working directory and set env variables'
+cd /home/jwestaway/pk_pipeline/ZB_100/outputs/direct_alignment/
+PILEUP="/home/jwestaway/pk_pipeline/tools/bbmap/pileup.sh"
+
+echo "---------------------------------------"
+echo 'Exectue samtools & bbmap'
+for i in *.bam
+do
+samtools view -h --threads 15 $i | $PILEUP in=stdin 2> ${i%.bam}.mapstats
+done 
+
+echo "---------------------------------------"
+echo 'Alignment - to Hg'
+
+echo "---------------------------------------"
+echo 'Change to working directory and set env variables'
+cd /home/jwestaway/pk_pipeline/ZB_100/outputs/hg_removed_alignment/sortedbam/
+
+echo "---------------------------------------"
+echo 'Exectue samtools & bbmap'
+for i in *.bam
+do
+samtools view -h --threads 15 $i | $PILEUP in=stdin 2> ${i%.bam}.mapstats
+done 
+
+echo "---------------------------------------"
+echo 'Alignment - to Pk post Hg removal'
+
+echo "---------------------------------------"
+echo 'Change to working directory and set env variables'
+cd /home/jwestaway/pk_pipeline/ZB_100/outputs/hg_removed_alignment/pk_alignment/
+
+echo "---------------------------------------"
+echo 'Exectue samtools & bbmap'
+for i in *.bam
+do
+samtools view -h --threads 15 $i | $PILEUP in=stdin 2> ${i%.bam}.mapstats
+done 
+
+echo "---------------------------------------"
+echo "Finsihed!"
+```
+
+### Get read depth
+
+```{R,eval=F}
+#!/bin/bash
+#PBS -N ZB_read_depth
+#PBS -j oe
+#PBS -m ae
+#PBS -l nodes=1
+#PBS -l ncpus=11
+#PBS -l mem=50gb
+#PBS -l walltime=24:00:00
+#PBS -M jacob.westaway@menzies.edu.au
+
+echo "---------------------------------------"
+echo "PBS: Job identifier is $PBS_JOBID"
+echo "PBS: Job name is $PBS_JOBNAME"
+
+echo "---------------------------------------"
+echo "Define paths to samtools"
+export PATH=$PATH:/usr/local/miniconda3/envs/assembly/bin/
+
+echo "---------------------------------------"
+echo 'DIRECT ALIGNMENT'
+
+echo "---------------------------------------"
+echo 'Change to working directory and set env variables'
+cd /home/jwestaway/pk_pipeline/ZB_100/outputs/direct_alignment/
+BED='/home/jwestaway/pk_pipeline/ref_genomes/PKA1H1/strain_A1_H.1.Icor.fasta.bed'
+
+echo "---------------------------------------"
+echo 'Sort bam files'
+
+for i in *.bam
+do
+samtools sort -@ 10 $i > ${i%.bam}.sorted.bam
+done 
+
+echo "---------------------------------------"
+echo 'Index bam files'
+
+for i in *.sorted.bam
+do
+samtools index -@ 10 $i 
+done 
+
+echo "---------------------------------------"
+echo 'Create file with list of filenames'
+ls *sorted.bam > filenames.txt
+
+echo "---------------------------------------"
+echo 'Exectue samtools depth'
+samtools depth -a -b $BED -f filenames.txt -o ZB_direct_depth_summary.depth
+
+echo "---------------------------------------"
+echo 'INDIRECT ALIGNMENT'
+
+echo "---------------------------------------"
+echo 'Change to working directory and set env variables'
+cd /home/jwestaway/pk_pipeline/ZB_100/outputs/hg_removed_alignment/pk_alignment/
+
+echo "---------------------------------------"
+echo 'Sort bam files'
+
+for i in *.bam
+do
+samtools sort -@ 10 $i > ${i%.bam}.sorted.bam
+done 
+
+echo "---------------------------------------"
+echo 'Index bam files'
+
+for i in *.sorted.bam
+do
+samtools index -@ 10 $i 
+done 
+
+echo "---------------------------------------"
+echo 'Create file with list of filenames'
+ls *sorted.bam > filenames.txt
+
+echo "---------------------------------------"
+echo 'Exectue samtools depth'
+samtools depth -a -b $BED -f filenames.txt -o ZB_indirect_depth_summary.depth
+
+echo "---------------------------------------"
+echo "Finsihed!"
+```
+
+
+############################################################################################################
+
+# Comparisons for mapping
+
+- Here we make comparisons on the number of reads being obtained from the three datasets, the number of reads mapping and the read depth at different positions along the Pk genome.
+
+## Mapstats
+
+Can concatenate output *.mapstats files within a given directory, and select only the relevant information (including the file/sample name) with:
+
+`tail -n +1 *mapstats | grep '.mapstats\|Read\|Mapped\|Ref\|Percent\|Average\|Standard' > S100_HGR_summary.mapstats`
+
+Outputs = dataset_alignment_summary.mapstats
+Example = SS_PKD_summary.mapstats = sanger subset & Pk direct alignment
+
+The PBS script below colates all the mapstats outputs for a given alignment and converts them into a two-column csv file.
+
+**NB.** If you run the above you need to alter the wildcard input (*mapstats) below or change the filename above.
+Can concatenate output *.mapstats files within a given directory, selecting only the relevant information (including the file/sample name), and then wrangle it to be easier to handle in R with:
+`tail -n +1 *mapstats | grep '.mapstats\|Read\|Mapped\|Ref\|Percent\|Average\|Standard' | sed 's/:/,/' | sed 's/<==/,/' > test.csv`
+
+
+File = Sum_mapstats.pbs
+Version(s) = 38.90 (BBMap) & 1.12 (samtools)
+
+```{R,eval=F}
+#!/bin/bash
+#PBS -N BBMap_sum
+#PBS -j oe
+#PBS -m ae
+#PBS -l nodes=1
+#PBS -l ncpus=11
+#PBS -l mem=10gb
+#PBS -l walltime=1:00:00
+#PBS -M jacob.westaway@menzies.edu.au
+
+echo "---------------------------------------"
+echo "PBS: Job identifier is $PBS_JOBID"
+echo "PBS: Job name is $PBS_JOBNAME"
+
+echo "---------------------------------------"
+echo "Create output directory for all files"
+OUTDIR="/home/jwestaway/pk_pipeline/analysis/bbmap_summary/"
+mkdir $OUTDIR
+
+echo "---------------------------------------"
+echo "SS"
+
+echo "Direct to Pk"
+cd /home/jwestaway/pk_pipeline/Sanger_Subset/outputs/alignment/direct_alignment/
+tail -n +1 *mapstats | grep '.mapstats\|Read\|Mapped\|Ref\|Percent\|Average\|Standard' | sed 's/:/,/' | sed 's/<==/,/' > $OUTDIR/SS_PKD_summary_mapstats.csv
+
+echo "Indirect to Hg"
+cd /home/jwestaway/pk_pipeline/Sanger_Subset/outputs/alignment/hg_removed_alignment/sortedbam/
+tail -n +1 *mapstats | grep '.mapstats\|Read\|Mapped\|Ref\|Percent\|Average\|Standard' | sed 's/:/,/' | sed 's/<==/,/' > $OUTDIR/SS_HGA_summary_mapstats.csv
+
+echo "Indirect to Pk"
+cd /home/jwestaway/pk_pipeline/Sanger_Subset/outputs/alignment/hg_removed_alignment/pk_alignment/
+tail -n +1 *mapstats | grep '.mapstats\|Read\|Mapped\|Ref\|Percent\|Average\|Standard' | sed 's/:/,/' | sed 's/<==/,/' > $OUTDIR/SS_HGR_summary_mapstats.csv
+
+echo "---------------------------------------"
+echo "S_100"
+
+echo "Direct to Pk"
+cd /home/jwestaway/pk_pipeline/Sanger_100/outputs/direct_alignment/
+tail -n +1 *mapstats | grep '.mapstats\|Read\|Mapped\|Ref\|Percent\|Average\|Standard' | sed 's/:/,/' | sed 's/<==/,/' > $OUTDIR/S100_PKD_summary_mapstats.csv
+
+echo "Indirect to Hg"
+cd /home/jwestaway/pk_pipeline/Sanger_100/outputs/hg_removed_alignment/sortedbam/
+tail -n +1 *mapstats | grep '.mapstats\|Read\|Mapped\|Ref\|Percent\|Average\|Standard' | sed 's/:/,/' | sed 's/<==/,/' > $OUTDIR/S100_HGA_summary_mapstats.csv
+
+echo "Indirect to Pk"
+cd /home/jwestaway/pk_pipeline/Sanger_100/outputs/hg_removed_alignment/pk_alignment/
+tail -n +1 *mapstats | grep '.mapstats\|Read\|Mapped\|Ref\|Percent\|Average\|Standard' | sed 's/:/,/' | sed 's/<==/,/' > $OUTDIR/S100_HGR_summary_mapstats.csv
+
+echo "---------------------------------------"
+echo "ZB_100"
+
+echo "Direct to Pk"
+cd /home/jwestaway/pk_pipeline/ZB_100/outputs/direct_alignment/
+tail -n +1 *mapstats | grep '.mapstats\|Read\|Mapped\|Ref\|Percent\|Average\|Standard' | sed 's/:/,/' | sed 's/<==/,/' > $OUTDIR/ZB_PKD_summary_mapstats.csv
+
+echo "Indirect to Hg"
+cd /home/jwestaway/pk_pipeline/ZB_100/outputs/hg_removed_alignment/sortedbam/
+tail -n +1 *mapstats | grep '.mapstats\|Read\|Mapped\|Ref\|Percent\|Average\|Standard' | sed 's/:/,/' | sed 's/<==/,/' > $OUTDIR/ZB_HGA_summary_mapstats.csv
+
+echo "Indirect to Pk"
+cd /home/jwestaway/pk_pipeline/ZB_100/outputs/hg_removed_alignment/pk_alignment/
+tail -n +1 *mapstats | grep '.mapstats\|Read\|Mapped\|Ref\|Percent\|Average\|Standard' | sed 's/:/,/' | sed 's/<==/,/' > $OUTDIR/ZB_HGR_summary_mapstats.csv
+
+echo "---------------------------------------"
+echo "Finsihed!"
+```
+**NB.** Downloaded these output files manually to desktop for subsequent exploratory analysis in R.
+
+## Analysis of mapstats outputs in R
+
+### Read in the data
+
+```{r,warning=F,message=F}
+library(tidyverse)
+```
+
+Version(s) = 1.3.0 (tidyverse), 1.2.1335 (RStudio) & 3.6.1 (R)
+
+The chunk below takes in the csv file specific to the dataset and type of alignment.
+It then filters to remove the sample names, creating a datframe with only statistics/variables.
+It then adds a column where we have filtered for the sample names, 'rbound' it to itself several times times and arranged it by samples names (so that each variable/statstic has an appropriate sample name in the adjaent column).
+This resultant dataframe is in the appropriate long format, so then `pivot.wider()` is used to create a [tidy](https://tidyr.tidyverse.org/articles/tidy-data.html) dataframe for analysis (where the first column is the sample numbers and each additional column is a variable).
+
+```{r,warning=F,message=F}
+# S_100 
+# Direct Pk
+S100 <- read_csv("data/bbmap_summary/S100_PKD_summary_mapstats.csv", col_names = c("Variable", "Value")) %>%
+  mutate(Variable = str_remove(Variable, "==> ")) %>% 
+  filter(!grepl("ERR", Variable)) %>% # data specific
+  add_column(
+    (read_csv("data/bbmap_summary/S100_PKD_summary_mapstats.csv", col_names = c("Variable", "Value")) %>% 
+       mutate(Variable = str_remove(Variable, "==> ")) %>% 
+       filter(grepl("ERR", Variable)) %>% # data specific
+       mutate(Variable = Variable) %>% 
+       rbind(.,.,.,.,.,.,.,.,.,.,.,.) %>% # represents the number of variables
+       arrange(Variable) %>% 
+       mutate_if(is.character, as.factor) %>% 
+       select(Variable) %>% 
+       rename("ID" = Variable))) %>% 
+  pivot_wider(names_from = Variable, values_from = Value) %>% 
+  add_column(Data = "S100", Alignment = "Direct", Genome = "Pk") %>% 
+# Indirect Hg
+  rbind(
+    (read_csv("data/bbmap_summary/S100_HGA_summary_mapstats.csv", col_names = c("Variable", "Value")) %>%
+  mutate(Variable = str_remove(Variable, "==> ")) %>% 
+  filter(!grepl("ERR", Variable)) %>% # data specific
+  add_column(
+    (read_csv("data/bbmap_summary/S100_HGA_summary_mapstats.csv", col_names = c("Variable", "Value")) %>% 
+       mutate(Variable = str_remove(Variable, "==> ")) %>% 
+       filter(grepl("ERR", Variable)) %>% # data specific
+       mutate(Variable = Variable) %>% 
+       rbind(.,.,.,.,.,.,.,.,.,.,.,.) %>% # represents the number of variables
+       arrange(Variable) %>% 
+       mutate_if(is.character, as.factor) %>% 
+       select(Variable) %>% 
+       rename("ID" = Variable))) %>%
+  pivot_wider(names_from = Variable, values_from = Value) %>% 
+  add_column(Data = "S100", Alignment = "Indirect", Genome = "Hg"))) %>% 
+# Indirect Pk
+  rbind(
+    (read_csv("data/bbmap_summary/S100_HGR_summary_mapstats.csv", col_names = c("Variable", "Value")) %>%
+  mutate(Variable = str_remove(Variable, "==> ")) %>% 
+  filter(!grepl("ERR", Variable)) %>% # data specific
+  add_column(
+    (read_csv("data/bbmap_summary/S100_HGR_summary_mapstats.csv", col_names = c("Variable", "Value")) %>% 
+       mutate(Variable = str_remove(Variable, "==> ")) %>% 
+       filter(grepl("ERR", Variable)) %>% # data specific
+       mutate(Variable = Variable) %>% 
+       rbind(.,.,.,.,.,.,.,.,.,.,.,.) %>% # represents the number of variables
+       arrange(Variable) %>% 
+       mutate_if(is.character, as.factor) %>% 
+       select(Variable) %>% 
+       rename("ID" = Variable))) %>%
+  pivot_wider(names_from = Variable, values_from = Value) %>% 
+  add_column(Data = "S100", Alignment = "Indirect", Genome = "Pk"))) %>% 
+  mutate_if(is.character, as.factor)
+
+# SS
+# Direct Pk
+SS <- read_csv("data/bbmap_summary/SS_PKD_summary_mapstats.csv", col_names = c("Variable", "Value")) %>%
+  mutate(Variable = str_remove(Variable, "==> ")) %>% 
+  filter(!grepl("PKA", Variable)) %>% # data specific
+  add_column(
+    (read_csv("data/bbmap_summary/SS_PKD_summary_mapstats.csv", col_names = c("Variable", "Value")) %>% 
+       mutate(Variable = str_remove(Variable, "==> ")) %>% 
+       filter(grepl("PKA", Variable)) %>% # data specific
+       mutate(Variable = Variable) %>% 
+       rbind(.,.,.,.,.,.,.,.,.,.,.,.) %>% # represents the number of variables
+       arrange(Variable) %>% 
+       mutate_if(is.character, as.factor) %>% 
+       select(Variable) %>% 
+       rename("ID" = Variable))) %>% 
+  pivot_wider(names_from = Variable, values_from = Value) %>% 
+  add_column(Data = "SS", Alignment = "Direct", Genome = "Pk") %>% 
+# Indirect Hg
+  rbind(
+    (read_csv("data/bbmap_summary/SS_HGA_summary_mapstats.csv", col_names = c("Variable", "Value")) %>%
+  mutate(Variable = str_remove(Variable, "==> ")) %>% 
+  filter(!grepl("PKA", Variable)) %>% # data specific
+  add_column(
+    (read_csv("data/bbmap_summary/SS_HGA_summary_mapstats.csv", col_names = c("Variable", "Value")) %>% 
+       mutate(Variable = str_remove(Variable, "==> ")) %>% 
+       filter(grepl("PKA", Variable)) %>% # data specific
+       mutate(Variable = Variable) %>% 
+       rbind(.,.,.,.,.,.,.,.,.,.,.,.) %>% # represents the number of variables
+       arrange(Variable) %>% 
+       mutate_if(is.character, as.factor) %>% 
+       select(Variable) %>% 
+       rename("ID" = Variable))) %>%
+  pivot_wider(names_from = Variable, values_from = Value) %>% 
+  add_column(Data = "SS", Alignment = "Indirect", Genome = "Hg"))) %>% 
+# Indirect Pk
+  rbind(
+    (read_csv("data/bbmap_summary/SS_HGR_summary_mapstats.csv", col_names = c("Variable", "Value")) %>%
+  mutate(Variable = str_remove(Variable, "==> ")) %>% 
+  filter(!grepl("PKA", Variable)) %>% # data specific
+  add_column(
+    (read_csv("data/bbmap_summary/SS_HGR_summary_mapstats.csv", col_names = c("Variable", "Value")) %>% 
+       mutate(Variable = str_remove(Variable, "==> ")) %>% 
+       filter(grepl("PKA", Variable)) %>% # data specific
+       mutate(Variable = Variable) %>% 
+       rbind(.,.,.,.,.,.,.,.,.,.,.,.) %>% # represents the number of variables
+       arrange(Variable) %>% 
+       mutate_if(is.character, as.factor) %>% 
+       select(Variable) %>% 
+       rename("ID" = Variable))) %>%
+  pivot_wider(names_from = Variable, values_from = Value) %>% 
+  add_column(Data = "SS", Alignment = "Indirect", Genome = "Pk")))%>% 
+  mutate_if(is.character, as.factor)
+
+# ZB
+# Direct Pk
+ZB100 <- read_csv("data/bbmap_summary/ZB_PKD_summary_mapstats.csv", col_names = c("Variable", "Value")) %>%
+  mutate(Variable = str_remove(Variable, "==> ")) %>% 
+  filter(!grepl("PK_SB_DNA", Variable)) %>% # data specific
+  add_column(
+    (read_csv("data/bbmap_summary/ZB_PKD_summary_mapstats.csv", col_names = c("Variable", "Value")) %>% 
+       mutate(Variable = str_remove(Variable, "==> ")) %>% 
+       filter(grepl("PK_SB_DNA", Variable)) %>% 
+       mutate(Variable = Variable) %>% 
+       rbind(.,.,.,.,.,.,.,.,.,.,.,.) %>% # represents the number of variables
+       arrange(Variable) %>% 
+       mutate_if(is.character, as.factor) %>% 
+       select(Variable) %>% 
+       rename("ID" = Variable))) %>% 
+  pivot_wider(names_from = Variable, values_from = Value) %>% 
+  add_column(Data = "ZB", Alignment = "Direct", Genome = "Pk") %>% 
+# Indirect Hg
+  rbind(
+    (read_csv("data/bbmap_summary/ZB_HGA_summary_mapstats.csv", col_names = c("Variable", "Value")) %>%
+  mutate(Variable = str_remove(Variable, "==> ")) %>% 
+  filter(!grepl("PK_SB_DNA", Variable)) %>% 
+  add_column(
+    (read_csv("data/bbmap_summary/ZB_HGA_summary_mapstats.csv", col_names = c("Variable", "Value")) %>% 
+       mutate(Variable = str_remove(Variable, "==> ")) %>% 
+       filter(grepl("PK_SB_DNA", Variable)) %>% 
+       mutate(Variable = Variable) %>% 
+       rbind(.,.,.,.,.,.,.,.,.,.,.,.) %>% # represents the number of variables
+       arrange(Variable) %>% 
+       mutate_if(is.character, as.factor) %>% 
+       select(Variable) %>% 
+       rename("ID" = Variable))) %>%
+  pivot_wider(names_from = Variable, values_from = Value) %>% 
+  add_column(Data = "ZB", Alignment = "Indirect", Genome = "Hg"))) %>% 
+# Indirect Pk
+  rbind(
+    (read_csv("data/bbmap_summary/ZB_HGR_summary_mapstats.csv", col_names = c("Variable", "Value")) %>%
+  mutate(Variable = str_remove(Variable, "==> ")) %>% 
+  filter(!grepl("PK_SB_DNA", Variable)) %>% 
+  add_column(
+    (read_csv("data/bbmap_summary/ZB_HGR_summary_mapstats.csv", col_names = c("Variable", "Value")) %>% 
+       mutate(Variable = str_remove(Variable, "==> ")) %>% 
+       filter(grepl("PK_SB_DNA", Variable)) %>% 
+       mutate(Variable = Variable) %>% 
+       rbind(.,.,.,.,.,.,.,.,.,.,.,.) %>% # represents the number of variables
+       arrange(Variable) %>% 
+       mutate_if(is.character, as.factor) %>% 
+       select(Variable) %>% 
+       rename("ID" = Variable))) %>%
+  pivot_wider(names_from = Variable, values_from = Value) %>% 
+  add_column(Data = "ZB", Alignment = "Indirect", Genome = "Pk"))) %>% 
+  mutate_if(is.character, as.factor)
+
+BBMAP <- rbind(SS, S100, ZB100) %>% 
+  as.tibble(.name_repair = "universal") # remove spaces from names
+```
+
+
+### Plots 
+
+#### Direct to Pk alignment
+
+```{r,warning=F,message=F,echo=F}
+BBMAP %>% 
+  filter(Alignment == "Direct") %>% 
+  ggplot() + 
+  geom_point(aes(x = ID, y = Reads/1000000, colour = Data)) +
+  geom_point(aes(x = ID, y = Mapped.reads/1000000, colour = Data), shape = 2) +
+  theme(axis.text.x = element_blank(), 
+        axis.ticks = element_blank(),
+        plot.title = element_text(vjust = - 20, size = 12)) +
+  labs(x = "Sample", y= "Reads (100K)", title = "total reads = circles & and mapped reads = triangles") 
+```
+
+#### Indirectly to Pk via removal of Hg
+
+For this plot, we want total reads (from before Hg removal) and mapped reads post-removal of Hg. So two seperate dataframe subsets are required, one from Direct alignment and the other from Indirect.
+
+```{r,warning=F,message=F,echo=F}
+ggplot() + 
+  geom_point((BBMAP %>% filter(Alignment == "Direct") %>% filter(Genome == "Pk")),
+    mapping = aes(x = ID, y = Reads/1000000, colour = Data)) +
+  geom_point(data = (BBMAP %>% filter(Alignment == "Indirect") %>% filter(Genome == "Pk")),
+    mapping = aes(x = ID, y = Mapped.reads/1000000, colour = Data), shape = 2) +
+  theme(axis.text.x = element_blank(), 
+        axis.ticks = element_blank(),
+        plot.title = element_text(vjust = - 20, size = 12)) +
+  labs(x = "Sample", y= "Reads (100K)", title = "total reads = circles & and mapped reads = triangles") 
+```
+
+#### Direct VS Indirect 
+
+```{r,warning=F,message=F,echo=F}
+BBMAP %>% 
+  filter(Genome == "Pk") %>%
+  ggplot() + 
+  geom_col(aes(x = ID, y = Mapped.reads/1000000, colour = Data)) +
+  theme(axis.text.x = element_blank(), axis.ticks = element_blank()) +
+  labs(x = "Samples", y= "Mapped reads (100K)") +
+  facet_wrap(~Alignment)
+```
+
+### Summary Statisitics 
+
+#### Aligned direct to Pk 
+
+```{r,warning=F,message=F,echo=F}
+BBMAP %>% 
+  filter(Alignment == "Direct") %>%
+  group_by(Data) %>% 
+  summarise_all(mean) %>% 
+  select(Data, Reads, Mapped.reads, Mapped.bases, Percent.mapped) 
+```
+
+#### Aligned to Hg 
+
+```{r,warning=F,message=F,echo=F}
+BBMAP %>% 
+  filter(Alignment == "Indirect") %>%
+  filter(Genome == "Hg") %>% 
+  group_by(Data) %>% 
+  summarise_all(mean) %>% 
+  select(Data, Reads, Mapped.reads, Mapped.bases, Percent.mapped) 
+```
+
+#### Hg removed alignment to Pk
+
+```{r,warning=F,message=F,echo=F}
+BBMAP %>% 
+  filter(Alignment == "Indirect") %>%
+  filter(Genome == "Pk") %>% 
+  group_by(Data) %>% 
+  summarise_all(mean) %>% 
+  select(Data, Reads, Mapped.reads, Mapped.bases, Percent.mapped)
+```
+
+#### Comparing direct and indirect alignment to Pk
+```{r,warning=F,message=F,echo=F}
+BBMAP %>% 
+  filter(Genome == "Pk") %>% 
+  group_by(Data, Alignment) %>% 
+  summarise_all(mean) %>% 
+  select(Data, Alignment, Reads, Mapped.reads, Mapped.bases) %>% 
+  unite(Data, Data, Alignment)
+```
+
+## Why are some samples losing so many reads to the Hg before Pk mapping?
+
+**Could be duplicates.**
+
+Take the samples that are losing the most reads from SS and ZB datasets direct alignment (S100 doesn't have any visibly significant changes), remove duplicates from the aligned BAM files and re-run some of the above stats and plots.
+
+### Get the filenames of samples that suffer a massive loss
+
+```{r,waring=F,message=F}
+BBMAP %>%
+  filter(Alignment == "Direct") %>%
+  filter(Data == "SS" | Data == "ZB") %>% 
+  select(ID, Mapped.reads) %>% 
+  arrange(desc(Mapped.reads))
+```
+
+## Remove duplicates
+
+Use files that have been aligned (direct).
+
+File: Remove_dups.pbs
+Version(s): 1.12 (samtools)
+
+[Marking duplicates](http://www.htslib.org/doc/samtools-markdup.html) requires that the input file is both sorted by position and NOT name, and has mate coordinates.
+
+```{R,eval=F}
+#!/bin/bash
+#PBS -N Duplicate_analysis
+#PBS -j oe
+#PBS -m ae
+#PBS -l nodes=1
+#PBS -l ncpus=10
+#PBS -l mem=20gb
+#PBS -l walltime=1:00:00
+#PBS -M jacob.westaway@menzies.edu.au
+
+echo "---------------------------------------"
+echo "PBS: Job identifier is $PBS_JOBID"
+echo "PBS: Job name is $PBS_JOBNAME"
+
+echo "---------------------------------------"
+echo "Define paths to samtools"
+export PATH=$PATH:/usr/local/miniconda3/envs/assembly/bin/samtools
+
+echo "---------------------------------------"
+echo 'Change to working directory and set env variables'
+cd /home/jwestaway/pk_pipeline/analysis/
+OUTDIR="/home/jwestaway/pk_pipeline/analysis/remove_duplicates"
+mkdir $OUTDIR
+SS_File="/home/jwestaway/pk_pipeline/Sanger_Subset/outputs/alignment/direct_alignment"
+ZB_File="/home/jwestaway/pk_pipeline/ZB_100/outputs/direct_alignment"
+
+echo "---------------------------------------"
+echo 'Exectue samtools fixmate to give MC and ms tags'
+samtools fixmate -m $SS_File/PKAS13_124.bam $OUTDIR/PKAS13_124_FIX.bam
+samtools fixmate -m $ZB_File/PK_SB_DNA_031_DKDL210002160-1a_HWHGKDSXY_L4.bam $OUTDIR/PK_SB_DNA_031_DKDL210002160-1a_HWHGKDSXY_L4_FIX.bam 
+
+echo "---------------------------------------"
+echo 'Exectue samtools to sort by coordinates'
+samtools sort -o $OUTDIR/PKAS13_124_SORTED.bam $OUTDIR/PKAS13_124_FIX.bam
+samtools sort -o $OUTDIR/PK_SB_DNA_031_DKDL210002160-1a_HWHGKDSXY_L4_SORTED.bam $OUTDIR/PK_SB_DNA_031_DKDL210002160-1a_HWHGKDSXY_L4_FIX.bam
+
+echo "---------------------------------------"
+echo 'Exectue samtools markdup to mark and remove duplicates'
+samtools markdup -r $OUTDIR/PKAS13_124_SORTED.bam $OUTDIR/PKAS13_124_DUPS.bam
+samtools markdup -r $OUTDIR/PK_SB_DNA_031_DKDL210002160-1a_HWHGKDSXY_L4_SORTED.bam $OUTDIR/PK_SB_DNA_031_DKDL210002160-1a_HWHGKDSXY_L4_DUPS.bam
+
+echo "---------------------------------------"
+echo "Finsihed!"
+```
+
+## Get mapstats and create a summary csv file
+
+File = dups_mapstats.pbs
+Version(s) = Version(s) = 38.90 (BBMap), 1.12 (samtools), 1.8.0_171 (java) & 0.6.3 (sambamba)
+
+```{R,eval=F}
+#!/bin/bash
+#PBS -N Duplicate_mapstats_csv
+#PBS -j oe
+#PBS -m ae
+#PBS -l nodes=1
+#PBS -l ncpus=5
+#PBS -l mem=20gb
+#PBS -l walltime=1:00:00
+#PBS -M jacob.westaway@menzies.edu.au
+
+echo "---------------------------------------"
+echo "PBS: Job identifier is $PBS_JOBID"
+echo "PBS: Job name is $PBS_JOBNAME"
+
+echo "---------------------------------------"
+echo "Define paths to bbmap and samtools"
+export Path=$PATH:/home/jwestaway/pk_pipeline/tools/bbmap
+export PATH=$PATH:/usr/local/miniconda3/envs/assembly/bin/  
+export PATH=$PATH:/usr/local/miniconda3/pkgs/quast-5.0.2-py37pl526hb5aa323_2/lib/python3.7/site-packages/quast_libs/sambamba
+module load java/1.8.0_171
+
+echo "---------------------------------------"
+echo 'Change to working directory and set env variables'
+cd /home/jwestaway/pk_pipeline/analysis/remove_duplicates
+PILEUP="/home/jwestaway/pk_pipeline/tools/bbmap/pileup.sh"
+
+echo "---------------------------------------"
+echo 'Exectue samtools & bbmap'
+for i in *_DUPS.bam
+do
+samtools view -h --threads 15 $i | $PILEUP in=stdin 2> ${i%_DUPS.bam}.mapstats
+done 
+
+echo "---------------------------------------"
+echo 'Create summary csv file'
+tail -n +1 *mapstats | grep '.mapstats\|Read\|Mapped\|Ref\|Percent\|Average\|Standard' | sed 's/:/,/' | sed 's/<==/,/' > DUPS_summary_mapstats.csv
+
+echo "---------------------------------------"
+echo "Finsihed!"
+```
+
+### Analyse pre and post-duplicate removals in R
+
+File(s) = DUPS_summary_mapstats.csv
+Version(s) = 1.3.0 (tidyverse), 1.2.1335 (RStudio) & 3.6.1 (R)
+
+```{r,warning=F,message=F}
+library(tidyverse)
+```
+
+Create a dataframe for ALL sample rows that had duplicates removed and plot a comparison (direct vs indirect coloured by Data and include sample names)
+
+```{r}
+DUPS <- read_csv("data/bbmap_summary/DUPS_summary_mapstats.csv", col_names = c("Variable", "Value")) %>%
+  mutate(Variable = str_remove(Variable, "==> ")) %>% 
+  filter(!grepl("mapstats", Variable)) %>% # data specific
+  add_column(
+    (read_csv("data/bbmap_summary/DUPS_summary_mapstats.csv", col_names = c("Variable", "Value")) %>% 
+       mutate(Variable = str_remove(Variable, "==> ")) %>% 
+       filter(grepl("mapstats", Variable)) %>% # data specific
+       mutate(Variable = Variable) %>% 
+       rbind(.,.,.,.,.,.,.,.,.,.,.,.) %>% # represents the number of variables
+       arrange(desc(Variable)) %>% 
+       mutate_if(is.character, as.factor) %>% 
+       select(Variable) %>% 
+       rename("ID" = Variable))) %>% 
+  pivot_wider(names_from = Variable, values_from = Value) %>% 
+  add_column(Data = "DUPS", Alignment = "Direct", Genome = "Pk") %>% 
+  as.tibble(.name_repair = "universal") %>% 
+  mutate(ID = str_replace(ID, "_124", "")) %>% 
+  mutate(ID = str_replace(ID, "_124", "")) %>% 
+  mutate(ID = str_replace(ID, "mapstats", "dups_removed"))
+```
+
+### Plot the mapped reads with the duplicate-removed samples included
+
+```{r}
+BBMAP %>% 
+  rbind(DUPS) %>% 
+  filter(Genome == "Pk") %>%
+  ggplot() + 
+  geom_col(aes(x = ID, y = Mapped.reads/1000000, colour = Data)) +
+  theme(axis.text.x = element_blank(), axis.ticks = element_blank()) +
+  labs(x = "Samples", y= "Mapped reads (100K)") +
+  facet_wrap(~Alignment)
+```
+
+### Plot just the samples that have had duplicates removed (with the originals included)
+
+```{r}
+DUPS %>% 
+  rbind(
+    (BBMAP %>% filter(Genome == "Pk" & (ID == "PK_SB_DNA_031_DKDL210002160-1a_HWHGKDSXY_L4.mapstats" | ID == "PKAS13.mapstats")))) %>%
+  mutate(ID = recode(ID, "PK_SB_DNA_031_DKDL210002160-1a_HWHGKDSXY_L4.dups_removed" = "ZB_31_dups", 
+                     "PKAS13.dups_removed" = "SS_13_dups", 
+                     "PKAS13.mapstats" = "SS_13",
+                     "PK_SB_DNA_031_DKDL210002160-1a_HWHGKDSXY_L4.mapstats" = "ZB_31")) %>% 
+  ggplot() + 
+  geom_col(aes(x = ID, y = Mapped.reads/1000000, colour = Data)) +
+  theme(axis.text.x = element_text(angle = 90), axis.ticks = element_blank()) +
+  labs(x = "Samples", y= "Mapped reads (100K)") +
+  facet_wrap(~Alignment)
+```
+
+### Compare direct alignment statistics for samples that have/haven't had duplicates removed
+
+```{r}
+DUPS %>% 
+  rbind((BBMAP %>% 
+           filter(Genome == "Pk" & (ID == "PK_SB_DNA_031_DKDL210002160-1a_HWHGKDSXY_L4.mapstats" | ID == "PKAS13.mapstats")))) %>% 
+  arrange(ID) %>% 
+  select(ID, Alignment, Reads, Mapped.reads, Mapped.bases)
+```
+
+**DUPLICATES do not account for the loss in mapped reads after aligning to Hg.**
+28% for SS.
+55% for ZB.
+
+### Prep data for IGV
+Require:
+ - reference.fasta
+ - reference.fasta.fai
+ - reference.gff
+ - chromosome_sorted.bam
+ - indexed_chromosome_sorted.bam.bai
+
+[Helpful tutorial.](https://wikis.utexas.edu/display/bioiteam/Integrative+Genomics+Viewer+%28IGV%29+tutorial)
+
+
+#### Index Pk genome to get .fai file
+
+File = Index_for_fai.pbs
+Version(s) = 1.12 (samtools)
+
+```{R,eval=F```
+#!/bin/bash
+#PBS -N Idex_for_fai
+#PBS -j oe
+#PBS -m ae
+#PBS -l nodes=1
+#PBS -l ncpus=10
+#PBS -l mem=20gb
+#PBS -l walltime=4:00:00
+#PBS -M jacob.westaway@menzies.edu.au
+
+
+echo "---------------------------------------"
+echo "PBS: Job identifier is $PBS_JOBID"
+echo "PBS: Job name is $PBS_JOBNAME"
+
+echo "---------------------------------------"
+echo "Define paths to bbmap and samtools"
+export PATH=$PATH:/usr/local/miniconda3/envs/assembly/bin/samtools 
+
+echo "---------------------------------------"
+echo 'Change to working directory and set env variables'
+cd "/home/jwestaway/pk_pipeline/ref_genomes/PKA1H1/"
+
+
+echo "---------------------------------------"
+echo 'Exectue samtools index'
+
+samtools faidx fasta/strain_A1_H.1.Icor.fasta -o strain_A1_H.1.Icor.fasta.fai
+
+echo "---------------------------------------"
+echo "Finsihed!"
+```
+
+#### Sort and index bam alignment files
+
+File = sort_index_bam.pbs 
+Version(s) = 1.12 (samtools)
+
+```{R,eval=F}
+#!/bin/bash
+#PBS -N Sort_index
+#PBS -j oe
+#PBS -m ae
+#PBS -l nodes=1
+#PBS -l ncpus=10
+#PBS -l mem=20gb
+#PBS -l walltime=4:00:00
+#PBS -M jacob.westaway@menzies.edu.au
+
+
+echo "---------------------------------------"
+echo "PBS: Job identifier is $PBS_JOBID"
+echo "PBS: Job name is $PBS_JOBNAME"
+
+echo "---------------------------------------"
+echo "Define paths to bbmap and samtools"
+export PATH=$PATH:/usr/local/miniconda3/envs/assembly/bin/samtools 
+
+echo "---------------------------------------"
+echo 'Change to working directory and set env variables'
+cd /home/jwestaway/pk_pipeline/IGV
+
+
+echo "---------------------------------------"
+echo 'Exectue samtools for ZB'
+samtools sort PK_SB_DNA_031_DKDL210002160-1a_HWHGKDSXY_L4.bam > PK_SB_DNA_031_sorted.bam
+samtools index PK_SB_DNA_031_sorted.bam 
+
+echo "---------------------------------------"
+echo 'Exectue samtools for SS'
+
+samtools sort PKAS13_124.bam > PKAS13_sorted.bam 
+samtools index PKAS13_sorted.bam 
+
+
+echo "---------------------------------------"
+echo "Finsihed!"
+```
+
+############################################################################################################
+
+# Comparisons for read depth using samtools depth
+
+File = read_depth.Rmd (laptop)
+Version(s) = 1.3.0 (tidyverse), 1.3.1 (readxl), 1.2.1335 (RStudio) & 3.6.1 (R)
+
+## Convert depth files to tsv (mv *.depth *.tsv) and read into R.
+
+Below I group by the contigs and get the average read depth at each base using a function `read_depth_data()`. 
+The function takes samtools depth outputs as a tsv file, removes the column with the base name, filters for contigs only (they're labelled something like this = PKNH_ordered_1), I then group by the contigs and caclulate the average read depth.
+The last few lines of the function move the first row of the transposed df to colnames, creates new columns specific to the dataset and alignment type, and turns the rownames into a column.
+
+```{r,warning=F,message=F}
+library(tidyverse)
+library(janitor)
+library(readxl)
+```
+
+```{r,eval=F}
+read_depth_data <- function(file_path, dataset, alignment){
+read_tsv(file_path, col_names = c("Contig", "Bases", "S01", "S02", "S03", "S04", "S05", "S06", "S07", "S08", "S09", "S10", "S11", "S12", "S13")) %>% 
+  select(!Bases) %>% 
+  filter(grepl("ordered", Contig)) %>% 
+  group_by(Contig) %>% 
+  summarise_all(mean) %>%
+  t() %>% 
+  as.data.frame() %>% 
+  row_to_names(1) %>% 
+  add_column(Data = dataset, Alignment = alignment) %>% 
+  rownames_to_column("Sample")
+}
+
+depth_summary <- read_depth_data("data/read_depth/ZB_direct_depth_summary.tsv", "ZB", "Direct") %>% 
+  rbind((read_depth_data("data/read_depth/ZB_indirect_depth_summary.tsv", "ZB", "Indirect"))) %>% 
+  rbind((read_depth_data("data/read_depth/S100_direct_depth_summary.tsv", "Sanger", "Direct"))) %>%
+  rbind((read_depth_data("data/read_depth/S100_indirect_depth_summary.tsv", "Sanger", "Indirect"))) %>% 
+  rbind((read_depth_data("data/read_depth/SS_direct_depth_summary.tsv", "Initial Subset", "Direct"))) %>% 
+  rbind((read_depth_data("data/read_depth/SS_indirect_depth_summary.tsv", "Initial Subset", "Indirect"))) %>%
+  mutate_if(is.factor, as.character) %>% 
+  mutate_at(grep("ordered", colnames(.)), as.numeric)
+```
+
+## Plot depth by sample, shaped by alignment and coloured by data
+
+```{r,eval=F}
+depth_summary %>% 
+  ggplot() +
+  geom_point(mapping = aes(x = Sample, y = ordered_PKNH_01_v2, colour = Data, shape = Alignment)) +
+  scale_y_log10()
+```
+
+## To do the same above but with zeroes removed (bases where no alignment occured)
+
+This is made possible with the addition of the na_if(0) and na.rm=T.
+
+```{r,eval=F}
+read_depth_data_na <- function(file_path, dataset, alignment){
+read_tsv(file_path, col_names = c("Contig", "Bases", "S01", "S02", "S03", "S04", "S05", "S06", "S07", "S08", "S09", "S10", "S11", "S12", "S13")) %>% 
+  select(!Bases) %>% 
+  filter(grepl("ordered", Contig)) %>% 
+  na_if(0) %>% 
+  group_by(Contig) %>% 
+  summarise_all(mean, na.rm=T) %>%
+  t() %>% 
+  as.data.frame() %>% 
+  row_to_names(1) %>% 
+  add_column(Data = dataset, Alignment = alignment) %>% 
+  rownames_to_column("Sample")
+}
+
+depth_summary_no_na <- read_depth_data_na("data/read_depth/ZB_direct_depth_summary.tsv", "ZB", "Direct") %>% 
+  rbind((read_depth_data_na("data/read_depth/ZB_indirect_depth_summary.tsv", "ZB", "Indirect"))) %>% 
+  rbind((read_depth_data_na("data/read_depth/S100_direct_depth_summary.tsv", "Sanger", "Direct"))) %>%
+  rbind((read_depth_data_na("data/read_depth/S100_indirect_depth_summary.tsv", "Sanger", "Indirect"))) %>% 
+  rbind((read_depth_data_na("data/read_depth/SS_direct_depth_summary.tsv", "Initial Subset", "Direct"))) %>% 
+  rbind((read_depth_data_na("data/read_depth/SS_indirect_depth_summary.tsv", "Initial Subset", "Indirect"))) %>%
+  mutate_if(is.factor, as.character) %>% 
+  mutate_at(grep("ordered", colnames(.)), as.numeric)
+
+depth_summary_no_na %>% 
+  ggplot() +
+  geom_point(mapping = aes(x = Sample, y = ordered_PKNH_01_v2, colour = Data, shape = Alignment)) +
+  scale_y_log10()
+```
+
+## Average read depth at each contig for each dataset and alignment
+
+```{r,eval=F}
+depth_summary %>% 
+  select(!1) %>% 
+  group_by(Data, Alignment) %>% 
+  summarise_all(mean) %>% 
+  pivot_longer(cols = !c(Data, Alignment), names_to = "Contig", values_to = "Depth") %>% 
+  ggplot() +
+  geom_point(mapping = aes(x = Contig, y = Depth, colour = Data, shape = Alignment)) +
+  theme(axis.text.x = element_blank(), axis.ticks = element_blank()) +
+  ggtitle("Average read depth at each contig for each dataset")
+```
+
+## Calculate the percentage of NA values (bases with no coverage) at each contig and within each sample
+
+```{r,eval=F}
+base_pairs <- function(file_path, dataset, alignment){
+read_tsv(file_path, col_names = c("Contig", "Bases", "S01", "S02", "S03", "S04", "S05", "S06", "S07", "S08", "S09", "S10", "S11", "S12", "S13")) %>% 
+  select(!Bases) %>% 
+  filter(grepl("ordered", Contig)) %>% 
+  na_if(0) %>% 
+  group_by(Contig) %>% 
+  summarise_all(funs(sum(is.na(.))/length(.) * 100)) %>% 
+  t() %>% 
+  as.data.frame() %>% 
+  row_to_names(1) %>% 
+  add_column(Data = dataset, Alignment = alignment) %>% 
+  rownames_to_column("Sample")
+}
+
+
+base_pair_summary <- base_pairs("data/read_depth/ZB_direct_depth_summary.tsv", "ZB", "Direct") %>% 
+  rbind((base_pairs("data/read_depth/ZB_indirect_depth_summary.tsv", "ZB", "Indirect"))) %>% 
+  rbind((base_pairs("data/read_depth/S100_direct_depth_summary.tsv", "Sanger", "Direct"))) %>%
+  rbind((base_pairs("data/read_depth/S100_indirect_depth_summary.tsv", "Sanger", "Indirect"))) %>% 
+  rbind((base_pairs("data/read_depth/SS_direct_depth_summary.tsv", "Initial Subset", "Direct"))) %>% 
+  rbind((base_pairs("data/read_depth/SS_indirect_depth_summary.tsv", "Initial Subset", "Indirect"))) %>%
+  mutate_if(is.factor, as.character) %>% 
+  mutate_at(grep("ordered", colnames(.)), as.numeric)
+```
+
+## Average NA at each contig for each dataset 
+
+```{r,eval=F}
+base_pair_summary %>% 
+  select(!1) %>% 
+  group_by(Data, Alignment) %>% 
+  summarise_all(mean) %>% 
+  pivot_longer(cols = !c(Data, Alignment), names_to = "Contig", values_to = "Bases") %>% 
+  ggplot() +
+  geom_point(mapping = aes(x = Contig, y = Bases, colour = Data, shape = Alignment)) +
+  theme(axis.text.x = element_blank(), axis.ticks = element_blank()) +
+  ggtitle("Average percentage of bases WITHOUT coverage for each contig")
+```
+
+
+**Despite obious trends showing ZB data is on top, and some pretty good looking averages, when looking at the raw data there are some poor samples. Hopefully looking at the parasite load will shed some light here.**
+
+
+
+## Read in metadata for ZB data and combine with summary data
+
+```{r,eval=F}
+read_metadata <- function(file_path){
+  
+# select desired samples fromt the metadata
+temp1 <- readxl::read_excel(file_path) %>% 
+  filter(sampleid == "PK_SB_DNA_006" |
+         sampleid == "PK_SB_DNA_008" |
+         sampleid == "PK_SB_DNA_009" |
+         sampleid == "PK_SB_DNA_011" |
+         sampleid == "PK_SB_DNA_012" |
+         sampleid == "PK_SB_DNA_014" |
+         sampleid == "PK_SB_DNA_015" |
+         sampleid == "PK_SB_DNA_019" |
+         sampleid == "PK_SB_DNA_023" |
+         sampleid == "PK_SB_DNA_030" |
+         sampleid == "PK_SB_DNA_031" | 
+         sampleid == "PK_SB_DNA_033" |
+         sampleid == "PK_SB_DNA_034") %>% 
+  add_column(Sample = 1:13) 
+
+# change levels of subset to match depth/base data
+temp2 <- temp1 %>% 
+  slice(1:9) %>% 
+  mutate(Sample = as.character(Sample)) %>% 
+  mutate(Sample = paste0("S0", Sample)) 
+
+# change levels of subset to match depth/base data
+temp3 <- temp1 %>% 
+  slice(10:13) %>% 
+  mutate(Sample = as.character(Sample)) %>% 
+  mutate(Sample = paste0("S", Sample)) 
+
+# combine 
+temp4 <- temp2 %>% rbind(temp3)
+
+# filter depth/base data for ZB data, join them together and then combine with the metadata wrangled above
+depth_summary %>% 
+  filter(Data == "ZB") %>% 
+  pivot_longer(cols = !c(Sample, Data, Alignment), names_to = "Contig", values_to = "Depth") %>%  
+  left_join(
+    (base_pair_summary %>% 
+       filter(Data == "ZB") %>% 
+       pivot_longer(cols = !c(Sample, Data, Alignment), names_to = "Contig", values_to = "Bases"))) %>% 
+  right_join(temp4)
+  
+}
+
+ZB_metadata <- read_metadata("data/metadata/PK_Sabah_Sample_naming_indexes.xlsx")
+```
+
+## Plot depth of each sample (direct alignment) at each contig
+
+```{r,eval=F}
+ZB_metadata %>% 
+  filter(Alignment == "Direct") %>% 
+  ggplot(mapping = aes(x = Sample, y = Depth)) +
+  geom_col() +
+  facet_wrap(~Contig) +
+  ggtitle("Depth of each sample (direct alignment) at each contig") +
+  theme(axis.text.x = element_blank(), axis.ticks.x = element_blank())
+```
+
+*Why does sample 11 have much higher read depth? Parasitemia?*
+
+## Parasitemia per sample at each contig
+
+```{r,eval=F}
+ZB_metadata %>% 
+  filter(Alignment == "Direct") %>% 
+  ggplot(mapping = aes(x = Sample, y = parasitemia)) +
+  geom_col() +
+  facet_wrap(~Contig) +
+  theme(axis.text.x = element_blank(), axis.ticks.x = element_blank()) +
+  ggtitle("Parasitemia of each sample (direct alignment)") 
+```
+## Plot relationship between depth across samples in relation to parasitemia, faceted by contig
+
+```{r,eval=F}
+ZB_metadata %>%
+  filter(Sample != "S11") %>% 
+  ggplot(mapping = aes(x = parasitemia, y = Depth)) +
+  geom_point() +
+  scale_y_log10() +
+  geom_smooth(method = "lm", se = T) +
+  facet_wrap(~Contig) +
+  ylab("Depth (log10)")
+```
+
+## Plot relationship between depth across samples in relation to NA bases, faceted by contig
+
+```{r,eval=F}
+ZB_metadata %>%
+  filter(Sample != "S11") %>% 
+  ggplot(mapping = aes(x = parasitemia, y = Bases)) +
+  geom_point() +
+  scale_y_log10() +
+  geom_smooth(method = "lm", se = T) +
+  facet_wrap(~Contig) +
+  ylab("Bases (log10)")
+```
+
+## Plot relationship between depth and disease severity, faceted by contig
+
+```{r,eval=F}
+ZB_metadata %>%
+  filter(Sample != "S11") %>% 
+  ggplot(mapping = aes(x = severe, y = Depth)) +
+  geom_point() +
+  geom_boxplot() +
+  scale_y_log10() +
+  geom_smooth(method = "lm", se = T) +
+  facet_wrap(~Contig) +
+  ylab("Depth (log10)")
+```
+
+## Comparing our samples to those in previous studies
+
+```{r,eval=F}
+depth_summary_updated <- depth_summary %>% 
+  rbind(
+    read_tsv("data/read_depth/previous_Pk_data.tsv", col_names = c("Contig", "Bases", "S01", "S02", "S03", "S04")) %>% 
+       select(!Bases) %>% 
+       filter(grepl("ordered", Contig)) %>% 
+      group_by(Contig) %>% 
+      summarise_all(mean) %>%
+      t() %>% 
+      as.data.frame() %>% 
+      row_to_names(1) %>% 
+      add_column(Data = "Previous_Pk_data", Alignment = "Direct") %>% 
+      rownames_to_column("Sample")) %>%
+  mutate_if(is.factor, as.character) %>% 
+  mutate_at(grep("ordered", colnames(.)), as.numeric) 
+
+depth_summary_updated %>% 
+  select(!1) %>% 
+  group_by(Data, Alignment) %>% 
+  summarise_all(mean) %>% 
+  pivot_longer(cols = !c(Data, Alignment), names_to = "Contig", values_to = "Depth") %>% 
+  ggplot() +
+  geom_point(mapping = aes(x = Contig, y = Depth, colour = Data, shape = Alignment)) +
+  theme(axis.text.x = element_blank(), axis.ticks = element_blank()) 
+```
+## Plot read depth at each contig for previous Pk data
+
+```{r,eval=F}
+depth_summary_updated %>% 
+  filter(Data == "Previous_Pk_data") %>% 
+  select(1:15) %>% 
+  pivot_longer(cols = !Sample, names_to = "Contig", values_to = "Depth") %>%  
+  ggplot(mapping = aes(x = Sample, y = Depth)) +
+  geom_col() +
+  facet_wrap(~Contig) +
+  theme(axis.text.x = element_blank(), axis.ticks.x = element_blank())
+```
+
+## Calculate the percentage of NA values (bases with no coverage) at each contig and within each sample
+
+```{r,eval=F}
+base_pair_summary_updated <- base_pair_summary %>% 
+  rbind(
+    read_tsv("data/read_depth/previous_Pk_data.tsv", col_names = c("Contig", "Bases", "S01", "S02", "S03", "S04")) %>% 
+       select(!Bases) %>% 
+       filter(grepl("ordered", Contig)) %>% 
+      na_if(0) %>%
+      group_by(Contig) %>% 
+  summarise_all(funs(sum(is.na(.))/length(.) * 100)) %>% 
+      t() %>% 
+      as.data.frame() %>% 
+      row_to_names(1) %>% 
+      add_column(Data = "Previous_Pk_data", Alignment = "Direct") %>% 
+      rownames_to_column("Sample")) %>%
+  mutate_if(is.factor, as.character) %>% 
+  mutate_at(grep("ordered", colnames(.)), as.numeric) 
+
+base_pair_summary_updated %>% 
+  select(!1) %>% 
+  group_by(Data, Alignment) %>% 
+  summarise_all(mean) %>% 
+  pivot_longer(cols = !c(Data, Alignment), names_to = "Contig", values_to = "Bases") %>% 
+  ggplot() +
+  geom_point(mapping = aes(x = Contig, y = Bases, colour = Data, shape = Alignment)) +
+  theme(axis.text.x = element_blank(), axis.ticks = element_blank()) +
+  ggtitle("Average percentage of bases WITHOUT coverage for each contig")
+```
+
+###################################################################################################
+
+# Trying bowtie2 alignment to Hg
+
+Combining bowtie2 for the Hg alignment with bwa for the Pk alignment may improve the mapping.
+
+## Index with bowtie2
+
+bowtie2 requires there indexed files labled a specific way (different to bwa).
+
+File: 01_bowtie2_index.pbs
+Version(s): 2.2.4 (bowtie2)
+
+```{R,eval=F}
+#!/bin/bash
+#PBS -N Bowtie_index
+#PBS -j oe
+#PBS -m ae
+#PBS -l nodes=1
+#PBS -l ncpus=21
+#PBS -l mem=100gb
+#PBS -l walltime=24:00:00
+#PBS -M jacob.westaway@menzies.edu.au
+
+echo "---------------------------------------"
+echo "PBS: Job identifier is $PBS_JOBID"
+echo "PBS: Job name is $PBS_JOBNAME"
+
+echo "---------------------------------------"
+echo "Define paths to bowtie and samtools"
+export PATH=$PATH:/usr/local/bowtie2-2.2.4  
+
+echo "---------------------------------------"
+echo "Change working directory"
+cd /home/jwestaway/pk_pipeline/ZB_100/bowtie2/indexed_genomes
+
+echo "---------------------------------------"
+echo "INDEX PK WITH BOWTIE2"
+bowtie2-build /home/jwestaway/pk_pipeline/ref_genomes/PKA1H1/fasta/strain_A1_H.1.Icor.fasta PK
+
+echo "---------------------------------------"
+echo "INDEX HG WITH BOWTIE2"
+bowtie2-build /home/jwestaway/pk_pipeline/ref_genomes/human/GRCh38d1_noalt.fa  HG
+
+echo "---------------------------------------"
+echo 'Finished!'
+```
+
+## Align to Hg and get fastq for Pk alignment
+
+File: 02_bowtie2_align_Hg.pbs
+Version(s): 2.2.4 (bowtie2) & 1.12 (samtools)
+
+bowtie2 arguments
+  • -p - threads
+  • -x - path to indexed genome
+
+```{R,eval=F}
+#!/bin/bash
+#PBS -N Bowtie_Hg_align
+#PBS -j oe
+#PBS -m ae
+#PBS -l nodes=1
+#PBS -l ncpus=16
+#PBS -l mem=150gb
+#PBS -l walltime=48:00:00
+#PBS -M jacob.westaway@menzies.edu.au
+
+echo "---------------------------------------"
+echo "PBS: Job identifier is $PBS_JOBID"
+echo "PBS: Job name is $PBS_JOBNAME"
+
+echo "---------------------------------------"
+echo "Define paths to bowtie and samtools"
+export PATH=$PATH:/usr/local/miniconda3/envs/assembly/bin/
+export PATH=$PATH:/usr/local/bowtie2-2.2.4  
+
+
+echo "---------------------------------------"
+echo "ALIGN TO HG GENOME USING BOWTIE"
+
+echo "---------------------------------------"
+echo 'Set environment vars'
+OUTDIR="/home/jwestaway/pk_pipeline/ZB_100/bowtie2/Hg_alignment/sorted_bam"
+INDEXTDIR="/home/jwestaway/pk_pipeline/ZB_100/bowtie2/indexed_genomes/"
+mkdir -p $OUTDIR
+
+echo "---------------------------------------"
+echo 'Change to working directory' 
+cd /home/jwestaway/pk_pipeline/ZB_100/trim_test/outputs/trimmed/
+
+echo "---------------------------------------"
+echo 'Exectue bowtie2 and samtools to align files and convert to bam format'
+for i in *_val_1.fq.gz
+do
+bowtie2 -p 15 -x $INDEXTDIR/HG -1 $i -2 ${i%_1_val_1.fq.gz}_2_val_2.fq.gz | samtools view -u -S - | samtools sort -n -o $OUTDIR/${i%_1_val_1.fq.gz}.bam
+done 
+
+
+echo "---------------------------------------"
+echo "FASTQ FROM HG ALIGNMENT"
+
+echo "---------------------------------------"
+echo 'Change to working directory' 
+cd /home/jwestaway/pk_pipeline/ZB_100/bowtie2/Hg_alignment/sorted_bam
+
+echo "---------------------------------------"
+echo 'Set environment vars for bam file step'
+OUTDIR="/home/jwestaway/pk_pipeline/ZB_100/bowtie2/Hg_alignment/unaligned_pairs/"
+mkdir -p $OUTDIR
+
+echo "---------------------------------------"
+echo 'Get un-aligned reads (Pk reads)'
+for i in *.bam
+do
+samtools view -@ 15 -b -f 12 -F 256 -o $OUTDIR/${i%.bam}.unaligned.bam $i 
+done 
+
+echo "---------------------------------------"
+echo 'Set environment vars for fastq file step'
+cd $OUTDIR
+OUTDIR="/home/jwestaway/pk_pipeline/ZB_100/bowtie2/Hg_alignment/hg_rem_fastq/"
+mkdir -p $OUTDIR
+
+echo "---------------------------------------"
+echo 'Get fastqs from unaligned pk read pairs'
+for i in *.unaligned.bam
+do
+samtools bam2fq -@ 15 -1 $OUTDIR/${i%.unaligned.bam}_unmapped_R1.fq.gz -2 $OUTDIR/${i%.unaligned.bam}_unmapped_R2.fq.gz -N --reference $INDEXTDIR -s /dev/null $i
+done 
+
+echo "---------------------------------------"
+echo 'Finished!'
+```
+
+###################################################################################################
+
+# Comparing our samples to those in previous studies
+
+To get an idea of how our samples stack up against previous sucessful studies we have downloaded samples from NCBI and run them through the same direct alignment outlined above.
+We can then calculate read depth samtools and plot the depth of these samples with our mapped datasets to see how they comapre.
+The first step is downloading samples from NCBI.
+
+Link to sample list: https://static-content.springer.com/esm/art%3A10.1038%2Fs41598-019-46398-z/MediaObjects/41598_2019_46398_MOESM1_ESM.pdf
+
+## Download and convert previous data files to paired fastq files
+> wget https://sra-downloadb.be-md.ncbi.nlm.nih.gov/sos3/sra-pub-run-21/ERR2762860/ERR2762860.1
+> /usr/local/sratoolkit.2.8.2-1-centos_linux64/bin/fastq-dump -F --split-files ERR2762860.1
+
+fastq-dump arguments
+  • --split-files - split into forward and reverse files
+  • -F - defline contains only original sequence name (without there will be downstream during the alignment)
+
+
+## Run QC, trimming and direct Pk alignment, and calculate the read depth
+
+File: Data_comparison.pbs
+Version(s): 0.7.10 (bwa), 3.1.0 (singularity), 0.6.4 (trim-galore), 20171222 (parallel), 0.1.9 (MultiQC), 0.10.1 (FastQC) & 1.12 (samtools)
+
+```{R,eval=F}
+#!/bin/bash
+#PBS -N Comparison
+#PBS -j oe
+#PBS -m ae
+#PBS -l nodes=1
+#PBS -l ncpus=16
+#PBS -l mem=50gb
+#PBS -l walltime=24:00:00
+#PBS -M jacob.westaway@menzies.edu.au
+
+echo "---------------------------------------"
+echo "PBS: Job identifier is $PBS_JOBID"
+echo "PBS: Job name is $PBS_JOBNAME"
+
+
+echo "---------------------------------------"
+echo 'QC'
+
+echo "Export path to fastqc and singularity"
+export PATH=$PATH:/usr/local/FastQC
+export PATH=$PATH:/usr/local/singularity/latest/bin
+
+echo "Change to current working directory"
+cd /home/jwestaway/pk_pipeline/previous_pk_data
+
+echo "Set environment variable"
+INPUTDIR="pk_data/"
+OUTDIR="outputs/fastqc/"
+mkdir $OUTDIR
+
+echo "Execute fastqc"
+fastqc -t 15 -o $OUTDIR $INPUTDIR/*.fastq
+
+echo "Execute multiqc in OUTDIR using singularity"
+cd $OUTDIR
+singularity exec /home/jwestaway/pk_pipeline/tools/singularity/multiqc_v0.1.9.sif multiqc .
+
+echo 'QC FINISHED'
+
+
+
+echo "---------------------------------------"
+echo 'Trimming'
+
+echo "Export path to parallel"
+export PATH=$PATH:/usr/local/parallel_20171222/bin/
+
+echo 'Change to current working directory' 
+cd /home/jwestaway/pk_pipeline/previous_pk_data
+
+echo 'Set environment vars'
+OUTDIR="outputs/trimmed"
+INPUTDIR="pk_data/"
+mkdir -p $OUTDIR
+
+echo 'Exectue trim_galore for quality and adapter trimming'
+parallel -j15 --xapply singularity exec ~/pk_pipeline/tools/singularity/trim-galore_0.6.4.sif trim_galore --illumina --paired --fastqc -o $OUTDIR ::: $INPUTDIR/*1.fastq ::: $INPUTDIR/*2.fastq
+
+echo 'Trimming FINISHED'
+
+
+
+echo "---------------------------------------"
+echo 'QC'
+
+echo "Change to previous output directory"
+cd $OUTDIR
+
+echo "Execute multiqc using singularity"
+singularity exec ~/pk_pipeline/tools/singularity/multiqc_v0.1.9.sif multiqc .
+
+echo 'QC FINISHED'
+
+
+
+echo "---------------------------------------"
+echo 'Alignment'
+
+echo "Define paths to bwa and samtools"
+export PATH=$PATH:/usr/local/miniconda3/envs/assembly/bin/
+export PATH=$PATH:/usr/local/bwa-0.7.10 
+
+echo 'Set environment vars'
+OUTDIR="/home/jwestaway/pk_pipeline/previous_pk_data/outputs/direct_alignment/"
+INDEXTDIR="/home/jwestaway/pk_pipeline/ref_genomes/PKA1H1/fasta/strain_A1_H.1.Icor.fasta"
+mkdir -p $OUTDIR
+
+echo 'Change to working directory' 
+cd /home/jwestaway/pk_pipeline/previous_pk_data/outputs/trimmed
+
+echo 'Exectue bwa and samtools'
+for i in *_val_1.fq
+do
+bwa mem -t 15 -M -R "@RG\tID:${i%_1_val_1.fq}\tPL:ILLUMINA" $INDEXTDIR $i ${i%_1_val_1.fq}_2_val_2.fq | samtools view -u -S - | samtools sort -n -o $OUTDIR/${i%_1_val_1.fq}.bam
+done 
+
+echo 'ALIGNMENT FINISHED'
+
+
+
+echo "---------------------------------------"
+echo 'Read Depth'
+
+echo 'Change to working directory and set env variables'
+cd /home/jwestaway/pk_pipeline/previous_pk_data/outputs/direct_alignment/
+BED='/home/jwestaway/pk_pipeline/ref_genomes/PKA1H1/strain_A1_H.1.Icor.fasta.bed'
+
+echo 'Sort bam files'
+
+for i in *.bam
+do
+samtools sort -@ 15 $i > ${i%.bam}.sorted.bam
+done 
+
+echo 'Index bam files'
+
+for i in *.sorted.bam
+do
+samtools index -@ 15 $i 
+done 
+
+echo 'Create file with list of filenames'
+ls *sorted.bam > filenames.txt
+
+echo 'Exectue samtools depth'
+samtools depth -a -b $BED -f filenames.txt -o ZB_direct_depth_summary.depth
+
+echo 'READ DEPTH FINISHED'
+
+echo "---------------------------------------"
+echo 'PBS SCRIPT FINISHED'
+```
