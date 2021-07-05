@@ -1221,6 +1221,8 @@ echo "Finsihed!"
 
 ### Get read depth
 
+File = 12_Read_depth.pbs
+Version(s) = 1.12 (samtools)
 
 ```{R, eval=F}
 #!/bin/bash
@@ -1492,9 +1494,9 @@ Version(s) = 0.7.10 (bwa) & 1.12 (samtools)
 #PBS -j oe
 #PBS -m ae
 #PBS -l nodes=1
-#PBS -l ncpus=16
-#PBS -l mem=100gb
-#PBS -l walltime=24:00:00
+#PBS -l ncpus=21
+#PBS -l mem=200gb
+#PBS -l walltime=72:00:00
 #PBS -M jacob.westaway@menzies.edu.au
 
 echo "---------------------------------------"
@@ -1755,6 +1757,9 @@ echo "Finsihed!"
 ```
 
 ### Get read depth
+
+File = 12_Read_depth.pbs
+Version(s) = 1.12 (samtools)
 
 ```{R,eval=F}
 #!/bin/bash
@@ -2831,6 +2836,12 @@ base_pair_summary_updated %>%
   ggtitle("Average percentage of bases WITHOUT coverage for each contig")
 ```
 
+############################################################################################################
+
+# Comparisons for read depth using IGV
+Download *sorted.bam *bam.bai files from 12_Read_depth.pbs to be used in IGV or tablet.
+
+
 ###################################################################################################
 
 # Trying bowtie2 alignment to Hg
@@ -2894,9 +2905,9 @@ bowtie2 arguments
 #PBS -j oe
 #PBS -m ae
 #PBS -l nodes=1
-#PBS -l ncpus=16
-#PBS -l mem=150gb
-#PBS -l walltime=48:00:00
+#PBS -l ncpus=21
+#PBS -l mem=200gb
+#PBS -l walltime=72:00:00
 #PBS -M jacob.westaway@menzies.edu.au
 
 echo "---------------------------------------"
@@ -2926,7 +2937,7 @@ echo "---------------------------------------"
 echo 'Exectue bowtie2 and samtools to align files and convert to bam format'
 for i in *_val_1.fq.gz
 do
-bowtie2 -p 15 -x $INDEXTDIR/HG -1 $i -2 ${i%_1_val_1.fq.gz}_2_val_2.fq.gz | samtools view -u -S - | samtools sort -n -o $OUTDIR/${i%_1_val_1.fq.gz}.bam
+bowtie2 -p 20 -x $INDEXTDIR/HG -1 $i -2 ${i%_1_val_1.fq.gz}_2_val_2.fq.gz | samtools view -u -S - | samtools sort -n -o $OUTDIR/${i%_1_val_1.fq.gz}.bam
 done 
 
 
@@ -2946,7 +2957,7 @@ echo "---------------------------------------"
 echo 'Get un-aligned reads (Pk reads)'
 for i in *.bam
 do
-samtools view -@ 15 -b -f 12 -F 256 -o $OUTDIR/${i%.bam}.unaligned.bam $i 
+samtools view -@ 20 -b -f 12 -F 256 -o $OUTDIR/${i%.bam}.unaligned.bam $i 
 done 
 
 echo "---------------------------------------"
@@ -2959,12 +2970,16 @@ echo "---------------------------------------"
 echo 'Get fastqs from unaligned pk read pairs'
 for i in *.unaligned.bam
 do
-samtools bam2fq -@ 15 -1 $OUTDIR/${i%.unaligned.bam}_unmapped_R1.fq.gz -2 $OUTDIR/${i%.unaligned.bam}_unmapped_R2.fq.gz -N --reference $INDEXTDIR -s /dev/null $i
+samtools bam2fq -@ 20 -1 $OUTDIR/${i%.unaligned.bam}_unmapped_R1.fq.gz -2 $OUTDIR/${i%.unaligned.bam}_unmapped_R2.fq.gz -N --reference $INDEXTDIR -s /dev/null $i
 done 
 
 echo "---------------------------------------"
 echo 'Finished!'
 ```
+
+## Pk alignment post-bowtie2
+
+## Map stats and read depth from post-bowtie2 Pk alignment 
 
 ###################################################################################################
 
