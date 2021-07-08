@@ -1534,7 +1534,19 @@ echo 'Finished!'
 
 #### Alignment and sort to BAM 
 
-File = 08_Align_to_hg.pbs
+Aligning to the Hg has proven to be more compute intensive than I had anticipated. As a result, I had to split the jobs and run a PBS script for each samples.
+To do this I created a template script and then used some bash commands to replicate this script for each sample by substituting the sample name in.
+
+> ls *_1_val_1.fq.gz | sed 's/_1_val_1.fq.gz//' > sample_names.txt
+
+> for i in $(cat sample_names.txt)
+> do
+> sed s/SAMPLE/$i/g Pk_alignment_template.pbs > ${i}.pbs
+> done
+
+The resulting files can be found in 08_Align_to_hg, and an example is given below.
+
+File = 034_Align_to_hg.pbs
 Version(s) = 0.7.10 (bwa) & 1.12 (samtools)
 
 ```{R, eval=F}
@@ -1543,8 +1555,8 @@ Version(s) = 0.7.10 (bwa) & 1.12 (samtools)
 #PBS -j oe
 #PBS -m ae
 #PBS -l nodes=1
-#PBS -l ncpus=21
-#PBS -l mem=200gb
+#PBS -l ncpus=11
+#PBS -l mem=20gb
 #PBS -l walltime=48:00:00
 #PBS -M jacob.westaway@menzies.edu.au
 
@@ -1561,19 +1573,16 @@ echo "---------------------------------------"
 echo 'Set environment vars'
 OUTDIR="/home/jwestaway/pk_pipeline/ZB_100/outputs/hg_removed_alignment/sortedbam/"
 INDEXTDIR="/home/jwestaway/pk_pipeline/ref_genomes/human/GRCh38d1_noalt.fa"
-mkdir -p $OUTDIR
 
 echo "---------------------------------------"
 echo 'Change to working directory' 
-cd /home/jwestaway/pk_pipeline/ZB_100/outputs/trimmed/
+cd /home/jwestaway/pk_pipeline/ZB_100/trim_test/outputs/trimmed/
 
 echo "---------------------------------------"
 echo 'Exectue alignment with bwa to hg and sort to bam'
 echo "---------------------------------------"
-for i in *_val_1.fq.gz
-do
-bwa mem -t 20 -M -R "@RG\tID:${i%_1_val_1.fq.gz}\tPL:ILLUMINA" $INDEXTDIR $i ${i%_1_val_1.fq.gz}_2_val_2.fq.gz | samtools view -u -S - | samtools sort -n -o $OUTDIR/${i%_1_val_1.fq.gz}.bam
-done 
+
+bwa mem -t 10 -M -R "@RG\tID:PK_SB_DNA_034_DKDL210002163-1a_HWHGKDSXY_L4\tPL:ILLUMINA" $INDEXTDIR PK_SB_DNA_034_DKDL210002163-1a_HWHGKDSXY_L4_1_val_1.fq.gz PK_SB_DNA_034_DKDL210002163-1a_HWHGKDSXY_L4_2_val_2.fq.gz | samtools view -u -S - | samtools sort -n -o $OUTDIR/PK_SB_DNA_034_DKDL210002163-1a_HWHGKDSXY_L4.bam
 
 echo "---------------------------------------"
 echo 'Finished!'
@@ -2892,7 +2901,19 @@ echo 'Finished!'
 
 ## Align to Hg and get fastq for Pk alignment
 
-File: 02_bowtie2_align_Hg.pbs
+Aligning to the Hg has proven to be more compute intensive than I had anticipated. As a result, I had to split the jobs and run a PBS script for each samples.
+To do this I created a template script and then used some bash commands to replicate this script for each sample by substituting the sample name in.
+
+> ls *_1_val_1.fq.gz | sed 's/_1_val_1.fq.gz//' > sample_names.txt
+
+> for i in $(cat sample_names.txt)
+> do
+> sed s/SAMPLE/$i/g Pk_alignment_template.pbs > ${i}.pbs
+> done
+
+The resulting scripts are found in 02_bowtie2_align_Hg, and below is an example for a single sample.
+
+File: 034_bowtie2_align_Hg.pbs
 Version(s): 2.2.4 (bowtie2) & 1.12 (samtools)
 
 bowtie2 arguments
@@ -2905,9 +2926,9 @@ bowtie2 arguments
 #PBS -j oe
 #PBS -m ae
 #PBS -l nodes=1
-#PBS -l ncpus=21
-#PBS -l mem=200gb
-#PBS -l walltime=72:00:00
+#PBS -l ncpus=11
+#PBS -l mem=20gb
+#PBS -l walltime=48:00:00
 #PBS -M jacob.westaway@menzies.edu.au
 
 echo "---------------------------------------"
@@ -2919,7 +2940,6 @@ echo "Define paths to bowtie and samtools"
 export PATH=$PATH:/usr/local/miniconda3/envs/assembly/bin/
 export PATH=$PATH:/usr/local/bowtie2-2.2.4  
 
-
 echo "---------------------------------------"
 echo "ALIGN TO HG GENOME USING BOWTIE"
 
@@ -2927,7 +2947,6 @@ echo "---------------------------------------"
 echo 'Set environment vars'
 OUTDIR="/home/jwestaway/pk_pipeline/ZB_100/bowtie2/Hg_alignment/sorted_bam"
 INDEXTDIR="/home/jwestaway/pk_pipeline/ZB_100/bowtie2/indexed_genomes/"
-mkdir -p $OUTDIR
 
 echo "---------------------------------------"
 echo 'Change to working directory' 
@@ -2935,11 +2954,8 @@ cd /home/jwestaway/pk_pipeline/ZB_100/trim_test/outputs/trimmed/
 
 echo "---------------------------------------"
 echo 'Exectue bowtie2 and samtools to align files and convert to bam format'
-for i in *_val_1.fq.gz
-do
-bowtie2 -p 20 -x $INDEXTDIR/HG -1 $i -2 ${i%_1_val_1.fq.gz}_2_val_2.fq.gz | samtools view -u -S - | samtools sort -n -o $OUTDIR/${i%_1_val_1.fq.gz}.bam
-done 
 
+bowtie2 -p 10 -x $INDEXTDIR/HG -1 PK_SB_DNA_034_DKDL210002163-1a_HWHGKDSXY_L4_1_val_1.fq.gz -2 PK_SB_DNA_034_DKDL210002163-1a_HWHGKDSXY_L4_2_val_2.fq.gz  | samtools view -u -S - | samtools sort -n -o $OUTDIR/PK_SB_DNA_034_DKDL210002163-1a_HWHGKDSXY_L4.bam
 
 echo "---------------------------------------"
 echo "FASTQ FROM HG ALIGNMENT"
@@ -2951,27 +2967,21 @@ cd /home/jwestaway/pk_pipeline/ZB_100/bowtie2/Hg_alignment/sorted_bam
 echo "---------------------------------------"
 echo 'Set environment vars for bam file step'
 OUTDIR="/home/jwestaway/pk_pipeline/ZB_100/bowtie2/Hg_alignment/unaligned_pairs/"
-mkdir -p $OUTDIR
 
 echo "---------------------------------------"
 echo 'Get un-aligned reads (Pk reads)'
-for i in *.bam
-do
-samtools view -@ 20 -b -f 12 -F 256 -o $OUTDIR/${i%.bam}.unaligned.bam $i 
-done 
+
+samtools view -@ 10 -b -f 12 -F 256 -o $OUTDIR/PK_SB_DNA_034_DKDL210002163-1a_HWHGKDSXY_L4.unaligned.bam PK_SB_DNA_034_DKDL210002163-1a_HWHGKDSXY_L4.bam 
 
 echo "---------------------------------------"
 echo 'Set environment vars for fastq file step'
 cd $OUTDIR
 OUTDIR="/home/jwestaway/pk_pipeline/ZB_100/bowtie2/Hg_alignment/hg_rem_fastq/"
-mkdir -p $OUTDIR
 
 echo "---------------------------------------"
 echo 'Get fastqs from unaligned pk read pairs'
-for i in *.unaligned.bam
-do
-samtools bam2fq -@ 20 -1 $OUTDIR/${i%.unaligned.bam}_unmapped_R1.fq.gz -2 $OUTDIR/${i%.unaligned.bam}_unmapped_R2.fq.gz -N --reference $INDEXTDIR -s /dev/null $i
-done 
+
+samtools bam2fq -@ 10 -1 $OUTDIR/PK_SB_DNA_034_DKDL210002163-1a_HWHGKDSXY_L4_unmapped_R1.fq.gz -2 $OUTDIR/PK_SB_DNA_034_DKDL210002163-1a_HWHGKDSXY_L4_unmapped_R2.fq.gz -N --reference $INDEXTDIR -s /dev/null PK_SB_DNA_034_DKDL210002163-1a_HWHGKDSXY_L4.unaligned.bam
 
 echo "---------------------------------------"
 echo 'Finished!'
@@ -3138,3 +3148,5 @@ echo 'READ DEPTH FINISHED'
 echo "---------------------------------------"
 echo 'PBS SCRIPT FINISHED'
 ```
+
+ 
