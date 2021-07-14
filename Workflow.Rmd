@@ -1534,8 +1534,8 @@ echo 'Finished!'
 
 #### Alignment and sort to BAM 
 
-Aligning to the Hg has proven to be more compute intensive than I had anticipated. As a result, I had to split the jobs and run a PBS script for each samples.
-To do this I created a template script and then used some bash commands to replicate this script for each sample by substituting the sample name in.
+Aligning to the Hg has proven to be more compute intensive than I had anticipated. As a result, I had to split the jobs and run a PBS script for each sample.
+To do this I created a template script and then used some bash commands to replicate this script for each sample by substituting the sample name.
 
 > ls *_1_val_1.fq.gz | sed 's/_1_val_1.fq.gz//' > sample_names.txt
 
@@ -1648,17 +1648,28 @@ echo "Finsihed!"
 
 #### Alignment to Pk reference genome
 
-File = 10_Alignment_hg_removed.pbs
+I again ran this alignment by sample for faster turnover, creating scripts witht the below syntax:
+
+> ls *_1_val_1.fq.gz | sed 's/_1_val_1.fq.gz//' > sample_names.txt
+
+> for i in $(cat sample_names.txt)
+> do
+> sed s/SAMPLE/$i/g Pk_alignment_template.pbs > ${i}.pbs
+> done
+
+The scripts can be found in 10_Alignment_hg_removed, and example is given below:
+
+File = PK_SB_DNA_034_DKDL210002163-1a_HWHGKDSXY_L4.pbs
 Version = 0.7.10 (bwa) & 1.12 (samtools)
 
 ```{R,eval=F}
 #!/bin/bash
-#PBS -N Align_Pk_no_host
+#PBS -N Align_Pk_bwa
 #PBS -j oe
 #PBS -m ae
 #PBS -l nodes=1
-#PBS -l ncpus=16
-#PBS -l mem=100gb
+#PBS -l ncpus=11
+#PBS -l mem=20gb
 #PBS -l walltime=24:00:00
 #PBS -M jacob.westaway@menzies.edu.au
 echo "---------------------------------------"
@@ -1678,17 +1689,15 @@ echo "---------------------------------------"
 echo 'Set environment vars'
 OUTDIR="/home/jwestaway/pk_pipeline/ZB_100/outputs/hg_removed_alignment/pk_alignment/"
 INDEXTDIR="/home/jwestaway/pk_pipeline/ref_genomes/PKA1H1/fasta/strain_A1_H.1.Icor.fasta"
-mkdir -p $OUTDIR
 
 echo "---------------------------------------"
 echo 'Exectue alignment with bwa to hg and sort to bam'
-for i in *_unmapped_R1.fq.gz
-do
-bwa mem -t 15 -M -R "@RG\tID:${i%_unmapped_R1.fq.gz}\tPL:ILLUMINA" $INDEXTDIR $i ${i%_unmapped_R1.fq.gz}_unmapped_R2.fq.gz | samtools view -u -S - | samtools sort -n -o $OUTDIR/${i%_unmapped_R1.fq.gz}.bam
-done 
+
+bwa mem -t 10 -M -R "@RG\tID:PK_SB_DNA_034_DKDL210002163-1a_HWHGKDSXY_L4\tPL:ILLUMINA" $INDEXTDIR PK_SB_DNA_034_DKDL210002163-1a_HWHGKDSXY_L4_unmapped_R1.fq.gz PK_SB_DNA_034_DKDL210002163-1a_HWHGKDSXY_L4_unmapped_R2.fq.gz | samtools view -u -S - | samtools sort -n -o $OUTDIR/PK_SB_DNA_034_DKDL210002163-1a_HWHGKDSXY_L4.bam
 
 echo "---------------------------------------"
 echo "Finsihed!"
+
 ```
 
 ### Get mapping quality
@@ -1776,8 +1785,8 @@ Version(s) = 1.12 (samtools)
 #PBS -j oe
 #PBS -m ae
 #PBS -l nodes=1
-#PBS -l ncpus=11
-#PBS -l mem=50gb
+#PBS -l ncpus=21
+#PBS -l mem=100gb
 #PBS -l walltime=24:00:00
 #PBS -M jacob.westaway@menzies.edu.au
 
@@ -1802,7 +1811,7 @@ echo 'Sort bam files'
 
 for i in *.bam
 do
-samtools sort -@ 10 $i > ${i%.bam}.sorted.bam
+samtools sort -@ 20 $i > ${i%.bam}.sorted.bam
 done 
 
 echo "---------------------------------------"
@@ -1810,7 +1819,7 @@ echo 'Index bam files'
 
 for i in *.sorted.bam
 do
-samtools index -@ 10 $i 
+samtools index -@ 20 $i 
 done 
 
 echo "---------------------------------------"
@@ -1819,7 +1828,7 @@ ls *sorted.bam > filenames.txt
 
 echo "---------------------------------------"
 echo 'Exectue samtools depth'
-samtools depth -a -b $BED -f filenames.txt -o ZB_direct_depth_summary.depth
+samtools depth -a -b $BED -f filenames.txt -o ZB_redo_direct_depth_summary.depth
 
 echo "---------------------------------------"
 echo 'INDIRECT ALIGNMENT'
@@ -1833,7 +1842,7 @@ echo 'Sort bam files'
 
 for i in *.bam
 do
-samtools sort -@ 10 $i > ${i%.bam}.sorted.bam
+samtools sort -@ 20 $i > ${i%.bam}.sorted.bam
 done 
 
 echo "---------------------------------------"
@@ -1841,7 +1850,7 @@ echo 'Index bam files'
 
 for i in *.sorted.bam
 do
-samtools index -@ 10 $i 
+samtools index -@ 20 $i 
 done 
 
 echo "---------------------------------------"
@@ -1850,7 +1859,7 @@ ls *sorted.bam > filenames.txt
 
 echo "---------------------------------------"
 echo 'Exectue samtools depth'
-samtools depth -a -b $BED -f filenames.txt -o ZB_indirect_depth_summary.depth
+samtools depth -a -b $BED -f filenames.txt -o ZB_redo_indirect_depth_summary.depth
 
 echo "---------------------------------------"
 echo "Finsihed!"
@@ -1961,6 +1970,7 @@ library(tidyverse)
 ```
 
 Version(s) = 1.3.0 (tidyverse), 1.2.1335 (RStudio) & 3.6.1 (R)
+File = bbmap.rmd (on local)
 
 The chunk below takes in the csv file specific to the dataset and type of alignment.
 It then filters to remove the sample names, creating a datframe with only statistics/variables.
@@ -2427,6 +2437,8 @@ Require:
 
 
 #### Index Pk genome to get .fai file
+
+If `read depth` with samtools has been run you can also just use the sorted.bam and bam.fai outputs.
 
 File = Index_for_fai.pbs
 Version(s) = 1.12 (samtools)
@@ -2989,7 +3001,179 @@ echo 'Finished!'
 
 ## Pk alignment post-bowtie2
 
+The Pk alignment was also done by sample.
+
+> ls *_1_val_1.fq.gz | sed 's/_1_val_1.fq.gz//' > sample_names.txt
+
+> for i in $(cat sample_names.txt)
+> do
+> sed s/SAMPLE/$i/g Pk_alignment_template.pbs > ${i}.pbs
+> done
+
+The scripts can be found in 03_Pk_alignment, and an example is given below.
+
+File = PK_SB_DNA_034_DKDL210002163-1a_HWHGKDSXY_L4.pbs
+Version(s) = 0.7.10 (bwa) & 1.12 (samtools)
+
+```{R, eval=F}
+#!/bin/bash
+#PBS -N Align_Pk_bowtie2
+#PBS -j oe
+#PBS -m ae
+#PBS -l nodes=1
+#PBS -l ncpus=11
+#PBS -l mem=20gb
+#PBS -l walltime=24:00:00
+#PBS -M jacob.westaway@menzies.edu.au
+echo "---------------------------------------"
+echo "PBS: Job identifier is $PBS_JOBID"
+echo "PBS: Job name is $PBS_JOBNAME"
+
+echo "---------------------------------------"
+echo "Define paths to bwa and samtools"
+export PATH=$PATH:/usr/local/miniconda3/envs/assembly/bin/
+export PATH=$PATH:/usr/local/bwa-0.7.10 
+
+echo "---------------------------------------"
+echo 'Change to working directory' 
+cd /home/jwestaway/pk_pipeline/ZB_100/bowtie2/Hg_alignment/hg_rem_fastq/
+
+echo "---------------------------------------"
+echo 'Set environment vars'
+OUTDIR="/home/jwestaway/pk_pipeline/ZB_100/bowtie2/Hg_alignment/Pk_alignment/"
+INDEXTDIR="/home/jwestaway/pk_pipeline/ref_genomes/PKA1H1/fasta/strain_A1_H.1.Icor.fasta"
+
+echo "---------------------------------------"
+echo 'Exectue alignment with bwa to hg and sort to bam'
+
+bwa mem -t 10 -M -R "@RG\tID:PK_SB_DNA_034_DKDL210002163-1a_HWHGKDSXY_L4\tPL:ILLUMINA" $INDEXTDIR PK_SB_DNA_034_DKDL210002163-1a_HWHGKDSXY_L4_unmapped_R1.fq.gz PK_SB_DNA_034_DKDL210002163-1a_HWHGKDSXY_L4_unmapped_R2.fq.gz | samtools view -u -S - | samtools sort -n -o $OUTDIR/PK_SB_DNA_034_DKDL210002163-1a_HWHGKDSXY_L4.bam
+
+echo "---------------------------------------"
+echo "Finsihed!"
+```
+
 ## Map stats and read depth from post-bowtie2 Pk alignment 
+
+File = Map_Stats.pbs
+Version(s) = 38.90 (BBMap), 1.12 (samtools), 1.8.0_171 (java) & 0.6.3 (sambamba)
+
+```{R, eval=F}
+#!/bin/bash
+#PBS -N Map_Stats_ZB
+#PBS -j oe
+#PBS -m ae
+#PBS -l nodes=1
+#PBS -l ncpus=16
+#PBS -l mem=50gb
+#PBS -l walltime=12:00:00
+#PBS -M jacob.westaway@menzies.edu.au
+
+echo "---------------------------------------"
+echo "PBS: Job identifier is $PBS_JOBID"
+echo "PBS: Job name is $PBS_JOBNAME"
+
+echo "---------------------------------------"
+echo "Define paths to bbmap and samtools"
+export Path=$PATH:/home/jwestaway/pk_pipeline/tools/bbmap
+export PATH=$PATH:/usr/local/miniconda3/envs/assembly/bin/  
+export PATH=$PATH:/usr/local/miniconda3/pkgs/quast-5.0.2-py37pl526hb5aa323_2/lib/python3.7/site-packages/quast_libs/sambamba
+module load java/1.8.0_171
+
+echo "---------------------------------------"
+echo 'Set env variables'
+PILEUP="/home/jwestaway/pk_pipeline/tools/bbmap/pileup.sh"
+
+echo "---------------------------------------"
+echo 'Alignment - to Hg'
+
+echo "---------------------------------------"
+echo 'Change to working directory and set env variables'
+cd /home/jwestaway/pk_pipeline/ZB_100/bowtie2/Hg_alignment/sorted_bam/
+
+echo "---------------------------------------"
+echo 'Exectue samtools & bbmap'
+for i in *.bam
+do
+samtools view -h --threads 15 $i | $PILEUP in=stdin 2> ${i%.bam}.mapstats
+done 
+
+echo "---------------------------------------"
+echo 'Alignment - to Pk post Hg removal'
+
+echo "---------------------------------------"
+echo 'Change to working directory and set env variables'
+cd /home/jwestaway/pk_pipeline/ZB_100/bowtie2/Hg_alignment/Pk_alignment/
+
+echo "---------------------------------------"
+echo 'Exectue samtools & bbmap'
+for i in *.bam
+do
+samtools view -h --threads 15 $i | $PILEUP in=stdin 2> ${i%.bam}.mapstats
+done 
+
+echo "---------------------------------------"
+echo "Finsihed!"
+```
+File = Read_depth.pbs
+Version(s) = 1.12 (samtools)
+
+```{R, eval=F}
+#!/bin/bash
+#PBS -N ZB_read_depth
+#PBS -j oe
+#PBS -m ae
+#PBS -l nodes=1
+#PBS -l ncpus=16
+#PBS -l mem=50gb
+#PBS -l walltime=24:00:00
+#PBS -M jacob.westaway@menzies.edu.au
+
+echo "---------------------------------------"
+echo "PBS: Job identifier is $PBS_JOBID"
+echo "PBS: Job name is $PBS_JOBNAME"
+
+echo "---------------------------------------"
+echo "Define paths to samtools"
+export PATH=$PATH:/usr/local/miniconda3/envs/assembly/bin/
+
+echo "---------------------------------------"
+echo 'Set env variables'
+BED='/home/jwestaway/pk_pipeline/ref_genomes/PKA1H1/strain_A1_H.1.Icor.fasta.bed'
+
+echo "---------------------------------------"
+echo 'INDIRECT ALIGNMENT'
+
+echo "---------------------------------------"
+echo 'Change to working directory and set env variables'
+cd /home/jwestaway/pk_pipeline/ZB_100/bowtie2/Hg_alignment/Pk_alignment/
+
+echo "---------------------------------------"
+echo 'Sort bam files'
+
+for i in *.bam
+do
+samtools sort -@ 15 $i > ${i%.bam}.sorted.bam
+done 
+
+echo "---------------------------------------"
+echo 'Index bam files'
+
+for i in *.sorted.bam
+do
+samtools index -@ 15 $i 
+done 
+
+echo "---------------------------------------"
+echo 'Create file with list of filenames'
+ls *sorted.bam > filenames.txt
+
+echo "---------------------------------------"
+echo 'Exectue samtools depth'
+samtools depth -a -b $BED -f filenames.txt -o ZB_indirect_depth_summary.depth
+
+echo "---------------------------------------"
+echo "Finsihed!"
+```
 
 ###################################################################################################
 
