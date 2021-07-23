@@ -3182,9 +3182,3 @@ Java uses a [Picard](https://github.com/broadinstitute/picard) jar file to run G
 ```{R,eval=F}
 
 ```
-# For a test
-# For a test
-# For a test
-# For a test
-# For a test
-# For a test
