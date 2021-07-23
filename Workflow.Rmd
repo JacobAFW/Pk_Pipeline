@@ -3159,3 +3159,26 @@ ZB_metadata %>%
 ################################################################################################################################
 
 # Bam Preprocessing
+
+Jobs split and run as a PBS script for each sample.
+
+> cd /home/jwestaway/pk_pipeline/ZB_100/outputs/direct_alignment
+> ls *.bam | sed 's/.bam//' > sample_names.txt
+
+> for i in $(cat sample_names.txt)
+> do
+> sed s/SAMPLE/$i/g Indel_realignment_template.pbs > ${i}.pbs
+> done
+
+> for file in *L4.pbs; do qsub $file; done
+
+The resulting files can be found in 14_Indel_realignment, and an example is given below.
+File = PK_SB_DNA_006_DKDL210002135-1a_HWHGKDSXY_L4.pbs
+Version(s) = 1.12 (samtools), 1.8.0_131-b1 (Java), 2.21.9 (picard) & 3.2.2 (GATK).
+
+GATK is run through Java, which requires compatible [jdk and jre](https://www.guru99.com/difference-between-jdk-jre-jvm.html#:~:text=The%20full%20form%20of%20JDK%20is%20Java%20Development,also%20platform%20dependent%2C%20but%20JVM%20is%20platform%20independent. installations).
+Java uses a [Picard](https://github.com/broadinstitute/picard) jar file to run GATK.
+
+```{R,eval=F}
+
+```
