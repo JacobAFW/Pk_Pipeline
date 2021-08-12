@@ -1,0 +1,113 @@
+#!/bin/bash
+#PBS -N Indel_Realign_ZB
+#PBS -j oe
+#PBS -m ae
+#PBS -l nodes=1
+#PBS -l ncpus=10
+#PBS -l mem=50gb
+#PBS -l walltime=12:00:00
+#PBS -M jacob.westaway@menzies.edu.au
+
+echo "---------------------------------------"
+echo "PBS: Job identifier is $PBS_JOBID"
+echo "PBS: Job name is $PBS_JOBNAME"
+
+echo "---------------------------------------"
+echo "Define paths to samtools"
+export PATH=$PATH:/usr/local/java
+export PATH=$PATH:/usr/local/GenomeAnalysisTK-3.2.2 
+
+echo "---------------------------------------"
+echo 'Change to working directory and set env variables'
+cd /home/jwestaway/pk_pipeline/ZB_100/outputs/remove_duplicates
+OUTDIR="/home/jwestaway/pk_pipeline/ZB_100/outputs/indel_realignment"
+mkdir $OUTDIR
+
+echo "---------------------------------------"
+echo '' 
+
+java -Djava.io.tmpdir=$PBS_JOBFS  -jar /g/data/u86/variantdb/v2.38/ext/bin/picard.jar \
+    MarkDuplicates AS=TRUE VALIDATION_STRINGENCY=LENIENT \
+    I=/g/data/u86/variantdb/runs/v2.38/human_related_gatk/pc_cohort16/pc_cohort16_sg1_unaffected1_runs/pc_cohort16_sg1_unaffected1_2473/bam/pc_cohort16_sg1_unaffected1_2473.merge_bam.cvrmax60.bam \
+    O=/g/data/u86/variantdb/runs/v2.38/human_related_gatk/pc_cohort16/pc_cohort16_sg1_unaffected1_runs/pc_cohort16_sg1_unaffected1_2473/bam/pc_cohort16_sg1_unaffected1_2473.picard_sorted.dupmarked.bam \
+    M=/g/data/u86/variantdb/runs/v2.38/human_related_gatk/pc_cohort16/pc_cohort16_sg1_unaffected1_runs/pc_cohort16_sg1_unaffected1_2473/bam/pc_cohort16_sg1_unaffected1_2473_picard_metrics_file.txt \
+    TMP_DIR=/g/data/u86/variantdb/runs/v2.38/human_related_gatk/pc_cohort16/pc_cohort16_sg1_unaffected1_runs/pc_cohort16_sg1_unaffected1_2473
+
+echo "---------------------------------------"
+echo '' 
+
+java -Djava.iodir=$PBS_JOBFS  -Xms3200m -Xmx3600m -jar /g/data/u86/variantdb/v2.38/ext/bin/GenomeAnalysisTK.jar \
+    -T RealignerTargetCreator \
+    -nt 1 \
+    -R /g/data/u86/variantdb/v2.38/conf/human/GRCh38/fasta/single_file/GRCh38d1_noalt.fa \
+    -I /g/data/u86/variantdb/runs/v2.38/human_related_gatk/pc_cohort16/bam_links/pc_cohort16_sg1_unaffected1.bam \
+    --intervals /g/data/u86/variantdb/v2.38/conf/human/GRCh38/fasta/intervals/3.intervals \
+    -known /g/data/u86/variantdb/v2.38/conf/human/GRCh38/resources//Homo_sapiens_assembly38.known_indels.vcf \
+    -o /g/data/u86/variantdb/runs/v2.38/human_related_gatk/pc_cohort16/pc_cohort16_sg1_unaffected1_runs/pc_cohort16_sg1_unaffected1_2473/gatk/pc_cohort16_sg1_unaffected1.realigner.3.intervals
+
+echo "---------------------------------------"
+echo '' 
+
+java -Djava.iodir=$PBS_JOBFS  -Xms3200m -Xmx3600m -jar /g/data/u86/variantdb/v2.38/ext/bin/GenomeAnalysisTK.jar \
+    -T IndelRealigner \
+    --consensusDeterminationModel KNOWNS_ONLY \
+    -LOD 0.4 \
+    -R /g/data/u86/variantdb/v2.38/conf/human/GRCh38/fasta/single_file/GRCh38d1_noalt.fa \
+    -I /g/data/u86/variantdb/runs/v2.38/human_related_gatk/pc_cohort16/bam_links/pc_cohort16_sg1_unaffected1.bam \
+    -known /g/data/u86/variantdb/v2.38/conf/human/GRCh38/resources//Homo_sapiens_assembly38.known_indels.vcf \
+    --intervals /g/data/u86/variantdb/v2.38/conf/human/GRCh38/fasta/intervals/3.intervals \
+    -targetIntervals /g/data/u86/variantdb/runs/v2.38/human_related_gatk/pc_cohort16/pc_cohort16_sg1_unaffected1_runs/pc_cohort16_sg1_unaffected1_2473/gatk/pc_cohort16_sg1_unaffected1.realigner.3.intervals \
+    -o /g/data/u86/variantdb/runs/v2.38/human_related_gatk/pc_cohort16/pc_cohort16_sg1_unaffected1_runs/pc_cohort16_sg1_unaffected1_2473/gatk/pc_cohort16_sg1_unaffected1.sorted_dupmarked_readgrp_realigned.3.bam 
+
+echo "---------------------------------------"
+echo '' 
+
+java -Djava.iodir=$PBS_JOBFS  -Xms3200m -Xmx3600m -jar /g/data/u86/variantdb/v2.38/ext/bin/GenomeAnalysisTK.jar \
+    -T BaseRecalibrator \
+    -R /g/data/u86/variantdb/v2.38/conf/human/GRCh38/fasta/single_file/GRCh38d1_noalt.fa \
+    -L /g/data/u86/variantdb/v2.38/conf/human/GRCh38/fasta/intervals/3.intervals \
+    -I /g/data/u86/variantdb/runs/v2.38/human_related_gatk/pc_cohort16/pc_cohort16_sg1_unaffected1_runs/pc_cohort16_sg1_unaffected1_2473/gatk/pc_cohort16_sg1_unaffected1.sorted_dupmarked_readgrp_realigned.3.bam \
+    -knownSites /g/data/u86/variantdb/v2.38/conf/human/GRCh38/resources//Homo_sapiens_assembly38.dbsnp138.vcf \
+    -knownSites /g/data/u86/variantdb/v2.38/conf/human/GRCh38/resources//Mills_and_1000G_gold_standard.indels.hg38.vcf \
+    -o /g/data/u86/variantdb/runs/v2.38/human_related_gatk/pc_cohort16/pc_cohort16_sg1_unaffected1_runs/pc_cohort16_sg1_unaffected1_2473/gatk/pc_cohort16_sg1_unaffected1.recal.3.table
+
+echo "---------------------------------------"
+echo '' 
+
+java -Djava.iodir=$PBS_JOBFS  -Xms3200m -Xmx3600m -jar /g/data/u86/variantdb/v2.38/ext/bin/GenomeAnalysisTK.jar \
+    -T PrintReads \
+    -R /g/data/u86/variantdb/v2.38/conf/human/GRCh38/fasta/single_file/GRCh38d1_noalt.fa \
+    -L /g/data/u86/variantdb/v2.38/conf/human/GRCh38/fasta/intervals/3.intervals \
+    -I /g/data/u86/variantdb/runs/v2.38/human_related_gatk/pc_cohort16/pc_cohort16_sg1_unaffected1_runs/pc_cohort16_sg1_unaffected1_2473/gatk/pc_cohort16_sg1_unaffected1.sorted_dupmarked_readgrp_realigned.3.bam \
+    -BQSR /g/data/u86/variantdb/runs/v2.38/human_related_gatk/pc_cohort16/pc_cohort16_sg1_unaffected1_runs/pc_cohort16_sg1_unaffected1_2473/gatk/pc_cohort16_sg1_unaffected1.recal.3.table \
+    -o /g/data/u86/variantdb/runs/v2.38/human_related_gatk/pc_cohort16/pc_cohort16_sg1_unaffected1_runs/pc_cohort16_sg1_unaffected1_2473/gatk/pc_cohort16_sg1_unaffected1.sorted_dupmarked_readgrp_realigned_recal.3.bam
+
+echo "---------------------------------------"
+echo '' 
+
+java -Djava.iodir=$PBS_JOBFS  -Xms3200m -Xmx3600m -jar /g/data/u86/variantdb/v2.38/ext/bin/GenomeAnalysisTK.jar \
+    -T HaplotypeCaller \
+    -nt 1 \
+    -ERC GVCF \
+    --minPruning 3 \
+    --maxNumHaplotypesInPopulation 200 \
+    --max_alternate_alleles 3 \
+    -contamination 0.0 \
+    -R /g/data/u86/variantdb/v2.38/conf/human/GRCh38/fasta/single_file/GRCh38d1_noalt.fa \
+    -L /g/data/u86/variantdb/v2.38/conf/human/GRCh38/fasta/intervals/3.intervals \
+    -I /g/data/u86/variantdb/runs/v2.38/human_related_gatk/pc_cohort16/pc_cohort16_sg1_unaffected1_runs/pc_cohort16_sg1_unaffected1_2473/gatk/pc_cohort16_sg1_unaffected1.sorted_dupmarked_readgrp_realigned_recal.3.bam \
+    -o /g/data/u86/variantdb/runs/v2.38/human_related_gatk/pc_cohort16/pc_cohort16_sg1_unaffected1_runs/pc_cohort16_sg1_unaffected1_2473/gatk/pc_cohort16_sg1_unaffected1.haplotypecaller.3.g.vcf.gz
+
+echo "---------------------------------------"
+echo '' 
+
+java -Djava.iodir=$PBS_JOBFS  -Xms3200m -Xmx3600m -jar /g/data/u86/variantdb/v2.38/ext/bin/GenomeAnalysisTK.jar \
+    -T GenotypeGVCFs \
+    -nt 1 \
+    -R /g/data/u86/variantdb/v2.38/conf/human/GRCh38/fasta/single_file/GRCh38d1_noalt.fa \
+    -L /g/data/u86/variantdb/v2.38/conf/human/GRCh38/fasta/intervals/3.intervals \
+    -V /g/data/u86/variantdb/runs/v2.38/human_related_gatk/pc_cohort16/pc_cohort16_sg1_unaffected1_runs/pc_cohort16_sg1_unaffected1_2473/gatk/pc_cohort16_sg1_unaffected1.haplotypecaller.3.g.vcf.gz \
+    -o /g/data/u86/variantdb/runs/v2.38/human_related_gatk/pc_cohort16/pc_cohort16_sg1_snvcalls/pc_cohort16_sg1_unaffected1.3.vcf
+
+echo "---------------------------------------"
+echo 'Finished' 

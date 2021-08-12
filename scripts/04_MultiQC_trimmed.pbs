@@ -1,0 +1,32 @@
+#!/bin/bash
+#PBS -N multiqc
+#PBS -j oe
+#PBS -m ae
+#PBS -l nodes=1
+#PBS -l ncpus=10
+#PBS -l mem=40gb
+#PBS -l walltime=04:00:00
+#PBS -M jacob.westaway@menzies.edu.au
+
+echo "---------------------------------------"
+echo "PBS: Job identifier is $PBS_JOBID"
+echo "PBS: Job name is $PBS_JOBNAME"
+
+echo "---------------------------------------"
+echo "Export path to multiqc"
+export PATH=$PATH:/usr/local/singularity/latest/bin
+
+echo "---------------------------------------"
+echo "Set environment variable"
+OUTDIR="/home/jwestaway/pk_pipeline/ZB_100/trim_test/outputs/trimmed"
+
+echo "---------------------------------------"
+echo "Change to output directory"
+cd $OUTDIR
+
+echo "---------------------------------------"
+echo "Execute multiqc using singularity"
+singularity exec ~/pk_pipeline/tools/singularity/multiqc_v0.1.9.sif multiqc .
+
+echo "---------------------------------------"
+echo "Finsihed!"

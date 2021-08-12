@@ -1,0 +1,128 @@
+#!/bin/bash
+#PBS -N Indel_Realign_ZB_Test
+#PBS -j oe
+#PBS -m ae
+#PBS -l nodes=1
+#PBS -l ncpus=10
+#PBS -l mem=50gb
+#PBS -l walltime=12:00:00
+#PBS -M jacob.westaway@menzies.edu.au
+
+echo "---------------------------------------"
+echo "PBS: Job identifier is $PBS_JOBID"
+echo "PBS: Job name is $PBS_JOBNAME"
+
+echo "---------------------------------------"
+echo "Define paths to samtools"
+export PATH=$PATH:/usr/local/jdk1.8.0_131/bin
+export PATH=$PATH:/usr/local/jre1.8.0_111/bin
+export PATH=$PATH:/usr/local/GenomeAnalysisTK-3.2.2 
+export PATH=$PATH:/usr/local/miniconda3/envs/assembly/bin/
+
+echo "---------------------------------------"
+echo 'Change to working directory and set env variables'
+INDIR="/home/jwestaway/pk_pipeline/ZB_100/outputs/direct_alignment"
+OUTDIR="/home/jwestaway/pk_pipeline/ZB_100/outputs/indel_realignment/PK_SB_DNA_006_DKDL210002135-1a_HWHGKDSXY_L4"
+PICARD="/usr/local/miniconda3/pkgs/picard-2.21.9-0/share/picard-2.21.9-0/picard.jar"
+INDEXTDIR="/home/jwestaway/pk_pipeline/ref_genomes/PKA1H1/fasta/strain_A1_H.1.Icor.fasta"
+#KNOWNSITES=""
+#INTERVALS=""
+
+mkdir $OUTDIR
+ 
+echo "---------------------------------------"
+echo 'Sort and Index bam files'
+cd /home/jwestaway/pk_pipeline/ZB_100/outputs/direct_alignment
+
+samtools sort -@ 10 PK_SB_DNA_006_DKDL210002135-1a_HWHGKDSXY_L4.bam > PK_SB_DNA_006_DKDL210002135-1a_HWHGKDSXY_L4.sorted.bam
+
+samtools index -@ 10 PK_SB_DNA_006_DKDL210002135-1a_HWHGKDSXY_L4.sorted.bam
+
+echo "---------------------------------------"
+echo 'MarkDuplicates'
+
+/usr/local/jdk1.8.0_131/bin/java -Djava.iodir=$PBS_JOBFS -jar $PICARD \
+    MarkDuplicates AS=TRUE VALIDATION_STRINGENCY=LENIENT \
+    I=$INDIR/PK_SB_DNA_006_DKDL210002135-1a_HWHGKDSXY_L4.sorted.bam \
+    O=$OUTDIR/PK_SB_DNA_006_DKDL210002135-1a_HWHGKDSXY_L4.dupmarked.bam \
+    M=$OUTDIR/PK_SB_DNA_006_DKDL210002135-1a_HWHGKDSXY_L4_picard_metrics_file.txt 
+
+echo "---------------------------------------"
+echo 'RealignerTargetCreator'
+
+/usr/local/jdk1.8.0_131/bin/java -Djava.iodir=$PBS_JOBFS  -Xms3200m -Xmx3600m -jar /usr/local/GenomeAnalysisTK-3.2.2/GenomeAnalysisTK.jar \
+    -T RealignerTargetCreator \
+    -nt 1 \
+    -R $INDEXTDIR \
+    -I $OUTDIR/PK_SB_DNA_006_DKDL210002135-1a_HWHGKDSXY_L4.dupmarked.bam \
+    # --intervals /g/data/u86/variantdb/v2.38/conf/human/GRCh38/fasta/intervals/3.intervals \
+    # -known /g/data/u86/variantdb/v2.38/conf/human/GRCh38/resources//Homo_sapiens_assembly38.known_indels.vcf \
+    -o $OUTDIR/PK_SB_DNA_006_DKDL210002135-1a_HWHGKDSXY_L4.dupmarked.realigner.intervals
+    
+echo "---------------------------------------"
+echo 'IndelRealigner' 
+
+/usr/local/jdk1.8.0_131/bin/java -Djava.iodir=$PBS_JOBFS  -Xms3200m -Xmx3600m -jar /usr/local/GenomeAnalysisTK-3.2.2/GenomeAnalysisTK.jar \
+    -T IndelRealigner \
+    # --consensusDeterminationModel KNOWNS_ONLY \
+    -LOD 0.4 \
+    -R $INDEXTDIR \
+    -I $OUTDIR/PK_SB_DNA_006_DKDL210002135-1a_HWHGKDSXY_L4.dupmarked.bam \
+    # -known /g/data/u86/variantdb/v2.38/conf/human/GRCh38/resources//Homo_sapiens_assembly38.known_indels.vcf \
+    # --intervals /g/data/u86/variantdb/v2.38/conf/human/GRCh38/fasta/intervals/3.intervals \
+    -targetIntervals $OUTDIR/PK_SB_DNA_006_DKDL210002135-1a_HWHGKDSXY_L4.dupmarked.realigner.intervals \
+    -o $OUTDIR/PK_SB_DNA_006_DKDL210002135-1a_HWHGKDSXY_L4.dupmarked.realigned.bam
+
+echo "---------------------------------------"
+echo 'BaseRecalibrator - create recal table' 
+
+/usr/local/jdk1.8.0_131/bin/java -Djava.iodir=$PBS_JOBFS  -Xms3200m -Xmx3600m -jar /usr/local/GenomeAnalysisTK-3.2.2/GenomeAnalysisTK.jar \
+    -T BaseRecalibrator \
+    -R $INDEXTDIR \
+    # -L /g/data/u86/variantdb/v2.38/conf/human/GRCh38/fasta/intervals/3.intervals \
+    -I $OUTDIR/PK_SB_DNA_006_DKDL210002135-1a_HWHGKDSXY_L4.dupmarked.realigned.bam \
+    # -knownSites /g/data/u86/variantdb/v2.38/conf/human/GRCh38/resources//Homo_sapiens_assembly38.dbsnp138.vcf \
+    # -knownSites /g/data/u86/variantdb/v2.38/conf/human/GRCh38/resources//Mills_and_1000G_gold_standard.indels.hg38.vcf \
+    -o $OUTDIR/PK_SB_DNA_006_DKDL210002135-1a_HWHGKDSXY_L4.dupmarked.realigned.recal.table
+
+echo "---------------------------------------"
+echo 'PrintReads - get recal reads' 
+
+/usr/local/jdk1.8.0_131/bin/java -Djava.iodir=$PBS_JOBFS  -Xms3200m -Xmx3600m -jar /usr/local/GenomeAnalysisTK-3.2.2/GenomeAnalysisTK.jar  \
+    -T PrintReads \
+    -R $INDEXTDIR \
+    # -L /g/data/u86/variantdb/v2.38/conf/human/GRCh38/fasta/intervals/3.intervals \
+    -I $OUTDIR/PK_SB_DNA_006_DKDL210002135-1a_HWHGKDSXY_L4.dupmarked.realigned.bam
+    -BQSR $OUTDIR/PK_SB_DNA_006_DKDL210002135-1a_HWHGKDSXY_L4.dupmarked.realigned.recal.table \
+    -o $OUTDIR/PK_SB_DNA_006_DKDL210002135-1a_HWHGKDSXY_L4.dupmarked.realigned.recal.bam
+
+echo "---------------------------------------"
+echo 'HaplotypeCaller' 
+
+/usr/local/jdk1.8.0_131/bin/java -Djava.iodir=$PBS_JOBFS  -Xms3200m -Xmx3600m -jar /usr/local/GenomeAnalysisTK-3.2.2/GenomeAnalysisTK.jar \
+    -T HaplotypeCaller \
+    -nt 1 \
+    -ERC GVCF \
+    --minPruning 3 \
+    --maxNumHaplotypesInPopulation 200 \
+    --max_alternate_alleles 3 \
+    -contamination 0.0 \
+    -R $INDEXTDIR \
+    # -L /g/data/u86/variantdb/v2.38/conf/human/GRCh38/fasta/intervals/3.intervals \
+    -I $OUTDIR/PK_SB_DNA_006_DKDL210002135-1a_HWHGKDSXY_L4.dupmarked.realigned.recal.bam \
+    -o $OUTDIR/PK_SB_DNA_006_DKDL210002135-1a_HWHGKDSXY_L4.haplotypecaller.vcf.gz
+
+echo 'GenotypeGVCFs' 
+
+/usr/local/jdk1.8.0_131/bin/java -Djava.iodir=$PBS_JOBFS  -Xms3200m -Xmx3600m -jar /usr/local/GenomeAnalysisTK-3.2.2/GenomeAnalysisTK.jar \
+    -T GenotypeGVCFs \
+    -nt 1 \
+    -R $INDEXTDIR \
+    # -L /g/data/u86/variantdb/v2.38/conf/human/GRCh38/fasta/intervals/3.intervals \
+    -V $OUTDIR/PK_SB_DNA_006_DKDL210002135-1a_HWHGKDSXY_L4.haplotypecaller.vcf.gz \
+    -o $OUTDIR/PK_SB_DNA_006_DKDL210002135-1a_HWHGKDSXY_L4.vcf.gz
+    pc_cohort16_sg1_unaffected1.3.vcf.gz
+
+
+echo "---------------------------------------"
+echo 'Finished' 

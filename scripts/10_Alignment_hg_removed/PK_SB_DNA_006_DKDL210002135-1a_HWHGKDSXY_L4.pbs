@@ -1,0 +1,34 @@
+#!/bin/bash
+#PBS -N Align_Pk_bwa
+#PBS -j oe
+#PBS -m ae
+#PBS -l nodes=1
+#PBS -l ncpus=11
+#PBS -l mem=20gb
+#PBS -l walltime=24:00:00
+#PBS -M jacob.westaway@menzies.edu.au
+echo "---------------------------------------"
+echo "PBS: Job identifier is $PBS_JOBID"
+echo "PBS: Job name is $PBS_JOBNAME"
+
+echo "---------------------------------------"
+echo "Define paths to bwa and samtools"
+export PATH=$PATH:/usr/local/miniconda3/envs/assembly/bin/
+export PATH=$PATH:/usr/local/bwa-0.7.10 
+
+echo "---------------------------------------"
+echo 'Change to working directory' 
+cd /home/jwestaway/pk_pipeline/ZB_100/outputs/hg_removed_alignment/hg_rem_fastq/
+
+echo "---------------------------------------"
+echo 'Set environment vars'
+OUTDIR="/home/jwestaway/pk_pipeline/ZB_100/outputs/hg_removed_alignment/pk_alignment/"
+INDEXTDIR="/home/jwestaway/pk_pipeline/ref_genomes/PKA1H1/fasta/strain_A1_H.1.Icor.fasta"
+
+echo "---------------------------------------"
+echo 'Exectue alignment with bwa to hg and sort to bam'
+
+bwa mem -t 10 -M -R "@RG\tID:PK_SB_DNA_006_DKDL210002135-1a_HWHGKDSXY_L4\tPL:ILLUMINA" $INDEXTDIR PK_SB_DNA_006_DKDL210002135-1a_HWHGKDSXY_L4_unmapped_R1.fq.gz PK_SB_DNA_006_DKDL210002135-1a_HWHGKDSXY_L4_unmapped_R2.fq.gz | samtools view -u -S - | samtools sort -n -o $OUTDIR/PK_SB_DNA_006_DKDL210002135-1a_HWHGKDSXY_L4.bam
+
+echo "---------------------------------------"
+echo "Finsihed!"

@@ -1,0 +1,64 @@
+#!/bin/bash
+#PBS -N Remove_duplicates_ZB
+#PBS -j oe
+#PBS -m ae
+#PBS -l nodes=1
+#PBS -l ncpus=11
+#PBS -l mem=100gb
+#PBS -l walltime=24:00:00
+#PBS -M jacob.westaway@menzies.edu.au
+
+echo "---------------------------------------"
+echo "PBS: Job identifier is $PBS_JOBID"
+echo "PBS: Job name is $PBS_JOBNAME"
+
+echo "---------------------------------------"
+echo "Define paths to samtools"
+export PATH=$PATH:/usr/local/miniconda3/envs/assembly/bin/samtools
+
+echo "---------------------------------------"
+echo 'Change to working directory and set env variables'
+cd /home/jwestaway/pk_pipeline/ZB_100/outputs/direct_alignment
+OUTDIR="/home/jwestaway/pk_pipeline/ZB_100/outputs/remove_duplicates"
+mkdir $OUTDIR
+
+echo "---------------------------------------"
+echo 'Execute samtools to sort bam files by name' 
+
+for i in *.sorted.bam
+do
+samtools sort -@ 10 -n -o ${i%.sorted.bam}.sorted.tmp.bam $i 
+done 
+
+echo "---------------------------------------"
+echo 'Execute fixmate to give MC and ms tags'
+
+for i in *.sorted.tmp.bam
+do
+samtools fixmate -@ 10 -m $i ${i%.sorted.tmp.bam}.fix.tmp.bam
+done 
+
+rm -f *.sorted.tmp.bam
+
+echo "---------------------------------------"
+echo 'Execute samtools to sort coordinates' 
+
+for i in *.fix.tmp.bam
+do
+samtools sort -@ 10 -o ${i%.fix.tmp.bam}.sorted.tmp.bam $i
+done 
+
+rm -f *.fix.tmp.bam
+
+echo "---------------------------------------"
+echo 'Execute markdup to mark and remove duplicates' 
+
+for i in *.sorted.tmp.bam
+do
+samtools markdup -@ 10 -r $i $OUTDIR/${i%.sorted.tmp.bam}_dups_rem.bam
+done 
+
+rm -f *.sorted.tmp.bam 
+
+echo "---------------------------------------"
+echo "Finsihed!"

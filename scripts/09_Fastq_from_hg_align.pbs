@@ -1,0 +1,51 @@
+#!/bin/bash
+#PBS -N fastq_from_hg_align
+#PBS -j oe
+#PBS -m ae
+#PBS -l nodes=1
+#PBS -l ncpus=21
+#PBS -l mem=100gb
+#PBS -l walltime=72:00:00
+#PBS -M jacob.westaway@menzies.edu.au
+
+echo "---------------------------------------"
+echo "PBS: Job identifier is $PBS_JOBID"
+echo "PBS: Job name is $PBS_JOBNAME"
+
+echo "---------------------------------------"
+echo "Define paths to bwa and samtools"
+export PATH=$PATH:/usr/local/miniconda3/envs/assembly/bin/
+export PATH=$PATH:/usr/local/bwa-0.7.10 
+
+echo "---------------------------------------"
+echo 'Change to working directory' 
+cd /home/jwestaway/pk_pipeline/ZB_100/outputs/hg_removed_alignment/sortedbam/
+
+echo "---------------------------------------"
+echo 'Set environment vars for bam file step'
+OUTDIR="/home/jwestaway/pk_pipeline/ZB_100/outputs/hg_removed_alignment/unaligned_pairs/"
+mkdir -p $OUTDIR
+
+echo "---------------------------------------"
+echo 'Get un-aligned reads (Pk reads)'
+for i in *.bam
+do
+samtools view -@ 20 -b -f 12 -F 256 -o $OUTDIR/${i%.bam}.unaligned.bam $i 
+done 
+
+echo "---------------------------------------"
+echo 'Set environment vars for fastq file step'
+cd $OUTDIR
+INDEXTDIR="/home/jwestaway/pk_pipeline/ref_genomes/human/GRCh38d1_noalt.fa"
+OUTDIR="/home/jwestaway/pk_pipeline/ZB_100/outputs/hg_removed_alignment/hg_rem_fastq/"
+mkdir -p $OUTDIR
+
+echo "---------------------------------------"
+echo 'Get fastqs from unaligned pk read pairs'
+for i in *.unaligned.bam
+do
+samtools bam2fq -@ 20 -1 $OUTDIR/${i%.unaligned.bam}_unmapped_R1.fq.gz -2 $OUTDIR/${i%.unaligned.bam}_unmapped_R2.fq.gz -N --reference $INDEXTDIR -s /dev/null $i
+done 
+
+echo "---------------------------------------"
+echo "Finsihed!"

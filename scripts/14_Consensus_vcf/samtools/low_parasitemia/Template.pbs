@@ -1,0 +1,39 @@
+#!/bin/bash
+#PBS -N VCF_con_samtools
+#PBS -j oe
+#PBS -m ae
+#PBS -l nodes=1
+#PBS -l ncpus=11
+#PBS -l mem=50gb
+#PBS -l walltime=24:00:00
+#PBS -M jacob.westaway@menzies.edu.au
+
+echo "---------------------------------------"
+echo "PBS: Job identifier is $PBS_JOBID"
+echo "PBS: Job name is $PBS_JOBNAME"
+
+echo "---------------------------------------"
+echo "Define paths to samtools"
+export PATH=$PATH:/home/jwestaway/pk_pipeline/tools/bcftools-1.13/
+export PATH=$PATH:/usr/local/jdk1.8.0_131/bin
+export PATH=$PATH:/usr/local/jre1.8.0_111/bin
+export PATH=$PATH:/usr/local/GenomeAnalysisTK-3.2.2 
+
+echo "---------------------------------------"
+echo 'Change to working directory and set env variables'
+cd /home/jwestaway/pk_pipeline/ZB_100/outputs/vcf_consensus/GATK/SAMPLE
+INDEXTDIR="/home/jwestaway/pk_pipeline/ref_genomes/PKA1H1/fasta/strain_A1_H.1.Icor.fasta"
+PICARD="/usr/local/miniconda3/pkgs/picard-2.21.9-0/share/picard-2.21.9-0/picard.jar"
+OUTDIR="/home/jwestaway/pk_pipeline/ZB_100/outputs/vcf_consensus/samtools/SAMPLE"
+mkdir $OUTDIR
+
+echo "---------------------------------------"
+echo 'Call variants with samtools'
+
+bcftools mpileup --threads 10 -f $INDEXTDIR SAMPLE.dupmarked.reheader.bam \
+   | bcftools call -mv -Ob -o $OUTDIR/SAMPLE_samtools.raw.vcf.gz
+
+bcftools index --threads 10 -t -o $OUTDIR/SAMPLE_samtools.raw.vcf.gz.tbi $OUTDIR/SAMPLE_samtools.raw.vcf.gz
+
+echo "---------------------------------------"
+echo "Finsihed!"
