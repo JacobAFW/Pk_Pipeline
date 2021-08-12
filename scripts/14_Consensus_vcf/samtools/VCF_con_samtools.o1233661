@@ -1,0 +1,15 @@
+---------------------------------------
+PBS: Job identifier is 1233661.cheetah
+PBS: Job name is VCF_con_samtools
+---------------------------------------
+Define paths to samtools
+---------------------------------------
+Change to working directory and set env variables
+mkdir: cannot create directory `/home/jwestaway/pk_pipeline/ZB_100/outputs/vcf_consensus/samtools/PK_SB_DNA_006_DKDL210002135-1a_HWHGKDSXY_L4': File exists
+---------------------------------------
+Call variants
+Note: none of --samples-file, --ploidy or --ploidy-file given, assuming all sites are diploid
+[mpileup] 1 samples in 1 input files
+[mpileup] maximum number of reads per input file set to -d 250
+---------------------------------------
+Finsihed!

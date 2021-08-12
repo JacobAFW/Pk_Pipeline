@@ -1,0 +1,1237 @@
+---------------------------------------
+PBS: Job identifier is 1233701.cheetah
+PBS: Job name is VCF_Con
+---------------------------------------
+Define paths to samtools
+---------------------------------------
+Change to working directory and set env variables
+---------------------------------------
+MarkDuplicates
+INFO	2021-08-09 08:36:09	MarkDuplicates	
+
+********** NOTE: Picard's command line syntax is changing.
+**********
+********** For more information, please see:
+********** https://github.com/broadinstitute/picard/wiki/Command-Line-Syntax-Transition-For-Users-(Pre-Transition)
+**********
+********** The command line looks like this in the new syntax:
+**********
+**********    MarkDuplicates -AS TRUE -VALIDATION_STRINGENCY LENIENT -I /home/jwestaway/pk_pipeline/low_parasitemia/outputs/pk_alignment/PK_SB_DNA_093_DKDL210002222-1a_HWHGKDSXY_L4.sorted.bam -O /home/jwestaway/pk_pipeline/ZB_100/outputs/vcf_consensus/GATK/PK_SB_DNA_093_DKDL210002222-1a_HWHGKDSXY_L4/PK_SB_DNA_093_DKDL210002222-1a_HWHGKDSXY_L4.dupmarked.bam -M /home/jwestaway/pk_pipeline/ZB_100/outputs/vcf_consensus/GATK/PK_SB_DNA_093_DKDL210002222-1a_HWHGKDSXY_L4/PK_SB_DNA_093_DKDL210002222-1a_HWHGKDSXY_L4_picard_metrics_file.txt
+**********
+
+
+08:36:09.867 INFO  NativeLibraryLoader - Loading libgkl_compression.so from jar:file:/usr/local/miniconda3/pkgs/picard-2.21.9-0/share/picard-2.21.9-0/picard.jar!/com/intel/gkl/native/libgkl_compression.so
+[Mon Aug 09 08:36:09 ACST 2021] MarkDuplicates INPUT=[/home/jwestaway/pk_pipeline/low_parasitemia/outputs/pk_alignment/PK_SB_DNA_093_DKDL210002222-1a_HWHGKDSXY_L4.sorted.bam] OUTPUT=/home/jwestaway/pk_pipeline/ZB_100/outputs/vcf_consensus/GATK/PK_SB_DNA_093_DKDL210002222-1a_HWHGKDSXY_L4/PK_SB_DNA_093_DKDL210002222-1a_HWHGKDSXY_L4.dupmarked.bam METRICS_FILE=/home/jwestaway/pk_pipeline/ZB_100/outputs/vcf_consensus/GATK/PK_SB_DNA_093_DKDL210002222-1a_HWHGKDSXY_L4/PK_SB_DNA_093_DKDL210002222-1a_HWHGKDSXY_L4_picard_metrics_file.txt ASSUME_SORTED=true VALIDATION_STRINGENCY=LENIENT    MAX_SEQUENCES_FOR_DISK_READ_ENDS_MAP=50000 MAX_FILE_HANDLES_FOR_READ_ENDS_MAP=8000 SORTING_COLLECTION_SIZE_RATIO=0.25 TAG_DUPLICATE_SET_MEMBERS=false REMOVE_SEQUENCING_DUPLICATES=false TAGGING_POLICY=DontTag CLEAR_DT=true DUPLEX_UMI=false ADD_PG_TAG_TO_READS=true REMOVE_DUPLICATES=false DUPLICATE_SCORING_STRATEGY=SUM_OF_BASE_QUALITIES PROGRAM_RECORD_ID=MarkDuplicates PROGRAM_GROUP_NAME=MarkDuplicates READ_NAME_REGEX=<optimized capture of last three ':' separated fields as numeric values> OPTICAL_DUPLICATE_PIXEL_DISTANCE=100 MAX_OPTICAL_DUPLICATE_SET_SIZE=300000 VERBOSITY=INFO QUIET=false COMPRESSION_LEVEL=5 MAX_RECORDS_IN_RAM=500000 CREATE_INDEX=false CREATE_MD5_FILE=false GA4GH_CLIENT_SECRETS=client_secrets.json USE_JDK_DEFLATER=false USE_JDK_INFLATER=false
+[Mon Aug 09 08:36:09 ACST 2021] Executing as jwestaway@cheetah01 on Linux 2.6.32-754.14.2.el6.x86_64 amd64; Java HotSpot(TM) 64-Bit Server VM 1.8.0_131-b11; Deflater: Intel; Inflater: Intel; Provider GCS is not available; Picard version: 2.21.9-SNAPSHOT
+INFO	2021-08-09 08:36:10	MarkDuplicates	Start of doWork freeMemory: 2054515000; totalMemory: 2076049408; maxMemory: 31136546816
+INFO	2021-08-09 08:36:10	MarkDuplicates	Reading input file and constructing read end information.
+INFO	2021-08-09 08:36:10	MarkDuplicates	Will retain up to 112813575 data points before spilling to disk.
+Ignoring SAM validation error: ERROR::HEADER_RECORD_MISSING_REQUIRED_TAG:File /home/jwestaway/pk_pipeline/low_parasitemia/outputs/pk_alignment/PK_SB_DNA_093_DKDL210002222-1a_HWHGKDSXY_L4.sorted.bam, Error parsing SAM header. @RG line missing SM tag. Line:
+@RG	ID:PK_SB_DNA_093_DKDL210002222-1a_HWHGKDSXY_L4	PL:ILLUMINA
+INFO	2021-08-09 08:36:39	MarkDuplicates	Read     1,000,000 records.  Elapsed time: 00:00:27s.  Time for last 1,000,000:   27s.  Last read position: ordered_PKNH_03_v2:637,856
+INFO	2021-08-09 08:36:39	MarkDuplicates	Tracking 236609 as yet unmatched pairs. 191092 records in RAM.
+INFO	2021-08-09 08:36:47	MarkDuplicates	Read     2,000,000 records.  Elapsed time: 00:00:35s.  Time for last 1,000,000:    8s.  Last read position: ordered_PKNH_03_v2:637,877
+INFO	2021-08-09 08:36:47	MarkDuplicates	Tracking 429195 as yet unmatched pairs. 142502 records in RAM.
+INFO	2021-08-09 08:36:57	MarkDuplicates	Read     3,000,000 records.  Elapsed time: 00:00:45s.  Time for last 1,000,000:    9s.  Last read position: ordered_PKNH_04_v2:442,997
+INFO	2021-08-09 08:36:57	MarkDuplicates	Tracking 265470 as yet unmatched pairs. 1699 records in RAM.
+INFO	2021-08-09 08:37:07	MarkDuplicates	Read     4,000,000 records.  Elapsed time: 00:00:55s.  Time for last 1,000,000:    9s.  Last read position: ordered_PKNH_08_v2:1,061,025
+INFO	2021-08-09 08:37:07	MarkDuplicates	Tracking 271116 as yet unmatched pairs. 5301 records in RAM.
+INFO	2021-08-09 08:37:16	MarkDuplicates	Read     5,000,000 records.  Elapsed time: 00:01:04s.  Time for last 1,000,000:    9s.  Last read position: ordered_PKNH_10_v2:1,126,146
+INFO	2021-08-09 08:37:16	MarkDuplicates	Tracking 261849 as yet unmatched pairs. 3111 records in RAM.
+INFO	2021-08-09 08:37:28	MarkDuplicates	Read     6,000,000 records.  Elapsed time: 00:01:16s.  Time for last 1,000,000:   11s.  Last read position: ordered_PKNH_11_v2:1,842,564
+INFO	2021-08-09 08:37:28	MarkDuplicates	Tracking 250572 as yet unmatched pairs. 4909 records in RAM.
+INFO	2021-08-09 08:37:41	MarkDuplicates	Read     7,000,000 records.  Elapsed time: 00:01:29s.  Time for last 1,000,000:   13s.  Last read position: ordered_PKNH_13_v2:592,134
+INFO	2021-08-09 08:37:41	MarkDuplicates	Tracking 161345 as yet unmatched pairs. 11636 records in RAM.
+INFO	2021-08-09 08:37:55	MarkDuplicates	Read     8,000,000 records.  Elapsed time: 00:01:43s.  Time for last 1,000,000:   13s.  Last read position: ordered_PKNH_14_v2:2,135,833
+INFO	2021-08-09 08:37:55	MarkDuplicates	Tracking 13910 as yet unmatched pairs. 13741 records in RAM.
+INFO	2021-08-09 08:37:57	MarkDuplicates	Read 8228410 records. 0 pairs never matched.
+INFO	2021-08-09 08:37:59	MarkDuplicates	After buildSortedReadEndLists freeMemory: 2412114896; totalMemory: 4153778176; maxMemory: 31136546816
+INFO	2021-08-09 08:37:59	MarkDuplicates	Will retain up to 973017088 duplicate indices before spilling to disk.
+INFO	2021-08-09 08:38:10	MarkDuplicates	Traversing read pair information and detecting duplicates.
+INFO	2021-08-09 08:38:13	OpticalDuplicateFinder	Large duplicate set. size = 1865
+INFO	2021-08-09 08:38:14	OpticalDuplicateFinder	compared         1,000 ReadEnds to others.  Elapsed time: 00:00:00s.  Time for last 1,000:    0s.  Last read position: 0:16,351
+INFO	2021-08-09 08:38:14	OpticalDuplicateFinder	Large duplicate set. size = 2012
+INFO	2021-08-09 08:38:14	OpticalDuplicateFinder	compared         1,000 ReadEnds to others.  Elapsed time: 00:00:00s.  Time for last 1,000:    0s.  Last read position: 0:23,430
+INFO	2021-08-09 08:38:14	OpticalDuplicateFinder	compared         2,000 ReadEnds to others.  Elapsed time: 00:00:00s.  Time for last 1,000:    0s.  Last read position: 0:10,131
+INFO	2021-08-09 08:38:14	OpticalDuplicateFinder	Large duplicate set. size = 2187
+INFO	2021-08-09 08:38:14	OpticalDuplicateFinder	compared         1,000 ReadEnds to others.  Elapsed time: 00:00:00s.  Time for last 1,000:    0s.  Last read position: 0:28,944
+INFO	2021-08-09 08:38:14	OpticalDuplicateFinder	compared         2,000 ReadEnds to others.  Elapsed time: 00:00:00s.  Time for last 1,000:    0s.  Last read position: 0:21,025
+INFO	2021-08-09 08:38:14	OpticalDuplicateFinder	Large duplicate set. size = 2738
+INFO	2021-08-09 08:38:15	OpticalDuplicateFinder	compared         1,000 ReadEnds to others.  Elapsed time: 00:00:00s.  Time for last 1,000:    0s.  Last read position: 0:6,216
+INFO	2021-08-09 08:38:15	OpticalDuplicateFinder	compared         2,000 ReadEnds to others.  Elapsed time: 00:00:00s.  Time for last 1,000:    0s.  Last read position: 0:30,526
+INFO	2021-08-09 08:38:15	OpticalDuplicateFinder	Large duplicate set. size = 2658
+INFO	2021-08-09 08:38:15	OpticalDuplicateFinder	compared         1,000 ReadEnds to others.  Elapsed time: 00:00:00s.  Time for last 1,000:    0s.  Last read position: 0:22,191
+INFO	2021-08-09 08:38:15	OpticalDuplicateFinder	compared         2,000 ReadEnds to others.  Elapsed time: 00:00:00s.  Time for last 1,000:    0s.  Last read position: 0:20,012
+INFO	2021-08-09 08:38:15	OpticalDuplicateFinder	Large duplicate set. size = 3737
+INFO	2021-08-09 08:38:16	OpticalDuplicateFinder	compared         1,000 ReadEnds to others.  Elapsed time: 00:00:00s.  Time for last 1,000:    0s.  Last read position: 0:25,952
+INFO	2021-08-09 08:38:16	OpticalDuplicateFinder	compared         2,000 ReadEnds to others.  Elapsed time: 00:00:00s.  Time for last 1,000:    0s.  Last read position: 0:24,858
+INFO	2021-08-09 08:38:16	OpticalDuplicateFinder	compared         3,000 ReadEnds to others.  Elapsed time: 00:00:00s.  Time for last 1,000:    0s.  Last read position: 0:2,537
+INFO	2021-08-09 08:38:16	OpticalDuplicateFinder	Large duplicate set. size = 11011
+INFO	2021-08-09 08:38:17	OpticalDuplicateFinder	compared        10,000 ReadEnds to keeper.  Elapsed time: 00:00:00s.  Time for last 10,000:    0s.  Last read position: 0:11,496
+INFO	2021-08-09 08:38:17	OpticalDuplicateFinder	compared         1,000 ReadEnds to others.  Elapsed time: 00:00:01s.  Time for last 1,000:    0s.  Last read position: 0:2,781
+INFO	2021-08-09 08:38:17	OpticalDuplicateFinder	compared         2,000 ReadEnds to others.  Elapsed time: 00:00:01s.  Time for last 1,000:    0s.  Last read position: 0:28,429
+INFO	2021-08-09 08:38:17	OpticalDuplicateFinder	compared         3,000 ReadEnds to others.  Elapsed time: 00:00:01s.  Time for last 1,000:    0s.  Last read position: 0:10,511
+INFO	2021-08-09 08:38:17	OpticalDuplicateFinder	compared         4,000 ReadEnds to others.  Elapsed time: 00:00:01s.  Time for last 1,000:    0s.  Last read position: 0:18,539
+INFO	2021-08-09 08:38:17	OpticalDuplicateFinder	compared         5,000 ReadEnds to others.  Elapsed time: 00:00:01s.  Time for last 1,000:    0s.  Last read position: 0:24,017
+INFO	2021-08-09 08:38:17	OpticalDuplicateFinder	compared         6,000 ReadEnds to others.  Elapsed time: 00:00:01s.  Time for last 1,000:    0s.  Last read position: 0:27,308
+INFO	2021-08-09 08:38:17	OpticalDuplicateFinder	compared         7,000 ReadEnds to others.  Elapsed time: 00:00:01s.  Time for last 1,000:    0s.  Last read position: 0:7,139
+INFO	2021-08-09 08:38:17	OpticalDuplicateFinder	compared         8,000 ReadEnds to others.  Elapsed time: 00:00:01s.  Time for last 1,000:    0s.  Last read position: 0:27,615
+INFO	2021-08-09 08:38:17	OpticalDuplicateFinder	compared         9,000 ReadEnds to others.  Elapsed time: 00:00:01s.  Time for last 1,000:    0s.  Last read position: 0:12,726
+INFO	2021-08-09 08:38:17	OpticalDuplicateFinder	compared        10,000 ReadEnds to others.  Elapsed time: 00:00:01s.  Time for last 1,000:    0s.  Last read position: 0:18,837
+INFO	2021-08-09 08:38:17	OpticalDuplicateFinder	compared        11,000 ReadEnds to others.  Elapsed time: 00:00:01s.  Time for last 1,000:    0s.  Last read position: 0:20,980
+INFO	2021-08-09 08:38:17	OpticalDuplicateFinder	Large duplicate set. size = 15237
+INFO	2021-08-09 08:38:19	OpticalDuplicateFinder	compared        10,000 ReadEnds to keeper.  Elapsed time: 00:00:01s.  Time for last 10,000:    0s.  Last read position: 0:11,189
+INFO	2021-08-09 08:38:20	OpticalDuplicateFinder	compared         1,000 ReadEnds to others.  Elapsed time: 00:00:02s.  Time for last 1,000:    0s.  Last read position: 0:30,635
+INFO	2021-08-09 08:38:20	OpticalDuplicateFinder	compared         2,000 ReadEnds to others.  Elapsed time: 00:00:02s.  Time for last 1,000:    0s.  Last read position: 0:8,522
+INFO	2021-08-09 08:38:20	OpticalDuplicateFinder	compared         3,000 ReadEnds to others.  Elapsed time: 00:00:02s.  Time for last 1,000:    0s.  Last read position: 0:20,925
+INFO	2021-08-09 08:38:20	OpticalDuplicateFinder	compared         4,000 ReadEnds to others.  Elapsed time: 00:00:02s.  Time for last 1,000:    0s.  Last read position: 0:24,994
+INFO	2021-08-09 08:38:20	OpticalDuplicateFinder	compared         5,000 ReadEnds to others.  Elapsed time: 00:00:02s.  Time for last 1,000:    0s.  Last read position: 0:10,538
+INFO	2021-08-09 08:38:20	OpticalDuplicateFinder	compared         6,000 ReadEnds to others.  Elapsed time: 00:00:02s.  Time for last 1,000:    0s.  Last read position: 0:12,057
+INFO	2021-08-09 08:38:20	OpticalDuplicateFinder	compared         7,000 ReadEnds to others.  Elapsed time: 00:00:02s.  Time for last 1,000:    0s.  Last read position: 0:8,531
+INFO	2021-08-09 08:38:20	OpticalDuplicateFinder	compared         8,000 ReadEnds to others.  Elapsed time: 00:00:02s.  Time for last 1,000:    0s.  Last read position: 0:30,644
+INFO	2021-08-09 08:38:20	OpticalDuplicateFinder	compared         9,000 ReadEnds to others.  Elapsed time: 00:00:02s.  Time for last 1,000:    0s.  Last read position: 0:11,767
+INFO	2021-08-09 08:38:20	OpticalDuplicateFinder	compared        10,000 ReadEnds to others.  Elapsed time: 00:00:02s.  Time for last 1,000:    0s.  Last read position: 0:21,079
+INFO	2021-08-09 08:38:20	OpticalDuplicateFinder	compared        11,000 ReadEnds to others.  Elapsed time: 00:00:02s.  Time for last 1,000:    0s.  Last read position: 0:20,184
+INFO	2021-08-09 08:38:20	OpticalDuplicateFinder	compared        12,000 ReadEnds to others.  Elapsed time: 00:00:02s.  Time for last 1,000:    0s.  Last read position: 0:28,736
+INFO	2021-08-09 08:38:20	OpticalDuplicateFinder	compared        13,000 ReadEnds to others.  Elapsed time: 00:00:02s.  Time for last 1,000:    0s.  Last read position: 0:22,788
+INFO	2021-08-09 08:38:20	OpticalDuplicateFinder	compared        14,000 ReadEnds to others.  Elapsed time: 00:00:02s.  Time for last 1,000:    0s.  Last read position: 0:15,456
+INFO	2021-08-09 08:38:20	OpticalDuplicateFinder	compared        15,000 ReadEnds to others.  Elapsed time: 00:00:03s.  Time for last 1,000:    0s.  Last read position: 0:17,879
+INFO	2021-08-09 08:38:20	OpticalDuplicateFinder	Large duplicate set. size = 16057
+INFO	2021-08-09 08:38:22	OpticalDuplicateFinder	compared        10,000 ReadEnds to keeper.  Elapsed time: 00:00:01s.  Time for last 10,000:    0s.  Last read position: 0:7,509
+INFO	2021-08-09 08:38:23	OpticalDuplicateFinder	compared         1,000 ReadEnds to others.  Elapsed time: 00:00:02s.  Time for last 1,000:    0s.  Last read position: 0:16,658
+INFO	2021-08-09 08:38:23	OpticalDuplicateFinder	compared         2,000 ReadEnds to others.  Elapsed time: 00:00:02s.  Time for last 1,000:    0s.  Last read position: 0:5,303
+INFO	2021-08-09 08:38:23	OpticalDuplicateFinder	compared         3,000 ReadEnds to others.  Elapsed time: 00:00:02s.  Time for last 1,000:    0s.  Last read position: 0:31,919
+INFO	2021-08-09 08:38:23	OpticalDuplicateFinder	compared         4,000 ReadEnds to others.  Elapsed time: 00:00:02s.  Time for last 1,000:    0s.  Last read position: 0:5,638
+INFO	2021-08-09 08:38:23	OpticalDuplicateFinder	compared         5,000 ReadEnds to others.  Elapsed time: 00:00:02s.  Time for last 1,000:    0s.  Last read position: 0:28,583
+INFO	2021-08-09 08:38:23	OpticalDuplicateFinder	compared         6,000 ReadEnds to others.  Elapsed time: 00:00:02s.  Time for last 1,000:    0s.  Last read position: 0:17,146
+INFO	2021-08-09 08:38:23	OpticalDuplicateFinder	compared         7,000 ReadEnds to others.  Elapsed time: 00:00:02s.  Time for last 1,000:    0s.  Last read position: 0:3,134
+INFO	2021-08-09 08:38:23	OpticalDuplicateFinder	compared         8,000 ReadEnds to others.  Elapsed time: 00:00:02s.  Time for last 1,000:    0s.  Last read position: 0:12,219
+INFO	2021-08-09 08:38:23	OpticalDuplicateFinder	compared         9,000 ReadEnds to others.  Elapsed time: 00:00:02s.  Time for last 1,000:    0s.  Last read position: 0:28,999
+INFO	2021-08-09 08:38:23	OpticalDuplicateFinder	compared        10,000 ReadEnds to others.  Elapsed time: 00:00:02s.  Time for last 1,000:    0s.  Last read position: 0:19,840
+INFO	2021-08-09 08:38:23	OpticalDuplicateFinder	compared        11,000 ReadEnds to others.  Elapsed time: 00:00:02s.  Time for last 1,000:    0s.  Last read position: 0:20,365
+INFO	2021-08-09 08:38:23	OpticalDuplicateFinder	compared        12,000 ReadEnds to others.  Elapsed time: 00:00:02s.  Time for last 1,000:    0s.  Last read position: 0:11,225
+INFO	2021-08-09 08:38:23	OpticalDuplicateFinder	compared        13,000 ReadEnds to others.  Elapsed time: 00:00:02s.  Time for last 1,000:    0s.  Last read position: 0:20,871
+INFO	2021-08-09 08:38:23	OpticalDuplicateFinder	compared        14,000 ReadEnds to others.  Elapsed time: 00:00:02s.  Time for last 1,000:    0s.  Last read position: 0:8,332
+INFO	2021-08-09 08:38:23	OpticalDuplicateFinder	compared        15,000 ReadEnds to others.  Elapsed time: 00:00:03s.  Time for last 1,000:    0s.  Last read position: 0:22,923
+INFO	2021-08-09 08:38:23	OpticalDuplicateFinder	compared        16,000 ReadEnds to others.  Elapsed time: 00:00:03s.  Time for last 1,000:    0s.  Last read position: 0:5,565
+INFO	2021-08-09 08:38:23	OpticalDuplicateFinder	Large duplicate set. size = 16599
+INFO	2021-08-09 08:38:25	OpticalDuplicateFinder	compared        10,000 ReadEnds to keeper.  Elapsed time: 00:00:02s.  Time for last 10,000:    0s.  Last read position: 0:19,623
+INFO	2021-08-09 08:38:26	OpticalDuplicateFinder	compared         1,000 ReadEnds to others.  Elapsed time: 00:00:02s.  Time for last 1,000:    0s.  Last read position: 0:14,055
+INFO	2021-08-09 08:38:26	OpticalDuplicateFinder	compared         2,000 ReadEnds to others.  Elapsed time: 00:00:02s.  Time for last 1,000:    0s.  Last read position: 0:20,627
+INFO	2021-08-09 08:38:26	OpticalDuplicateFinder	compared         3,000 ReadEnds to others.  Elapsed time: 00:00:02s.  Time for last 1,000:    0s.  Last read position: 0:11,957
+INFO	2021-08-09 08:38:26	OpticalDuplicateFinder	compared         4,000 ReadEnds to others.  Elapsed time: 00:00:02s.  Time for last 1,000:    0s.  Last read position: 0:8,603
+INFO	2021-08-09 08:38:26	OpticalDuplicateFinder	compared         5,000 ReadEnds to others.  Elapsed time: 00:00:02s.  Time for last 1,000:    0s.  Last read position: 0:6,659
+INFO	2021-08-09 08:38:26	OpticalDuplicateFinder	compared         6,000 ReadEnds to others.  Elapsed time: 00:00:02s.  Time for last 1,000:    0s.  Last read position: 0:27,941
+INFO	2021-08-09 08:38:26	OpticalDuplicateFinder	compared         7,000 ReadEnds to others.  Elapsed time: 00:00:02s.  Time for last 1,000:    0s.  Last read position: 0:9,010
+INFO	2021-08-09 08:38:26	OpticalDuplicateFinder	compared         8,000 ReadEnds to others.  Elapsed time: 00:00:02s.  Time for last 1,000:    0s.  Last read position: 0:2,483
+INFO	2021-08-09 08:38:26	OpticalDuplicateFinder	compared         9,000 ReadEnds to others.  Elapsed time: 00:00:02s.  Time for last 1,000:    0s.  Last read position: 0:14,950
+INFO	2021-08-09 08:38:26	OpticalDuplicateFinder	compared        10,000 ReadEnds to others.  Elapsed time: 00:00:02s.  Time for last 1,000:    0s.  Last read position: 0:10,547
+INFO	2021-08-09 08:38:26	OpticalDuplicateFinder	compared        11,000 ReadEnds to others.  Elapsed time: 00:00:02s.  Time for last 1,000:    0s.  Last read position: 0:1,705
+INFO	2021-08-09 08:38:26	OpticalDuplicateFinder	compared        12,000 ReadEnds to others.  Elapsed time: 00:00:02s.  Time for last 1,000:    0s.  Last read position: 0:28,221
+INFO	2021-08-09 08:38:26	OpticalDuplicateFinder	compared        13,000 ReadEnds to others.  Elapsed time: 00:00:02s.  Time for last 1,000:    0s.  Last read position: 0:12,518
+INFO	2021-08-09 08:38:26	OpticalDuplicateFinder	compared        14,000 ReadEnds to others.  Elapsed time: 00:00:02s.  Time for last 1,000:    0s.  Last read position: 0:25,979
+INFO	2021-08-09 08:38:26	OpticalDuplicateFinder	compared        15,000 ReadEnds to others.  Elapsed time: 00:00:02s.  Time for last 1,000:    0s.  Last read position: 0:18,484
+INFO	2021-08-09 08:38:26	OpticalDuplicateFinder	compared        16,000 ReadEnds to others.  Elapsed time: 00:00:02s.  Time for last 1,000:    0s.  Last read position: 0:9,625
+INFO	2021-08-09 08:38:26	OpticalDuplicateFinder	Large duplicate set. size = 16127
+INFO	2021-08-09 08:38:27	OpticalDuplicateFinder	compared        10,000 ReadEnds to keeper.  Elapsed time: 00:00:00s.  Time for last 10,000:    0s.  Last read position: 0:19,931
+INFO	2021-08-09 08:38:27	OpticalDuplicateFinder	compared         1,000 ReadEnds to others.  Elapsed time: 00:00:01s.  Time for last 1,000:    0s.  Last read position: 0:32,678
+INFO	2021-08-09 08:38:27	OpticalDuplicateFinder	compared         2,000 ReadEnds to others.  Elapsed time: 00:00:01s.  Time for last 1,000:    0s.  Last read position: 0:11,885
+INFO	2021-08-09 08:38:27	OpticalDuplicateFinder	compared         3,000 ReadEnds to others.  Elapsed time: 00:00:01s.  Time for last 1,000:    0s.  Last read position: 0:15,763
+INFO	2021-08-09 08:38:27	OpticalDuplicateFinder	compared         4,000 ReadEnds to others.  Elapsed time: 00:00:01s.  Time for last 1,000:    0s.  Last read position: 0:21,640
+INFO	2021-08-09 08:38:27	OpticalDuplicateFinder	compared         5,000 ReadEnds to others.  Elapsed time: 00:00:01s.  Time for last 1,000:    0s.  Last read position: 0:9,805
+INFO	2021-08-09 08:38:27	OpticalDuplicateFinder	compared         6,000 ReadEnds to others.  Elapsed time: 00:00:01s.  Time for last 1,000:    0s.  Last read position: 0:9,869
+INFO	2021-08-09 08:38:27	OpticalDuplicateFinder	compared         7,000 ReadEnds to others.  Elapsed time: 00:00:01s.  Time for last 1,000:    0s.  Last read position: 0:6,867
+INFO	2021-08-09 08:38:27	OpticalDuplicateFinder	compared         8,000 ReadEnds to others.  Elapsed time: 00:00:01s.  Time for last 1,000:    0s.  Last read position: 0:32,759
+INFO	2021-08-09 08:38:27	OpticalDuplicateFinder	compared         9,000 ReadEnds to others.  Elapsed time: 00:00:01s.  Time for last 1,000:    0s.  Last read position: 0:32,579
+INFO	2021-08-09 08:38:27	OpticalDuplicateFinder	compared        10,000 ReadEnds to others.  Elapsed time: 00:00:01s.  Time for last 1,000:    0s.  Last read position: 0:7,591
+INFO	2021-08-09 08:38:27	OpticalDuplicateFinder	compared        11,000 ReadEnds to others.  Elapsed time: 00:00:01s.  Time for last 1,000:    0s.  Last read position: 0:6,017
+INFO	2021-08-09 08:38:27	OpticalDuplicateFinder	compared        12,000 ReadEnds to others.  Elapsed time: 00:00:01s.  Time for last 1,000:    0s.  Last read position: 0:28,311
+INFO	2021-08-09 08:38:27	OpticalDuplicateFinder	compared        13,000 ReadEnds to others.  Elapsed time: 00:00:01s.  Time for last 1,000:    0s.  Last read position: 0:4,029
+INFO	2021-08-09 08:38:27	OpticalDuplicateFinder	compared        14,000 ReadEnds to others.  Elapsed time: 00:00:01s.  Time for last 1,000:    0s.  Last read position: 0:24,361
+INFO	2021-08-09 08:38:27	OpticalDuplicateFinder	compared        15,000 ReadEnds to others.  Elapsed time: 00:00:01s.  Time for last 1,000:    0s.  Last read position: 0:9,046
+INFO	2021-08-09 08:38:27	OpticalDuplicateFinder	compared        16,000 ReadEnds to others.  Elapsed time: 00:00:01s.  Time for last 1,000:    0s.  Last read position: 0:20,112
+INFO	2021-08-09 08:38:27	OpticalDuplicateFinder	Large duplicate set. size = 14470
+INFO	2021-08-09 08:38:29	OpticalDuplicateFinder	compared        10,000 ReadEnds to keeper.  Elapsed time: 00:00:01s.  Time for last 10,000:    0s.  Last read position: 0:18,864
+INFO	2021-08-09 08:38:29	OpticalDuplicateFinder	compared         1,000 ReadEnds to others.  Elapsed time: 00:00:01s.  Time for last 1,000:    0s.  Last read position: 0:8,558
+INFO	2021-08-09 08:38:29	OpticalDuplicateFinder	compared         2,000 ReadEnds to others.  Elapsed time: 00:00:01s.  Time for last 1,000:    0s.  Last read position: 0:27,281
+INFO	2021-08-09 08:38:29	OpticalDuplicateFinder	compared         3,000 ReadEnds to others.  Elapsed time: 00:00:01s.  Time for last 1,000:    0s.  Last read position: 0:1,949
+INFO	2021-08-09 08:38:29	OpticalDuplicateFinder	compared         4,000 ReadEnds to others.  Elapsed time: 00:00:01s.  Time for last 1,000:    0s.  Last read position: 0:31,195
+INFO	2021-08-09 08:38:29	OpticalDuplicateFinder	compared         5,000 ReadEnds to others.  Elapsed time: 00:00:01s.  Time for last 1,000:    0s.  Last read position: 0:7,202
+INFO	2021-08-09 08:38:29	OpticalDuplicateFinder	compared         6,000 ReadEnds to others.  Elapsed time: 00:00:01s.  Time for last 1,000:    0s.  Last read position: 0:13,395
+INFO	2021-08-09 08:38:29	OpticalDuplicateFinder	compared         7,000 ReadEnds to others.  Elapsed time: 00:00:01s.  Time for last 1,000:    0s.  Last read position: 0:30,942
+INFO	2021-08-09 08:38:29	OpticalDuplicateFinder	compared         8,000 ReadEnds to others.  Elapsed time: 00:00:01s.  Time for last 1,000:    0s.  Last read position: 0:27,073
+INFO	2021-08-09 08:38:29	OpticalDuplicateFinder	compared         9,000 ReadEnds to others.  Elapsed time: 00:00:01s.  Time for last 1,000:    0s.  Last read position: 0:31,792
+INFO	2021-08-09 08:38:29	OpticalDuplicateFinder	compared        10,000 ReadEnds to others.  Elapsed time: 00:00:01s.  Time for last 1,000:    0s.  Last read position: 0:9,146
+INFO	2021-08-09 08:38:29	OpticalDuplicateFinder	compared        11,000 ReadEnds to others.  Elapsed time: 00:00:01s.  Time for last 1,000:    0s.  Last read position: 0:19,660
+INFO	2021-08-09 08:38:29	OpticalDuplicateFinder	compared        12,000 ReadEnds to others.  Elapsed time: 00:00:01s.  Time for last 1,000:    0s.  Last read position: 0:27,118
+INFO	2021-08-09 08:38:29	OpticalDuplicateFinder	compared        13,000 ReadEnds to others.  Elapsed time: 00:00:01s.  Time for last 1,000:    0s.  Last read position: 0:30,897
+INFO	2021-08-09 08:38:29	OpticalDuplicateFinder	compared        14,000 ReadEnds to others.  Elapsed time: 00:00:01s.  Time for last 1,000:    0s.  Last read position: 0:2,293
+INFO	2021-08-09 08:38:29	OpticalDuplicateFinder	Large duplicate set. size = 10534
+INFO	2021-08-09 08:38:29	OpticalDuplicateFinder	compared        10,000 ReadEnds to keeper.  Elapsed time: 00:00:00s.  Time for last 10,000:    0s.  Last read position: 0:4,128
+INFO	2021-08-09 08:38:29	OpticalDuplicateFinder	compared         1,000 ReadEnds to others.  Elapsed time: 00:00:00s.  Time for last 1,000:    0s.  Last read position: 0:16,441
+INFO	2021-08-09 08:38:29	OpticalDuplicateFinder	compared         2,000 ReadEnds to others.  Elapsed time: 00:00:00s.  Time for last 1,000:    0s.  Last read position: 0:17,734
+INFO	2021-08-09 08:38:29	OpticalDuplicateFinder	compared         3,000 ReadEnds to others.  Elapsed time: 00:00:00s.  Time for last 1,000:    0s.  Last read position: 0:26,078
+INFO	2021-08-09 08:38:29	OpticalDuplicateFinder	compared         4,000 ReadEnds to others.  Elapsed time: 00:00:00s.  Time for last 1,000:    0s.  Last read position: 0:15,429
+INFO	2021-08-09 08:38:29	OpticalDuplicateFinder	compared         5,000 ReadEnds to others.  Elapsed time: 00:00:00s.  Time for last 1,000:    0s.  Last read position: 0:25,889
+INFO	2021-08-09 08:38:29	OpticalDuplicateFinder	compared         6,000 ReadEnds to others.  Elapsed time: 00:00:00s.  Time for last 1,000:    0s.  Last read position: 0:3,766
+INFO	2021-08-09 08:38:29	OpticalDuplicateFinder	compared         7,000 ReadEnds to others.  Elapsed time: 00:00:00s.  Time for last 1,000:    0s.  Last read position: 0:22,643
+INFO	2021-08-09 08:38:29	OpticalDuplicateFinder	compared         8,000 ReadEnds to others.  Elapsed time: 00:00:00s.  Time for last 1,000:    0s.  Last read position: 0:14,796
+INFO	2021-08-09 08:38:29	OpticalDuplicateFinder	compared         9,000 ReadEnds to others.  Elapsed time: 00:00:00s.  Time for last 1,000:    0s.  Last read position: 0:8,784
+INFO	2021-08-09 08:38:29	OpticalDuplicateFinder	compared        10,000 ReadEnds to others.  Elapsed time: 00:00:00s.  Time for last 1,000:    0s.  Last read position: 0:28,809
+INFO	2021-08-09 08:38:30	OpticalDuplicateFinder	Large duplicate set. size = 7713
+INFO	2021-08-09 08:38:30	OpticalDuplicateFinder	compared         1,000 ReadEnds to others.  Elapsed time: 00:00:00s.  Time for last 1,000:    0s.  Last read position: 0:15,790
+INFO	2021-08-09 08:38:30	OpticalDuplicateFinder	compared         2,000 ReadEnds to others.  Elapsed time: 00:00:00s.  Time for last 1,000:    0s.  Last read position: 0:21,269
+INFO	2021-08-09 08:38:30	OpticalDuplicateFinder	compared         3,000 ReadEnds to others.  Elapsed time: 00:00:00s.  Time for last 1,000:    0s.  Last read position: 0:31,837
+INFO	2021-08-09 08:38:30	OpticalDuplicateFinder	compared         4,000 ReadEnds to others.  Elapsed time: 00:00:00s.  Time for last 1,000:    0s.  Last read position: 0:11,324
+INFO	2021-08-09 08:38:30	OpticalDuplicateFinder	compared         5,000 ReadEnds to others.  Elapsed time: 00:00:00s.  Time for last 1,000:    0s.  Last read position: 0:31,620
+INFO	2021-08-09 08:38:30	OpticalDuplicateFinder	compared         6,000 ReadEnds to others.  Elapsed time: 00:00:00s.  Time for last 1,000:    0s.  Last read position: 0:28,348
+INFO	2021-08-09 08:38:30	OpticalDuplicateFinder	compared         7,000 ReadEnds to others.  Elapsed time: 00:00:00s.  Time for last 1,000:    0s.  Last read position: 0:26,386
+INFO	2021-08-09 08:38:30	OpticalDuplicateFinder	Large duplicate set. size = 5798
+INFO	2021-08-09 08:38:30	OpticalDuplicateFinder	compared         1,000 ReadEnds to others.  Elapsed time: 00:00:00s.  Time for last 1,000:    0s.  Last read position: 0:7,455
+INFO	2021-08-09 08:38:30	OpticalDuplicateFinder	compared         2,000 ReadEnds to others.  Elapsed time: 00:00:00s.  Time for last 1,000:    0s.  Last read position: 0:1,895
+INFO	2021-08-09 08:38:30	OpticalDuplicateFinder	compared         3,000 ReadEnds to others.  Elapsed time: 00:00:00s.  Time for last 1,000:    0s.  Last read position: 0:4,942
+INFO	2021-08-09 08:38:30	OpticalDuplicateFinder	compared         4,000 ReadEnds to others.  Elapsed time: 00:00:00s.  Time for last 1,000:    0s.  Last read position: 0:29,577
+INFO	2021-08-09 08:38:30	OpticalDuplicateFinder	compared         5,000 ReadEnds to others.  Elapsed time: 00:00:00s.  Time for last 1,000:    0s.  Last read position: 0:3,314
+INFO	2021-08-09 08:38:30	OpticalDuplicateFinder	Large duplicate set. size = 5571
+INFO	2021-08-09 08:38:30	OpticalDuplicateFinder	compared         1,000 ReadEnds to others.  Elapsed time: 00:00:00s.  Time for last 1,000:    0s.  Last read position: 0:14,398
+INFO	2021-08-09 08:38:30	OpticalDuplicateFinder	compared         2,000 ReadEnds to others.  Elapsed time: 00:00:00s.  Time for last 1,000:    0s.  Last read position: 0:1,904
+INFO	2021-08-09 08:38:30	OpticalDuplicateFinder	compared         3,000 ReadEnds to others.  Elapsed time: 00:00:00s.  Time for last 1,000:    0s.  Last read position: 0:4,869
+INFO	2021-08-09 08:38:30	OpticalDuplicateFinder	compared         4,000 ReadEnds to others.  Elapsed time: 00:00:00s.  Time for last 1,000:    0s.  Last read position: 0:1,190
+INFO	2021-08-09 08:38:31	OpticalDuplicateFinder	compared         5,000 ReadEnds to others.  Elapsed time: 00:00:00s.  Time for last 1,000:    0s.  Last read position: 0:14,796
+INFO	2021-08-09 08:38:31	OpticalDuplicateFinder	Large duplicate set. size = 5691
+INFO	2021-08-09 08:38:31	OpticalDuplicateFinder	compared         1,000 ReadEnds to others.  Elapsed time: 00:00:00s.  Time for last 1,000:    0s.  Last read position: 0:11,478
+INFO	2021-08-09 08:38:31	OpticalDuplicateFinder	compared         2,000 ReadEnds to others.  Elapsed time: 00:00:00s.  Time for last 1,000:    0s.  Last read position: 0:2,284
+INFO	2021-08-09 08:38:31	OpticalDuplicateFinder	compared         3,000 ReadEnds to others.  Elapsed time: 00:00:00s.  Time for last 1,000:    0s.  Last read position: 0:10,041
+INFO	2021-08-09 08:38:31	OpticalDuplicateFinder	compared         4,000 ReadEnds to others.  Elapsed time: 00:00:00s.  Time for last 1,000:    0s.  Last read position: 0:20,518
+INFO	2021-08-09 08:38:31	OpticalDuplicateFinder	compared         5,000 ReadEnds to others.  Elapsed time: 00:00:00s.  Time for last 1,000:    0s.  Last read position: 0:24,777
+INFO	2021-08-09 08:38:31	OpticalDuplicateFinder	Large duplicate set. size = 5283
+INFO	2021-08-09 08:38:31	OpticalDuplicateFinder	compared         1,000 ReadEnds to others.  Elapsed time: 00:00:00s.  Time for last 1,000:    0s.  Last read position: 0:28,040
+INFO	2021-08-09 08:38:31	OpticalDuplicateFinder	compared         2,000 ReadEnds to others.  Elapsed time: 00:00:00s.  Time for last 1,000:    0s.  Last read position: 0:32,045
+INFO	2021-08-09 08:38:31	OpticalDuplicateFinder	compared         3,000 ReadEnds to others.  Elapsed time: 00:00:00s.  Time for last 1,000:    0s.  Last read position: 0:18,891
+INFO	2021-08-09 08:38:31	OpticalDuplicateFinder	compared         4,000 ReadEnds to others.  Elapsed time: 00:00:00s.  Time for last 1,000:    0s.  Last read position: 0:17,318
+INFO	2021-08-09 08:38:31	OpticalDuplicateFinder	compared         5,000 ReadEnds to others.  Elapsed time: 00:00:00s.  Time for last 1,000:    0s.  Last read position: 0:15,429
+INFO	2021-08-09 08:38:31	OpticalDuplicateFinder	Large duplicate set. size = 3896
+INFO	2021-08-09 08:38:31	OpticalDuplicateFinder	compared         1,000 ReadEnds to others.  Elapsed time: 00:00:00s.  Time for last 1,000:    0s.  Last read position: 0:22,815
+INFO	2021-08-09 08:38:31	OpticalDuplicateFinder	compared         2,000 ReadEnds to others.  Elapsed time: 00:00:00s.  Time for last 1,000:    0s.  Last read position: 0:13,404
+INFO	2021-08-09 08:38:31	OpticalDuplicateFinder	compared         3,000 ReadEnds to others.  Elapsed time: 00:00:00s.  Time for last 1,000:    0s.  Last read position: 0:12,129
+INFO	2021-08-09 08:38:31	OpticalDuplicateFinder	Large duplicate set. size = 1513
+INFO	2021-08-09 08:38:31	OpticalDuplicateFinder	compared         1,000 ReadEnds to others.  Elapsed time: 00:00:00s.  Time for last 1,000:    0s.  Last read position: 0:7,762
+INFO	2021-08-09 08:38:31	OpticalDuplicateFinder	Large duplicate set. size = 1033
+INFO	2021-08-09 08:38:31	OpticalDuplicateFinder	compared         1,000 ReadEnds to others.  Elapsed time: 00:00:00s.  Time for last 1,000:    0s.  Last read position: 0:13,259
+INFO	2021-08-09 08:38:31	OpticalDuplicateFinder	Large duplicate set. size = 1063
+INFO	2021-08-09 08:38:31	OpticalDuplicateFinder	compared         1,000 ReadEnds to others.  Elapsed time: 00:00:00s.  Time for last 1,000:    0s.  Last read position: 0:4,616
+INFO	2021-08-09 08:38:31	OpticalDuplicateFinder	Large duplicate set. size = 1285
+INFO	2021-08-09 08:38:31	OpticalDuplicateFinder	compared         1,000 ReadEnds to others.  Elapsed time: 00:00:00s.  Time for last 1,000:    0s.  Last read position: 0:14,959
+INFO	2021-08-09 08:38:31	OpticalDuplicateFinder	Large duplicate set. size = 1374
+INFO	2021-08-09 08:38:31	OpticalDuplicateFinder	compared         1,000 ReadEnds to others.  Elapsed time: 00:00:00s.  Time for last 1,000:    0s.  Last read position: 0:4,010
+INFO	2021-08-09 08:38:31	OpticalDuplicateFinder	Large duplicate set. size = 2636
+INFO	2021-08-09 08:38:31	OpticalDuplicateFinder	compared         1,000 ReadEnds to others.  Elapsed time: 00:00:00s.  Time for last 1,000:    0s.  Last read position: 0:31,087
+INFO	2021-08-09 08:38:31	OpticalDuplicateFinder	compared         2,000 ReadEnds to others.  Elapsed time: 00:00:00s.  Time for last 1,000:    0s.  Last read position: 0:22,896
+INFO	2021-08-09 08:38:31	OpticalDuplicateFinder	Large duplicate set. size = 1804
+INFO	2021-08-09 08:38:31	OpticalDuplicateFinder	compared         1,000 ReadEnds to others.  Elapsed time: 00:00:00s.  Time for last 1,000:    0s.  Last read position: 0:12,165
+INFO	2021-08-09 08:38:31	OpticalDuplicateFinder	Large duplicate set. size = 1745
+INFO	2021-08-09 08:38:31	OpticalDuplicateFinder	compared         1,000 ReadEnds to others.  Elapsed time: 00:00:00s.  Time for last 1,000:    0s.  Last read position: 0:5,575
+INFO	2021-08-09 08:38:31	OpticalDuplicateFinder	Large duplicate set. size = 1929
+INFO	2021-08-09 08:38:31	OpticalDuplicateFinder	compared         1,000 ReadEnds to others.  Elapsed time: 00:00:00s.  Time for last 1,000:    0s.  Last read position: 0:23,475
+INFO	2021-08-09 08:38:31	OpticalDuplicateFinder	Large duplicate set. size = 1151
+INFO	2021-08-09 08:38:31	OpticalDuplicateFinder	compared         1,000 ReadEnds to others.  Elapsed time: 00:00:00s.  Time for last 1,000:    0s.  Last read position: 0:3,242
+INFO	2021-08-09 08:38:31	OpticalDuplicateFinder	Large duplicate set. size = 1624
+INFO	2021-08-09 08:38:31	OpticalDuplicateFinder	compared         1,000 ReadEnds to others.  Elapsed time: 00:00:00s.  Time for last 1,000:    0s.  Last read position: 0:25,934
+INFO	2021-08-09 08:38:32	OpticalDuplicateFinder	Large duplicate set. size = 136190
+INFO	2021-08-09 08:47:35	OpticalDuplicateFinder	compared        10,000 ReadEnds to keeper.  Elapsed time: 00:09:03s.  Time for last 10,000:    0s.  Last read position: 0:32,117
+INFO	2021-08-09 08:47:35	OpticalDuplicateFinder	compared        20,000 ReadEnds to keeper.  Elapsed time: 00:09:03s.  Time for last 10,000:    0s.  Last read position: 0:25,861
+INFO	2021-08-09 08:47:36	OpticalDuplicateFinder	compared        30,000 ReadEnds to keeper.  Elapsed time: 00:09:04s.  Time for last 10,000:    0s.  Last read position: 0:21,784
+INFO	2021-08-09 08:47:37	OpticalDuplicateFinder	compared        40,000 ReadEnds to keeper.  Elapsed time: 00:09:05s.  Time for last 10,000:    0s.  Last read position: 0:22,851
+INFO	2021-08-09 08:47:37	OpticalDuplicateFinder	compared        50,000 ReadEnds to keeper.  Elapsed time: 00:09:05s.  Time for last 10,000:    0s.  Last read position: 0:21,766
+INFO	2021-08-09 08:47:38	OpticalDuplicateFinder	compared        60,000 ReadEnds to keeper.  Elapsed time: 00:09:06s.  Time for last 10,000:    1s.  Last read position: 0:20,808
+INFO	2021-08-09 08:47:39	OpticalDuplicateFinder	compared        70,000 ReadEnds to keeper.  Elapsed time: 00:09:07s.  Time for last 10,000:    0s.  Last read position: 0:19,162
+INFO	2021-08-09 08:47:39	OpticalDuplicateFinder	compared        80,000 ReadEnds to keeper.  Elapsed time: 00:09:07s.  Time for last 10,000:    0s.  Last read position: 0:8,793
+INFO	2021-08-09 08:47:39	OpticalDuplicateFinder	compared        90,000 ReadEnds to keeper.  Elapsed time: 00:09:07s.  Time for last 10,000:    0s.  Last read position: 0:5,403
+INFO	2021-08-09 08:47:39	OpticalDuplicateFinder	compared       100,000 ReadEnds to keeper.  Elapsed time: 00:09:07s.  Time for last 10,000:    0s.  Last read position: 0:11,505
+INFO	2021-08-09 08:47:39	OpticalDuplicateFinder	compared       110,000 ReadEnds to keeper.  Elapsed time: 00:09:07s.  Time for last 10,000:    0s.  Last read position: 0:13,132
+INFO	2021-08-09 08:47:40	OpticalDuplicateFinder	compared       120,000 ReadEnds to keeper.  Elapsed time: 00:09:08s.  Time for last 10,000:    0s.  Last read position: 0:27,010
+INFO	2021-08-09 08:47:40	OpticalDuplicateFinder	compared       130,000 ReadEnds to keeper.  Elapsed time: 00:09:08s.  Time for last 10,000:    0s.  Last read position: 0:24,903
+INFO	2021-08-09 08:52:38	OpticalDuplicateFinder	compared         1,000 ReadEnds to others.  Elapsed time: 00:14:06s.  Time for last 1,000:    0s.  Last read position: 0:23,628
+INFO	2021-08-09 08:52:38	OpticalDuplicateFinder	compared         2,000 ReadEnds to others.  Elapsed time: 00:14:06s.  Time for last 1,000:    0s.  Last read position: 0:30,291
+INFO	2021-08-09 08:52:38	OpticalDuplicateFinder	compared         3,000 ReadEnds to others.  Elapsed time: 00:14:06s.  Time for last 1,000:    0s.  Last read position: 0:20,907
+INFO	2021-08-09 08:52:38	OpticalDuplicateFinder	compared         4,000 ReadEnds to others.  Elapsed time: 00:14:06s.  Time for last 1,000:    0s.  Last read position: 0:27,489
+INFO	2021-08-09 08:52:38	OpticalDuplicateFinder	compared         5,000 ReadEnds to others.  Elapsed time: 00:14:06s.  Time for last 1,000:    0s.  Last read position: 0:17,734
+INFO	2021-08-09 08:52:38	OpticalDuplicateFinder	compared         6,000 ReadEnds to others.  Elapsed time: 00:14:06s.  Time for last 1,000:    0s.  Last read position: 0:5,520
+INFO	2021-08-09 08:52:38	OpticalDuplicateFinder	compared         7,000 ReadEnds to others.  Elapsed time: 00:14:06s.  Time for last 1,000:    0s.  Last read position: 0:11,324
+INFO	2021-08-09 08:52:38	OpticalDuplicateFinder	compared         8,000 ReadEnds to others.  Elapsed time: 00:14:06s.  Time for last 1,000:    0s.  Last read position: 0:29,414
+INFO	2021-08-09 08:52:38	OpticalDuplicateFinder	compared         9,000 ReadEnds to others.  Elapsed time: 00:14:06s.  Time for last 1,000:    0s.  Last read position: 0:3,314
+INFO	2021-08-09 08:52:38	OpticalDuplicateFinder	compared        10,000 ReadEnds to others.  Elapsed time: 00:14:06s.  Time for last 1,000:    0s.  Last read position: 0:21,983
+INFO	2021-08-09 08:52:38	OpticalDuplicateFinder	compared        11,000 ReadEnds to others.  Elapsed time: 00:14:06s.  Time for last 1,000:    0s.  Last read position: 0:8,314
+INFO	2021-08-09 08:52:38	OpticalDuplicateFinder	compared        12,000 ReadEnds to others.  Elapsed time: 00:14:06s.  Time for last 1,000:    0s.  Last read position: 0:28,076
+INFO	2021-08-09 08:52:38	OpticalDuplicateFinder	compared        13,000 ReadEnds to others.  Elapsed time: 00:14:06s.  Time for last 1,000:    0s.  Last read position: 0:27,462
+INFO	2021-08-09 08:52:38	OpticalDuplicateFinder	compared        14,000 ReadEnds to others.  Elapsed time: 00:14:06s.  Time for last 1,000:    0s.  Last read position: 0:30,915
+INFO	2021-08-09 08:52:38	OpticalDuplicateFinder	compared        15,000 ReadEnds to others.  Elapsed time: 00:14:06s.  Time for last 1,000:    0s.  Last read position: 0:8,910
+INFO	2021-08-09 08:52:38	OpticalDuplicateFinder	compared        16,000 ReadEnds to others.  Elapsed time: 00:14:06s.  Time for last 1,000:    0s.  Last read position: 0:21,621
+INFO	2021-08-09 08:52:38	OpticalDuplicateFinder	compared        17,000 ReadEnds to others.  Elapsed time: 00:14:06s.  Time for last 1,000:    0s.  Last read position: 0:32,090
+INFO	2021-08-09 08:52:38	OpticalDuplicateFinder	compared        18,000 ReadEnds to others.  Elapsed time: 00:14:06s.  Time for last 1,000:    0s.  Last read position: 0:28,456
+INFO	2021-08-09 08:52:38	OpticalDuplicateFinder	compared        19,000 ReadEnds to others.  Elapsed time: 00:14:06s.  Time for last 1,000:    0s.  Last read position: 0:25,545
+INFO	2021-08-09 08:52:38	OpticalDuplicateFinder	compared        20,000 ReadEnds to others.  Elapsed time: 00:14:06s.  Time for last 1,000:    0s.  Last read position: 0:24,162
+INFO	2021-08-09 08:52:38	OpticalDuplicateFinder	compared        21,000 ReadEnds to others.  Elapsed time: 00:14:06s.  Time for last 1,000:    0s.  Last read position: 0:11,858
+INFO	2021-08-09 08:52:38	OpticalDuplicateFinder	compared        22,000 ReadEnds to others.  Elapsed time: 00:14:06s.  Time for last 1,000:    0s.  Last read position: 0:8,413
+INFO	2021-08-09 08:52:38	OpticalDuplicateFinder	compared        23,000 ReadEnds to others.  Elapsed time: 00:14:06s.  Time for last 1,000:    0s.  Last read position: 0:19,108
+INFO	2021-08-09 08:52:38	OpticalDuplicateFinder	compared        24,000 ReadEnds to others.  Elapsed time: 00:14:06s.  Time for last 1,000:    0s.  Last read position: 0:10,682
+INFO	2021-08-09 08:52:38	OpticalDuplicateFinder	compared        25,000 ReadEnds to others.  Elapsed time: 00:14:06s.  Time for last 1,000:    0s.  Last read position: 0:8,377
+INFO	2021-08-09 08:52:38	OpticalDuplicateFinder	compared        26,000 ReadEnds to others.  Elapsed time: 00:14:06s.  Time for last 1,000:    0s.  Last read position: 0:25,744
+INFO	2021-08-09 08:52:38	OpticalDuplicateFinder	compared        27,000 ReadEnds to others.  Elapsed time: 00:14:06s.  Time for last 1,000:    0s.  Last read position: 0:7,012
+INFO	2021-08-09 08:52:38	OpticalDuplicateFinder	compared        28,000 ReadEnds to others.  Elapsed time: 00:14:06s.  Time for last 1,000:    0s.  Last read position: 0:28,863
+INFO	2021-08-09 08:52:38	OpticalDuplicateFinder	compared        29,000 ReadEnds to others.  Elapsed time: 00:14:06s.  Time for last 1,000:    0s.  Last read position: 0:22,064
+INFO	2021-08-09 08:52:38	OpticalDuplicateFinder	compared        30,000 ReadEnds to others.  Elapsed time: 00:14:06s.  Time for last 1,000:    0s.  Last read position: 0:19,605
+INFO	2021-08-09 08:52:38	OpticalDuplicateFinder	compared        31,000 ReadEnds to others.  Elapsed time: 00:14:06s.  Time for last 1,000:    0s.  Last read position: 0:1,877
+INFO	2021-08-09 08:52:38	OpticalDuplicateFinder	compared        32,000 ReadEnds to others.  Elapsed time: 00:14:06s.  Time for last 1,000:    0s.  Last read position: 0:5,755
+INFO	2021-08-09 08:52:38	OpticalDuplicateFinder	compared        33,000 ReadEnds to others.  Elapsed time: 00:14:06s.  Time for last 1,000:    0s.  Last read position: 0:6,686
+INFO	2021-08-09 08:52:38	OpticalDuplicateFinder	compared        34,000 ReadEnds to others.  Elapsed time: 00:14:06s.  Time for last 1,000:    0s.  Last read position: 0:20,012
+INFO	2021-08-09 08:52:38	OpticalDuplicateFinder	compared        35,000 ReadEnds to others.  Elapsed time: 00:14:06s.  Time for last 1,000:    0s.  Last read position: 0:10,158
+INFO	2021-08-09 08:52:38	OpticalDuplicateFinder	compared        36,000 ReadEnds to others.  Elapsed time: 00:14:06s.  Time for last 1,000:    0s.  Last read position: 0:24,722
+INFO	2021-08-09 08:52:38	OpticalDuplicateFinder	compared        37,000 ReadEnds to others.  Elapsed time: 00:14:06s.  Time for last 1,000:    0s.  Last read position: 0:23,149
+INFO	2021-08-09 08:52:38	OpticalDuplicateFinder	compared        38,000 ReadEnds to others.  Elapsed time: 00:14:06s.  Time for last 1,000:    0s.  Last read position: 0:21,983
+INFO	2021-08-09 08:52:38	OpticalDuplicateFinder	compared        39,000 ReadEnds to others.  Elapsed time: 00:14:06s.  Time for last 1,000:    0s.  Last read position: 0:6,967
+INFO	2021-08-09 08:52:38	OpticalDuplicateFinder	compared        40,000 ReadEnds to others.  Elapsed time: 00:14:06s.  Time for last 1,000:    0s.  Last read position: 0:21,160
+INFO	2021-08-09 08:52:38	OpticalDuplicateFinder	compared        41,000 ReadEnds to others.  Elapsed time: 00:14:06s.  Time for last 1,000:    0s.  Last read position: 0:13,982
+INFO	2021-08-09 08:52:38	OpticalDuplicateFinder	compared        42,000 ReadEnds to others.  Elapsed time: 00:14:06s.  Time for last 1,000:    0s.  Last read position: 0:16,938
+INFO	2021-08-09 08:52:38	OpticalDuplicateFinder	compared        43,000 ReadEnds to others.  Elapsed time: 00:14:06s.  Time for last 1,000:    0s.  Last read position: 0:2,871
+INFO	2021-08-09 08:52:38	OpticalDuplicateFinder	compared        44,000 ReadEnds to others.  Elapsed time: 00:14:06s.  Time for last 1,000:    0s.  Last read position: 0:15,393
+INFO	2021-08-09 08:52:38	OpticalDuplicateFinder	compared        45,000 ReadEnds to others.  Elapsed time: 00:14:06s.  Time for last 1,000:    0s.  Last read position: 0:10,267
+INFO	2021-08-09 08:52:38	OpticalDuplicateFinder	compared        46,000 ReadEnds to others.  Elapsed time: 00:14:06s.  Time for last 1,000:    0s.  Last read position: 0:2,139
+INFO	2021-08-09 08:52:38	OpticalDuplicateFinder	compared        47,000 ReadEnds to others.  Elapsed time: 00:14:06s.  Time for last 1,000:    0s.  Last read position: 0:24,135
+INFO	2021-08-09 08:52:38	OpticalDuplicateFinder	compared        48,000 ReadEnds to others.  Elapsed time: 00:14:06s.  Time for last 1,000:    0s.  Last read position: 0:20,998
+INFO	2021-08-09 08:52:38	OpticalDuplicateFinder	compared        49,000 ReadEnds to others.  Elapsed time: 00:14:06s.  Time for last 1,000:    0s.  Last read position: 0:14,344
+INFO	2021-08-09 08:52:38	OpticalDuplicateFinder	compared        50,000 ReadEnds to others.  Elapsed time: 00:14:06s.  Time for last 1,000:    0s.  Last read position: 0:6,560
+INFO	2021-08-09 08:52:38	OpticalDuplicateFinder	compared        51,000 ReadEnds to others.  Elapsed time: 00:14:06s.  Time for last 1,000:    0s.  Last read position: 0:31,919
+INFO	2021-08-09 08:52:38	OpticalDuplicateFinder	compared        52,000 ReadEnds to others.  Elapsed time: 00:14:06s.  Time for last 1,000:    0s.  Last read position: 0:30,671
+INFO	2021-08-09 08:52:38	OpticalDuplicateFinder	compared        53,000 ReadEnds to others.  Elapsed time: 00:14:06s.  Time for last 1,000:    0s.  Last read position: 0:4,815
+INFO	2021-08-09 08:52:38	OpticalDuplicateFinder	compared        54,000 ReadEnds to others.  Elapsed time: 00:14:06s.  Time for last 1,000:    0s.  Last read position: 0:25,780
+INFO	2021-08-09 08:52:38	OpticalDuplicateFinder	compared        55,000 ReadEnds to others.  Elapsed time: 00:14:06s.  Time for last 1,000:    0s.  Last read position: 0:2,112
+INFO	2021-08-09 08:52:38	OpticalDuplicateFinder	compared        56,000 ReadEnds to others.  Elapsed time: 00:14:06s.  Time for last 1,000:    0s.  Last read position: 0:11,668
+INFO	2021-08-09 08:52:38	OpticalDuplicateFinder	compared        57,000 ReadEnds to others.  Elapsed time: 00:14:06s.  Time for last 1,000:    0s.  Last read position: 0:28,655
+INFO	2021-08-09 08:52:38	OpticalDuplicateFinder	compared        58,000 ReadEnds to others.  Elapsed time: 00:14:06s.  Time for last 1,000:    0s.  Last read position: 0:27,742
+INFO	2021-08-09 08:52:38	OpticalDuplicateFinder	compared        59,000 ReadEnds to others.  Elapsed time: 00:14:06s.  Time for last 1,000:    0s.  Last read position: 0:17,743
+INFO	2021-08-09 08:52:38	OpticalDuplicateFinder	compared        60,000 ReadEnds to others.  Elapsed time: 00:14:06s.  Time for last 1,000:    0s.  Last read position: 0:19,434
+INFO	2021-08-09 08:52:38	OpticalDuplicateFinder	compared        61,000 ReadEnds to others.  Elapsed time: 00:14:06s.  Time for last 1,000:    0s.  Last read position: 0:11,532
+INFO	2021-08-09 08:52:38	OpticalDuplicateFinder	compared        62,000 ReadEnds to others.  Elapsed time: 00:14:06s.  Time for last 1,000:    0s.  Last read position: 0:26,594
+INFO	2021-08-09 08:52:38	OpticalDuplicateFinder	compared        63,000 ReadEnds to others.  Elapsed time: 00:14:06s.  Time for last 1,000:    0s.  Last read position: 0:5,050
+INFO	2021-08-09 08:52:38	OpticalDuplicateFinder	compared        64,000 ReadEnds to others.  Elapsed time: 00:14:06s.  Time for last 1,000:    0s.  Last read position: 0:2,546
+INFO	2021-08-09 08:52:38	OpticalDuplicateFinder	compared        65,000 ReadEnds to others.  Elapsed time: 00:14:06s.  Time for last 1,000:    0s.  Last read position: 0:24,397
+INFO	2021-08-09 08:52:38	OpticalDuplicateFinder	compared        66,000 ReadEnds to others.  Elapsed time: 00:14:06s.  Time for last 1,000:    0s.  Last read position: 0:21,043
+INFO	2021-08-09 08:52:38	OpticalDuplicateFinder	Seen many non-increasing record positions. Printing Read-names as well.
+INFO	2021-08-09 08:52:38	OpticalDuplicateFinder	compared        67,000 ReadEnds to others.  Elapsed time: 00:14:06s.  Time for last 1,000:    0s.  Last read position: 0:28,393
+INFO	2021-08-09 08:52:38	OpticalDuplicateFinder	compared        68,000 ReadEnds to others.  Elapsed time: 00:14:06s.  Time for last 1,000:    0s.  Last read position: 0:12,608
+INFO	2021-08-09 08:52:38	OpticalDuplicateFinder	compared        69,000 ReadEnds to others.  Elapsed time: 00:14:06s.  Time for last 1,000:    0s.  Last read position: 0:5,484
+INFO	2021-08-09 08:52:38	OpticalDuplicateFinder	compared        70,000 ReadEnds to others.  Elapsed time: 00:14:06s.  Time for last 1,000:    0s.  Last read position: 0:10,637
+INFO	2021-08-09 08:52:38	OpticalDuplicateFinder	compared        71,000 ReadEnds to others.  Elapsed time: 00:14:06s.  Time for last 1,000:    0s.  Last read position: 0:25,147
+INFO	2021-08-09 08:52:38	OpticalDuplicateFinder	compared        72,000 ReadEnds to others.  Elapsed time: 00:14:06s.  Time for last 1,000:    0s.  Last read position: 0:16,179
+INFO	2021-08-09 08:52:38	OpticalDuplicateFinder	compared        73,000 ReadEnds to others.  Elapsed time: 00:14:06s.  Time for last 1,000:    0s.  Last read position: 0:7,184
+INFO	2021-08-09 08:52:38	OpticalDuplicateFinder	compared        74,000 ReadEnds to others.  Elapsed time: 00:14:06s.  Time for last 1,000:    0s.  Last read position: 0:13,458
+INFO	2021-08-09 08:52:38	OpticalDuplicateFinder	compared        75,000 ReadEnds to others.  Elapsed time: 00:14:06s.  Time for last 1,000:    0s.  Last read position: 0:10,158
+INFO	2021-08-09 08:52:38	OpticalDuplicateFinder	compared        76,000 ReadEnds to others.  Elapsed time: 00:14:06s.  Time for last 1,000:    0s.  Last read position: 0:26,368
+INFO	2021-08-09 08:52:38	OpticalDuplicateFinder	compared        77,000 ReadEnds to others.  Elapsed time: 00:14:06s.  Time for last 1,000:    0s.  Last read position: 0:28,953
+INFO	2021-08-09 08:52:38	OpticalDuplicateFinder	compared        78,000 ReadEnds to others.  Elapsed time: 00:14:06s.  Time for last 1,000:    0s.  Last read position: 0:17,309
+INFO	2021-08-09 08:52:39	OpticalDuplicateFinder	compared        79,000 ReadEnds to others.  Elapsed time: 00:14:06s.  Time for last 1,000:    0s.  Last read position: 0:32,018
+INFO	2021-08-09 08:52:39	OpticalDuplicateFinder	compared        80,000 ReadEnds to others.  Elapsed time: 00:14:06s.  Time for last 1,000:    0s.  Last read position: 0:4,661
+INFO	2021-08-09 08:52:39	OpticalDuplicateFinder	compared        81,000 ReadEnds to others.  Elapsed time: 00:14:06s.  Time for last 1,000:    0s.  Last read position: 0:4,598
+INFO	2021-08-09 08:52:39	OpticalDuplicateFinder	compared        82,000 ReadEnds to others.  Elapsed time: 00:14:06s.  Time for last 1,000:    0s.  Last read position: 0:8,006
+INFO	2021-08-09 08:52:39	OpticalDuplicateFinder	compared        83,000 ReadEnds to others.  Elapsed time: 00:14:06s.  Time for last 1,000:    0s.  Last read position: 0:7,717
+INFO	2021-08-09 08:52:39	OpticalDuplicateFinder	compared        84,000 ReadEnds to others.  Elapsed time: 00:14:06s.  Time for last 1,000:    0s.  Last read position: 0:3,305
+INFO	2021-08-09 08:52:39	OpticalDuplicateFinder	compared        85,000 ReadEnds to others.  Elapsed time: 00:14:06s.  Time for last 1,000:    0s.  Last read position: 0:2,446
+INFO	2021-08-09 08:52:39	OpticalDuplicateFinder	compared        86,000 ReadEnds to others.  Elapsed time: 00:14:06s.  Time for last 1,000:    0s.  Last read position: 0:5,529
+INFO	2021-08-09 08:52:39	OpticalDuplicateFinder	compared        87,000 ReadEnds to others.  Elapsed time: 00:14:06s.  Time for last 1,000:    0s.  Last read position: 0:8,712
+INFO	2021-08-09 08:52:39	OpticalDuplicateFinder	compared        88,000 ReadEnds to others.  Elapsed time: 00:14:06s.  Time for last 1,000:    0s.  Last read position: 0:7,789
+INFO	2021-08-09 08:52:39	OpticalDuplicateFinder	compared        89,000 ReadEnds to others.  Elapsed time: 00:14:06s.  Time for last 1,000:    0s.  Last read position: 0:24,288
+INFO	2021-08-09 08:52:39	OpticalDuplicateFinder	compared        90,000 ReadEnds to others.  Elapsed time: 00:14:07s.  Time for last 1,000:    0s.  Last read position: 0:4,435
+INFO	2021-08-09 08:52:39	OpticalDuplicateFinder	compared        91,000 ReadEnds to others.  Elapsed time: 00:14:07s.  Time for last 1,000:    0s.  Last read position: 0:20,853
+INFO	2021-08-09 08:52:39	OpticalDuplicateFinder	compared        92,000 ReadEnds to others.  Elapsed time: 00:14:07s.  Time for last 1,000:    0s.  Last read position: 0:14,823
+INFO	2021-08-09 08:52:39	OpticalDuplicateFinder	compared        93,000 ReadEnds to others.  Elapsed time: 00:14:07s.  Time for last 1,000:    0s.  Last read position: 0:7,681
+INFO	2021-08-09 08:52:39	OpticalDuplicateFinder	compared        94,000 ReadEnds to others.  Elapsed time: 00:14:07s.  Time for last 1,000:    0s.  Last read position: 0:4,670
+INFO	2021-08-09 08:52:39	OpticalDuplicateFinder	compared        95,000 ReadEnds to others.  Elapsed time: 00:14:07s.  Time for last 1,000:    0s.  Last read position: 0:24,080
+INFO	2021-08-09 08:52:39	OpticalDuplicateFinder	compared        96,000 ReadEnds to others.  Elapsed time: 00:14:07s.  Time for last 1,000:    0s.  Last read position: 0:18,683
+INFO	2021-08-09 08:52:39	OpticalDuplicateFinder	compared        97,000 ReadEnds to others.  Elapsed time: 00:14:07s.  Time for last 1,000:    0s.  Last read position: 0:24,478
+INFO	2021-08-09 08:52:39	OpticalDuplicateFinder	compared        98,000 ReadEnds to others.  Elapsed time: 00:14:07s.  Time for last 1,000:    0s.  Last read position: 0:24,062
+INFO	2021-08-09 08:52:39	OpticalDuplicateFinder	compared        99,000 ReadEnds to others.  Elapsed time: 00:14:07s.  Time for last 1,000:    0s.  Last read position: 0:6,108
+INFO	2021-08-09 08:52:39	OpticalDuplicateFinder	compared       100,000 ReadEnds to others.  Elapsed time: 00:14:07s.  Time for last 1,000:    0s.  Last read position: 0:28,320
+INFO	2021-08-09 08:52:39	OpticalDuplicateFinder	compared       101,000 ReadEnds to others.  Elapsed time: 00:14:07s.  Time for last 1,000:    0s.  Last read position: 0:7,753
+INFO	2021-08-09 08:52:39	OpticalDuplicateFinder	compared       102,000 ReadEnds to others.  Elapsed time: 00:14:07s.  Time for last 1,000:    0s.  Last read position: 0:9,733
+INFO	2021-08-09 08:52:39	OpticalDuplicateFinder	compared       103,000 ReadEnds to others.  Elapsed time: 00:14:07s.  Time for last 1,000:    0s.  Last read position: 0:19,759
+INFO	2021-08-09 08:52:39	OpticalDuplicateFinder	compared       104,000 ReadEnds to others.  Elapsed time: 00:14:07s.  Time for last 1,000:    0s.  Last read position: 0:11,324
+INFO	2021-08-09 08:52:39	OpticalDuplicateFinder	compared       105,000 ReadEnds to others.  Elapsed time: 00:14:07s.  Time for last 1,000:    0s.  Last read position: 0:3,260
+INFO	2021-08-09 08:52:39	OpticalDuplicateFinder	compared       106,000 ReadEnds to others.  Elapsed time: 00:14:07s.  Time for last 1,000:    0s.  Last read position: 0:5,159
+INFO	2021-08-09 08:52:39	OpticalDuplicateFinder	compared       107,000 ReadEnds to others.  Elapsed time: 00:14:07s.  Time for last 1,000:    0s.  Last read position: 0:9,299
+INFO	2021-08-09 08:52:39	OpticalDuplicateFinder	compared       108,000 ReadEnds to others.  Elapsed time: 00:14:07s.  Time for last 1,000:    0s.  Last read position: 0:15,989
+INFO	2021-08-09 08:52:39	OpticalDuplicateFinder	compared       109,000 ReadEnds to others.  Elapsed time: 00:14:07s.  Time for last 1,000:    0s.  Last read position: 0:19,117
+INFO	2021-08-09 08:52:39	OpticalDuplicateFinder	compared       110,000 ReadEnds to others.  Elapsed time: 00:14:07s.  Time for last 1,000:    0s.  Last read position: 0:2,944
+INFO	2021-08-09 08:52:39	OpticalDuplicateFinder	compared       111,000 ReadEnds to others.  Elapsed time: 00:14:07s.  Time for last 1,000:    0s.  Last read position: 0:11,993
+INFO	2021-08-09 08:52:39	OpticalDuplicateFinder	compared       112,000 ReadEnds to others.  Elapsed time: 00:14:07s.  Time for last 1,000:    0s.  Last read position: 0:30,996
+INFO	2021-08-09 08:52:39	OpticalDuplicateFinder	compared       113,000 ReadEnds to others.  Elapsed time: 00:14:07s.  Time for last 1,000:    0s.  Last read position: 0:5,593
+INFO	2021-08-09 08:52:39	OpticalDuplicateFinder	compared       114,000 ReadEnds to others.  Elapsed time: 00:14:07s.  Time for last 1,000:    0s.  Last read position: 0:8,079
+INFO	2021-08-09 08:52:39	OpticalDuplicateFinder	compared       115,000 ReadEnds to others.  Elapsed time: 00:14:07s.  Time for last 1,000:    0s.  Last read position: 0:8,422
+INFO	2021-08-09 08:52:39	OpticalDuplicateFinder	compared       116,000 ReadEnds to others.  Elapsed time: 00:14:07s.  Time for last 1,000:    0s.  Last read position: 0:28,628
+INFO	2021-08-09 08:52:39	OpticalDuplicateFinder	compared       117,000 ReadEnds to others.  Elapsed time: 00:14:07s.  Time for last 1,000:    0s.  Last read position: 0:30,906
+INFO	2021-08-09 08:52:39	OpticalDuplicateFinder	compared       118,000 ReadEnds to others.  Elapsed time: 00:14:07s.  Time for last 1,000:    0s.  Last read position: 0:20,844
+INFO	2021-08-09 08:52:39	OpticalDuplicateFinder	compared       119,000 ReadEnds to others.  Elapsed time: 00:14:07s.  Time for last 1,000:    0s.  Last read position: 0:26,160
+INFO	2021-08-09 08:52:39	OpticalDuplicateFinder	compared       120,000 ReadEnds to others.  Elapsed time: 00:14:07s.  Time for last 1,000:    0s.  Last read position: 0:22,336
+INFO	2021-08-09 08:52:39	OpticalDuplicateFinder	compared       121,000 ReadEnds to others.  Elapsed time: 00:14:07s.  Time for last 1,000:    0s.  Last read position: 0:2,166
+INFO	2021-08-09 08:52:39	OpticalDuplicateFinder	compared       122,000 ReadEnds to others.  Elapsed time: 00:14:07s.  Time for last 1,000:    0s.  Last read position: 0:5,077
+INFO	2021-08-09 08:52:39	OpticalDuplicateFinder	compared       123,000 ReadEnds to others.  Elapsed time: 00:14:07s.  Time for last 1,000:    0s.  Last read position: 0:12,662
+INFO	2021-08-09 08:52:39	OpticalDuplicateFinder	compared       124,000 ReadEnds to others.  Elapsed time: 00:14:07s.  Time for last 1,000:    0s.  Last read position: 0:4,001
+INFO	2021-08-09 08:52:39	OpticalDuplicateFinder	compared       125,000 ReadEnds to others.  Elapsed time: 00:14:07s.  Time for last 1,000:    0s.  Last read position: 0:30,481
+INFO	2021-08-09 08:52:39	OpticalDuplicateFinder	compared       126,000 ReadEnds to others.  Elapsed time: 00:14:07s.  Time for last 1,000:    0s.  Last read position: 0:21,432
+INFO	2021-08-09 08:52:39	OpticalDuplicateFinder	compared       127,000 ReadEnds to others.  Elapsed time: 00:14:07s.  Time for last 1,000:    0s.  Last read position: 0:17,987
+INFO	2021-08-09 08:52:39	OpticalDuplicateFinder	compared       128,000 ReadEnds to others.  Elapsed time: 00:14:07s.  Time for last 1,000:    0s.  Last read position: 0:30,463
+INFO	2021-08-09 08:52:39	OpticalDuplicateFinder	compared       129,000 ReadEnds to others.  Elapsed time: 00:14:07s.  Time for last 1,000:    0s.  Last read position: 0:16,260
+INFO	2021-08-09 08:52:39	OpticalDuplicateFinder	compared       130,000 ReadEnds to others.  Elapsed time: 00:14:07s.  Time for last 1,000:    0s.  Last read position: 0:10,899
+INFO	2021-08-09 08:52:39	OpticalDuplicateFinder	compared       131,000 ReadEnds to others.  Elapsed time: 00:14:07s.  Time for last 1,000:    0s.  Last read position: 0:7,961
+INFO	2021-08-09 08:52:39	OpticalDuplicateFinder	compared       132,000 ReadEnds to others.  Elapsed time: 00:14:07s.  Time for last 1,000:    0s.  Last read position: 0:7,835
+INFO	2021-08-09 08:52:39	OpticalDuplicateFinder	compared       133,000 ReadEnds to others.  Elapsed time: 00:14:07s.  Time for last 1,000:    0s.  Last read position: 0:10,791
+INFO	2021-08-09 08:52:39	OpticalDuplicateFinder	compared       134,000 ReadEnds to others.  Elapsed time: 00:14:07s.  Time for last 1,000:    0s.  Last read position: 0:16,333
+INFO	2021-08-09 08:52:39	OpticalDuplicateFinder	compared       135,000 ReadEnds to others.  Elapsed time: 00:14:07s.  Time for last 1,000:    0s.  Last read position: 0:23,167
+INFO	2021-08-09 08:52:39	OpticalDuplicateFinder	compared       136,000 ReadEnds to others.  Elapsed time: 00:14:07s.  Time for last 1,000:    0s.  Last read position: 0:9,417
+INFO	2021-08-09 08:52:39	OpticalDuplicateFinder	Large duplicate set. size = 5512
+INFO	2021-08-09 08:52:40	OpticalDuplicateFinder	compared         1,000 ReadEnds to others.  Elapsed time: 00:00:00s.  Time for last 1,000:    0s.  Last read position: 0:26,096
+INFO	2021-08-09 08:52:40	OpticalDuplicateFinder	compared         2,000 ReadEnds to others.  Elapsed time: 00:00:00s.  Time for last 1,000:    0s.  Last read position: 0:28,772
+INFO	2021-08-09 08:52:40	OpticalDuplicateFinder	compared         3,000 ReadEnds to others.  Elapsed time: 00:00:00s.  Time for last 1,000:    0s.  Last read position: 0:12,481
+INFO	2021-08-09 08:52:40	OpticalDuplicateFinder	compared         4,000 ReadEnds to others.  Elapsed time: 00:00:00s.  Time for last 1,000:    0s.  Last read position: 0:15,872
+INFO	2021-08-09 08:52:40	OpticalDuplicateFinder	compared         5,000 ReadEnds to others.  Elapsed time: 00:00:00s.  Time for last 1,000:    0s.  Last read position: 0:21,820
+INFO	2021-08-09 08:52:40	OpticalDuplicateFinder	Large duplicate set. size = 1098
+INFO	2021-08-09 08:52:40	OpticalDuplicateFinder	compared         1,000 ReadEnds to others.  Elapsed time: 00:00:00s.  Time for last 1,000:    0s.  Last read position: 0:2,980
+INFO	2021-08-09 08:52:40	OpticalDuplicateFinder	Large duplicate set. size = 2228
+INFO	2021-08-09 08:52:40	OpticalDuplicateFinder	compared         1,000 ReadEnds to others.  Elapsed time: 00:00:00s.  Time for last 1,000:    0s.  Last read position: 0:26,069
+INFO	2021-08-09 08:52:40	OpticalDuplicateFinder	compared         2,000 ReadEnds to others.  Elapsed time: 00:00:00s.  Time for last 1,000:    0s.  Last read position: 0:8,739
+INFO	2021-08-09 08:52:40	OpticalDuplicateFinder	Large duplicate set. size = 1054
+INFO	2021-08-09 08:52:40	OpticalDuplicateFinder	compared         1,000 ReadEnds to others.  Elapsed time: 00:00:00s.  Time for last 1,000:    0s.  Last read position: 0:19,054
+INFO	2021-08-09 08:52:40	OpticalDuplicateFinder	Large duplicate set. size = 1509
+INFO	2021-08-09 08:52:40	OpticalDuplicateFinder	compared         1,000 ReadEnds to others.  Elapsed time: 00:00:00s.  Time for last 1,000:    0s.  Last read position: 0:30,138
+INFO	2021-08-09 08:52:40	OpticalDuplicateFinder	Large duplicate set. size = 2013
+INFO	2021-08-09 08:52:40	OpticalDuplicateFinder	compared         1,000 ReadEnds to others.  Elapsed time: 00:00:00s.  Time for last 1,000:    0s.  Last read position: 0:25,916
+INFO	2021-08-09 08:52:40	OpticalDuplicateFinder	compared         2,000 ReadEnds to others.  Elapsed time: 00:00:00s.  Time for last 1,000:    0s.  Last read position: 0:22,851
+INFO	2021-08-09 08:52:40	OpticalDuplicateFinder	Large duplicate set. size = 2106
+INFO	2021-08-09 08:52:40	OpticalDuplicateFinder	compared         1,000 ReadEnds to others.  Elapsed time: 00:00:00s.  Time for last 1,000:    0s.  Last read position: 0:32,624
+INFO	2021-08-09 08:52:40	OpticalDuplicateFinder	compared         2,000 ReadEnds to others.  Elapsed time: 00:00:00s.  Time for last 1,000:    0s.  Last read position: 0:31,439
+INFO	2021-08-09 08:52:40	OpticalDuplicateFinder	Large duplicate set. size = 2278
+INFO	2021-08-09 08:52:40	OpticalDuplicateFinder	compared         1,000 ReadEnds to others.  Elapsed time: 00:00:00s.  Time for last 1,000:    0s.  Last read position: 0:10,511
+INFO	2021-08-09 08:52:40	OpticalDuplicateFinder	compared         2,000 ReadEnds to others.  Elapsed time: 00:00:00s.  Time for last 1,000:    0s.  Last read position: 0:21,414
+INFO	2021-08-09 08:52:40	OpticalDuplicateFinder	Large duplicate set. size = 8095
+INFO	2021-08-09 08:52:41	OpticalDuplicateFinder	compared         1,000 ReadEnds to others.  Elapsed time: 00:00:00s.  Time for last 1,000:    0s.  Last read position: 0:7,265
+INFO	2021-08-09 08:52:41	OpticalDuplicateFinder	compared         2,000 ReadEnds to others.  Elapsed time: 00:00:00s.  Time for last 1,000:    0s.  Last read position: 0:27,118
+INFO	2021-08-09 08:52:41	OpticalDuplicateFinder	compared         3,000 ReadEnds to others.  Elapsed time: 00:00:00s.  Time for last 1,000:    0s.  Last read position: 0:24,560
+INFO	2021-08-09 08:52:41	OpticalDuplicateFinder	compared         4,000 ReadEnds to others.  Elapsed time: 00:00:00s.  Time for last 1,000:    0s.  Last read position: 0:24,894
+INFO	2021-08-09 08:52:41	OpticalDuplicateFinder	compared         5,000 ReadEnds to others.  Elapsed time: 00:00:00s.  Time for last 1,000:    0s.  Last read position: 0:19,072
+INFO	2021-08-09 08:52:41	OpticalDuplicateFinder	compared         6,000 ReadEnds to others.  Elapsed time: 00:00:00s.  Time for last 1,000:    0s.  Last read position: 0:22,715
+INFO	2021-08-09 08:52:41	OpticalDuplicateFinder	compared         7,000 ReadEnds to others.  Elapsed time: 00:00:00s.  Time for last 1,000:    0s.  Last read position: 0:8,043
+INFO	2021-08-09 08:52:41	OpticalDuplicateFinder	compared         8,000 ReadEnds to others.  Elapsed time: 00:00:00s.  Time for last 1,000:    0s.  Last read position: 0:26,512
+INFO	2021-08-09 08:52:41	OpticalDuplicateFinder	Large duplicate set. size = 21186
+INFO	2021-08-09 08:52:44	OpticalDuplicateFinder	compared        10,000 ReadEnds to keeper.  Elapsed time: 00:00:02s.  Time for last 10,000:    0s.  Last read position: 0:1,226
+INFO	2021-08-09 08:52:44	OpticalDuplicateFinder	compared        20,000 ReadEnds to keeper.  Elapsed time: 00:00:02s.  Time for last 10,000:    0s.  Last read position: 0:19,226
+INFO	2021-08-09 08:52:45	OpticalDuplicateFinder	compared         1,000 ReadEnds to others.  Elapsed time: 00:00:03s.  Time for last 1,000:    0s.  Last read position: 0:17,354
+INFO	2021-08-09 08:52:45	OpticalDuplicateFinder	compared         2,000 ReadEnds to others.  Elapsed time: 00:00:03s.  Time for last 1,000:    0s.  Last read position: 0:26,196
+INFO	2021-08-09 08:52:45	OpticalDuplicateFinder	compared         3,000 ReadEnds to others.  Elapsed time: 00:00:03s.  Time for last 1,000:    0s.  Last read position: 0:31,729
+INFO	2021-08-09 08:52:45	OpticalDuplicateFinder	compared         4,000 ReadEnds to others.  Elapsed time: 00:00:03s.  Time for last 1,000:    0s.  Last read position: 0:5,077
+INFO	2021-08-09 08:52:45	OpticalDuplicateFinder	compared         5,000 ReadEnds to others.  Elapsed time: 00:00:03s.  Time for last 1,000:    0s.  Last read position: 0:19,443
+INFO	2021-08-09 08:52:45	OpticalDuplicateFinder	compared         6,000 ReadEnds to others.  Elapsed time: 00:00:03s.  Time for last 1,000:    0s.  Last read position: 0:28,510
+INFO	2021-08-09 08:52:45	OpticalDuplicateFinder	compared         7,000 ReadEnds to others.  Elapsed time: 00:00:03s.  Time for last 1,000:    0s.  Last read position: 0:15,962
+INFO	2021-08-09 08:52:45	OpticalDuplicateFinder	compared         8,000 ReadEnds to others.  Elapsed time: 00:00:03s.  Time for last 1,000:    0s.  Last read position: 0:6,081
+INFO	2021-08-09 08:52:45	OpticalDuplicateFinder	compared         9,000 ReadEnds to others.  Elapsed time: 00:00:03s.  Time for last 1,000:    0s.  Last read position: 0:19,135
+INFO	2021-08-09 08:52:45	OpticalDuplicateFinder	compared        10,000 ReadEnds to others.  Elapsed time: 00:00:03s.  Time for last 1,000:    0s.  Last read position: 0:24,677
+INFO	2021-08-09 08:52:45	OpticalDuplicateFinder	compared        11,000 ReadEnds to others.  Elapsed time: 00:00:03s.  Time for last 1,000:    0s.  Last read position: 0:14,145
+INFO	2021-08-09 08:52:45	OpticalDuplicateFinder	compared        12,000 ReadEnds to others.  Elapsed time: 00:00:03s.  Time for last 1,000:    0s.  Last read position: 0:5,339
+INFO	2021-08-09 08:52:45	OpticalDuplicateFinder	compared        13,000 ReadEnds to others.  Elapsed time: 00:00:03s.  Time for last 1,000:    0s.  Last read position: 0:10,926
+INFO	2021-08-09 08:52:45	OpticalDuplicateFinder	compared        14,000 ReadEnds to others.  Elapsed time: 00:00:03s.  Time for last 1,000:    0s.  Last read position: 0:26,784
+INFO	2021-08-09 08:52:45	OpticalDuplicateFinder	compared        15,000 ReadEnds to others.  Elapsed time: 00:00:03s.  Time for last 1,000:    0s.  Last read position: 0:4,960
+INFO	2021-08-09 08:52:45	OpticalDuplicateFinder	compared        16,000 ReadEnds to others.  Elapsed time: 00:00:03s.  Time for last 1,000:    0s.  Last read position: 0:18,909
+INFO	2021-08-09 08:52:45	OpticalDuplicateFinder	compared        17,000 ReadEnds to others.  Elapsed time: 00:00:03s.  Time for last 1,000:    0s.  Last read position: 0:24,370
+INFO	2021-08-09 08:52:45	OpticalDuplicateFinder	compared        18,000 ReadEnds to others.  Elapsed time: 00:00:03s.  Time for last 1,000:    0s.  Last read position: 0:30,002
+INFO	2021-08-09 08:52:45	OpticalDuplicateFinder	compared        19,000 ReadEnds to others.  Elapsed time: 00:00:03s.  Time for last 1,000:    0s.  Last read position: 0:24,035
+INFO	2021-08-09 08:52:45	OpticalDuplicateFinder	compared        20,000 ReadEnds to others.  Elapsed time: 00:00:03s.  Time for last 1,000:    0s.  Last read position: 0:7,111
+INFO	2021-08-09 08:52:45	OpticalDuplicateFinder	compared        21,000 ReadEnds to others.  Elapsed time: 00:00:03s.  Time for last 1,000:    0s.  Last read position: 0:29,161
+INFO	2021-08-09 08:52:45	OpticalDuplicateFinder	Large duplicate set. size = 1463
+INFO	2021-08-09 08:52:45	OpticalDuplicateFinder	compared         1,000 ReadEnds to others.  Elapsed time: 00:00:00s.  Time for last 1,000:    0s.  Last read position: 0:13,801
+INFO	2021-08-09 08:52:45	OpticalDuplicateFinder	Large duplicate set. size = 1034
+INFO	2021-08-09 08:52:45	OpticalDuplicateFinder	compared         1,000 ReadEnds to others.  Elapsed time: 00:00:00s.  Time for last 1,000:    0s.  Last read position: 0:15,881
+INFO	2021-08-09 08:52:45	OpticalDuplicateFinder	Large duplicate set. size = 1222
+INFO	2021-08-09 08:52:45	OpticalDuplicateFinder	compared         1,000 ReadEnds to others.  Elapsed time: 00:00:00s.  Time for last 1,000:    0s.  Last read position: 0:16,378
+INFO	2021-08-09 08:52:45	OpticalDuplicateFinder	Large duplicate set. size = 1122
+INFO	2021-08-09 08:52:45	OpticalDuplicateFinder	compared         1,000 ReadEnds to others.  Elapsed time: 00:00:00s.  Time for last 1,000:    0s.  Last read position: 0:30,816
+INFO	2021-08-09 08:52:45	OpticalDuplicateFinder	Large duplicate set. size = 7009
+INFO	2021-08-09 08:52:45	OpticalDuplicateFinder	compared         1,000 ReadEnds to others.  Elapsed time: 00:00:00s.  Time for last 1,000:    0s.  Last read position: 0:23,936
+INFO	2021-08-09 08:52:45	OpticalDuplicateFinder	compared         2,000 ReadEnds to others.  Elapsed time: 00:00:00s.  Time for last 1,000:    0s.  Last read position: 0:1,063
+INFO	2021-08-09 08:52:45	OpticalDuplicateFinder	compared         3,000 ReadEnds to others.  Elapsed time: 00:00:00s.  Time for last 1,000:    0s.  Last read position: 0:23,104
+INFO	2021-08-09 08:52:45	OpticalDuplicateFinder	compared         4,000 ReadEnds to others.  Elapsed time: 00:00:00s.  Time for last 1,000:    0s.  Last read position: 0:15,790
+INFO	2021-08-09 08:52:45	OpticalDuplicateFinder	compared         5,000 ReadEnds to others.  Elapsed time: 00:00:00s.  Time for last 1,000:    0s.  Last read position: 0:17,318
+INFO	2021-08-09 08:52:45	OpticalDuplicateFinder	compared         6,000 ReadEnds to others.  Elapsed time: 00:00:00s.  Time for last 1,000:    0s.  Last read position: 0:20,582
+INFO	2021-08-09 08:52:45	OpticalDuplicateFinder	compared         7,000 ReadEnds to others.  Elapsed time: 00:00:00s.  Time for last 1,000:    0s.  Last read position: 0:24,659
+INFO	2021-08-09 08:52:45	OpticalDuplicateFinder	Large duplicate set. size = 9633
+INFO	2021-08-09 08:52:46	OpticalDuplicateFinder	compared         1,000 ReadEnds to others.  Elapsed time: 00:00:00s.  Time for last 1,000:    0s.  Last read position: 0:15,691
+INFO	2021-08-09 08:52:46	OpticalDuplicateFinder	compared         2,000 ReadEnds to others.  Elapsed time: 00:00:00s.  Time for last 1,000:    0s.  Last read position: 0:8,043
+INFO	2021-08-09 08:52:46	OpticalDuplicateFinder	compared         3,000 ReadEnds to others.  Elapsed time: 00:00:00s.  Time for last 1,000:    0s.  Last read position: 0:6,840
+INFO	2021-08-09 08:52:46	OpticalDuplicateFinder	compared         4,000 ReadEnds to others.  Elapsed time: 00:00:00s.  Time for last 1,000:    0s.  Last read position: 0:27,344
+INFO	2021-08-09 08:52:46	OpticalDuplicateFinder	compared         5,000 ReadEnds to others.  Elapsed time: 00:00:00s.  Time for last 1,000:    0s.  Last read position: 0:9,019
+INFO	2021-08-09 08:52:46	OpticalDuplicateFinder	compared         6,000 ReadEnds to others.  Elapsed time: 00:00:00s.  Time for last 1,000:    0s.  Last read position: 0:27,697
+INFO	2021-08-09 08:52:46	OpticalDuplicateFinder	compared         7,000 ReadEnds to others.  Elapsed time: 00:00:00s.  Time for last 1,000:    0s.  Last read position: 0:18,593
+INFO	2021-08-09 08:52:46	OpticalDuplicateFinder	compared         8,000 ReadEnds to others.  Elapsed time: 00:00:00s.  Time for last 1,000:    0s.  Last read position: 0:2,609
+INFO	2021-08-09 08:52:46	OpticalDuplicateFinder	compared         9,000 ReadEnds to others.  Elapsed time: 00:00:00s.  Time for last 1,000:    0s.  Last read position: 0:26,341
+INFO	2021-08-09 08:52:46	OpticalDuplicateFinder	Large duplicate set. size = 31680
+INFO	2021-08-09 08:52:55	OpticalDuplicateFinder	compared        10,000 ReadEnds to keeper.  Elapsed time: 00:00:09s.  Time for last 10,000:    0s.  Last read position: 0:31,548
+INFO	2021-08-09 08:52:55	OpticalDuplicateFinder	compared        20,000 ReadEnds to keeper.  Elapsed time: 00:00:09s.  Time for last 10,000:    0s.  Last read position: 0:11,379
+INFO	2021-08-09 08:52:55	OpticalDuplicateFinder	compared        30,000 ReadEnds to keeper.  Elapsed time: 00:00:09s.  Time for last 10,000:    0s.  Last read position: 0:7,383
+INFO	2021-08-09 08:53:00	OpticalDuplicateFinder	compared         1,000 ReadEnds to others.  Elapsed time: 00:00:13s.  Time for last 1,000:    0s.  Last read position: 0:21,558
+INFO	2021-08-09 08:53:00	OpticalDuplicateFinder	compared         2,000 ReadEnds to others.  Elapsed time: 00:00:13s.  Time for last 1,000:    0s.  Last read position: 0:22,037
+INFO	2021-08-09 08:53:00	OpticalDuplicateFinder	compared         3,000 ReadEnds to others.  Elapsed time: 00:00:13s.  Time for last 1,000:    0s.  Last read position: 0:30,599
+INFO	2021-08-09 08:53:00	OpticalDuplicateFinder	compared         4,000 ReadEnds to others.  Elapsed time: 00:00:13s.  Time for last 1,000:    0s.  Last read position: 0:11,008
+INFO	2021-08-09 08:53:00	OpticalDuplicateFinder	compared         5,000 ReadEnds to others.  Elapsed time: 00:00:14s.  Time for last 1,000:    0s.  Last read position: 0:13,277
+INFO	2021-08-09 08:53:00	OpticalDuplicateFinder	compared         6,000 ReadEnds to others.  Elapsed time: 00:00:14s.  Time for last 1,000:    0s.  Last read position: 0:22,073
+INFO	2021-08-09 08:53:00	OpticalDuplicateFinder	compared         7,000 ReadEnds to others.  Elapsed time: 00:00:14s.  Time for last 1,000:    0s.  Last read position: 0:10,646
+INFO	2021-08-09 08:53:00	OpticalDuplicateFinder	compared         8,000 ReadEnds to others.  Elapsed time: 00:00:14s.  Time for last 1,000:    0s.  Last read position: 0:30,436
+INFO	2021-08-09 08:53:00	OpticalDuplicateFinder	compared         9,000 ReadEnds to others.  Elapsed time: 00:00:14s.  Time for last 1,000:    0s.  Last read position: 0:11,297
+INFO	2021-08-09 08:53:00	OpticalDuplicateFinder	compared        10,000 ReadEnds to others.  Elapsed time: 00:00:14s.  Time for last 1,000:    0s.  Last read position: 0:13,458
+INFO	2021-08-09 08:53:00	OpticalDuplicateFinder	compared        11,000 ReadEnds to others.  Elapsed time: 00:00:14s.  Time for last 1,000:    0s.  Last read position: 0:21,856
+INFO	2021-08-09 08:53:00	OpticalDuplicateFinder	compared        12,000 ReadEnds to others.  Elapsed time: 00:00:14s.  Time for last 1,000:    0s.  Last read position: 0:13,702
+INFO	2021-08-09 08:53:00	OpticalDuplicateFinder	compared        13,000 ReadEnds to others.  Elapsed time: 00:00:14s.  Time for last 1,000:    0s.  Last read position: 0:9,344
+INFO	2021-08-09 08:53:00	OpticalDuplicateFinder	compared        14,000 ReadEnds to others.  Elapsed time: 00:00:14s.  Time for last 1,000:    0s.  Last read position: 0:13,801
+INFO	2021-08-09 08:53:00	OpticalDuplicateFinder	compared        15,000 ReadEnds to others.  Elapsed time: 00:00:14s.  Time for last 1,000:    0s.  Last read position: 0:14,326
+INFO	2021-08-09 08:53:00	OpticalDuplicateFinder	compared        16,000 ReadEnds to others.  Elapsed time: 00:00:14s.  Time for last 1,000:    0s.  Last read position: 0:14,660
+INFO	2021-08-09 08:53:00	OpticalDuplicateFinder	compared        17,000 ReadEnds to others.  Elapsed time: 00:00:14s.  Time for last 1,000:    0s.  Last read position: 0:30,273
+INFO	2021-08-09 08:53:00	OpticalDuplicateFinder	compared        18,000 ReadEnds to others.  Elapsed time: 00:00:14s.  Time for last 1,000:    0s.  Last read position: 0:1,958
+INFO	2021-08-09 08:53:00	OpticalDuplicateFinder	compared        19,000 ReadEnds to others.  Elapsed time: 00:00:14s.  Time for last 1,000:    0s.  Last read position: 0:5,068
+INFO	2021-08-09 08:53:00	OpticalDuplicateFinder	compared        20,000 ReadEnds to others.  Elapsed time: 00:00:14s.  Time for last 1,000:    0s.  Last read position: 0:20,726
+INFO	2021-08-09 08:53:00	OpticalDuplicateFinder	compared        21,000 ReadEnds to others.  Elapsed time: 00:00:14s.  Time for last 1,000:    0s.  Last read position: 0:21,667
+INFO	2021-08-09 08:53:00	OpticalDuplicateFinder	compared        22,000 ReadEnds to others.  Elapsed time: 00:00:14s.  Time for last 1,000:    0s.  Last read position: 0:28,058
+INFO	2021-08-09 08:53:00	OpticalDuplicateFinder	compared        23,000 ReadEnds to others.  Elapsed time: 00:00:14s.  Time for last 1,000:    0s.  Last read position: 0:9,986
+INFO	2021-08-09 08:53:00	OpticalDuplicateFinder	compared        24,000 ReadEnds to others.  Elapsed time: 00:00:14s.  Time for last 1,000:    0s.  Last read position: 0:27,028
+INFO	2021-08-09 08:53:00	OpticalDuplicateFinder	compared        25,000 ReadEnds to others.  Elapsed time: 00:00:14s.  Time for last 1,000:    0s.  Last read position: 0:23,927
+INFO	2021-08-09 08:53:00	OpticalDuplicateFinder	compared        26,000 ReadEnds to others.  Elapsed time: 00:00:14s.  Time for last 1,000:    0s.  Last read position: 0:13,096
+INFO	2021-08-09 08:53:00	OpticalDuplicateFinder	compared        27,000 ReadEnds to others.  Elapsed time: 00:00:14s.  Time for last 1,000:    0s.  Last read position: 0:14,389
+INFO	2021-08-09 08:53:00	OpticalDuplicateFinder	compared        28,000 ReadEnds to others.  Elapsed time: 00:00:14s.  Time for last 1,000:    0s.  Last read position: 0:12,210
+INFO	2021-08-09 08:53:00	OpticalDuplicateFinder	compared        29,000 ReadEnds to others.  Elapsed time: 00:00:14s.  Time for last 1,000:    0s.  Last read position: 0:18,584
+INFO	2021-08-09 08:53:00	OpticalDuplicateFinder	compared        30,000 ReadEnds to others.  Elapsed time: 00:00:14s.  Time for last 1,000:    0s.  Last read position: 0:22,182
+INFO	2021-08-09 08:53:00	OpticalDuplicateFinder	compared        31,000 ReadEnds to others.  Elapsed time: 00:00:14s.  Time for last 1,000:    0s.  Last read position: 0:6,858
+INFO	2021-08-09 08:53:00	OpticalDuplicateFinder	Large duplicate set. size = 6842
+INFO	2021-08-09 08:53:00	OpticalDuplicateFinder	compared         1,000 ReadEnds to others.  Elapsed time: 00:00:00s.  Time for last 1,000:    0s.  Last read position: 0:4,363
+INFO	2021-08-09 08:53:00	OpticalDuplicateFinder	compared         2,000 ReadEnds to others.  Elapsed time: 00:00:00s.  Time for last 1,000:    0s.  Last read position: 0:26,096
+INFO	2021-08-09 08:53:00	OpticalDuplicateFinder	compared         3,000 ReadEnds to others.  Elapsed time: 00:00:00s.  Time for last 1,000:    0s.  Last read position: 0:20,998
+INFO	2021-08-09 08:53:00	OpticalDuplicateFinder	compared         4,000 ReadEnds to others.  Elapsed time: 00:00:00s.  Time for last 1,000:    0s.  Last read position: 0:27,597
+INFO	2021-08-09 08:53:00	OpticalDuplicateFinder	compared         5,000 ReadEnds to others.  Elapsed time: 00:00:00s.  Time for last 1,000:    0s.  Last read position: 0:16,459
+INFO	2021-08-09 08:53:00	OpticalDuplicateFinder	compared         6,000 ReadEnds to others.  Elapsed time: 00:00:00s.  Time for last 1,000:    0s.  Last read position: 0:20,302
+INFO	2021-08-09 08:53:00	OpticalDuplicateFinder	Large duplicate set. size = 6296
+INFO	2021-08-09 08:53:01	OpticalDuplicateFinder	compared         1,000 ReadEnds to others.  Elapsed time: 00:00:00s.  Time for last 1,000:    0s.  Last read position: 0:10,999
+INFO	2021-08-09 08:53:01	OpticalDuplicateFinder	compared         2,000 ReadEnds to others.  Elapsed time: 00:00:00s.  Time for last 1,000:    0s.  Last read position: 0:16,224
+INFO	2021-08-09 08:53:01	OpticalDuplicateFinder	compared         3,000 ReadEnds to others.  Elapsed time: 00:00:00s.  Time for last 1,000:    0s.  Last read position: 0:21,820
+INFO	2021-08-09 08:53:01	OpticalDuplicateFinder	compared         4,000 ReadEnds to others.  Elapsed time: 00:00:00s.  Time for last 1,000:    0s.  Last read position: 0:24,885
+INFO	2021-08-09 08:53:01	OpticalDuplicateFinder	compared         5,000 ReadEnds to others.  Elapsed time: 00:00:00s.  Time for last 1,000:    0s.  Last read position: 0:11,053
+INFO	2021-08-09 08:53:01	OpticalDuplicateFinder	compared         6,000 ReadEnds to others.  Elapsed time: 00:00:00s.  Time for last 1,000:    0s.  Last read position: 0:31,620
+INFO	2021-08-09 08:53:01	OpticalDuplicateFinder	Large duplicate set. size = 1123
+INFO	2021-08-09 08:53:01	OpticalDuplicateFinder	compared         1,000 ReadEnds to others.  Elapsed time: 00:00:00s.  Time for last 1,000:    0s.  Last read position: 0:8,431
+INFO	2021-08-09 08:53:01	OpticalDuplicateFinder	Large duplicate set. size = 22962
+INFO	2021-08-09 08:53:03	OpticalDuplicateFinder	compared        10,000 ReadEnds to keeper.  Elapsed time: 00:00:02s.  Time for last 10,000:    0s.  Last read position: 0:23,873
+INFO	2021-08-09 08:53:04	OpticalDuplicateFinder	compared        20,000 ReadEnds to keeper.  Elapsed time: 00:00:02s.  Time for last 10,000:    0s.  Last read position: 0:2,112
+INFO	2021-08-09 08:53:19	OpticalDuplicateFinder	compared         1,000 ReadEnds to others.  Elapsed time: 00:00:18s.  Time for last 1,000:    0s.  Last read position: 0:11,288
+INFO	2021-08-09 08:53:22	OpticalDuplicateFinder	compared         2,000 ReadEnds to others.  Elapsed time: 00:00:21s.  Time for last 1,000:    2s.  Last read position: 0:10,230
+INFO	2021-08-09 08:53:22	OpticalDuplicateFinder	compared         3,000 ReadEnds to others.  Elapsed time: 00:00:21s.  Time for last 1,000:    0s.  Last read position: 0:24,108
+INFO	2021-08-09 08:53:22	OpticalDuplicateFinder	compared         4,000 ReadEnds to others.  Elapsed time: 00:00:21s.  Time for last 1,000:    0s.  Last read position: 0:8,594
+INFO	2021-08-09 08:53:22	OpticalDuplicateFinder	compared         5,000 ReadEnds to others.  Elapsed time: 00:00:21s.  Time for last 1,000:    0s.  Last read position: 0:16,007
+INFO	2021-08-09 08:53:25	OpticalDuplicateFinder	compared         6,000 ReadEnds to others.  Elapsed time: 00:00:24s.  Time for last 1,000:    3s.  Last read position: 0:29,252
+INFO	2021-08-09 08:53:25	OpticalDuplicateFinder	compared         7,000 ReadEnds to others.  Elapsed time: 00:00:24s.  Time for last 1,000:    0s.  Last read position: 0:22,770
+INFO	2021-08-09 08:53:25	OpticalDuplicateFinder	compared         8,000 ReadEnds to others.  Elapsed time: 00:00:24s.  Time for last 1,000:    0s.  Last read position: 0:21,522
+INFO	2021-08-09 08:53:25	OpticalDuplicateFinder	compared         9,000 ReadEnds to others.  Elapsed time: 00:00:24s.  Time for last 1,000:    0s.  Last read position: 0:20,835
+INFO	2021-08-09 08:53:28	OpticalDuplicateFinder	compared        10,000 ReadEnds to others.  Elapsed time: 00:00:27s.  Time for last 1,000:    3s.  Last read position: 0:25,907
+INFO	2021-08-09 08:53:28	OpticalDuplicateFinder	compared        11,000 ReadEnds to others.  Elapsed time: 00:00:27s.  Time for last 1,000:    0s.  Last read position: 0:27,208
+INFO	2021-08-09 08:53:28	OpticalDuplicateFinder	compared        12,000 ReadEnds to others.  Elapsed time: 00:00:27s.  Time for last 1,000:    0s.  Last read position: 0:7,166
+INFO	2021-08-09 08:53:28	OpticalDuplicateFinder	compared        13,000 ReadEnds to others.  Elapsed time: 00:00:27s.  Time for last 1,000:    0s.  Last read position: 0:31,882
+INFO	2021-08-09 08:53:28	OpticalDuplicateFinder	compared        14,000 ReadEnds to others.  Elapsed time: 00:00:27s.  Time for last 1,000:    0s.  Last read position: 0:24,632
+INFO	2021-08-09 08:53:28	OpticalDuplicateFinder	compared        15,000 ReadEnds to others.  Elapsed time: 00:00:27s.  Time for last 1,000:    0s.  Last read position: 0:5,737
+INFO	2021-08-09 08:53:28	OpticalDuplicateFinder	compared        16,000 ReadEnds to others.  Elapsed time: 00:00:27s.  Time for last 1,000:    0s.  Last read position: 0:15,917
+INFO	2021-08-09 08:53:28	OpticalDuplicateFinder	compared        17,000 ReadEnds to others.  Elapsed time: 00:00:27s.  Time for last 1,000:    0s.  Last read position: 0:22,507
+INFO	2021-08-09 08:53:28	OpticalDuplicateFinder	compared        18,000 ReadEnds to others.  Elapsed time: 00:00:27s.  Time for last 1,000:    0s.  Last read position: 0:9,390
+INFO	2021-08-09 08:53:28	OpticalDuplicateFinder	compared        19,000 ReadEnds to others.  Elapsed time: 00:00:27s.  Time for last 1,000:    0s.  Last read position: 0:18,557
+INFO	2021-08-09 08:53:28	OpticalDuplicateFinder	compared        20,000 ReadEnds to others.  Elapsed time: 00:00:27s.  Time for last 1,000:    0s.  Last read position: 0:2,383
+INFO	2021-08-09 08:53:28	OpticalDuplicateFinder	compared        21,000 ReadEnds to others.  Elapsed time: 00:00:27s.  Time for last 1,000:    0s.  Last read position: 0:25,120
+INFO	2021-08-09 08:53:28	OpticalDuplicateFinder	compared        22,000 ReadEnds to others.  Elapsed time: 00:00:27s.  Time for last 1,000:    0s.  Last read position: 0:25,238
+INFO	2021-08-09 08:53:28	OpticalDuplicateFinder	Large duplicate set. size = 18841
+INFO	2021-08-09 08:53:30	OpticalDuplicateFinder	compared        10,000 ReadEnds to keeper.  Elapsed time: 00:00:01s.  Time for last 10,000:    0s.  Last read position: 0:15,646
+INFO	2021-08-09 08:53:31	OpticalDuplicateFinder	compared         1,000 ReadEnds to others.  Elapsed time: 00:00:02s.  Time for last 1,000:    0s.  Last read position: 0:3,712
+INFO	2021-08-09 08:53:31	OpticalDuplicateFinder	compared         2,000 ReadEnds to others.  Elapsed time: 00:00:02s.  Time for last 1,000:    0s.  Last read position: 0:20,238
+INFO	2021-08-09 08:53:31	OpticalDuplicateFinder	compared         3,000 ReadEnds to others.  Elapsed time: 00:00:02s.  Time for last 1,000:    0s.  Last read position: 0:29,839
+INFO	2021-08-09 08:53:31	OpticalDuplicateFinder	compared         4,000 ReadEnds to others.  Elapsed time: 00:00:02s.  Time for last 1,000:    0s.  Last read position: 0:5,701
+INFO	2021-08-09 08:53:31	OpticalDuplicateFinder	compared         5,000 ReadEnds to others.  Elapsed time: 00:00:02s.  Time for last 1,000:    0s.  Last read position: 0:15,103
+INFO	2021-08-09 08:53:31	OpticalDuplicateFinder	compared         6,000 ReadEnds to others.  Elapsed time: 00:00:02s.  Time for last 1,000:    0s.  Last read position: 0:13,476
+INFO	2021-08-09 08:53:31	OpticalDuplicateFinder	compared         7,000 ReadEnds to others.  Elapsed time: 00:00:02s.  Time for last 1,000:    0s.  Last read position: 0:24,523
+INFO	2021-08-09 08:53:31	OpticalDuplicateFinder	compared         8,000 ReadEnds to others.  Elapsed time: 00:00:02s.  Time for last 1,000:    0s.  Last read position: 0:19,063
+INFO	2021-08-09 08:53:31	OpticalDuplicateFinder	compared         9,000 ReadEnds to others.  Elapsed time: 00:00:02s.  Time for last 1,000:    0s.  Last read position: 0:27,561
+INFO	2021-08-09 08:53:31	OpticalDuplicateFinder	compared        10,000 ReadEnds to others.  Elapsed time: 00:00:02s.  Time for last 1,000:    0s.  Last read position: 0:27,516
+INFO	2021-08-09 08:53:31	OpticalDuplicateFinder	compared        11,000 ReadEnds to others.  Elapsed time: 00:00:02s.  Time for last 1,000:    0s.  Last read position: 0:32,588
+INFO	2021-08-09 08:53:31	OpticalDuplicateFinder	compared        12,000 ReadEnds to others.  Elapsed time: 00:00:02s.  Time for last 1,000:    0s.  Last read position: 0:14,208
+INFO	2021-08-09 08:53:31	OpticalDuplicateFinder	compared        13,000 ReadEnds to others.  Elapsed time: 00:00:02s.  Time for last 1,000:    0s.  Last read position: 0:2,456
+INFO	2021-08-09 08:53:31	OpticalDuplicateFinder	compared        14,000 ReadEnds to others.  Elapsed time: 00:00:02s.  Time for last 1,000:    0s.  Last read position: 0:25,581
+INFO	2021-08-09 08:53:31	OpticalDuplicateFinder	compared        15,000 ReadEnds to others.  Elapsed time: 00:00:02s.  Time for last 1,000:    0s.  Last read position: 0:16,595
+INFO	2021-08-09 08:53:31	OpticalDuplicateFinder	compared        16,000 ReadEnds to others.  Elapsed time: 00:00:02s.  Time for last 1,000:    0s.  Last read position: 0:25,717
+INFO	2021-08-09 08:53:31	OpticalDuplicateFinder	compared        17,000 ReadEnds to others.  Elapsed time: 00:00:02s.  Time for last 1,000:    0s.  Last read position: 0:7,419
+INFO	2021-08-09 08:53:31	OpticalDuplicateFinder	compared        18,000 ReadEnds to others.  Elapsed time: 00:00:02s.  Time for last 1,000:    0s.  Last read position: 0:32,560
+INFO	2021-08-09 08:53:31	OpticalDuplicateFinder	Large duplicate set. size = 18589
+INFO	2021-08-09 08:53:32	OpticalDuplicateFinder	compared        10,000 ReadEnds to keeper.  Elapsed time: 00:00:01s.  Time for last 10,000:    0s.  Last read position: 0:23,294
+INFO	2021-08-09 08:53:33	OpticalDuplicateFinder	compared         1,000 ReadEnds to others.  Elapsed time: 00:00:01s.  Time for last 1,000:    0s.  Last read position: 0:8,413
+INFO	2021-08-09 08:53:33	OpticalDuplicateFinder	compared         2,000 ReadEnds to others.  Elapsed time: 00:00:01s.  Time for last 1,000:    0s.  Last read position: 0:31,792
+INFO	2021-08-09 08:53:33	OpticalDuplicateFinder	compared         3,000 ReadEnds to others.  Elapsed time: 00:00:01s.  Time for last 1,000:    0s.  Last read position: 0:14,543
+INFO	2021-08-09 08:53:33	OpticalDuplicateFinder	compared         4,000 ReadEnds to others.  Elapsed time: 00:00:01s.  Time for last 1,000:    0s.  Last read position: 0:29,387
+INFO	2021-08-09 08:53:33	OpticalDuplicateFinder	compared         5,000 ReadEnds to others.  Elapsed time: 00:00:01s.  Time for last 1,000:    0s.  Last read position: 0:19,470
+INFO	2021-08-09 08:53:33	OpticalDuplicateFinder	compared         6,000 ReadEnds to others.  Elapsed time: 00:00:01s.  Time for last 1,000:    0s.  Last read position: 0:1,262
+INFO	2021-08-09 08:53:33	OpticalDuplicateFinder	compared         7,000 ReadEnds to others.  Elapsed time: 00:00:01s.  Time for last 1,000:    0s.  Last read position: 0:31,575
+INFO	2021-08-09 08:53:33	OpticalDuplicateFinder	compared         8,000 ReadEnds to others.  Elapsed time: 00:00:01s.  Time for last 1,000:    0s.  Last read position: 0:22,037
+INFO	2021-08-09 08:53:33	OpticalDuplicateFinder	compared         9,000 ReadEnds to others.  Elapsed time: 00:00:01s.  Time for last 1,000:    0s.  Last read position: 0:5,972
+INFO	2021-08-09 08:53:33	OpticalDuplicateFinder	compared        10,000 ReadEnds to others.  Elapsed time: 00:00:01s.  Time for last 1,000:    0s.  Last read position: 0:32,199
+INFO	2021-08-09 08:53:33	OpticalDuplicateFinder	compared        11,000 ReadEnds to others.  Elapsed time: 00:00:01s.  Time for last 1,000:    0s.  Last read position: 0:7,021
+INFO	2021-08-09 08:53:33	OpticalDuplicateFinder	compared        12,000 ReadEnds to others.  Elapsed time: 00:00:01s.  Time for last 1,000:    0s.  Last read position: 0:30,996
+INFO	2021-08-09 08:53:33	OpticalDuplicateFinder	compared        13,000 ReadEnds to others.  Elapsed time: 00:00:01s.  Time for last 1,000:    0s.  Last read position: 0:3,857
+INFO	2021-08-09 08:53:33	OpticalDuplicateFinder	compared        14,000 ReadEnds to others.  Elapsed time: 00:00:01s.  Time for last 1,000:    0s.  Last read position: 0:25,997
+INFO	2021-08-09 08:53:33	OpticalDuplicateFinder	compared        15,000 ReadEnds to others.  Elapsed time: 00:00:01s.  Time for last 1,000:    0s.  Last read position: 0:3,775
+INFO	2021-08-09 08:53:33	OpticalDuplicateFinder	compared        16,000 ReadEnds to others.  Elapsed time: 00:00:01s.  Time for last 1,000:    0s.  Last read position: 0:23,909
+INFO	2021-08-09 08:53:33	OpticalDuplicateFinder	compared        17,000 ReadEnds to others.  Elapsed time: 00:00:01s.  Time for last 1,000:    0s.  Last read position: 0:29,432
+INFO	2021-08-09 08:53:33	OpticalDuplicateFinder	compared        18,000 ReadEnds to others.  Elapsed time: 00:00:01s.  Time for last 1,000:    0s.  Last read position: 0:30,346
+INFO	2021-08-09 08:53:33	OpticalDuplicateFinder	Large duplicate set. size = 18392
+INFO	2021-08-09 08:53:35	OpticalDuplicateFinder	compared        10,000 ReadEnds to keeper.  Elapsed time: 00:00:01s.  Time for last 10,000:    0s.  Last read position: 0:6,017
+INFO	2021-08-09 08:53:35	OpticalDuplicateFinder	compared         1,000 ReadEnds to others.  Elapsed time: 00:00:02s.  Time for last 1,000:    0s.  Last read position: 0:4,951
+INFO	2021-08-09 08:53:35	OpticalDuplicateFinder	compared         2,000 ReadEnds to others.  Elapsed time: 00:00:02s.  Time for last 1,000:    0s.  Last read position: 0:25,672
+INFO	2021-08-09 08:53:35	OpticalDuplicateFinder	compared         3,000 ReadEnds to others.  Elapsed time: 00:00:02s.  Time for last 1,000:    0s.  Last read position: 0:7,853
+INFO	2021-08-09 08:53:35	OpticalDuplicateFinder	compared         4,000 ReadEnds to others.  Elapsed time: 00:00:02s.  Time for last 1,000:    0s.  Last read position: 0:28,709
+INFO	2021-08-09 08:53:35	OpticalDuplicateFinder	compared         5,000 ReadEnds to others.  Elapsed time: 00:00:02s.  Time for last 1,000:    0s.  Last read position: 0:9,634
+INFO	2021-08-09 08:53:35	OpticalDuplicateFinder	compared         6,000 ReadEnds to others.  Elapsed time: 00:00:02s.  Time for last 1,000:    0s.  Last read position: 0:21,549
+INFO	2021-08-09 08:53:35	OpticalDuplicateFinder	compared         7,000 ReadEnds to others.  Elapsed time: 00:00:02s.  Time for last 1,000:    0s.  Last read position: 0:8,413
+INFO	2021-08-09 08:53:35	OpticalDuplicateFinder	compared         8,000 ReadEnds to others.  Elapsed time: 00:00:02s.  Time for last 1,000:    0s.  Last read position: 0:22,625
+INFO	2021-08-09 08:53:35	OpticalDuplicateFinder	compared         9,000 ReadEnds to others.  Elapsed time: 00:00:02s.  Time for last 1,000:    0s.  Last read position: 0:14,959
+INFO	2021-08-09 08:53:35	OpticalDuplicateFinder	compared        10,000 ReadEnds to others.  Elapsed time: 00:00:02s.  Time for last 1,000:    0s.  Last read position: 0:21,332
+INFO	2021-08-09 08:53:35	OpticalDuplicateFinder	compared        11,000 ReadEnds to others.  Elapsed time: 00:00:02s.  Time for last 1,000:    0s.  Last read position: 0:5,692
+INFO	2021-08-09 08:53:35	OpticalDuplicateFinder	compared        12,000 ReadEnds to others.  Elapsed time: 00:00:02s.  Time for last 1,000:    0s.  Last read position: 0:24,288
+INFO	2021-08-09 08:53:35	OpticalDuplicateFinder	compared        13,000 ReadEnds to others.  Elapsed time: 00:00:02s.  Time for last 1,000:    0s.  Last read position: 0:4,508
+INFO	2021-08-09 08:53:35	OpticalDuplicateFinder	compared        14,000 ReadEnds to others.  Elapsed time: 00:00:02s.  Time for last 1,000:    0s.  Last read position: 0:13,386
+INFO	2021-08-09 08:53:35	OpticalDuplicateFinder	compared        15,000 ReadEnds to others.  Elapsed time: 00:00:02s.  Time for last 1,000:    0s.  Last read position: 0:25,147
+INFO	2021-08-09 08:53:35	OpticalDuplicateFinder	compared        16,000 ReadEnds to others.  Elapsed time: 00:00:02s.  Time for last 1,000:    0s.  Last read position: 0:8,097
+INFO	2021-08-09 08:53:35	OpticalDuplicateFinder	compared        17,000 ReadEnds to others.  Elapsed time: 00:00:02s.  Time for last 1,000:    0s.  Last read position: 0:30,617
+INFO	2021-08-09 08:53:35	OpticalDuplicateFinder	compared        18,000 ReadEnds to others.  Elapsed time: 00:00:02s.  Time for last 1,000:    0s.  Last read position: 0:24,207
+INFO	2021-08-09 08:53:35	OpticalDuplicateFinder	Large duplicate set. size = 16626
+INFO	2021-08-09 08:53:36	OpticalDuplicateFinder	compared        10,000 ReadEnds to keeper.  Elapsed time: 00:00:01s.  Time for last 10,000:    0s.  Last read position: 0:22,381
+INFO	2021-08-09 08:53:37	OpticalDuplicateFinder	compared         1,000 ReadEnds to others.  Elapsed time: 00:00:01s.  Time for last 1,000:    0s.  Last read position: 0:1,615
+INFO	2021-08-09 08:53:37	OpticalDuplicateFinder	compared         2,000 ReadEnds to others.  Elapsed time: 00:00:01s.  Time for last 1,000:    0s.  Last read position: 0:12,174
+INFO	2021-08-09 08:53:37	OpticalDuplicateFinder	compared         3,000 ReadEnds to others.  Elapsed time: 00:00:01s.  Time for last 1,000:    0s.  Last read position: 0:30,101
+INFO	2021-08-09 08:53:37	OpticalDuplicateFinder	compared         4,000 ReadEnds to others.  Elapsed time: 00:00:01s.  Time for last 1,000:    0s.  Last read position: 0:26,169
+INFO	2021-08-09 08:53:37	OpticalDuplicateFinder	compared         5,000 ReadEnds to others.  Elapsed time: 00:00:01s.  Time for last 1,000:    0s.  Last read position: 0:13,431
+INFO	2021-08-09 08:53:37	OpticalDuplicateFinder	compared         6,000 ReadEnds to others.  Elapsed time: 00:00:01s.  Time for last 1,000:    0s.  Last read position: 0:8,757
+INFO	2021-08-09 08:53:37	OpticalDuplicateFinder	compared         7,000 ReadEnds to others.  Elapsed time: 00:00:01s.  Time for last 1,000:    0s.  Last read position: 0:12,409
+INFO	2021-08-09 08:53:37	OpticalDuplicateFinder	compared         8,000 ReadEnds to others.  Elapsed time: 00:00:01s.  Time for last 1,000:    0s.  Last read position: 0:15,302
+INFO	2021-08-09 08:53:37	OpticalDuplicateFinder	compared         9,000 ReadEnds to others.  Elapsed time: 00:00:01s.  Time for last 1,000:    0s.  Last read position: 0:29,749
+INFO	2021-08-09 08:53:37	OpticalDuplicateFinder	compared        10,000 ReadEnds to others.  Elapsed time: 00:00:01s.  Time for last 1,000:    0s.  Last read position: 0:5,339
+INFO	2021-08-09 08:53:37	OpticalDuplicateFinder	compared        11,000 ReadEnds to others.  Elapsed time: 00:00:01s.  Time for last 1,000:    0s.  Last read position: 0:27,245
+INFO	2021-08-09 08:53:37	OpticalDuplicateFinder	compared        12,000 ReadEnds to others.  Elapsed time: 00:00:01s.  Time for last 1,000:    0s.  Last read position: 0:10,628
+INFO	2021-08-09 08:53:37	OpticalDuplicateFinder	compared        13,000 ReadEnds to others.  Elapsed time: 00:00:01s.  Time for last 1,000:    0s.  Last read position: 0:7,229
+INFO	2021-08-09 08:53:37	OpticalDuplicateFinder	compared        14,000 ReadEnds to others.  Elapsed time: 00:00:01s.  Time for last 1,000:    0s.  Last read position: 0:31,060
+INFO	2021-08-09 08:53:37	OpticalDuplicateFinder	compared        15,000 ReadEnds to others.  Elapsed time: 00:00:01s.  Time for last 1,000:    0s.  Last read position: 0:31,177
+INFO	2021-08-09 08:53:37	OpticalDuplicateFinder	compared        16,000 ReadEnds to others.  Elapsed time: 00:00:01s.  Time for last 1,000:    0s.  Last read position: 0:31,539
+INFO	2021-08-09 08:53:37	OpticalDuplicateFinder	Large duplicate set. size = 1035
+INFO	2021-08-09 08:53:37	OpticalDuplicateFinder	compared         1,000 ReadEnds to others.  Elapsed time: 00:00:00s.  Time for last 1,000:    0s.  Last read position: 0:20,076
+INFO	2021-08-09 08:53:40	MarkDuplicates	Traversing fragment information and detecting duplicates.
+INFO	2021-08-09 08:53:46	MarkDuplicates	Sorting list of duplicate records.
+INFO	2021-08-09 08:54:14	MarkDuplicates	After generateDuplicateIndexes freeMemory: 10929274024; totalMemory: 18821058560; maxMemory: 31136546816
+INFO	2021-08-09 08:54:14	MarkDuplicates	Marking 3523659 records as duplicates.
+INFO	2021-08-09 08:54:14	MarkDuplicates	Found 32835 optical duplicate clusters.
+Ignoring SAM validation error: ERROR::HEADER_RECORD_MISSING_REQUIRED_TAG:File /home/jwestaway/pk_pipeline/low_parasitemia/outputs/pk_alignment/PK_SB_DNA_093_DKDL210002222-1a_HWHGKDSXY_L4.sorted.bam, Error parsing SAM header. @RG line missing SM tag. Line:
+@RG	ID:PK_SB_DNA_093_DKDL210002222-1a_HWHGKDSXY_L4	PL:ILLUMINA
+INFO	2021-08-09 08:54:14	MarkDuplicates	Reads are assumed to be ordered by: coordinate
+INFO	2021-08-09 09:30:29	MarkDuplicates	Written    10,000,000 records.  Elapsed time: 00:36:14s.  Time for last 10,000,000: 2,174s.  Last read position: */*
+INFO	2021-08-09 09:35:06	MarkDuplicates	Written    20,000,000 records.  Elapsed time: 00:40:52s.  Time for last 10,000,000:  277s.  Last read position: */*
+INFO	2021-08-09 09:39:42	MarkDuplicates	Written    30,000,000 records.  Elapsed time: 00:45:27s.  Time for last 10,000,000:  275s.  Last read position: */*
+INFO	2021-08-09 09:44:22	MarkDuplicates	Written    40,000,000 records.  Elapsed time: 00:50:07s.  Time for last 10,000,000:  279s.  Last read position: */*
+INFO	2021-08-09 09:48:56	MarkDuplicates	Written    50,000,000 records.  Elapsed time: 00:54:41s.  Time for last 10,000,000:  273s.  Last read position: */*
+INFO	2021-08-09 09:49:03	MarkDuplicates	Writing complete. Closing input iterator.
+INFO	2021-08-09 09:49:03	MarkDuplicates	Duplicate Index cleanup.
+INFO	2021-08-09 09:49:03	MarkDuplicates	Getting Memory Stats.
+INFO	2021-08-09 09:49:07	MarkDuplicates	Before output close freeMemory: 18712974304; totalMemory: 18821058560; maxMemory: 31136546816
+INFO	2021-08-09 09:49:08	MarkDuplicates	Closed outputs. Getting more Memory Stats.
+INFO	2021-08-09 09:49:08	MarkDuplicates	After output close freeMemory: 17047746360; totalMemory: 17146593280; maxMemory: 31136546816
+[Mon Aug 09 09:49:08 ACST 2021] picard.sam.markduplicates.MarkDuplicates done. Elapsed time: 72.98 minutes.
+Runtime.totalMemory()=17146593280
+---------------------------------------
+Change header @RG and index
+---------------------------------------
+HaplotypeCaller
+INFO  09:51:04,067 HelpFormatter - -------------------------------------------------------------------------------- 
+INFO  09:51:04,087 HelpFormatter - The Genome Analysis Toolkit (GATK) v3.2-2-gec30cee, Compiled 2014/07/17 15:22:03 
+INFO  09:51:04,088 HelpFormatter - Copyright (c) 2010 The Broad Institute 
+INFO  09:51:04,089 HelpFormatter - For support and documentation go to http://www.broadinstitute.org/gatk 
+INFO  09:51:04,121 HelpFormatter - Program Args: -T HaplotypeCaller -nt 1 -ERC GVCF --minPruning 3 --maxNumHaplotypesInPopulation 200 --max_alternate_alleles 3 --variant_index_type LINEAR --variant_index_parameter 128000 -contamination 0.0 -R /home/jwestaway/pk_pipeline/ref_genomes/PKA1H1/fasta/strain_A1_H.1.Icor.fasta -I /home/jwestaway/pk_pipeline/ZB_100/outputs/vcf_consensus/GATK/PK_SB_DNA_093_DKDL210002222-1a_HWHGKDSXY_L4/PK_SB_DNA_093_DKDL210002222-1a_HWHGKDSXY_L4.dupmarked.reheader.bam -o /home/jwestaway/pk_pipeline/ZB_100/outputs/vcf_consensus/GATK/PK_SB_DNA_093_DKDL210002222-1a_HWHGKDSXY_L4/PK_SB_DNA_093_DKDL210002222-1a_HWHGKDSXY_L4.haplotypecaller.vcf.gz 
+INFO  09:51:04,159 HelpFormatter - Executing as jwestaway@cheetah01 on Linux 2.6.32-754.14.2.el6.x86_64 amd64; Java HotSpot(TM) 64-Bit Server VM 1.8.0_131-b11. 
+INFO  09:51:04,162 HelpFormatter - Date/Time: 2021/08/09 09:51:04 
+INFO  09:51:04,164 HelpFormatter - -------------------------------------------------------------------------------- 
+INFO  09:51:04,178 HelpFormatter - -------------------------------------------------------------------------------- 
+WARN  09:51:04,217 GATKVCFUtils - Creating Tabix index for /home/jwestaway/pk_pipeline/ZB_100/outputs/vcf_consensus/GATK/PK_SB_DNA_093_DKDL210002222-1a_HWHGKDSXY_L4/PK_SB_DNA_093_DKDL210002222-1a_HWHGKDSXY_L4.haplotypecaller.vcf.gz, ignoring user-specified index type and parameter 
+INFO  09:51:06,836 GenomeAnalysisEngine - Strictness is SILENT 
+INFO  09:51:07,379 GenomeAnalysisEngine - Downsampling Settings: Method: BY_SAMPLE, Target Coverage: 250 
+INFO  09:51:07,417 SAMDataSource$SAMReaders - Initializing SAMRecords in serial 
+INFO  09:51:07,473 SAMDataSource$SAMReaders - Done initializing BAM readers: total time 0.05 
+INFO  09:51:07,531 HCMappingQualityFilter - Filtering out reads with MAPQ < 20 
+INFO  09:51:08,065 GenomeAnalysisEngine - Preparing for traversal over 1 BAM files 
+INFO  09:51:08,209 GenomeAnalysisEngine - Done preparing for traversal 
+INFO  09:51:08,211 ProgressMeter - [INITIALIZATION COMPLETE; STARTING PROCESSING] 
+INFO  09:51:08,212 ProgressMeter -                 |      processed |    time |         per 1M |           |   total | remaining 
+INFO  09:51:08,214 ProgressMeter -        Location | active regions | elapsed | active regions | completed | runtime |   runtime 
+INFO  09:51:08,221 HaplotypeCaller - Standard Emitting and Calling confidence set to 0.0 for reference-model confidence output 
+INFO  09:51:08,222 HaplotypeCaller - All sites annotated with PLs forced to true for reference-model confidence output 
+INFO  09:51:08,782 HaplotypeCaller - Using global mismapping rate of 45 => -4.5 in log10 likelihood units 
+Using AVX accelerated implementation of PairHMM
+INFO  09:51:12,456 VectorLoglessPairHMM - libVectorLoglessPairHMM unpacked successfully from GATK jar file 
+INFO  09:51:12,466 VectorLoglessPairHMM - Using vectorized implementation of PairHMM 
+INFO  09:51:38,262 ProgressMeter - ordered_PKNH_01_v2:28069              0.0    30.0 s           49.7 w        0.1%     7.2 h       7.2 h 
+INFO  09:52:08,266 ProgressMeter - ordered_PKNH_01_v2:55673              0.0    60.0 s           99.3 w        0.2%     7.3 h       7.3 h 
+INFO  09:52:38,275 ProgressMeter - ordered_PKNH_01_v2:65905              0.0    90.0 s          148.9 w        0.3%     9.2 h       9.2 h 
+INFO  09:53:08,278 ProgressMeter - ordered_PKNH_01_v2:81041              0.0   120.0 s          198.5 w        0.3%    10.0 h      10.0 h 
+INFO  09:53:38,280 ProgressMeter - ordered_PKNH_01_v2:101282              0.0     2.5 m          248.1 w        0.4%    10.0 h      10.0 h 
+INFO  09:54:08,283 ProgressMeter - ordered_PKNH_01_v2:119353              0.0     3.0 m          297.7 w        0.5%    10.2 h      10.1 h 
+INFO  09:54:38,285 ProgressMeter - ordered_PKNH_01_v2:139427              0.0     3.5 m          347.3 w        0.6%    10.2 h      10.1 h 
+INFO  09:55:08,287 ProgressMeter - ordered_PKNH_01_v2:156379              0.0     4.0 m          397.0 w        0.6%    10.4 h      10.3 h 
+INFO  09:55:38,289 ProgressMeter - ordered_PKNH_01_v2:194680              0.0     4.5 m          446.6 w        0.8%     9.4 h       9.3 h 
+INFO  09:56:08,291 ProgressMeter - ordered_PKNH_01_v2:220483              0.0     5.0 m          496.2 w        0.9%     9.2 h       9.1 h 
+INFO  09:56:38,292 ProgressMeter - ordered_PKNH_01_v2:254336              0.0     5.5 m          545.8 w        1.0%     8.8 h       8.7 h 
+INFO  09:57:08,293 ProgressMeter - ordered_PKNH_01_v2:287480              0.0     6.0 m          595.4 w        1.2%     8.5 h       8.4 h 
+INFO  09:57:38,294 ProgressMeter - ordered_PKNH_01_v2:320371              0.0     6.5 m          645.0 w        1.3%     8.2 h       8.1 h 
+INFO  09:58:08,295 ProgressMeter - ordered_PKNH_01_v2:346388              0.0     7.0 m          694.6 w        1.4%     8.2 h       8.1 h 
+INFO  09:58:38,296 ProgressMeter - ordered_PKNH_01_v2:382480              0.0     7.5 m          744.2 w        1.6%     7.9 h       7.8 h 
+INFO  09:59:08,297 ProgressMeter - ordered_PKNH_01_v2:405018              0.0     8.0 m          793.8 w        1.7%     8.0 h       7.9 h 
+INFO  09:59:38,298 ProgressMeter - ordered_PKNH_01_v2:437391              0.0     8.5 m          843.4 w        1.8%     7.9 h       7.7 h 
+INFO  10:00:08,299 ProgressMeter - ordered_PKNH_01_v2:469582              0.0     9.0 m          893.0 w        1.9%     7.8 h       7.6 h 
+INFO  10:00:38,300 ProgressMeter - ordered_PKNH_01_v2:498268              0.0     9.5 m          942.6 w        2.0%     7.7 h       7.6 h 
+INFO  10:01:08,301 ProgressMeter - ordered_PKNH_01_v2:517742              0.0    10.0 m          992.2 w        2.1%     7.8 h       7.7 h 
+INFO  10:01:38,302 ProgressMeter - ordered_PKNH_01_v2:545215              0.0    10.5 m         1041.8 w        2.2%     7.8 h       7.6 h 
+INFO  10:02:08,303 ProgressMeter - ordered_PKNH_01_v2:582082              0.0    11.0 m         1091.4 w        2.4%     7.7 h       7.5 h 
+INFO  10:02:38,304 ProgressMeter - ordered_PKNH_01_v2:611172              0.0    11.5 m         1141.0 w        2.5%     7.6 h       7.4 h 
+INFO  10:03:08,305 ProgressMeter - ordered_PKNH_01_v2:688708              0.0    12.0 m         1190.6 w        2.8%     7.1 h       6.9 h 
+INFO  10:03:38,306 ProgressMeter - ordered_PKNH_01_v2:718088              0.0    12.5 m         1240.2 w        3.0%     7.1 h       6.8 h 
+INFO  10:04:08,308 ProgressMeter - ordered_PKNH_01_v2:759714              0.0    13.0 m         1289.8 w        3.1%     6.9 h       6.7 h 
+INFO  10:04:38,309 ProgressMeter - ordered_PKNH_01_v2:808150              0.0    13.5 m         1339.4 w        3.3%     6.8 h       6.5 h 
+INFO  10:05:08,310 ProgressMeter - ordered_PKNH_01_v2:863194              0.0    14.0 m         1389.1 w        3.5%     6.6 h       6.3 h 
+INFO  10:05:38,311 ProgressMeter - ordered_PKNH_02_v2:67252         892570.0    14.5 m           16.2 m        3.9%     6.1 h       5.9 h 
+INFO  10:06:08,312 ProgressMeter - ordered_PKNH_02_v2:130251         892570.0    15.0 m           16.8 m        4.2%     5.9 h       5.7 h 
+INFO  10:06:38,313 ProgressMeter - ordered_PKNH_02_v2:169489         892570.0    15.5 m           17.4 m        4.4%     5.9 h       5.7 h 
+INFO  10:07:08,314 ProgressMeter - ordered_PKNH_02_v2:210205         892570.0    16.0 m           17.9 m        4.5%     5.9 h       5.6 h 
+INFO  10:07:38,315 ProgressMeter - ordered_PKNH_02_v2:247337         892570.0    16.5 m           18.5 m        4.7%     5.9 h       5.6 h 
+INFO  10:08:08,316 ProgressMeter - ordered_PKNH_02_v2:294526         892570.0    17.0 m           19.0 m        4.9%     5.8 h       5.5 h 
+INFO  10:08:38,317 ProgressMeter - ordered_PKNH_02_v2:333884         892570.0    17.5 m           19.6 m        5.0%     5.8 h       5.5 h 
+INFO  10:09:08,318 ProgressMeter - ordered_PKNH_02_v2:404043         892570.0    18.0 m           20.2 m        5.3%     5.6 h       5.3 h 
+INFO  10:09:38,319 ProgressMeter - ordered_PKNH_02_v2:429354         892570.0    18.5 m           20.7 m        5.4%     5.7 h       5.4 h 
+INFO  10:10:08,320 ProgressMeter - ordered_PKNH_02_v2:459459         892570.0    19.0 m           21.3 m        5.6%     5.7 h       5.4 h 
+INFO  10:10:38,321 ProgressMeter - ordered_PKNH_02_v2:479624         892570.0    19.5 m           21.8 m        5.6%     5.8 h       5.4 h 
+INFO  10:11:08,322 ProgressMeter - ordered_PKNH_02_v2:508603         892570.0    20.0 m           22.4 m        5.8%     5.8 h       5.5 h 
+INFO  10:11:38,330 ProgressMeter - ordered_PKNH_02_v2:549011         892570.0    20.5 m           23.0 m        5.9%     5.8 h       5.4 h 
+INFO  10:12:08,331 ProgressMeter - ordered_PKNH_02_v2:592882         892570.0    21.0 m           23.5 m        6.1%     5.7 h       5.4 h 
+INFO  10:12:38,332 ProgressMeter - ordered_PKNH_02_v2:632546         892570.0    21.5 m           24.1 m        6.3%     5.7 h       5.4 h 
+WARN  10:12:54,430 ExactAFCalc - this tool is currently set to genotype at most 3 alternate alleles in a given context, but the context at ordered_PKNH_02_v2:673491 has 5 alternate alleles so only the top alleles will be used; see the --max_alternate_alleles argument 
+INFO  10:13:08,333 ProgressMeter - ordered_PKNH_02_v2:697940         892570.0    22.0 m           24.7 m        6.5%     5.6 h       5.2 h 
+INFO  10:13:38,334 ProgressMeter - ordered_PKNH_02_v2:750635         892570.0    22.5 m           25.2 m        6.8%     5.6 h       5.2 h 
+INFO  10:14:08,335 ProgressMeter - ordered_PKNH_03_v2:64358        1680216.0    23.0 m           13.7 m        7.2%     5.3 h       5.0 h 
+INFO  10:14:38,336 ProgressMeter - ordered_PKNH_03_v2:105230        1680216.0    23.5 m           14.0 m        7.3%     5.3 h       4.9 h 
+INFO  10:15:08,337 ProgressMeter - ordered_PKNH_03_v2:143582        1680216.0    24.0 m           14.3 m        7.5%     5.3 h       4.9 h 
+INFO  10:15:38,338 ProgressMeter - ordered_PKNH_03_v2:157824        1680216.0    24.5 m           14.6 m        7.6%     5.4 h       5.0 h 
+INFO  10:16:08,339 ProgressMeter - ordered_PKNH_03_v2:190116        1680216.0    25.0 m           14.9 m        7.7%     5.4 h       5.0 h 
+INFO  10:16:38,340 ProgressMeter - ordered_PKNH_03_v2:229133        1680216.0    25.5 m           15.2 m        7.9%     5.4 h       5.0 h 
+INFO  10:17:08,341 ProgressMeter - ordered_PKNH_03_v2:266976        1680216.0    26.0 m           15.5 m        8.0%     5.4 h       5.0 h 
+INFO  10:17:38,342 ProgressMeter - ordered_PKNH_03_v2:296841        1680216.0    26.5 m           15.8 m        8.1%     5.4 h       5.0 h 
+INFO  10:18:08,343 ProgressMeter - ordered_PKNH_03_v2:340887        1680216.0    27.0 m           16.1 m        8.3%     5.4 h       5.0 h 
+INFO  10:18:38,344 ProgressMeter - ordered_PKNH_03_v2:386833        1680216.0    27.5 m           16.4 m        8.5%     5.4 h       4.9 h 
+INFO  10:19:08,345 ProgressMeter - ordered_PKNH_03_v2:418318        1680216.0    28.0 m           16.7 m        8.6%     5.4 h       4.9 h 
+INFO  10:19:38,346 ProgressMeter - ordered_PKNH_03_v2:447250        1680216.0    28.5 m           17.0 m        8.7%     5.4 h       5.0 h 
+INFO  10:20:08,347 ProgressMeter - ordered_PKNH_03_v2:490036        1680216.0    29.0 m           17.3 m        8.9%     5.4 h       4.9 h 
+INFO  10:20:38,348 ProgressMeter - ordered_PKNH_03_v2:508564        1680216.0    29.5 m           17.6 m        9.0%     5.5 h       5.0 h 
+INFO  10:21:08,349 ProgressMeter - ordered_PKNH_03_v2:509104        1680216.0    30.0 m           17.9 m        9.0%     5.6 h       5.1 h 
+INFO  10:21:38,350 ProgressMeter - ordered_PKNH_03_v2:559952        1680216.0    30.5 m           18.2 m        9.2%     5.5 h       5.0 h 
+INFO  10:22:08,351 ProgressMeter - ordered_PKNH_03_v2:607420        1680216.0    31.0 m           18.5 m        9.4%     5.5 h       5.0 h 
+INFO  10:22:38,352 ProgressMeter - ordered_PKNH_03_v2:637882        1680216.0    31.5 m           18.7 m        9.5%     5.5 h       5.0 h 
+INFO  10:23:08,354 ProgressMeter - ordered_PKNH_03_v2:727387        1680216.0    32.0 m           19.0 m        9.9%     5.4 h       4.9 h 
+INFO  10:23:38,355 ProgressMeter - ordered_PKNH_03_v2:770327        1680216.0    32.5 m           19.3 m       10.1%     5.4 h       4.8 h 
+INFO  10:24:08,356 ProgressMeter - ordered_PKNH_03_v2:794987        1680216.0    33.0 m           19.6 m       10.2%     5.4 h       4.9 h 
+INFO  10:24:38,357 ProgressMeter - ordered_PKNH_03_v2:827330        1680216.0    33.5 m           19.9 m       10.3%     5.4 h       4.9 h 
+INFO  10:25:08,358 ProgressMeter - ordered_PKNH_03_v2:854943        1680216.0    34.0 m           20.2 m       10.4%     5.4 h       4.9 h 
+INFO  10:25:38,359 ProgressMeter - ordered_PKNH_03_v2:890236        1680216.0    34.5 m           20.5 m       10.6%     5.4 h       4.9 h 
+INFO  10:26:08,360 ProgressMeter - ordered_PKNH_03_v2:924094        1680216.0    35.0 m           20.8 m       10.7%     5.4 h       4.9 h 
+INFO  10:26:38,361 ProgressMeter - ordered_PKNH_03_v2:980485        1680216.0    35.5 m           21.1 m       10.9%     5.4 h       4.8 h 
+INFO  10:27:08,362 ProgressMeter - ordered_PKNH_04_v2:30463        2730786.0    36.0 m           13.2 m       11.4%     5.3 h       4.7 h 
+INFO  10:27:38,363 ProgressMeter - ordered_PKNH_04_v2:95597        2730786.0    36.5 m           13.4 m       11.6%     5.2 h       4.6 h 
+INFO  10:28:08,364 ProgressMeter - ordered_PKNH_04_v2:123390        2730786.0    37.0 m           13.6 m       11.7%     5.3 h       4.6 h 
+WARN  10:28:10,808 ExactAFCalc - this tool is currently set to genotype at most 3 alternate alleles in a given context, but the context at ordered_PKNH_04_v2:123060 has 5 alternate alleles so only the top alleles will be used; see the --max_alternate_alleles argument 
+INFO  10:28:38,365 ProgressMeter - ordered_PKNH_04_v2:147193        2730786.0    37.5 m           13.7 m       11.8%     5.3 h       4.7 h 
+INFO  10:29:08,366 ProgressMeter - ordered_PKNH_04_v2:177240        2730786.0    38.0 m           13.9 m       12.0%     5.3 h       4.7 h 
+INFO  10:29:38,367 ProgressMeter - ordered_PKNH_04_v2:218921        2730786.0    38.5 m           14.1 m       12.1%     5.3 h       4.6 h 
+INFO  10:30:08,368 ProgressMeter - ordered_PKNH_04_v2:264514        2730786.0    39.0 m           14.3 m       12.3%     5.3 h       4.6 h 
+WARN  10:30:25,511 ExactAFCalc - this tool is currently set to genotype at most 3 alternate alleles in a given context, but the context at ordered_PKNH_04_v2:314678 has 5 alternate alleles so only the top alleles will be used; see the --max_alternate_alleles argument 
+INFO  10:30:38,378 ProgressMeter - ordered_PKNH_04_v2:338518        2730786.0    39.5 m           14.5 m       12.6%     5.2 h       4.6 h 
+INFO  10:31:08,379 ProgressMeter - ordered_PKNH_04_v2:373099        2730786.0    40.0 m           14.6 m       12.8%     5.2 h       4.6 h 
+INFO  10:31:38,380 ProgressMeter - ordered_PKNH_04_v2:416206        2730786.0    40.5 m           14.8 m       12.9%     5.2 h       4.5 h 
+INFO  10:32:08,381 ProgressMeter - ordered_PKNH_04_v2:477338        2730786.0    41.0 m           15.0 m       13.2%     5.2 h       4.5 h 
+INFO  10:32:38,383 ProgressMeter - ordered_PKNH_04_v2:532487        2730786.0    41.5 m           15.2 m       13.4%     5.2 h       4.5 h 
+INFO  10:33:08,384 ProgressMeter - ordered_PKNH_04_v2:570786        2730786.0    42.0 m           15.4 m       13.6%     5.2 h       4.5 h 
+INFO  10:33:38,385 ProgressMeter - ordered_PKNH_04_v2:584613        2730786.0    42.5 m           15.6 m       13.6%     5.2 h       4.5 h 
+INFO  10:34:08,386 ProgressMeter - ordered_PKNH_04_v2:600493        2730786.0    43.0 m           15.7 m       13.7%     5.2 h       4.5 h 
+INFO  10:34:38,387 ProgressMeter - ordered_PKNH_04_v2:624780        2730786.0    43.5 m           15.9 m       13.8%     5.3 h       4.5 h 
+INFO  10:35:08,388 ProgressMeter - ordered_PKNH_04_v2:663266        2730786.0    44.0 m           16.1 m       14.0%     5.3 h       4.5 h 
+INFO  10:35:38,389 ProgressMeter - ordered_PKNH_04_v2:702086        2730786.0    44.5 m           16.3 m       14.1%     5.3 h       4.5 h 
+INFO  10:36:08,390 ProgressMeter - ordered_PKNH_04_v2:754107        2730786.0    45.0 m           16.5 m       14.3%     5.2 h       4.5 h 
+INFO  10:36:38,391 ProgressMeter - ordered_PKNH_04_v2:794222        2730786.0    45.5 m           16.7 m       14.5%     5.2 h       4.5 h 
+INFO  10:37:08,392 ProgressMeter - ordered_PKNH_04_v2:837784        2730786.0    46.0 m           16.8 m       14.7%     5.2 h       4.5 h 
+INFO  10:37:38,393 ProgressMeter - ordered_PKNH_04_v2:862810        2730786.0    46.5 m           17.0 m       14.8%     5.2 h       4.5 h 
+INFO  10:38:08,394 ProgressMeter - ordered_PKNH_04_v2:881731        2730786.0    47.0 m           17.2 m       14.9%     5.3 h       4.5 h 
+INFO  10:38:38,395 ProgressMeter - ordered_PKNH_04_v2:914847        2730786.0    47.5 m           17.4 m       15.0%     5.3 h       4.5 h 
+INFO  10:39:08,396 ProgressMeter - ordered_PKNH_04_v2:953734        2730786.0    48.0 m           17.6 m       15.1%     5.3 h       4.5 h 
+INFO  10:39:38,398 ProgressMeter - ordered_PKNH_04_v2:1003276        2730786.0    48.5 m           17.8 m       15.4%     5.3 h       4.5 h 
+INFO  10:40:08,399 ProgressMeter - ordered_PKNH_04_v2:1033841        2730786.0    49.0 m           17.9 m       15.5%     5.3 h       4.5 h 
+INFO  10:40:38,409 ProgressMeter - ordered_PKNH_04_v2:1081119        2730786.0    49.5 m           18.1 m       15.7%     5.3 h       4.4 h 
+INFO  10:41:08,410 ProgressMeter - ordered_PKNH_04_v2:1110394        2730786.0    50.0 m           18.3 m       15.8%     5.3 h       4.4 h 
+INFO  10:41:38,411 ProgressMeter - ordered_PKNH_05_v2:45851        3862810.0    50.5 m           13.1 m       16.1%     5.2 h       4.4 h 
+INFO  10:42:08,412 ProgressMeter - ordered_PKNH_05_v2:81381        3862810.0    51.0 m           13.2 m       16.2%     5.2 h       4.4 h 
+INFO  10:42:38,413 ProgressMeter - ordered_PKNH_05_v2:118775        3862810.0    51.5 m           13.3 m       16.4%     5.2 h       4.4 h 
+INFO  10:43:08,414 ProgressMeter - ordered_PKNH_05_v2:166724        3862810.0    52.0 m           13.5 m       16.6%     5.2 h       4.4 h 
+INFO  10:43:38,415 ProgressMeter - ordered_PKNH_05_v2:202198        3862810.0    52.5 m           13.6 m       16.7%     5.2 h       4.4 h 
+INFO  10:44:08,416 ProgressMeter - ordered_PKNH_05_v2:271246        3862810.0    53.0 m           13.7 m       17.0%     5.2 h       4.3 h 
+INFO  10:44:38,417 ProgressMeter - ordered_PKNH_05_v2:312926        3862810.0    53.5 m           13.9 m       17.2%     5.2 h       4.3 h 
+INFO  10:45:08,418 ProgressMeter - ordered_PKNH_05_v2:399521        3862810.0    54.0 m           14.0 m       17.5%     5.1 h       4.2 h 
+INFO  10:45:38,419 ProgressMeter - ordered_PKNH_05_v2:438870        3862810.0    54.5 m           14.1 m       17.7%     5.1 h       4.2 h 
+INFO  10:46:08,420 ProgressMeter - ordered_PKNH_05_v2:472672        3862810.0    55.0 m           14.2 m       17.8%     5.1 h       4.2 h 
+INFO  10:46:38,421 ProgressMeter - ordered_PKNH_05_v2:508180        3862810.0    55.5 m           14.4 m       18.0%     5.1 h       4.2 h 
+INFO  10:47:08,422 ProgressMeter - ordered_PKNH_05_v2:544298        3862810.0    56.0 m           14.5 m       18.1%     5.2 h       4.2 h 
+INFO  10:47:38,423 ProgressMeter - ordered_PKNH_05_v2:578224        3862810.0    56.5 m           14.6 m       18.3%     5.2 h       4.2 h 
+INFO  10:48:08,424 ProgressMeter - ordered_PKNH_05_v2:605142        3862810.0    57.0 m           14.8 m       18.4%     5.2 h       4.2 h 
+INFO  10:48:38,425 ProgressMeter - ordered_PKNH_05_v2:638496        3862810.0    57.5 m           14.9 m       18.5%     5.2 h       4.2 h 
+INFO  10:49:08,426 ProgressMeter - ordered_PKNH_05_v2:669000        3862810.0    58.0 m           15.0 m       18.6%     5.2 h       4.2 h 
+INFO  10:49:38,427 ProgressMeter - ordered_PKNH_05_v2:694984        3862810.0    58.5 m           15.1 m       18.7%     5.2 h       4.2 h 
+INFO  10:50:08,428 ProgressMeter - ordered_PKNH_05_v2:730802        3862810.0    59.0 m           15.3 m       18.9%     5.2 h       4.2 h 
+INFO  10:50:38,429 ProgressMeter - ordered_PKNH_05_v2:763957        3862810.0    59.5 m           15.4 m       19.0%     5.2 h       4.2 h 
+INFO  10:51:08,430 ProgressMeter - ordered_PKNH_06_v2:65444        4645255.0    60.0 m           12.9 m       19.4%     5.2 h       4.2 h 
+INFO  10:51:38,431 ProgressMeter - ordered_PKNH_06_v2:99052        4645255.0    60.5 m           13.0 m       19.5%     5.2 h       4.2 h 
+INFO  10:52:08,432 ProgressMeter - ordered_PKNH_06_v2:127416        4645255.0    61.0 m           13.1 m       19.6%     5.2 h       4.2 h 
+INFO  10:52:38,433 ProgressMeter - ordered_PKNH_06_v2:145487        4645255.0    61.5 m           13.2 m       19.7%     5.2 h       4.2 h 
+INFO  10:53:08,434 ProgressMeter - ordered_PKNH_06_v2:173056        4645255.0    62.0 m           13.3 m       19.8%     5.2 h       4.2 h 
+INFO  10:53:38,435 ProgressMeter - ordered_PKNH_06_v2:200623        4645255.0    62.5 m           13.5 m       19.9%     5.2 h       4.2 h 
+INFO  10:54:08,436 ProgressMeter - ordered_PKNH_06_v2:239125        4645255.0    63.0 m           13.6 m       20.1%     5.2 h       4.2 h 
+INFO  10:54:38,437 ProgressMeter - ordered_PKNH_06_v2:274651        4645255.0    63.5 m           13.7 m       20.2%     5.2 h       4.2 h 
+INFO  10:55:08,503 ProgressMeter - ordered_PKNH_06_v2:356913        4645255.0    64.0 m           13.8 m       20.6%     5.2 h       4.1 h 
+INFO  10:55:38,504 ProgressMeter - ordered_PKNH_06_v2:384932        4645255.0    64.5 m           13.9 m       20.7%     5.2 h       4.1 h 
+WARN  10:55:53,219 ExactAFCalc - this tool is currently set to genotype at most 3 alternate alleles in a given context, but the context at ordered_PKNH_06_v2:403950 has 5 alternate alleles so only the top alleles will be used; see the --max_alternate_alleles argument 
+INFO  10:56:08,505 ProgressMeter - ordered_PKNH_06_v2:426626        4645255.0    65.0 m           14.0 m       20.9%     5.2 h       4.1 h 
+INFO  10:56:38,506 ProgressMeter - ordered_PKNH_06_v2:467812        4645255.0    65.5 m           14.1 m       21.0%     5.2 h       4.1 h 
+INFO  10:57:08,507 ProgressMeter - ordered_PKNH_06_v2:491062        4645255.0    66.0 m           14.2 m       21.1%     5.2 h       4.1 h 
+INFO  10:57:38,508 ProgressMeter - ordered_PKNH_06_v2:519274        4645255.0    66.5 m           14.3 m       21.2%     5.2 h       4.1 h 
+INFO  10:58:18,509 ProgressMeter - ordered_PKNH_06_v2:551708        4645255.0    67.2 m           14.5 m       21.4%     5.2 h       4.1 h 
+INFO  10:58:48,510 ProgressMeter - ordered_PKNH_06_v2:601862        4645255.0    67.7 m           14.6 m       21.6%     5.2 h       4.1 h 
+INFO  10:59:18,511 ProgressMeter - ordered_PKNH_06_v2:655520        4645255.0    68.2 m           14.7 m       21.8%     5.2 h       4.1 h 
+INFO  10:59:48,511 ProgressMeter - ordered_PKNH_06_v2:699132        4645255.0    68.7 m           14.8 m       22.0%     5.2 h       4.1 h 
+INFO  11:00:18,519 ProgressMeter - ordered_PKNH_06_v2:744972        4645255.0    69.2 m           14.9 m       22.2%     5.2 h       4.0 h 
+INFO  11:00:58,520 ProgressMeter - ordered_PKNH_06_v2:796387        4645255.0    69.8 m           15.0 m       22.4%     5.2 h       4.0 h 
+INFO  11:01:38,521 ProgressMeter - ordered_PKNH_06_v2:858614        4645255.0    70.5 m           15.2 m       22.6%     5.2 h       4.0 h 
+INFO  11:02:08,522 ProgressMeter - ordered_PKNH_06_v2:900097        4645255.0    71.0 m           15.3 m       22.8%     5.2 h       4.0 h 
+INFO  11:02:48,523 ProgressMeter - ordered_PKNH_06_v2:962238        4645255.0    71.7 m           15.4 m       23.1%     5.2 h       4.0 h 
+INFO  11:03:28,524 ProgressMeter - ordered_PKNH_06_v2:1064788        4645255.0    72.3 m           15.6 m       23.5%     5.1 h       3.9 h 
+INFO  11:03:58,525 ProgressMeter - ordered_PKNH_07_v2:89529        5725911.0    72.8 m           12.7 m       23.9%     5.1 h       3.9 h 
+INFO  11:04:38,526 ProgressMeter - ordered_PKNH_07_v2:158451        5725911.0    73.5 m           12.8 m       24.2%     5.1 h       3.8 h 
+INFO  11:05:08,539 ProgressMeter - ordered_PKNH_07_v2:215997        5725911.0    74.0 m           12.9 m       24.4%     5.0 h       3.8 h 
+INFO  11:05:38,540 ProgressMeter - ordered_PKNH_07_v2:249024        5725911.0    74.5 m           13.0 m       24.6%     5.1 h       3.8 h 
+INFO  11:06:08,541 ProgressMeter - ordered_PKNH_07_v2:275914        5725911.0    75.0 m           13.1 m       24.7%     5.1 h       3.8 h 
+INFO  11:06:38,542 ProgressMeter - ordered_PKNH_07_v2:335892        5725911.0    75.5 m           13.2 m       24.9%     5.0 h       3.8 h 
+INFO  11:07:08,543 ProgressMeter - ordered_PKNH_07_v2:373299        5725911.0    76.0 m           13.3 m       25.1%     5.1 h       3.8 h 
+INFO  11:07:38,544 ProgressMeter - ordered_PKNH_07_v2:423092        5725911.0    76.5 m           13.4 m       25.3%     5.0 h       3.8 h 
+INFO  11:08:08,545 ProgressMeter - ordered_PKNH_07_v2:460556        5725911.0    77.0 m           13.4 m       25.4%     5.0 h       3.8 h 
+INFO  11:08:38,546 ProgressMeter - ordered_PKNH_07_v2:508829        5725911.0    77.5 m           13.5 m       25.6%     5.0 h       3.7 h 
+INFO  11:09:18,547 ProgressMeter - ordered_PKNH_07_v2:572701        5725911.0    78.2 m           13.7 m       25.9%     5.0 h       3.7 h 
+INFO  11:09:48,548 ProgressMeter - ordered_PKNH_07_v2:610889        5725911.0    78.7 m           13.7 m       26.1%     5.0 h       3.7 h 
+INFO  11:10:18,549 ProgressMeter - ordered_PKNH_07_v2:669461        5725911.0    79.2 m           13.8 m       26.3%     5.0 h       3.7 h 
+INFO  11:10:48,550 ProgressMeter - ordered_PKNH_07_v2:698653        5725911.0    79.7 m           13.9 m       26.4%     5.0 h       3.7 h 
+INFO  11:11:18,551 ProgressMeter - ordered_PKNH_07_v2:733740        5725911.0    80.2 m           14.0 m       26.6%     5.0 h       3.7 h 
+INFO  11:11:48,552 ProgressMeter - ordered_PKNH_07_v2:785709        5725911.0    80.7 m           14.1 m       26.8%     5.0 h       3.7 h 
+INFO  11:12:18,553 ProgressMeter - ordered_PKNH_07_v2:825902        5725911.0    81.2 m           14.2 m       26.9%     5.0 h       3.7 h 
+INFO  11:12:48,554 ProgressMeter - ordered_PKNH_07_v2:850557        5725911.0    81.7 m           14.3 m       27.0%     5.0 h       3.7 h 
+INFO  11:13:18,556 ProgressMeter - ordered_PKNH_07_v2:875602        5725911.0    82.2 m           14.4 m       27.1%     5.0 h       3.7 h 
+INFO  11:13:48,557 ProgressMeter - ordered_PKNH_07_v2:904026        5725911.0    82.7 m           14.4 m       27.3%     5.1 h       3.7 h 
+INFO  11:14:18,558 ProgressMeter - ordered_PKNH_07_v2:946768        5725911.0    83.2 m           14.5 m       27.4%     5.1 h       3.7 h 
+INFO  11:14:48,559 ProgressMeter - ordered_PKNH_07_v2:967405        5725911.0    83.7 m           14.6 m       27.5%     5.1 h       3.7 h 
+INFO  11:15:18,559 ProgressMeter - ordered_PKNH_07_v2:1022184        5725911.0    84.2 m           14.7 m       27.7%     5.1 h       3.7 h 
+INFO  11:15:48,560 ProgressMeter - ordered_PKNH_07_v2:1061219        5725911.0    84.7 m           14.8 m       27.9%     5.1 h       3.6 h 
+INFO  11:16:18,561 ProgressMeter - ordered_PKNH_07_v2:1105802        5725911.0    85.2 m           14.9 m       28.1%     5.1 h       3.6 h 
+INFO  11:16:48,562 ProgressMeter - ordered_PKNH_07_v2:1148975        5725911.0    85.7 m           15.0 m       28.3%     5.1 h       3.6 h 
+INFO  11:17:18,563 ProgressMeter - ordered_PKNH_07_v2:1176361        5725911.0    86.2 m           15.0 m       28.4%     5.1 h       3.6 h 
+INFO  11:17:48,564 ProgressMeter - ordered_PKNH_07_v2:1239468        5725911.0    86.7 m           15.1 m       28.6%     5.0 h       3.6 h 
+INFO  11:18:18,565 ProgressMeter - ordered_PKNH_07_v2:1288876        5725911.0    87.2 m           15.2 m       28.8%     5.0 h       3.6 h 
+INFO  11:18:48,566 ProgressMeter - ordered_PKNH_07_v2:1356176        5725911.0    87.7 m           15.3 m       29.1%     5.0 h       3.6 h 
+INFO  11:19:18,567 ProgressMeter - ordered_PKNH_07_v2:1392043        5725911.0    88.2 m           15.4 m       29.3%     5.0 h       3.6 h 
+INFO  11:19:48,568 ProgressMeter - ordered_PKNH_07_v2:1413739        5725911.0    88.7 m           15.5 m       29.4%     5.0 h       3.6 h 
+INFO  11:20:28,569 ProgressMeter - ordered_PKNH_07_v2:1466061        5725911.0    89.3 m           15.6 m       29.6%     5.0 h       3.5 h 
+INFO  11:20:58,570 ProgressMeter - ordered_PKNH_08_v2:13268        7247987.0    89.8 m           12.4 m       29.9%     5.0 h       3.5 h 
+INFO  11:21:28,577 ProgressMeter - ordered_PKNH_08_v2:72064        7247987.0    90.3 m           12.5 m       30.1%     5.0 h       3.5 h 
+INFO  11:21:58,578 ProgressMeter - ordered_PKNH_08_v2:132067        7247987.0    90.8 m           12.5 m       30.3%     5.0 h       3.5 h 
+INFO  11:22:28,579 ProgressMeter - ordered_PKNH_08_v2:167766        7247987.0    91.3 m           12.6 m       30.5%     5.0 h       3.5 h 
+INFO  11:22:58,580 ProgressMeter - ordered_PKNH_08_v2:217643        7247987.0    91.8 m           12.7 m       30.7%     5.0 h       3.5 h 
+INFO  11:23:28,581 ProgressMeter - ordered_PKNH_08_v2:264769        7247987.0    92.3 m           12.7 m       30.9%     5.0 h       3.4 h 
+INFO  11:23:58,582 ProgressMeter - ordered_PKNH_08_v2:322218        7247987.0    92.8 m           12.8 m       31.1%     5.0 h       3.4 h 
+INFO  11:24:28,583 ProgressMeter - ordered_PKNH_08_v2:398693        7247987.0    93.3 m           12.9 m       31.4%     4.9 h       3.4 h 
+INFO  11:24:58,584 ProgressMeter - ordered_PKNH_08_v2:452905        7247987.0    93.8 m           12.9 m       31.7%     4.9 h       3.4 h 
+INFO  11:25:28,585 ProgressMeter - ordered_PKNH_08_v2:522579        7247987.0    94.3 m           13.0 m       32.0%     4.9 h       3.3 h 
+INFO  11:26:08,586 ProgressMeter - ordered_PKNH_08_v2:604762        7247987.0    95.0 m           13.1 m       32.3%     4.9 h       3.3 h 
+INFO  11:26:48,587 ProgressMeter - ordered_PKNH_08_v2:651160        7247987.0    95.7 m           13.2 m       32.5%     4.9 h       3.3 h 
+INFO  11:27:18,588 ProgressMeter - ordered_PKNH_08_v2:684295        7247987.0    96.2 m           13.3 m       32.6%     4.9 h       3.3 h 
+INFO  11:27:48,589 ProgressMeter - ordered_PKNH_08_v2:721856        7247987.0    96.7 m           13.3 m       32.8%     4.9 h       3.3 h 
+INFO  11:28:28,590 ProgressMeter - ordered_PKNH_08_v2:767432        7247987.0    97.3 m           13.4 m       33.0%     4.9 h       3.3 h 
+INFO  11:29:08,591 ProgressMeter - ordered_PKNH_08_v2:839333        7247987.0    98.0 m           13.5 m       33.3%     4.9 h       3.3 h 
+INFO  11:29:48,592 ProgressMeter - ordered_PKNH_08_v2:888848        7247987.0    98.7 m           13.6 m       33.5%     4.9 h       3.3 h 
+INFO  11:30:28,593 ProgressMeter - ordered_PKNH_08_v2:941695        7247987.0    99.3 m           13.7 m       33.7%     4.9 h       3.3 h 
+INFO  11:31:08,594 ProgressMeter - ordered_PKNH_08_v2:976394        7247987.0   100.0 m           13.8 m       33.8%     4.9 h       3.3 h 
+INFO  11:31:38,595 ProgressMeter - ordered_PKNH_08_v2:1015044        7247987.0   100.5 m           13.9 m       34.0%     4.9 h       3.3 h 
+INFO  11:32:08,595 ProgressMeter - ordered_PKNH_08_v2:1053180        7247987.0   101.0 m           13.9 m       34.1%     4.9 h       3.2 h 
+INFO  11:32:38,606 ProgressMeter - ordered_PKNH_08_v2:1092651        7247987.0   101.5 m           14.0 m       34.3%     4.9 h       3.2 h 
+INFO  11:33:08,607 ProgressMeter - ordered_PKNH_08_v2:1125705        7247987.0   102.0 m           14.1 m       34.4%     4.9 h       3.2 h 
+INFO  11:33:38,608 ProgressMeter - ordered_PKNH_08_v2:1153910        7247987.0   102.5 m           14.1 m       34.5%     4.9 h       3.2 h 
+INFO  11:34:08,609 ProgressMeter - ordered_PKNH_08_v2:1180031        7247987.0   103.0 m           14.2 m       34.7%     5.0 h       3.2 h 
+INFO  11:34:48,610 ProgressMeter - ordered_PKNH_08_v2:1255667        7247987.0   103.7 m           14.3 m       35.0%     4.9 h       3.2 h 
+INFO  11:35:28,611 ProgressMeter - ordered_PKNH_08_v2:1324805        7247987.0   104.3 m           14.4 m       35.2%     4.9 h       3.2 h 
+INFO  11:36:08,612 ProgressMeter - ordered_PKNH_08_v2:1396356        7247987.0   105.0 m           14.5 m       35.5%     4.9 h       3.2 h 
+INFO  11:36:48,613 ProgressMeter - ordered_PKNH_08_v2:1467500        7247987.0   105.7 m           14.6 m       35.8%     4.9 h       3.2 h 
+INFO  11:37:18,614 ProgressMeter - ordered_PKNH_08_v2:1490869        7247987.0   106.2 m           14.6 m       35.9%     4.9 h       3.2 h 
+INFO  11:37:48,639 ProgressMeter - ordered_PKNH_08_v2:1517384        7247987.0   106.7 m           14.7 m       36.0%     4.9 h       3.2 h 
+INFO  11:38:18,640 ProgressMeter - ordered_PKNH_08_v2:1544497        7247987.0   107.2 m           14.8 m       36.2%     4.9 h       3.2 h 
+INFO  11:38:48,641 ProgressMeter - ordered_PKNH_08_v2:1566703        7247987.0   107.7 m           14.9 m       36.2%     5.0 h       3.2 h 
+INFO  11:39:18,642 ProgressMeter - ordered_PKNH_08_v2:1585550        7247987.0   108.2 m           14.9 m       36.3%     5.0 h       3.2 h 
+INFO  11:39:48,643 ProgressMeter - ordered_PKNH_08_v2:1615981        7247987.0   108.7 m           15.0 m       36.4%     5.0 h       3.2 h 
+INFO  11:40:28,644 ProgressMeter - ordered_PKNH_08_v2:1665348        7247987.0   109.3 m           15.1 m       36.6%     5.0 h       3.1 h 
+INFO  11:41:08,645 ProgressMeter - ordered_PKNH_08_v2:1703400        7247987.0   110.0 m           15.2 m       36.8%     5.0 h       3.1 h 
+INFO  11:41:38,646 ProgressMeter - ordered_PKNH_08_v2:1781001        7247987.0   110.5 m           15.2 m       37.1%     5.0 h       3.1 h 
+INFO  11:42:18,647 ProgressMeter - ordered_PKNH_08_v2:1832836        7247987.0   111.2 m           15.3 m       37.3%     5.0 h       3.1 h 
+INFO  11:42:48,648 ProgressMeter - ordered_PKNH_08_v2:1908667        7247987.0   111.7 m           15.4 m       37.7%     4.9 h       3.1 h 
+INFO  11:43:28,649 ProgressMeter - ordered_PKNH_09_v2:125483        9172442.0   112.3 m           12.2 m       38.2%     4.9 h       3.0 h 
+INFO  11:43:58,658 ProgressMeter - ordered_PKNH_09_v2:167715        9172442.0   112.8 m           12.3 m       38.4%     4.9 h       3.0 h 
+INFO  11:44:38,659 ProgressMeter - ordered_PKNH_09_v2:220851        9172442.0   113.5 m           12.4 m       38.6%     4.9 h       3.0 h 
+INFO  11:45:18,660 ProgressMeter - ordered_PKNH_09_v2:276460        9172442.0   114.2 m           12.4 m       38.9%     4.9 h       3.0 h 
+INFO  11:45:48,661 ProgressMeter - ordered_PKNH_09_v2:308238        9172442.0   114.7 m           12.5 m       39.0%     4.9 h       3.0 h 
+INFO  11:46:18,662 ProgressMeter - ordered_PKNH_09_v2:345376        9172442.0   115.2 m           12.6 m       39.1%     4.9 h       3.0 h 
+INFO  11:46:58,663 ProgressMeter - ordered_PKNH_09_v2:427714        9172442.0   115.8 m           12.6 m       39.5%     4.9 h       3.0 h 
+INFO  11:47:28,664 ProgressMeter - ordered_PKNH_09_v2:482747        9172442.0   116.3 m           12.7 m       39.7%     4.9 h       2.9 h 
+INFO  11:47:58,665 ProgressMeter - ordered_PKNH_09_v2:530087        9172442.0   116.8 m           12.7 m       39.9%     4.9 h       2.9 h 
+INFO  11:48:28,666 ProgressMeter - ordered_PKNH_09_v2:555348        9172442.0   117.3 m           12.8 m       40.0%     4.9 h       2.9 h 
+INFO  11:48:58,667 ProgressMeter - ordered_PKNH_09_v2:589681        9172442.0   117.8 m           12.8 m       40.1%     4.9 h       2.9 h 
+INFO  11:49:28,668 ProgressMeter - ordered_PKNH_09_v2:665032        9172442.0   118.3 m           12.9 m       40.4%     4.9 h       2.9 h 
+INFO  11:49:58,669 ProgressMeter - ordered_PKNH_09_v2:699909        9172442.0   118.8 m           13.0 m       40.6%     4.9 h       2.9 h 
+INFO  11:50:28,669 ProgressMeter - ordered_PKNH_09_v2:718419        9172442.0   119.3 m           13.0 m       40.7%     4.9 h       2.9 h 
+INFO  11:50:58,670 ProgressMeter - ordered_PKNH_09_v2:758818        9172442.0   119.8 m           13.1 m       40.8%     4.9 h       2.9 h 
+INFO  11:51:28,671 ProgressMeter - ordered_PKNH_09_v2:802177        9172442.0     2.0 h           13.1 m       41.0%     4.9 h       2.9 h 
+INFO  11:51:58,672 ProgressMeter - ordered_PKNH_09_v2:837051        9172442.0     2.0 h           13.2 m       41.2%     4.9 h       2.9 h 
+INFO  11:52:28,673 ProgressMeter - ordered_PKNH_09_v2:915244        9172442.0     2.0 h           13.2 m       41.5%     4.9 h       2.9 h 
+INFO  11:52:58,674 ProgressMeter - ordered_PKNH_09_v2:946389        9172442.0     2.0 h           13.3 m       41.6%     4.9 h       2.8 h 
+INFO  11:53:28,675 ProgressMeter - ordered_PKNH_09_v2:996273        9172442.0     2.0 h           13.3 m       41.8%     4.9 h       2.8 h 
+INFO  11:54:08,676 ProgressMeter - ordered_PKNH_09_v2:1038583        9172442.0     2.1 h           13.4 m       42.0%     4.9 h       2.8 h 
+INFO  11:54:38,683 ProgressMeter - ordered_PKNH_09_v2:1078312        9172442.0     2.1 h           13.5 m       42.1%     4.9 h       2.8 h 
+INFO  11:55:18,684 ProgressMeter - ordered_PKNH_09_v2:1122266        9172442.0     2.1 h           13.5 m       42.3%     4.9 h       2.8 h 
+INFO  11:55:48,685 ProgressMeter - ordered_PKNH_09_v2:1159654        9172442.0     2.1 h           13.6 m       42.5%     4.9 h       2.8 h 
+INFO  11:56:18,685 ProgressMeter - ordered_PKNH_09_v2:1195801        9172442.0     2.1 h           13.6 m       42.6%     4.9 h       2.8 h 
+INFO  11:56:48,686 ProgressMeter - ordered_PKNH_09_v2:1239821        9172442.0     2.1 h           13.7 m       42.8%     4.9 h       2.8 h 
+INFO  11:57:18,688 ProgressMeter - ordered_PKNH_09_v2:1275522        9172442.0     2.1 h           13.8 m       43.0%     4.9 h       2.8 h 
+INFO  11:57:48,688 ProgressMeter - ordered_PKNH_09_v2:1328222        9172442.0     2.1 h           13.8 m       43.2%     4.9 h       2.8 h 
+INFO  11:58:18,689 ProgressMeter - ordered_PKNH_09_v2:1379754        9172442.0     2.1 h           13.9 m       43.4%     4.9 h       2.8 h 
+INFO  11:58:48,690 ProgressMeter - ordered_PKNH_09_v2:1408768        9172442.0     2.1 h           13.9 m       43.5%     4.9 h       2.8 h 
+INFO  11:59:18,691 ProgressMeter - ordered_PKNH_09_v2:1472701        9172442.0     2.1 h           14.0 m       43.8%     4.9 h       2.7 h 
+INFO  11:59:48,692 ProgressMeter - ordered_PKNH_09_v2:1507917        9172442.0     2.1 h           14.0 m       43.9%     4.9 h       2.7 h 
+INFO  12:00:18,693 ProgressMeter - ordered_PKNH_09_v2:1537438        9172442.0     2.2 h           14.1 m       44.0%     4.9 h       2.7 h 
+INFO  12:00:48,694 ProgressMeter - ordered_PKNH_09_v2:1575678        9172442.0     2.2 h           14.1 m       44.2%     4.9 h       2.7 h 
+INFO  12:01:18,695 ProgressMeter - ordered_PKNH_09_v2:1626008        9172442.0     2.2 h           14.2 m       44.4%     4.9 h       2.7 h 
+INFO  12:01:48,696 ProgressMeter - ordered_PKNH_09_v2:1677851        9172442.0     2.2 h           14.2 m       44.6%     4.9 h       2.7 h 
+INFO  12:02:18,697 ProgressMeter - ordered_PKNH_09_v2:1727943        9172442.0     2.2 h           14.3 m       44.8%     4.9 h       2.7 h 
+INFO  12:02:58,698 ProgressMeter - ordered_PKNH_09_v2:1781691        9172442.0     2.2 h           14.4 m       45.0%     4.9 h       2.7 h 
+INFO  12:03:38,699 ProgressMeter - ordered_PKNH_09_v2:1849809        9172442.0     2.2 h           14.4 m       45.3%     4.9 h       2.7 h 
+INFO  12:04:18,700 ProgressMeter - ordered_PKNH_09_v2:1932948        9172442.0     2.2 h           14.5 m       45.7%     4.9 h       2.6 h 
+INFO  12:04:48,701 ProgressMeter - ordered_PKNH_09_v2:1982327        9172442.0     2.2 h           14.6 m       45.9%     4.9 h       2.6 h 
+INFO  12:05:18,702 ProgressMeter - ordered_PKNH_09_v2:2028874        9172442.0     2.2 h           14.6 m       46.1%     4.9 h       2.6 h 
+INFO  12:05:48,714 ProgressMeter - ordered_PKNH_09_v2:2117276        9172442.0     2.2 h           14.7 m       46.4%     4.8 h       2.6 h 
+INFO  12:06:18,714 ProgressMeter - ordered_PKNH_09_v2:2177496        9172442.0     2.3 h           14.7 m       46.7%     4.8 h       2.6 h 
+INFO  12:06:48,715 ProgressMeter - ordered_PKNH_10_v2:89104      1.1367931E7     2.3 h           11.9 m       47.1%     4.8 h       2.5 h 
+INFO  12:07:18,716 ProgressMeter - ordered_PKNH_10_v2:138728      1.1367931E7     2.3 h           12.0 m       47.3%     4.8 h       2.5 h 
+INFO  12:07:48,717 ProgressMeter - ordered_PKNH_10_v2:213658      1.1367931E7     2.3 h           12.0 m       47.6%     4.8 h       2.5 h 
+INFO  12:08:18,718 ProgressMeter - ordered_PKNH_10_v2:268548      1.1367931E7     2.3 h           12.1 m       47.8%     4.8 h       2.5 h 
+INFO  12:08:48,719 ProgressMeter - ordered_PKNH_10_v2:312237      1.1367931E7     2.3 h           12.1 m       48.0%     4.8 h       2.5 h 
+INFO  12:09:18,720 ProgressMeter - ordered_PKNH_10_v2:361502      1.1367931E7     2.3 h           12.2 m       48.2%     4.8 h       2.5 h 
+INFO  12:09:58,721 ProgressMeter - ordered_PKNH_10_v2:431366      1.1367931E7     2.3 h           12.2 m       48.5%     4.8 h       2.5 h 
+INFO  12:10:38,722 ProgressMeter - ordered_PKNH_10_v2:495038      1.1367931E7     2.3 h           12.3 m       48.8%     4.8 h       2.4 h 
+INFO  12:11:08,722 ProgressMeter - ordered_PKNH_10_v2:543273      1.1367931E7     2.3 h           12.3 m       49.0%     4.8 h       2.4 h 
+INFO  12:11:38,723 ProgressMeter - ordered_PKNH_10_v2:582888      1.1367931E7     2.3 h           12.4 m       49.1%     4.8 h       2.4 h 
+INFO  12:12:08,724 ProgressMeter - ordered_PKNH_10_v2:624414      1.1367931E7     2.4 h           12.4 m       49.3%     4.8 h       2.4 h 
+INFO  12:12:38,725 ProgressMeter - ordered_PKNH_10_v2:683286      1.1367931E7     2.4 h           12.4 m       49.6%     4.8 h       2.4 h 
+INFO  12:13:08,726 ProgressMeter - ordered_PKNH_10_v2:713239      1.1367931E7     2.4 h           12.5 m       49.7%     4.8 h       2.4 h 
+INFO  12:13:38,727 ProgressMeter - ordered_PKNH_10_v2:754646      1.1367931E7     2.4 h           12.5 m       49.8%     4.8 h       2.4 h 
+INFO  12:14:08,728 ProgressMeter - ordered_PKNH_10_v2:790539      1.1367931E7     2.4 h           12.6 m       50.0%     4.8 h       2.4 h 
+INFO  12:14:38,729 ProgressMeter - ordered_PKNH_10_v2:828070      1.1367931E7     2.4 h           12.6 m       50.1%     4.8 h       2.4 h 
+INFO  12:15:18,730 ProgressMeter - ordered_PKNH_10_v2:871628      1.1367931E7     2.4 h           12.7 m       50.3%     4.8 h       2.4 h 
+INFO  12:15:48,740 ProgressMeter - ordered_PKNH_10_v2:905363      1.1367931E7     2.4 h           12.7 m       50.5%     4.8 h       2.4 h 
+INFO  12:16:18,741 ProgressMeter - ordered_PKNH_10_v2:934497      1.1367931E7     2.4 h           12.8 m       50.6%     4.8 h       2.4 h 
+INFO  12:16:48,742 ProgressMeter - ordered_PKNH_10_v2:988310      1.1367931E7     2.4 h           12.8 m       50.8%     4.8 h       2.4 h 
+INFO  12:17:28,743 ProgressMeter - ordered_PKNH_10_v2:1042290      1.1367931E7     2.4 h           12.9 m       51.0%     4.8 h       2.3 h 
+INFO  12:18:08,744 ProgressMeter - ordered_PKNH_10_v2:1102571      1.1367931E7     2.5 h           12.9 m       51.3%     4.8 h       2.3 h 
+INFO  12:18:48,745 ProgressMeter - ordered_PKNH_10_v2:1137408      1.1367931E7     2.5 h           13.0 m       51.4%     4.8 h       2.3 h 
+INFO  12:19:28,746 ProgressMeter - ordered_PKNH_10_v2:1174835      1.1367931E7     2.5 h           13.0 m       51.6%     4.8 h       2.3 h 
+INFO  12:19:58,747 ProgressMeter - ordered_PKNH_10_v2:1208084      1.1367931E7     2.5 h           13.1 m       51.7%     4.8 h       2.3 h 
+INFO  12:20:28,748 ProgressMeter - ordered_PKNH_10_v2:1229204      1.1367931E7     2.5 h           13.1 m       51.8%     4.8 h       2.3 h 
+INFO  12:20:58,749 ProgressMeter - ordered_PKNH_10_v2:1273584      1.1367931E7     2.5 h           13.2 m       52.0%     4.8 h       2.3 h 
+INFO  12:21:28,750 ProgressMeter - ordered_PKNH_10_v2:1299386      1.1367931E7     2.5 h           13.2 m       52.1%     4.8 h       2.3 h 
+INFO  12:21:58,751 ProgressMeter - ordered_PKNH_10_v2:1340934      1.1367931E7     2.5 h           13.3 m       52.3%     4.8 h       2.3 h 
+INFO  12:22:28,752 ProgressMeter - ordered_PKNH_10_v2:1383616      1.1367931E7     2.5 h           13.3 m       52.4%     4.8 h       2.3 h 
+INFO  12:22:58,753 ProgressMeter - ordered_PKNH_10_v2:1448631      1.1367931E7     2.5 h           13.4 m       52.7%     4.8 h       2.3 h 
+INFO  12:23:28,754 ProgressMeter - ordered_PKNH_11_v2:19237      1.2884913E7     2.5 h           11.8 m       53.1%     4.8 h       2.2 h 
+INFO  12:24:08,755 ProgressMeter - ordered_PKNH_11_v2:85077      1.2884913E7     2.6 h           11.9 m       53.3%     4.8 h       2.2 h 
+INFO  12:24:38,756 ProgressMeter - ordered_PKNH_11_v2:126582      1.2884913E7     2.6 h           11.9 m       53.5%     4.8 h       2.2 h 
+INFO  12:25:08,756 ProgressMeter - ordered_PKNH_11_v2:162160      1.2884913E7     2.6 h           12.0 m       53.6%     4.8 h       2.2 h 
+INFO  12:25:38,757 ProgressMeter - ordered_PKNH_11_v2:205431      1.2884913E7     2.6 h           12.0 m       53.8%     4.8 h       2.2 h 
+INFO  12:26:08,758 ProgressMeter - ordered_PKNH_11_v2:230140      1.2884913E7     2.6 h           12.0 m       53.9%     4.8 h       2.2 h 
+INFO  12:26:38,766 ProgressMeter - ordered_PKNH_11_v2:291692      1.2884913E7     2.6 h           12.1 m       54.2%     4.8 h       2.2 h 
+INFO  12:27:18,767 ProgressMeter - ordered_PKNH_11_v2:346787      1.2884913E7     2.6 h           12.1 m       54.4%     4.8 h       2.2 h 
+INFO  12:27:58,768 ProgressMeter - ordered_PKNH_11_v2:390762      1.2884913E7     2.6 h           12.2 m       54.6%     4.8 h       2.2 h 
+INFO  12:28:28,768 ProgressMeter - ordered_PKNH_11_v2:451218      1.2884913E7     2.6 h           12.2 m       54.8%     4.8 h       2.2 h 
+INFO  12:28:58,769 ProgressMeter - ordered_PKNH_11_v2:508466      1.2884913E7     2.6 h           12.3 m       55.1%     4.8 h       2.1 h 
+INFO  12:29:28,770 ProgressMeter - ordered_PKNH_11_v2:553324      1.2884913E7     2.6 h           12.3 m       55.3%     4.8 h       2.1 h 
+INFO  12:29:58,771 ProgressMeter - ordered_PKNH_11_v2:612008      1.2884913E7     2.6 h           12.3 m       55.5%     4.8 h       2.1 h 
+INFO  12:30:28,772 ProgressMeter - ordered_PKNH_11_v2:655482      1.2884913E7     2.7 h           12.4 m       55.7%     4.8 h       2.1 h 
+INFO  12:30:58,773 ProgressMeter - ordered_PKNH_11_v2:689825      1.2884913E7     2.7 h           12.4 m       55.8%     4.8 h       2.1 h 
+INFO  12:31:28,774 ProgressMeter - ordered_PKNH_11_v2:734770      1.2884913E7     2.7 h           12.4 m       56.0%     4.8 h       2.1 h 
+INFO  12:31:58,775 ProgressMeter - ordered_PKNH_11_v2:809769      1.2884913E7     2.7 h           12.5 m       56.3%     4.8 h       2.1 h 
+INFO  12:32:28,776 ProgressMeter - ordered_PKNH_11_v2:865956      1.2884913E7     2.7 h           12.5 m       56.5%     4.8 h       2.1 h 
+INFO  12:32:58,777 ProgressMeter - ordered_PKNH_11_v2:916724      1.2884913E7     2.7 h           12.6 m       56.7%     4.8 h       2.1 h 
+INFO  12:33:28,778 ProgressMeter - ordered_PKNH_11_v2:1010776      1.2884913E7     2.7 h           12.6 m       57.1%     4.7 h       2.0 h 
+INFO  12:33:58,804 ProgressMeter - ordered_PKNH_11_v2:1076682      1.2884913E7     2.7 h           12.6 m       57.4%     4.7 h       2.0 h 
+INFO  12:34:28,805 ProgressMeter - ordered_PKNH_11_v2:1128136      1.2884913E7     2.7 h           12.7 m       57.6%     4.7 h       2.0 h 
+INFO  12:35:08,806 ProgressMeter - ordered_PKNH_11_v2:1192119      1.2884913E7     2.7 h           12.7 m       57.9%     4.7 h     119.3 m 
+INFO  12:35:48,807 ProgressMeter - ordered_PKNH_11_v2:1255883      1.2884913E7     2.7 h           12.8 m       58.1%     4.7 h     118.5 m 
+INFO  12:36:28,808 ProgressMeter - ordered_PKNH_11_v2:1314528      1.2884913E7     2.8 h           12.8 m       58.4%     4.7 h     117.8 m 
+WARN  12:36:46,966 ExactAFCalc - this tool is currently set to genotype at most 3 alternate alleles in a given context, but the context at ordered_PKNH_11_v2:1325171 has 5 alternate alleles so only the top alleles will be used; see the --max_alternate_alleles argument 
+INFO  12:36:58,808 ProgressMeter - ordered_PKNH_11_v2:1342020      1.2884913E7     2.8 h           12.9 m       58.5%     4.7 h     117.7 m 
+INFO  12:37:28,809 ProgressMeter - ordered_PKNH_11_v2:1382271      1.2884913E7     2.8 h           12.9 m       58.7%     4.7 h     117.2 m 
+INFO  12:37:58,829 ProgressMeter - ordered_PKNH_11_v2:1427837      1.2884913E7     2.8 h           12.9 m       58.9%     4.7 h     116.7 m 
+INFO  12:38:28,829 ProgressMeter - ordered_PKNH_11_v2:1455768      1.2884913E7     2.8 h           13.0 m       59.0%     4.7 h     116.4 m 
+INFO  12:38:58,830 ProgressMeter - ordered_PKNH_11_v2:1496002      1.2884913E7     2.8 h           13.0 m       59.1%     4.7 h     116.0 m 
+INFO  12:39:28,831 ProgressMeter - ordered_PKNH_11_v2:1518223      1.2884913E7     2.8 h           13.1 m       59.2%     4.7 h     115.9 m 
+INFO  12:39:58,832 ProgressMeter - ordered_PKNH_11_v2:1557233      1.2884913E7     2.8 h           13.1 m       59.4%     4.7 h     115.5 m 
+INFO  12:40:28,833 ProgressMeter - ordered_PKNH_11_v2:1592323      1.2884913E7     2.8 h           13.1 m       59.5%     4.7 h     115.1 m 
+INFO  12:41:08,834 ProgressMeter - ordered_PKNH_11_v2:1628741      1.2884913E7     2.8 h           13.2 m       59.7%     4.7 h     114.9 m 
+INFO  12:41:48,835 ProgressMeter - ordered_PKNH_11_v2:1664613      1.2884913E7     2.8 h           13.2 m       59.8%     4.8 h     114.6 m 
+INFO  12:42:18,835 ProgressMeter - ordered_PKNH_11_v2:1699121      1.2884913E7     2.9 h           13.3 m       60.0%     4.8 h     114.3 m 
+INFO  12:42:48,836 ProgressMeter - ordered_PKNH_11_v2:1739793      1.2884913E7     2.9 h           13.3 m       60.1%     4.8 h     113.8 m 
+INFO  12:43:18,837 ProgressMeter - ordered_PKNH_11_v2:1831537      1.2884913E7     2.9 h           13.4 m       60.5%     4.7 h     112.4 m 
+INFO  12:43:48,838 ProgressMeter - ordered_PKNH_11_v2:1907346      1.2884913E7     2.9 h           13.4 m       60.8%     4.7 h     111.2 m 
+INFO  12:44:18,839 ProgressMeter - ordered_PKNH_11_v2:1934292      1.2884913E7     2.9 h           13.4 m       60.9%     4.7 h     111.0 m 
+INFO  12:44:48,840 ProgressMeter - ordered_PKNH_11_v2:1972612      1.2884913E7     2.9 h           13.5 m       61.1%     4.7 h     110.6 m 
+INFO  12:45:28,841 ProgressMeter - ordered_PKNH_11_v2:2010796      1.2884913E7     2.9 h           13.5 m       61.2%     4.7 h     110.3 m 
+INFO  12:46:08,842 ProgressMeter - ordered_PKNH_11_v2:2049067      1.2884913E7     2.9 h           13.6 m       61.4%     4.7 h     110.0 m 
+INFO  12:46:38,843 ProgressMeter - ordered_PKNH_11_v2:2098420      1.2884913E7     2.9 h           13.6 m       61.6%     4.7 h     109.4 m 
+INFO  12:47:08,843 ProgressMeter - ordered_PKNH_11_v2:2143422      1.2884913E7     2.9 h           13.7 m       61.8%     4.7 h     108.8 m 
+INFO  12:47:38,844 ProgressMeter - ordered_PKNH_11_v2:2169429      1.2884913E7     2.9 h           13.7 m       61.9%     4.8 h     108.6 m 
+INFO  12:48:08,853 ProgressMeter - ordered_PKNH_11_v2:2200682      1.2884913E7     3.0 h           13.7 m       62.0%     4.8 h     108.4 m 
+INFO  12:48:38,854 ProgressMeter - ordered_PKNH_11_v2:2250592      1.2884913E7     3.0 h           13.8 m       62.2%     4.8 h     107.7 m 
+INFO  12:49:08,855 ProgressMeter - ordered_PKNH_11_v2:2310677      1.2884913E7     3.0 h           13.8 m       62.5%     4.7 h     106.9 m 
+INFO  12:49:38,856 ProgressMeter - ordered_PKNH_12_v2:39146       1.525358E7     3.0 h           11.7 m       62.9%     4.7 h     105.4 m 
+INFO  12:50:08,857 ProgressMeter - ordered_PKNH_12_v2:111976       1.525358E7     3.0 h           11.7 m       63.2%     4.7 h     104.3 m 
+INFO  12:50:38,858 ProgressMeter - ordered_PKNH_12_v2:146709       1.525358E7     3.0 h           11.8 m       63.3%     4.7 h     104.0 m 
+INFO  12:51:08,859 ProgressMeter - ordered_PKNH_12_v2:171779       1.525358E7     3.0 h           11.8 m       63.4%     4.7 h     103.8 m 
+INFO  12:51:48,860 ProgressMeter - ordered_PKNH_12_v2:209329       1.525358E7     3.0 h           11.8 m       63.6%     4.7 h     103.5 m 
+INFO  12:52:28,861 ProgressMeter - ordered_PKNH_12_v2:238501       1.525358E7     3.0 h           11.9 m       63.7%     4.7 h     103.3 m 
+INFO  12:52:58,862 ProgressMeter - ordered_PKNH_12_v2:279549       1.525358E7     3.0 h           11.9 m       63.9%     4.7 h     102.9 m 
+INFO  12:53:28,863 ProgressMeter - ordered_PKNH_12_v2:310519       1.525358E7     3.0 h           12.0 m       64.0%     4.7 h     102.6 m 
+INFO  12:54:08,864 ProgressMeter - ordered_PKNH_12_v2:352085       1.525358E7     3.1 h           12.0 m       64.2%     4.8 h     102.2 m 
+INFO  12:54:48,865 ProgressMeter - ordered_PKNH_12_v2:404433       1.525358E7     3.1 h           12.0 m       64.4%     4.8 h     101.6 m 
+INFO  12:55:18,865 ProgressMeter - ordered_PKNH_12_v2:447024       1.525358E7     3.1 h           12.1 m       64.6%     4.8 h     101.1 m 
+INFO  12:55:48,866 ProgressMeter - ordered_PKNH_12_v2:497257       1.525358E7     3.1 h           12.1 m       64.8%     4.8 h     100.5 m 
+INFO  12:56:18,867 ProgressMeter - ordered_PKNH_12_v2:547183       1.525358E7     3.1 h           12.1 m       65.0%     4.8 h      99.8 m 
+INFO  12:56:48,868 ProgressMeter - ordered_PKNH_12_v2:587236       1.525358E7     3.1 h           12.2 m       65.1%     4.8 h      99.4 m 
+INFO  12:57:18,869 ProgressMeter - ordered_PKNH_12_v2:642045       1.525358E7     3.1 h           12.2 m       65.4%     4.7 h      98.7 m 
+INFO  12:57:48,870 ProgressMeter - ordered_PKNH_12_v2:687396       1.525358E7     3.1 h           12.2 m       65.5%     4.7 h      98.1 m 
+INFO  12:58:18,871 ProgressMeter - ordered_PKNH_12_v2:750153       1.525358E7     3.1 h           12.3 m       65.8%     4.7 h      97.3 m 
+INFO  12:58:48,878 ProgressMeter - ordered_PKNH_12_v2:788260       1.525358E7     3.1 h           12.3 m       66.0%     4.7 h      96.8 m 
+INFO  12:59:18,879 ProgressMeter - ordered_PKNH_12_v2:832467       1.525358E7     3.1 h           12.3 m       66.1%     4.7 h      96.3 m 
+INFO  12:59:58,880 ProgressMeter - ordered_PKNH_12_v2:931018       1.525358E7     3.1 h           12.4 m       66.5%     4.7 h      94.9 m 
+INFO  13:00:28,880 ProgressMeter - ordered_PKNH_12_v2:979870       1.525358E7     3.2 h           12.4 m       66.7%     4.7 h      94.3 m 
+INFO  13:00:58,881 ProgressMeter - ordered_PKNH_12_v2:1025744       1.525358E7     3.2 h           12.4 m       66.9%     4.7 h      93.8 m 
+INFO  13:01:28,882 ProgressMeter - ordered_PKNH_12_v2:1085514       1.525358E7     3.2 h           12.5 m       67.2%     4.7 h      93.0 m 
+INFO  13:01:58,883 ProgressMeter - ordered_PKNH_12_v2:1108276       1.525358E7     3.2 h           12.5 m       67.3%     4.7 h      92.8 m 
+INFO  13:02:28,884 ProgressMeter - ordered_PKNH_12_v2:1146509       1.525358E7     3.2 h           12.5 m       67.4%     4.7 h      92.4 m 
+INFO  13:03:08,885 ProgressMeter - ordered_PKNH_12_v2:1216785       1.525358E7     3.2 h           12.6 m       67.7%     4.7 h      91.5 m 
+INFO  13:03:48,886 ProgressMeter - ordered_PKNH_12_v2:1285676       1.525358E7     3.2 h           12.6 m       68.0%     4.7 h      90.6 m 
+INFO  13:04:18,886 ProgressMeter - ordered_PKNH_12_v2:1345409       1.525358E7     3.2 h           12.7 m       68.3%     4.7 h      89.9 m 
+INFO  13:04:48,887 ProgressMeter - ordered_PKNH_12_v2:1382899       1.525358E7     3.2 h           12.7 m       68.4%     4.7 h      89.4 m 
+INFO  13:05:18,888 ProgressMeter - ordered_PKNH_12_v2:1422829       1.525358E7     3.2 h           12.7 m       68.6%     4.7 h      89.0 m 
+INFO  13:05:48,889 ProgressMeter - ordered_PKNH_12_v2:1467511       1.525358E7     3.2 h           12.8 m       68.8%     4.7 h      88.5 m 
+INFO  13:06:18,890 ProgressMeter - ordered_PKNH_12_v2:1519828       1.525358E7     3.3 h           12.8 m       69.0%     4.7 h      87.8 m 
+INFO  13:06:48,891 ProgressMeter - ordered_PKNH_12_v2:1558932       1.525358E7     3.3 h           12.8 m       69.1%     4.7 h      87.4 m 
+INFO  13:07:28,892 ProgressMeter - ordered_PKNH_12_v2:1632073       1.525358E7     3.3 h           12.9 m       69.4%     4.7 h      86.4 m 
+INFO  13:08:08,893 ProgressMeter - ordered_PKNH_12_v2:1715220       1.525358E7     3.3 h           12.9 m       69.8%     4.7 h      85.3 m 
+INFO  13:08:38,893 ProgressMeter - ordered_PKNH_12_v2:1764115       1.525358E7     3.3 h           12.9 m       70.0%     4.7 h      84.8 m 
+INFO  13:09:08,894 ProgressMeter - ordered_PKNH_12_v2:1817194       1.525358E7     3.3 h           13.0 m       70.2%     4.7 h      84.1 m 
+INFO  13:09:38,895 ProgressMeter - ordered_PKNH_12_v2:1881443       1.525358E7     3.3 h           13.0 m       70.5%     4.7 h      83.2 m 
+INFO  13:10:08,896 ProgressMeter - ordered_PKNH_12_v2:1911748       1.525358E7     3.3 h           13.0 m       70.6%     4.7 h      83.0 m 
+INFO  13:10:38,897 ProgressMeter - ordered_PKNH_12_v2:1972059       1.525358E7     3.3 h           13.1 m       70.8%     4.7 h      82.2 m 
+INFO  13:11:18,898 ProgressMeter - ordered_PKNH_12_v2:2026731       1.525358E7     3.3 h           13.1 m       71.1%     4.7 h      81.5 m 
+INFO  13:11:48,898 ProgressMeter - ordered_PKNH_12_v2:2113039       1.525358E7     3.3 h           13.2 m       71.4%     4.7 h      80.3 m 
+INFO  13:12:18,899 ProgressMeter - ordered_PKNH_12_v2:2205134       1.525358E7     3.4 h           13.2 m       71.8%     4.7 h      79.1 m 
+INFO  13:12:48,900 ProgressMeter - ordered_PKNH_12_v2:2270785       1.525358E7     3.4 h           13.2 m       72.1%     4.7 h      78.2 m 
+INFO  13:13:28,901 ProgressMeter - ordered_PKNH_12_v2:2334637       1.525358E7     3.4 h           13.3 m       72.3%     4.7 h      77.4 m 
+INFO  13:13:58,902 ProgressMeter - ordered_PKNH_12_v2:2374552       1.525358E7     3.4 h           13.3 m       72.5%     4.7 h      77.0 m 
+INFO  13:14:38,903 ProgressMeter - ordered_PKNH_12_v2:2461550       1.525358E7     3.4 h           13.3 m       72.8%     4.7 h      75.9 m 
+INFO  13:15:08,903 ProgressMeter - ordered_PKNH_12_v2:2517271       1.525358E7     3.4 h           13.4 m       73.1%     4.7 h      75.2 m 
+INFO  13:15:38,904 ProgressMeter - ordered_PKNH_12_v2:2559772       1.525358E7     3.4 h           13.4 m       73.2%     4.7 h      74.7 m 
+INFO  13:16:08,905 ProgressMeter - ordered_PKNH_12_v2:2595707       1.525358E7     3.4 h           13.4 m       73.4%     4.7 h      74.3 m 
+INFO  13:16:38,906 ProgressMeter - ordered_PKNH_12_v2:2642310       1.525358E7     3.4 h           13.5 m       73.6%     4.7 h      73.8 m 
+INFO  13:17:08,938 ProgressMeter - ordered_PKNH_12_v2:2703179       1.525358E7     3.4 h           13.5 m       73.8%     4.7 h      73.0 m 
+INFO  13:17:38,939 ProgressMeter - ordered_PKNH_12_v2:2752549       1.525358E7     3.4 h           13.5 m       74.0%     4.6 h      72.4 m 
+INFO  13:18:08,939 ProgressMeter - ordered_PKNH_12_v2:2806105       1.525358E7     3.5 h           13.6 m       74.3%     4.6 h      71.8 m 
+INFO  13:18:38,940 ProgressMeter - ordered_PKNH_12_v2:2858211       1.525358E7     3.5 h           13.6 m       74.5%     4.6 h      71.1 m 
+INFO  13:19:08,941 ProgressMeter - ordered_PKNH_12_v2:2897533       1.525358E7     3.5 h           13.6 m       74.6%     4.6 h      70.7 m 
+INFO  13:19:38,942 ProgressMeter - ordered_PKNH_12_v2:2936076       1.525358E7     3.5 h           13.7 m       74.8%     4.6 h      70.3 m 
+INFO  13:20:08,949 ProgressMeter - ordered_PKNH_12_v2:2977261       1.525358E7     3.5 h           13.7 m       75.0%     4.6 h      69.8 m 
+INFO  13:20:38,950 ProgressMeter - ordered_PKNH_12_v2:3021939       1.525358E7     3.5 h           13.7 m       75.1%     4.6 h      69.3 m 
+INFO  13:21:18,951 ProgressMeter - ordered_PKNH_12_v2:3086781       1.525358E7     3.5 h           13.8 m       75.4%     4.6 h      68.5 m 
+INFO  13:21:58,952 ProgressMeter - ordered_PKNH_12_v2:3138678       1.525358E7     3.5 h           13.8 m       75.6%     4.6 h      68.0 m 
+INFO  13:22:28,953 ProgressMeter - ordered_PKNH_13_v2:101995      1.8415289E7     3.5 h           11.5 m       76.1%     4.6 h      66.2 m 
+INFO  13:22:58,953 ProgressMeter - ordered_PKNH_13_v2:150239      1.8415289E7     3.5 h           11.5 m       76.3%     4.6 h      65.7 m 
+INFO  13:23:28,954 ProgressMeter - ordered_PKNH_13_v2:181085      1.8415289E7     3.5 h           11.5 m       76.5%     4.6 h      65.4 m 
+INFO  13:23:58,955 ProgressMeter - ordered_PKNH_13_v2:209936      1.8415289E7     3.5 h           11.6 m       76.6%     4.6 h      65.1 m 
+INFO  13:24:28,956 ProgressMeter - ordered_PKNH_13_v2:252416      1.8415289E7     3.6 h           11.6 m       76.8%     4.6 h      64.6 m 
+INFO  13:25:08,957 ProgressMeter - ordered_PKNH_13_v2:318786      1.8415289E7     3.6 h           11.6 m       77.0%     4.6 h      63.8 m 
+INFO  13:25:48,958 ProgressMeter - ordered_PKNH_13_v2:367105      1.8415289E7     3.6 h           11.7 m       77.2%     4.6 h      63.3 m 
+INFO  13:26:18,958 ProgressMeter - ordered_PKNH_13_v2:426143      1.8415289E7     3.6 h           11.7 m       77.5%     4.6 h      62.6 m 
+INFO  13:26:48,959 ProgressMeter - ordered_PKNH_13_v2:468291      1.8415289E7     3.6 h           11.7 m       77.6%     4.6 h      62.1 m 
+INFO  13:27:18,960 ProgressMeter - ordered_PKNH_13_v2:509182      1.8415289E7     3.6 h           11.7 m       77.8%     4.6 h      61.6 m 
+INFO  13:27:48,961 ProgressMeter - ordered_PKNH_13_v2:559734      1.8415289E7     3.6 h           11.8 m       78.0%     4.6 h      61.0 m 
+INFO  13:28:18,962 ProgressMeter - ordered_PKNH_13_v2:627076      1.8415289E7     3.6 h           11.8 m       78.3%     4.6 h      60.2 m 
+INFO  13:28:48,963 ProgressMeter - ordered_PKNH_13_v2:652447      1.8415289E7     3.6 h           11.8 m       78.4%     4.6 h      60.0 m 
+INFO  13:29:18,964 ProgressMeter - ordered_PKNH_13_v2:685453      1.8415289E7     3.6 h           11.8 m       78.5%     4.6 h      59.6 m 
+INFO  13:29:48,965 ProgressMeter - ordered_PKNH_13_v2:724442      1.8415289E7     3.6 h           11.9 m       78.7%     4.6 h      59.2 m 
+INFO  13:30:28,966 ProgressMeter - ordered_PKNH_13_v2:764168      1.8415289E7     3.7 h           11.9 m       78.9%     4.6 h      58.8 m 
+INFO  13:30:58,975 ProgressMeter - ordered_PKNH_13_v2:814845      1.8415289E7     3.7 h           11.9 m       79.1%     4.6 h      58.2 m 
+INFO  13:31:28,976 ProgressMeter - ordered_PKNH_13_v2:884016      1.8415289E7     3.7 h           12.0 m       79.4%     4.6 h      57.3 m 
+INFO  13:31:58,977 ProgressMeter - ordered_PKNH_13_v2:921762      1.8415289E7     3.7 h           12.0 m       79.5%     4.6 h      56.9 m 
+INFO  13:32:28,978 ProgressMeter - ordered_PKNH_13_v2:962720      1.8415289E7     3.7 h           12.0 m       79.7%     4.6 h      56.5 m 
+INFO  13:33:08,979 ProgressMeter - ordered_PKNH_13_v2:1009458      1.8415289E7     3.7 h           12.1 m       79.9%     4.6 h      56.0 m 
+INFO  13:33:38,979 ProgressMeter - ordered_PKNH_13_v2:1051216      1.8415289E7     3.7 h           12.1 m       80.0%     4.6 h      55.5 m 
+INFO  13:34:08,980 ProgressMeter - ordered_PKNH_13_v2:1158891      1.8415289E7     3.7 h           12.1 m       80.5%     4.6 h      54.1 m 
+INFO  13:34:38,981 ProgressMeter - ordered_PKNH_13_v2:1240943      1.8415289E7     3.7 h           12.1 m       80.8%     4.6 h      53.0 m 
+INFO  13:35:08,982 ProgressMeter - ordered_PKNH_13_v2:1299825      1.8415289E7     3.7 h           12.2 m       81.1%     4.6 h      52.3 m 
+INFO  13:35:48,983 ProgressMeter - ordered_PKNH_13_v2:1351055      1.8415289E7     3.7 h           12.2 m       81.3%     4.6 h      51.8 m 
+INFO  13:36:28,984 ProgressMeter - ordered_PKNH_13_v2:1393198      1.8415289E7     3.8 h           12.2 m       81.4%     4.6 h      51.3 m 
+INFO  13:36:58,984 ProgressMeter - ordered_PKNH_13_v2:1482414      1.8415289E7     3.8 h           12.3 m       81.8%     4.6 h      50.2 m 
+INFO  13:37:28,985 ProgressMeter - ordered_PKNH_13_v2:1527124      1.8415289E7     3.8 h           12.3 m       82.0%     4.6 h      49.7 m 
+INFO  13:37:58,986 ProgressMeter - ordered_PKNH_13_v2:1570555      1.8415289E7     3.8 h           12.3 m       82.2%     4.6 h      49.2 m 
+INFO  13:38:28,987 ProgressMeter - ordered_PKNH_13_v2:1600463      1.8415289E7     3.8 h           12.3 m       82.3%     4.6 h      48.9 m 
+INFO  13:38:58,988 ProgressMeter - ordered_PKNH_13_v2:1641043      1.8415289E7     3.8 h           12.4 m       82.5%     4.6 h      48.4 m 
+INFO  13:39:28,989 ProgressMeter - ordered_PKNH_13_v2:1692272      1.8415289E7     3.8 h           12.4 m       82.7%     4.6 h      47.8 m 
+INFO  13:39:58,990 ProgressMeter - ordered_PKNH_13_v2:1746080      1.8415289E7     3.8 h           12.4 m       82.9%     4.6 h      47.2 m 
+INFO  13:40:28,991 ProgressMeter - ordered_PKNH_13_v2:1808945      1.8415289E7     3.8 h           12.5 m       83.2%     4.6 h      46.4 m 
+INFO  13:41:08,992 ProgressMeter - ordered_PKNH_13_v2:1868032      1.8415289E7     3.8 h           12.5 m       83.4%     4.6 h      45.8 m 
+INFO  13:41:38,993 ProgressMeter - ordered_PKNH_13_v2:1891827      1.8415289E7     3.8 h           12.5 m       83.5%     4.6 h      45.6 m 
+INFO  13:42:08,993 ProgressMeter - ordered_PKNH_13_v2:1942842      1.8415289E7     3.9 h           12.5 m       83.7%     4.6 h      45.0 m 
+INFO  13:42:38,994 ProgressMeter - ordered_PKNH_13_v2:1990409      1.8415289E7     3.9 h           12.6 m       83.9%     4.6 h      44.4 m 
+INFO  13:43:08,995 ProgressMeter - ordered_PKNH_13_v2:2039755      1.8415289E7     3.9 h           12.6 m       84.1%     4.6 h      43.8 m 
+INFO  13:43:38,996 ProgressMeter - ordered_PKNH_13_v2:2099618      1.8415289E7     3.9 h           12.6 m       84.4%     4.6 h      43.1 m 
+INFO  13:44:08,997 ProgressMeter - ordered_PKNH_13_v2:2141136      1.8415289E7     3.9 h           12.7 m       84.5%     4.6 h      42.7 m 
+INFO  13:44:48,998 ProgressMeter - ordered_PKNH_13_v2:2205760      1.8415289E7     3.9 h           12.7 m       84.8%     4.6 h      41.9 m 
+INFO  13:45:28,999 ProgressMeter - ordered_PKNH_13_v2:2251788      1.8415289E7     3.9 h           12.7 m       85.0%     4.6 h      41.4 m 
+INFO  13:45:59,000 ProgressMeter - ordered_PKNH_13_v2:2308034      1.8415289E7     3.9 h           12.8 m       85.2%     4.6 h      40.8 m 
+INFO  13:46:29,001 ProgressMeter - ordered_PKNH_13_v2:2364671      1.8415289E7     3.9 h           12.8 m       85.4%     4.6 h      40.1 m 
+INFO  13:46:59,001 ProgressMeter - ordered_PKNH_13_v2:2392913      1.8415289E7     3.9 h           12.8 m       85.6%     4.6 h      39.8 m 
+INFO  13:47:29,002 ProgressMeter - ordered_PKNH_13_v2:2447788      1.8415289E7     3.9 h           12.8 m       85.8%     4.6 h      39.2 m 
+INFO  13:47:59,003 ProgressMeter - ordered_PKNH_13_v2:2508411      1.8415289E7     3.9 h           12.9 m       86.0%     4.6 h      38.4 m 
+INFO  13:48:29,004 ProgressMeter - ordered_PKNH_14_v2:29585        2.10123E7     4.0 h           11.3 m       86.5%     4.6 h      37.0 m 
+INFO  13:48:59,005 ProgressMeter - ordered_PKNH_14_v2:151997        2.10123E7     4.0 h           11.3 m       87.0%     4.6 h      35.5 m 
+INFO  13:49:39,006 ProgressMeter - ordered_PKNH_14_v2:228632        2.10123E7     4.0 h           11.4 m       87.3%     4.6 h      34.6 m 
+INFO  13:50:09,031 ProgressMeter - ordered_PKNH_14_v2:294952        2.10123E7     4.0 h           11.4 m       87.6%     4.5 h      33.8 m 
+INFO  13:50:39,032 ProgressMeter - ordered_PKNH_14_v2:348549        2.10123E7     4.0 h           11.4 m       87.8%     4.5 h      33.2 m 
+INFO  13:51:09,032 ProgressMeter - ordered_PKNH_14_v2:407619        2.10123E7     4.0 h           11.4 m       88.1%     4.5 h      32.5 m 
+INFO  13:51:39,033 ProgressMeter - ordered_PKNH_14_v2:458529        2.10123E7     4.0 h           11.4 m       88.3%     4.5 h      31.9 m 
+INFO  13:52:09,041 ProgressMeter - ordered_PKNH_14_v2:523331        2.10123E7     4.0 h           11.5 m       88.5%     4.5 h      31.2 m 
+INFO  13:52:39,042 ProgressMeter - ordered_PKNH_14_v2:591060        2.10123E7     4.0 h           11.5 m       88.8%     4.5 h      30.4 m 
+INFO  13:53:09,043 ProgressMeter - ordered_PKNH_14_v2:647612        2.10123E7     4.0 h           11.5 m       89.1%     4.5 h      29.7 m 
+INFO  13:53:49,044 ProgressMeter - ordered_PKNH_14_v2:704234        2.10123E7     4.0 h           11.5 m       89.3%     4.5 h      29.1 m 
+INFO  13:54:19,044 ProgressMeter - ordered_PKNH_14_v2:744945        2.10123E7     4.1 h           11.6 m       89.5%     4.5 h      28.6 m 
+INFO  13:54:49,045 ProgressMeter - ordered_PKNH_14_v2:781600        2.10123E7     4.1 h           11.6 m       89.6%     4.5 h      28.2 m 
+INFO  13:55:19,046 ProgressMeter - ordered_PKNH_14_v2:825187        2.10123E7     4.1 h           11.6 m       89.8%     4.5 h      27.8 m 
+INFO  13:55:49,047 ProgressMeter - ordered_PKNH_14_v2:876645        2.10123E7     4.1 h           11.6 m       90.0%     4.5 h      27.2 m 
+INFO  13:56:19,048 ProgressMeter - ordered_PKNH_14_v2:936906        2.10123E7     4.1 h           11.7 m       90.3%     4.5 h      26.5 m 
+INFO  13:56:59,049 ProgressMeter - ordered_PKNH_14_v2:1022960        2.10123E7     4.1 h           11.7 m       90.6%     4.5 h      25.5 m 
+INFO  13:57:29,050 ProgressMeter - ordered_PKNH_14_v2:1073119        2.10123E7     4.1 h           11.7 m       90.8%     4.5 h      24.9 m 
+INFO  13:57:59,050 ProgressMeter - ordered_PKNH_14_v2:1143558        2.10123E7     4.1 h           11.7 m       91.1%     4.5 h      24.1 m 
+INFO  13:58:29,051 ProgressMeter - ordered_PKNH_14_v2:1217299        2.10123E7     4.1 h           11.8 m       91.4%     4.5 h      23.3 m 
+INFO  13:58:59,052 ProgressMeter - ordered_PKNH_14_v2:1260341        2.10123E7     4.1 h           11.8 m       91.6%     4.5 h      22.8 m 
+INFO  13:59:29,053 ProgressMeter - ordered_PKNH_14_v2:1308557        2.10123E7     4.1 h           11.8 m       91.8%     4.5 h      22.2 m 
+INFO  13:59:59,054 ProgressMeter - ordered_PKNH_14_v2:1386895        2.10123E7     4.1 h           11.8 m       92.1%     4.5 h      21.3 m 
+INFO  14:00:39,055 ProgressMeter - ordered_PKNH_14_v2:1483941        2.10123E7     4.2 h           11.9 m       92.5%     4.5 h      20.2 m 
+INFO  14:01:09,055 ProgressMeter - ordered_PKNH_14_v2:1543834        2.10123E7     4.2 h           11.9 m       92.7%     4.5 h      19.6 m 
+INFO  14:01:39,056 ProgressMeter - ordered_PKNH_14_v2:1611956        2.10123E7     4.2 h           11.9 m       93.0%     4.5 h      18.8 m 
+INFO  14:02:09,057 ProgressMeter - ordered_PKNH_14_v2:1656003        2.10123E7     4.2 h           11.9 m       93.2%     4.5 h      18.3 m 
+INFO  14:02:39,064 ProgressMeter - ordered_PKNH_14_v2:1703049        2.10123E7     4.2 h           12.0 m       93.4%     4.5 h      17.8 m 
+INFO  14:03:09,065 ProgressMeter - ordered_PKNH_14_v2:1763792        2.10123E7     4.2 h           12.0 m       93.6%     4.5 h      17.1 m 
+INFO  14:03:39,066 ProgressMeter - ordered_PKNH_14_v2:1805068        2.10123E7     4.2 h           12.0 m       93.8%     4.5 h      16.6 m 
+INFO  14:04:19,067 ProgressMeter - ordered_PKNH_14_v2:1860833        2.10123E7     4.2 h           12.0 m       94.0%     4.5 h      16.0 m 
+INFO  14:04:49,067 ProgressMeter - ordered_PKNH_14_v2:1900067        2.10123E7     4.2 h           12.1 m       94.2%     4.5 h      15.6 m 
+INFO  14:05:19,068 ProgressMeter - ordered_PKNH_14_v2:1938613        2.10123E7     4.2 h           12.1 m       94.4%     4.5 h      15.2 m 
+INFO  14:05:49,069 ProgressMeter - ordered_PKNH_14_v2:1980212        2.10123E7     4.2 h           12.1 m       94.5%     4.5 h      14.7 m 
+INFO  14:06:19,070 ProgressMeter - ordered_PKNH_14_v2:2022485        2.10123E7     4.3 h           12.1 m       94.7%     4.5 h      14.2 m 
+INFO  14:06:49,071 ProgressMeter - ordered_PKNH_14_v2:2053695        2.10123E7     4.3 h           12.2 m       94.8%     4.5 h      13.9 m 
+INFO  14:07:19,072 ProgressMeter - ordered_PKNH_14_v2:2082018        2.10123E7     4.3 h           12.2 m       95.0%     4.5 h      13.6 m 
+INFO  14:07:59,073 ProgressMeter - ordered_PKNH_14_v2:2116163        2.10123E7     4.3 h           12.2 m       95.1%     4.5 h      13.2 m 
+INFO  14:08:39,074 ProgressMeter - ordered_PKNH_14_v2:2153934        2.10123E7     4.3 h           12.3 m       95.3%     4.5 h      12.8 m 
+INFO  14:09:09,074 ProgressMeter - ordered_PKNH_14_v2:2228200        2.10123E7     4.3 h           12.3 m       95.6%     4.5 h      12.0 m 
+INFO  14:09:39,075 ProgressMeter - ordered_PKNH_14_v2:2271651        2.10123E7     4.3 h           12.3 m       95.7%     4.5 h      11.5 m 
+INFO  14:10:09,076 ProgressMeter - ordered_PKNH_14_v2:2313295        2.10123E7     4.3 h           12.3 m       95.9%     4.5 h      11.0 m 
+INFO  14:10:39,077 ProgressMeter - ordered_PKNH_14_v2:2343104        2.10123E7     4.3 h           12.4 m       96.0%     4.5 h      10.7 m 
+INFO  14:11:09,078 ProgressMeter - ordered_PKNH_14_v2:2372927        2.10123E7     4.3 h           12.4 m       96.2%     4.5 h      10.4 m 
+INFO  14:11:49,079 ProgressMeter - ordered_PKNH_14_v2:2446695        2.10123E7     4.3 h           12.4 m       96.5%     4.5 h       9.6 m 
+INFO  14:12:19,079 ProgressMeter - ordered_PKNH_14_v2:2482284        2.10123E7     4.4 h           12.4 m       96.6%     4.5 h       9.2 m 
+INFO  14:12:49,080 ProgressMeter - ordered_PKNH_14_v2:2528912        2.10123E7     4.4 h           12.5 m       96.8%     4.5 h       8.7 m 
+INFO  14:13:19,088 ProgressMeter - ordered_PKNH_14_v2:2552506        2.10123E7     4.4 h           12.5 m       96.9%     4.5 h       8.4 m 
+INFO  14:13:49,089 ProgressMeter - ordered_PKNH_14_v2:2589489        2.10123E7     4.4 h           12.5 m       97.0%     4.5 h       8.0 m 
+INFO  14:14:29,090 ProgressMeter - ordered_PKNH_14_v2:2666835        2.10123E7     4.4 h           12.5 m       97.4%     4.5 h       7.1 m 
+INFO  14:15:09,090 ProgressMeter - ordered_PKNH_14_v2:2746595        2.10123E7     4.4 h           12.6 m       97.7%     4.5 h       6.2 m 
+INFO  14:15:39,091 ProgressMeter - ordered_PKNH_14_v2:2812822        2.10123E7     4.4 h           12.6 m       98.0%     4.5 h       5.5 m 
+INFO  14:16:09,092 ProgressMeter - ordered_PKNH_14_v2:2840817        2.10123E7     4.4 h           12.6 m       98.1%     4.5 h       5.2 m 
+INFO  14:16:39,093 ProgressMeter - ordered_PKNH_14_v2:2903137        2.10123E7     4.4 h           12.6 m       98.3%     4.5 h       4.5 m 
+INFO  14:17:19,094 ProgressMeter - ordered_PKNH_14_v2:2951578        2.10123E7     4.4 h           12.7 m       98.5%     4.5 h       4.0 m 
+INFO  14:17:49,094 ProgressMeter - ordered_PKNH_14_v2:2978780        2.10123E7     4.4 h           12.7 m       98.6%     4.5 h       3.7 m 
+INFO  14:18:19,095 ProgressMeter - ordered_PKNH_14_v2:3012127        2.10123E7     4.5 h           12.7 m       98.8%     4.5 h       3.3 m 
+INFO  14:18:49,096 ProgressMeter - ordered_PKNH_14_v2:3044586        2.10123E7     4.5 h           12.7 m       98.9%     4.5 h       2.9 m 
+INFO  14:19:19,097 ProgressMeter - ordered_PKNH_14_v2:3086848        2.10123E7     4.5 h           12.8 m       99.1%     4.5 h       2.5 m 
+INFO  14:19:49,098 ProgressMeter - ordered_PKNH_14_v2:3134453        2.10123E7     4.5 h           12.8 m       99.3%     4.5 h     115.0 s 
+INFO  14:20:19,099 ProgressMeter - ordered_PKNH_14_v2:3204012        2.10123E7     4.5 h           12.8 m       99.6%     4.5 h      69.0 s 
+Time spent in setup for JNI call : 2.7608555540000004
+Total compute time in PairHMM computeLikelihoods() : 2477.3525810670003
+INFO  14:20:50,906 HaplotypeCaller - Ran local assembly on 178161 active regions 
+INFO  14:20:51,021 ProgressMeter -            done      2.4320447E7     4.5 h           11.1 m      100.0%     4.5 h       0.0 s 
+INFO  14:20:51,022 ProgressMeter - Total runtime 16182.81 secs, 269.71 min, 4.50 hours 
+INFO  14:20:51,022 MicroScheduler - 5480755 reads were filtered out during the traversal out of approximately 8228410 total reads (66.61%) 
+INFO  14:20:51,022 MicroScheduler -   -> 1818674 reads (22.10% of total) failing DuplicateReadFilter 
+INFO  14:20:51,023 MicroScheduler -   -> 0 reads (0.00% of total) failing FailsVendorQualityCheckFilter 
+INFO  14:20:51,023 MicroScheduler -   -> 3588774 reads (43.61% of total) failing HCMappingQualityFilter 
+INFO  14:20:51,023 MicroScheduler -   -> 0 reads (0.00% of total) failing MalformedReadFilter 
+INFO  14:20:51,023 MicroScheduler -   -> 0 reads (0.00% of total) failing MappingQualityUnavailableFilter 
+INFO  14:20:51,024 MicroScheduler -   -> 73307 reads (0.89% of total) failing NotPrimaryAlignmentFilter 
+INFO  14:20:51,024 MicroScheduler -   -> 0 reads (0.00% of total) failing UnmappedReadFilter 
+GenotypeGVCFs
+INFO  14:21:28,358 HelpFormatter - -------------------------------------------------------------------------------- 
+INFO  14:21:28,361 HelpFormatter - The Genome Analysis Toolkit (GATK) v3.2-2-gec30cee, Compiled 2014/07/17 15:22:03 
+INFO  14:21:28,362 HelpFormatter - Copyright (c) 2010 The Broad Institute 
+INFO  14:21:28,363 HelpFormatter - For support and documentation go to http://www.broadinstitute.org/gatk 
+INFO  14:21:28,380 HelpFormatter - Program Args: -T GenotypeGVCFs -nt 1 -R /home/jwestaway/pk_pipeline/ref_genomes/PKA1H1/fasta/strain_A1_H.1.Icor.fasta -V /home/jwestaway/pk_pipeline/ZB_100/outputs/vcf_consensus/GATK/PK_SB_DNA_093_DKDL210002222-1a_HWHGKDSXY_L4/PK_SB_DNA_093_DKDL210002222-1a_HWHGKDSXY_L4.haplotypecaller.vcf.gz -o /home/jwestaway/pk_pipeline/ZB_100/outputs/vcf_consensus/GATK/PK_SB_DNA_093_DKDL210002222-1a_HWHGKDSXY_L4/PK_SB_DNA_093_DKDL210002222-1a_HWHGKDSXY_L4.vcf.gz 
+INFO  14:21:28,388 HelpFormatter - Executing as jwestaway@cheetah01 on Linux 2.6.32-754.14.2.el6.x86_64 amd64; Java HotSpot(TM) 64-Bit Server VM 1.8.0_131-b11. 
+INFO  14:21:28,389 HelpFormatter - Date/Time: 2021/08/09 14:21:28 
+INFO  14:21:28,389 HelpFormatter - -------------------------------------------------------------------------------- 
+INFO  14:21:28,390 HelpFormatter - -------------------------------------------------------------------------------- 
+INFO  14:21:29,591 GenomeAnalysisEngine - Strictness is SILENT 
+INFO  14:21:29,871 GenomeAnalysisEngine - Downsampling Settings: Method: BY_SAMPLE, Target Coverage: 1000 
+WARN  14:21:29,962 IndexDictionaryUtils - Track variant doesn't have a sequence dictionary built in, skipping dictionary validation 
+INFO  14:21:30,165 GenomeAnalysisEngine - Preparing for traversal 
+INFO  14:21:30,167 GenomeAnalysisEngine - Done preparing for traversal 
+INFO  14:21:30,168 ProgressMeter - [INITIALIZATION COMPLETE; STARTING PROCESSING] 
+INFO  14:21:30,179 ProgressMeter -                 | processed |    time |    per 1M |           |   total | remaining 
+INFO  14:21:30,182 ProgressMeter -        Location |     sites | elapsed |     sites | completed | runtime |   runtime 
+INFO  14:22:00,215 ProgressMeter - ordered_PKNH_02_v2:398101    892570.0    30.0 s      33.0 s        5.3%     9.4 m       8.9 m 
+INFO  14:22:30,218 ProgressMeter - ordered_PKNH_06_v2:449801   4645255.0    60.0 s      12.0 s       20.9%     4.8 m       3.8 m 
+INFO  14:23:00,220 ProgressMeter - ordered_PKNH_09_v2:2098601   1.1172442E7    90.0 s       8.0 s       46.3%     3.2 m     104.0 s 
+INFO  14:23:30,227 ProgressMeter - ordered_PKNH_12_v2:2305901   1.725358E7   120.0 s       6.0 s       72.2%     2.8 m      46.0 s 
+INFO  14:24:00,228 ProgressMeter - ordered_PKNH_14_v2:2785101   2.30123E7     2.5 m       6.0 s       97.8%     2.6 m       3.0 s 
+INFO  14:24:02,756 ProgressMeter -            done   2.4320447E7     2.5 m       6.0 s      100.0%     2.5 m       0.0 s 
+INFO  14:24:02,756 ProgressMeter - Total runtime 152.59 secs, 2.54 min, 0.04 hours 
+/var/spool/torque/mom_priv/jobs/1233701.cheetah.SC: line 73: --tmp-dir=/home/jwestaway/pk_pipeline/ZB_100/outputs/tmp: No such file or directory
+---------------------------------------
+Finished

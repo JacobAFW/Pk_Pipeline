@@ -32,7 +32,7 @@ echo "---------------------------------------"
 echo 'Exectue bwa and samtools'
 for i in *_val_1.fq.gz
 do
-bwa mem -t 15 -M -R "@RG\tID:${i%_1_val_1.fq.gz}\tPL:ILLUMINA" $INDEXTDIR $i ${i%_1_val_1.fq.gz}_2_val_2.fq.gz | samtools view -u -S - | samtools sort -n -o $OUTDIR/${i%_1_val_1.fq.gz}.bam
+bwa mem -t 15 -M -R "@RG\tID:${i%_1_val_1.fq.gz}\tSM:${i%_1_val_1.fq.gz}\tLB:None\tPL:ILLUMINA" $INDEXTDIR $i ${i%_1_val_1.fq.gz}_2_val_2.fq.gz | samtools view -u -S - | samtools sort -n -o $OUTDIR/${i%_1_val_1.fq.gz}.bam
 done 
 
 echo "---------------------------------------"

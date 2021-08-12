@@ -1,5 +1,5 @@
 #!/bin/bash
-#PBS -N Align_Pk_bwa
+#PBS -N Align_Pk
 #PBS -j oe
 #PBS -m ae
 #PBS -l nodes=1
@@ -18,17 +18,17 @@ export PATH=$PATH:/usr/local/bwa-0.7.10
 
 echo "---------------------------------------"
 echo 'Change to working directory' 
-cd /home/jwestaway/pk_pipeline/ZB_100/outputs/hg_removed_alignment/hg_rem_fastq/
+cd /home/jwestaway/pk_pipeline/low_parasitemia/outputs/trimmed
 
 echo "---------------------------------------"
 echo 'Set environment vars'
-OUTDIR="/home/jwestaway/pk_pipeline/ZB_100/outputs/hg_removed_alignment/pk_alignment/"
+OUTDIR="/home/jwestaway/pk_pipeline/low_parasitemia/outputs/pk_alignment/"
 INDEXTDIR="/home/jwestaway/pk_pipeline/ref_genomes/PKA1H1/fasta/strain_A1_H.1.Icor.fasta"
 
 echo "---------------------------------------"
 echo 'Exectue alignment with bwa to hg and sort to bam'
 
-bwa mem -t 10 -M -R "@RG\tID:SAMPLE\tPL:ILLUMINA" $INDEXTDIR SAMPLE_unmapped_R1.fq.gz SAMPLE_unmapped_R2.fq.gz | samtools view -u -S - | samtools sort -n -o $OUTDIR/SAMPLE.bam
+bwa mem -t 10 -M -R "@RG\tID:SAMPLE\tPL:ILLUMINA" $INDEXTDIR SAMPLE_1_val_1.fq.gz SAMPLE_2_val_2.fq.gz | samtools view -u -S - | samtools sort -n -o $OUTDIR/SAMPLE.bam
 
 echo "---------------------------------------"
 echo "Finsihed!"

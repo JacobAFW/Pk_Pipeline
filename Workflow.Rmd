@@ -3158,7 +3158,421 @@ ZB_metadata %>%
  
 ################################################################################################################################
 
+# Exploring low parasitemia samples
+
+Upon exploration of the mapping statistics and read depth for the ZB data, it was noted that none of the samples had parasitemia counts < 5000.
+To determine if ZBs sequencing workflow is good enough for low parasitemia I ran an additional 16 samples through the pipeline.
+I used the metadata to get the sample IDs, and then had to search for the files across the zipepd batches:
+
+unzip -l batch2.zip | grep 'SB_DNA_060/|SB_DNA_072/|SB_DNA_059/|SB_DNA_062/|SB_DNA_083/|SB_DNA_069/|SB_DNA_068/|SBH_DNA_005/|SB_DNA_071/|SB_DNA_086/|SB_DNA_007/|SB_DNA_002'
+
+unzip -j "batch2.zip" "batch2/PK_SB_DNA_075/PK_SB_DNA_075*" -d "/home/jwestaway/pk_pipeline/low_parasitemia/pk_data"
+
+Then the following was performed similar scripts outlined above (same 'versions' etc.):
+
+QC/MultiQC > Trimming > QC/MultiQC > Pk alignment > Map stats > Read depth 
+
+The mapstats and read depth data was then read into R for analyis.
+
+
+################################################################################################################################
+
 # Bam Preprocessing
+
+# First need to create a consensus VCF
+
+A VCF with known variants is needed for bam preprocessing (indel realignment and base recalibration). 
+As a consensus VCF has not be built, we must build our own. Here we use a combination of previously studies samples of known high quality, and our own high quality samples to build a consensus VCF.
+This follows a similar workflow to the standard calling of variants, where we mark duplicates, and then skip realignment and recalibration, going straight to haplotype calling. 
+We then combine the resulting VCF files to come up with a consensus.
+
+## Process previously studied high quality samples
+
+File = 01_QC.pbs 
+Version(s) = 0.10.1 (FastQC) & 0.1.9 (MultiQC)
+
+```{R,eval=F}
+#!/bin/bash
+#PBS -N QC
+#PBS -j oe
+#PBS -m ae
+#PBS -l nodes=1
+#PBS -l ncpus=11
+#PBS -l mem=50gb
+#PBS -l walltime=24:00:00
+#PBS -M jacob.westaway@menzies.edu.au
+
+echo "---------------------------------------"
+echo "PBS: Job identifier is $PBS_JOBID"
+echo "PBS: Job name is $PBS_JOBNAME"
+
+echo "---------------------------------------"
+echo "Export path to fastqc"
+export PATH=$PATH:/usr/local/FastQC
+export PATH=$PATH:/usr/local/singularity/latest/bin
+
+echo "---------------------------------------"
+echo "Change to current working directory"
+cd pk_pipeline
+
+echo "---------------------------------------"
+echo "Set environment variable"
+cd /home/jwestaway/pk_pipeline/vcf_data/pk_data/
+OUTDIR="/home/jwestaway/pk_pipeline/vcf_data/pk_data/qc"
+mkdir $OUTDIR
+
+echo "---------------------------------------"
+echo "Execute fastqc"
+fastqc -t 10 -o $OUTDIR *.fastq.gz
+
+echo "---------------------------------------"
+echo "Change to output directory"
+cd $OUTDIR
+
+echo "---------------------------------------"
+echo "Execute multiqc using singularity"
+singularity exec /home/jwestaway/pk_pipeline/tools/singularity/multiqc_v0.1.9.sif multiqc .
+
+echo "---------------------------------------"
+echo "Finsihed!"
+```
+
+File = Template.pbs
+Version(s) = 3.1.0 (singularity), 0.6.4 (trim-galore), 20171222 (parallel), 1.12 (samtools) & 0.7.10 (bwa)
+
+This job was submitted as a batch job, the scripts for which are located in vcf_data/scripts/02_Trim_align.
+
+```{R,eval=F}
+#!/bin/bash
+#PBS -N Trim_&_Align
+#PBS -j oe
+#PBS -m ae
+#PBS -l nodes=1
+#PBS -l ncpus=11
+#PBS -l mem=20gb
+#PBS -l walltime=72:00:00
+#PBS -M jacob.westaway@menzies.edu.au
+
+echo "---------------------------------------"
+echo "PBS: Job identifier is $PBS_JOBID"
+echo "PBS: Job name is $PBS_JOBNAME"
+
+echo "TRIMMING"
+
+echo "---------------------------------------"
+echo "Export paths and load modules"
+export PATH=$PATH:/usr/local/singularity/latest/bin
+export PATH=$PATH:/usr/local/parallel_20171222/bin
+
+echo "---------------------------------------"
+echo 'Change to current working directory' 
+cd pk_pipeline
+
+echo "---------------------------------------"
+echo 'Set environment vars'
+INPUTDIR="/home/jwestaway/pk_pipeline/vcf_data/pk_data/"
+OUTDIR="/home/jwestaway/pk_pipeline/vcf_data/outputs/trimmed"
+
+echo "---------------------------------------"
+echo 'Exectue trim_galore for quality and adapter trimming'
+parallel -j10 --xapply singularity exec ~/pk_pipeline/tools/singularity/trim-galore_0.6.4.sif trim_galore --illumina --paired --fastqc -o $OUTDIR ::: $INPUTDIR/SAMPLE_1.fastq.gz ::: $INPUTDIR/SAMPLE_2.fastq.gz
+
+echo "---------------------------------------"
+echo "ALIGNMENT"
+
+echo "---------------------------------------"
+echo "Define paths to bwa and samtools"
+export PATH=$PATH:/usr/local/miniconda3/envs/assembly/bin/
+export PATH=$PATH:/usr/local/bwa-0.7.10 
+
+echo "---------------------------------------"
+echo 'Change to working directory' 
+cd /home/jwestaway/pk_pipeline/vcf_data/outputs/trimmed
+
+echo "---------------------------------------"
+echo 'Set environment vars'
+OUTDIR="/home/jwestaway/pk_pipeline/vcf_data/outputs/pk_alignment/"
+INDEXTDIR="/home/jwestaway/pk_pipeline/ref_genomes/PKA1H1/fasta/strain_A1_H.1.Icor.fasta"
+
+echo "---------------------------------------"
+echo 'Exectue alignment with bwa to hg and sort to bam'
+
+bwa mem -t 10 -M -R "@RG\tID:SAMPLE\tPL:ILLUMINA" $INDEXTDIR SAMPLE_1_val_1.fq.gz SAMPLE_2_val_2.fq.gz | samtools view -u -S - | samtools sort -n -o $OUTDIR/SAMPLE.bam
+
+echo "---------------------------------------"
+echo "Finsihed!"
+```
+
+File = 03_Stats.pbs
+Versions = 0.1.9 (MultiQC), 1.12 (samtools), 1.8.0_171 (Java), 0.6.3 (sambamba) & 38.90 (BBMap)
+
+```{R,eval=F}
+#!/bin/bash
+#PBS -N Map_Stats
+#PBS -j oe
+#PBS -m ae
+#PBS -l nodes=1
+#PBS -l ncpus=21
+#PBS -l mem=100gb
+#PBS -l walltime=72:00:00
+#PBS -M jacob.westaway@menzies.edu.au
+
+echo "---------------------------------------"
+echo "PBS: Job identifier is $PBS_JOBID"
+echo "PBS: Job name is $PBS_JOBNAME"
+
+
+
+echo "---------------------------------------"
+echo 'MultiQC'
+
+echo "---------------------------------------"
+echo 'Change to working directory'
+export PATH=$PATH:/usr/local/singularity/latest/bin
+cd /home/jwestaway/pk_pipeline/vcf_data/outputs/trimmed
+
+echo "---------------------------------------"
+echo "Execute multiqc using singularity"
+singularity exec /home/jwestaway/pk_pipeline/tools/singularity/multiqc_v0.1.9.sif multiqc .
+
+
+
+echo "---------------------------------------"
+echo 'BBMAP'
+
+echo "---------------------------------------"
+echo "Define paths to bbmap and samtools"
+export Path=$PATH:/home/jwestaway/pk_pipeline/tools/bbmap
+export PATH=$PATH:/usr/local/miniconda3/envs/assembly/bin/  
+export PATH=$PATH:/usr/local/miniconda3/pkgs/quast-5.0.2-py37pl526hb5aa323_2/lib/python3.7/site-packages/quast_libs/sambamba
+module load java/1.8.0_171
+
+echo "---------------------------------------"
+echo 'Change to working directory and set env variables'
+cd /home/jwestaway/pk_pipeline/vcf_data/outputs/pk_alignment/
+PILEUP="/home/jwestaway/pk_pipeline/tools/bbmap/pileup.sh"
+
+echo "---------------------------------------"
+echo 'Exectue samtools & bbmap'
+for i in *.bam
+do
+samtools view -h --threads 20 $i | $PILEUP in=stdin 2> ${i%.bam}.mapstats
+done 
+
+echo "---------------------------------------"
+echo 'Collate map stats data into a single csv'
+tail -n +1 *mapstats | grep '.mapstats\|Read\|Mapped\|Ref\|Percent\|Average\|Standard' | sed 's/:/,/' | sed 's/<==/,/' > high_qual_mapstats.csv
+
+
+
+echo "---------------------------------------"
+echo 'READ DEPTH'
+
+echo "---------------------------------------"
+echo "Define paths to samtools"
+export PATH=$PATH:/usr/local/miniconda3/envs/assembly/bin/
+
+echo "---------------------------------------"
+echo 'Set env variables'
+BED='/home/jwestaway/pk_pipeline/ref_genomes/PKA1H1/strain_A1_H.1.Icor.fasta.bed'
+
+echo "---------------------------------------"
+echo 'Sort bam files'
+
+for i in *.bam
+do
+samtools sort -@ 20 $i > ${i%.bam}.sorted.bam
+done 
+
+echo "---------------------------------------"
+echo 'Index bam files'
+
+for i in *.sorted.bam
+do
+samtools index -@ 20 $i 
+done 
+
+echo "---------------------------------------"
+echo 'Create file with list of filenames'
+ls *sorted.bam > filenames.txt
+
+echo "---------------------------------------"
+echo 'Exectue samtools depth'
+samtools depth -a -b $BED -f filenames.txt -o high_qual_depth_summary.depth
+
+
+echo "---------------------------------------"
+echo "Finsihed!"
+```
+
+
+## Build consensus VCF
+
+This step requires the production and then merging of GVCF files. We used two variant callers, GATK and samtools, and both our own data and some previously analysed high quality data:
+ - Five lines maintained in laboratory rhesus macaques after isolation in the 1960s from Peninsular Malaysia and the Philippines - https://www.pnas.org/content/112/42/13027.full
+ - Archived clinical isolates, prepared with a method to reduce the amount of human DNA in the thawed blood samples in preparation for high throughput parasite genome sequencing using Illumina HiSeq and MiSeq sequencing platforms - https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0121303
+
+GATK requires that the reference genome has .dict and .fai files:
+'/usr/local/jdk1.8.0_131/bin/java -jar /usr/local/miniconda3/pkgs/picard-2.21.9-0/share/picard-2.21.9-0/picard.jar CreateSequenceDictionary R=strain_A1_H.1.Icor.fasta'
+'samtools faidx strain_A1_H.1.Icor.fasta'
+
+Versions: 1.12 (samtools), 1.8.0_131 (Java), 2.21.9 (picard)
+File: Template.pbs
+
+These jobs were run per sample. Look at previous examples above on how batch jobs were created.
+
+The header line had to be changed as GATK is specific about what it requires for @RG.
+
+### GATK 
+
+HaplotypeCaller Arguments:
+ - nt - ?
+ - ERC - mode for emitting reference confidence scores
+ - minPruning - the number of samples that must pass the pruning threshold
+ - maxNumHaplotypesInPopulation - each haplotype considered requires n evaluations if there are n reads across all samples, so this argument defines a specific number to control this. Dropping this too low can result in missing variants.
+ - max_alternate_alleles - maximum number of alternate alleles to genotype
+ - contamination - fraction of contamination in sequencing data to aggresively remove. If > 0, the caller will remove contamination through biased down sampling of the reads
+ - variant_index_type LINEAR & variant_index_parameter 128000 - old dodgey workaround that GATK used for index compression. Newer versions no longer need this 
+
+```{R,eval=F}
+#!/bin/bash
+#PBS -N VCF_Con
+#PBS -j oe
+#PBS -m ae
+#PBS -l nodes=1
+#PBS -l ncpus=11
+#PBS -l mem=50gb
+#PBS -l walltime=48:00:00
+#PBS -M jacob.westaway@menzies.edu.au
+
+echo "---------------------------------------"
+echo "PBS: Job identifier is $PBS_JOBID"
+echo "PBS: Job name is $PBS_JOBNAME"
+
+echo "---------------------------------------"
+echo "Define paths to samtools"
+export PATH=$PATH:/usr/local/jdk1.8.0_131/bin
+export PATH=$PATH:/usr/local/jre1.8.0_111/bin
+export PATH=$PATH:/usr/local/GenomeAnalysisTK-3.2.2 
+export PATH=$PATH:/usr/local/miniconda3/envs/assembly/bin/
+
+echo "---------------------------------------"
+echo 'Change to working directory and set env variables'
+INDIR="/home/jwestaway/pk_pipeline/ZB_100/outputs/direct_alignment"
+OUTDIR="/home/jwestaway/pk_pipeline/ZB_100/outputs/vcf_consensus/GATK/SAMPLE"
+PICARD="/usr/local/miniconda3/pkgs/picard-2.21.9-0/share/picard-2.21.9-0/picard.jar"
+INDEXTDIR="/home/jwestaway/pk_pipeline/ref_genomes/PKA1H1/fasta/strain_A1_H.1.Icor.fasta"
+
+mkdir $OUTDIR
+
+echo "---------------------------------------"
+echo 'Sort and Index bam files'
+cd /home/jwestaway/pk_pipeline/ZB_100/outputs/direct_alignment
+
+samtools sort -@ 10 SAMPLE.bam > SAMPLE.sorted.bam
+
+samtools index -@ 10 SAMPLE.sorted.bam
+
+echo "---------------------------------------"
+echo 'MarkDuplicates'
+
+/usr/local/jdk1.8.0_131/bin/java -Djava.iodir=$PBS_JOBFS -jar $PICARD \
+    MarkDuplicates AS=TRUE VALIDATION_STRINGENCY=LENIENT \
+    I=$INDIR/SAMPLE.sorted.bam \
+    O=$OUTDIR/SAMPLE.dupmarked.bam \
+    M=$OUTDIR/SAMPLE_picard_metrics_file.txt 
+
+echo "---------------------------------------"
+echo 'Change header @RG and index' 
+samtools view -H $OUTDIR/SAMPLE.dupmarked.bam | \
+    sed 's,^@RG.*,@RG\tID:SAMPLE\tSM:SAMPLE\tLB:None\tPL:Illumina,g' |  \
+    samtools reheader - $OUTDIR/SAMPLE.dupmarked.bam > $OUTDIR/SAMPLE.dupmarked.reheader.bam
+
+samtools index $OUTDIR/SAMPLE.dupmarked.reheader.bam 
+
+echo "---------------------------------------"
+echo 'HaplotypeCaller' 
+
+/usr/local/jdk1.8.0_131/bin/java -Djava.iodir=$PBS_JOBFS -Xms3200m -Xmx3600m -jar /usr/local/GenomeAnalysisTK-3.2.2/GenomeAnalysisTK.jar \
+    -T HaplotypeCaller \
+    -nt 1 \
+    -ERC GVCF \
+    --minPruning 3 \
+    --maxNumHaplotypesInPopulation 200 \
+    --max_alternate_alleles 3 \
+    --variant_index_type LINEAR \
+    --variant_index_parameter 128000 \
+    -contamination 0.0 \
+    -R $INDEXTDIR \
+    -I $OUTDIR/SAMPLE.dupmarked.reheader.bam \
+    -o $OUTDIR/SAMPLE.haplotypecaller.vcf.gz
+
+echo 'GenotypeGVCFs' 
+
+/usr/local/jdk1.8.0_131/bin/java -Djava.iodir=$PBS_JOBFS -Xms3200m -Xmx3600m -jar /usr/local/GenomeAnalysisTK-3.2.2/GenomeAnalysisTK.jar \
+    -T GenotypeGVCFs \
+    -nt 1 \
+    -R $INDEXTDIR \
+    -V $OUTDIR/SAMPLE.haplotypecaller.vcf.gz \
+    -o $OUTDIR/SAMPLE.vcf.gz
+    --tmp-dir=/home/jwestaway/pk_pipeline/ZB_100/outputs/tmp
+
+
+echo "---------------------------------------"
+echo 'Finished' 
+```
+
+### Samtools
+
+The pre-calling steps were carried out above with GATK, and so the *.dupmarked.reheader.bam files can be passed directly into bcftools.
+
+Versions: 1.13 (bcftools)
+
+```{R,eval=F}
+#!/bin/bash
+#PBS -N VCF_con_samtools
+#PBS -j oe
+#PBS -m ae
+#PBS -l nodes=1
+#PBS -l ncpus=11
+#PBS -l mem=50gb
+#PBS -l walltime=24:00:00
+#PBS -M jacob.westaway@menzies.edu.au
+
+echo "---------------------------------------"
+echo "PBS: Job identifier is $PBS_JOBID"
+echo "PBS: Job name is $PBS_JOBNAME"
+
+echo "---------------------------------------"
+echo "Define paths to samtools"
+export PATH=$PATH:/home/jwestaway/pk_pipeline/tools/bcftools-1.13/
+
+echo "---------------------------------------"
+echo 'Change to working directory and set env variables'
+cd /home/jwestaway/pk_pipeline/ZB_100/outputs/vcf_consensus/GATK/SAMPLE
+INDEXTDIR="/home/jwestaway/pk_pipeline/ref_genomes/PKA1H1/fasta/strain_A1_H.1.Icor.fasta"
+PICARD="/usr/local/miniconda3/pkgs/picard-2.21.9-0/share/picard-2.21.9-0/picard.jar"
+OUTDIR="/home/jwestaway/pk_pipeline/ZB_100/outputs/vcf_consensus/samtools/SAMPLE"
+mkdir $OUTDIR
+
+echo "---------------------------------------"
+echo 'Call variants with samtools'
+
+bcftools mpileup --threads 10 -f $INDEXTDIR SAMPLE.dupmarked.reheader.bam \
+   | bcftools call -mv -Ob -o $OUTDIR/SAMPLE_samtools.raw.vcf.gz
+
+bcftools index --threads 10 -t -o $OUTDIR/SAMPLE_samtools.raw.vcf.gz.tbi $OUTDIR/SAMPLE_samtools.raw.vcf.gz
+
+echo "---------------------------------------"
+echo "Finsihed!"
+```
+
+
+
+
+
+
+
 
 Jobs split and run as a PBS script for each sample.
 
