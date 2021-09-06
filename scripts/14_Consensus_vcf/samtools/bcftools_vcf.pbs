@@ -3,8 +3,8 @@
 #PBS -j oe
 #PBS -m ae
 #PBS -l nodes=1
-#PBS -l ncpus=11
-#PBS -l mem=50gb
+#PBS -l ncpus=21
+#PBS -l mem=200gb
 #PBS -l walltime=24:00:00
 #PBS -M jacob.westaway@menzies.edu.au
 
@@ -18,18 +18,17 @@ export PATH=$PATH:/home/jwestaway/pk_pipeline/tools/bcftools-1.13/
 
 echo "---------------------------------------"
 echo 'Change to working directory and set env variables'
-cd /home/jwestaway/pk_pipeline/ZB_100/outputs/vcf_consensus/GATK/SAMPLE
+cd /home/jwestaway/pk_pipeline/ZB_100/outputs/vcf_consensus/GATK/bams
 INDEXTDIR="/home/jwestaway/pk_pipeline/ref_genomes/PKA1H1/fasta/strain_A1_H.1.Icor.fasta"
-OUTDIR="/home/jwestaway/pk_pipeline/ZB_100/outputs/vcf_consensus/samtools/SAMPLE"
-mkdir $OUTDIR
+OUTDIR="/home/jwestaway/pk_pipeline/ZB_100/outputs/vcf_consensus/samtools/"
 
 echo "---------------------------------------"
 echo 'Call variants with samtools'
 
-bcftools mpileup --threads 10 -f $INDEXTDIR SAMPLE.dupmarked.reheader.bam \
-   | bcftools call -mv -Ob -o $OUTDIR/SAMPLE_samtools.raw.vcf.gz
+bcftools mpileup --threads 20 -f $INDEXTDIR -b input_bam_files.list -a FORMAT/AD,FORMAT/ADF,FORMAT/ADR,FORMAT/DP,FORMAT/QS,FORMAT/SP,FORMAT/SCR,INFO/AD,INFO/ADF,INFO/ADR,INFO/SCR \
+   | bcftools call -m -Oz -a FORMAT/GQ,FORMAT/GP,INFO/PV4 -o $OUTDIR/PK_samtools.raw.vcf.gz
 
-bcftools index --threads 10 -t -o $OUTDIR/SAMPLE_samtools.raw.vcf.gz.tbi $OUTDIR/SAMPLE_samtools.raw.vcf.gz
+bcftools index --threads 20 -t -o $OUTDIR/PK_samtools.raw.vcf.gz.tbi $OUTDIR/PK_samtools.raw.vcf.gz
 
 echo "---------------------------------------"
 echo "Finsihed!"

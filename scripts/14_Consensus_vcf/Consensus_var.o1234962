@@ -1,0 +1,13 @@
+---------------------------------------
+PBS: Job identifier is 1234962.cheetah
+PBS: Job name is Consensus_var
+---------------------------------------
+Define paths to bcftools and miniconda, load the R module, change to working directory and create an output directory
+---------------------------------------
+Change default language to ASCII - fewer characters than UTF8
+---------------------------------------
+Filter for variants from the original vcf that are called by both callers by using grep to match patterns created above
+---------------------------------------
+Concatenate the vcf header in the variants called by both callers
+---------------------------------------
+Finished 

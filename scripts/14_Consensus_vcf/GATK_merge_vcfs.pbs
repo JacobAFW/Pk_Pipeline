@@ -1,10 +1,10 @@
 #!/bin/bash
-#PBS -N Haplotype
+#PBS -N merge_vcfs
 #PBS -j oe
 #PBS -m ae
 #PBS -l nodes=1
-#PBS -l ncpus=11
-#PBS -l mem=50gb
+#PBS -l ncpus=16
+#PBS -l mem=100gb
 #PBS -l walltime=48:00:00
 #PBS -M jacob.westaway@menzies.edu.au
 
@@ -20,25 +20,20 @@ export PATH=$PATH:/usr/local/GenomeAnalysisTK-3.2.2
 
 echo "---------------------------------------"
 echo 'Change to working directory and set env variables'
-cd /home/jwestaway/pk_pipeline/ZB_100/outputs/vcf_consensus/GATK/SAMPLE
+cd /home/jwestaway/pk_pipeline/ZB_100/outputs/vcf_consensus/GATK/
 PICARD="/usr/local/miniconda3/pkgs/picard-2.21.9-0/share/picard-2.21.9-0/picard.jar"
-INDEXTDIR="/home/jwestaway/pk_pipeline/ref_genomes/PKA1H1/fasta/strain_A1_H.1.Icor.fasta"
 
 echo "---------------------------------------"
-echo 'HaplotypeCaller' 
+echo 'Create list of file names from GATK variant calling'
+ls /home/jwestaway/pk_pipeline/ZB_100/outputs/vcf_consensus/GATK/*/*.vcf.gz \
+    | tr '\n' '\0' | xargs -0 -n 1 basename \
+    > input_variant_files.list
 
-/usr/local/jdk1.8.0_131/bin/java -Djava.iodir=$PBS_JOBFS -Xms3200m -Xmx3600m -jar /usr/local/GenomeAnalysisTK-3.2.2/GenomeAnalysisTK.jar \
-    -T HaplotypeCaller \
-    -nt 10 \
-    -ERC GVCF \
-    --minPruning 3 \
-    --maxNumHaplotypesInPopulation 200 \
-    --variant_index_type LINEAR \
-    --variant_index_parameter 128000 \
-    -contamination 0.0 \
-    -R $INDEXTDIR \
-    -I SAMPLE.dupmarked.reheader.bam \
-    -o SAMPLE.haplotypecaller.g.vcf.gz
+echo "---------------------------------------"
+echo 'Execute MergeVcfs'
+/usr/local/jdk1.8.0_131/bin/java -jar $PICARD MergeVcfs \
+    I=input_variant_files.list \
+    O=GATK_merged_variants.vcf.gz
 
 echo "---------------------------------------"
 echo 'Finished' 

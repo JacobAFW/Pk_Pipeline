@@ -1,0 +1,36 @@
+#!/bin/bash
+#PBS -N Consensus_var
+#PBS -j oe
+#PBS -m ae
+#PBS -l nodes=1
+#PBS -l ncpus=30
+#PBS -l mem=300gb
+#PBS -l pmem=300gb
+#PBS -l file=200gb
+#PBS -l walltime=48:00:00
+#PBS -M jacob.westaway@menzies.edu.au
+
+echo "---------------------------------------"
+echo "PBS: Job identifier is $PBS_JOBID"
+echo "PBS: Job name is $PBS_JOBNAME"
+
+echo "---------------------------------------"
+echo "Define paths to bcftools and miniconda, load the R module, change to working directory and create an output directory"
+export PATH=$PATH:/home/jwestaway/pk_pipeline/tools/bcftools-1.13/
+module load software/R_3.6.2
+cd /home/jwestaway/pk_pipeline/ZB_100/outputs/vcf_consensus/
+
+echo "---------------------------------------"
+echo "Change default language to ASCII - fewer characters than UTF8"
+LC_ALL=C
+
+echo "---------------------------------------"
+echo "Filter for variants from the original vcf that are called by both callers by using grep to match patterns created above" 
+bcftools view merged_GATK_samtools_variants.vcf.gz | fgrep -f grep_patterns.txt - > filtered.vcf
+
+echo "---------------------------------------"
+echo "Concatenate the vcf header in the variants called by both callers"
+cat vcf_head.vcf filtered.vcf > PK_consensus.vcf
+
+echo "---------------------------------------"
+echo "Finished "

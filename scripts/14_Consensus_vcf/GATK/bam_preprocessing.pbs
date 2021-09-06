@@ -1,5 +1,5 @@
 #!/bin/bash
-#PBS -N Haplotype
+#PBS -N Bam_pre
 #PBS -j oe
 #PBS -m ae
 #PBS -l nodes=1
@@ -17,28 +17,33 @@ echo "Define paths to samtools"
 export PATH=$PATH:/usr/local/jdk1.8.0_131/bin
 export PATH=$PATH:/usr/local/jre1.8.0_111/bin
 export PATH=$PATH:/usr/local/GenomeAnalysisTK-3.2.2 
+export PATH=$PATH:/usr/local/miniconda3/envs/assembly/bin/
 
 echo "---------------------------------------"
 echo 'Change to working directory and set env variables'
-cd /home/jwestaway/pk_pipeline/ZB_100/outputs/vcf_consensus/GATK/SAMPLE
+INDIR="/home/jwestaway/pk_pipeline/vcf_data/outputs/pk_alignment"
+OUTDIR="/home/jwestaway/pk_pipeline/ZB_100/outputs/vcf_consensus/GATK/SAMPLE"
 PICARD="/usr/local/miniconda3/pkgs/picard-2.21.9-0/share/picard-2.21.9-0/picard.jar"
 INDEXTDIR="/home/jwestaway/pk_pipeline/ref_genomes/PKA1H1/fasta/strain_A1_H.1.Icor.fasta"
 
-echo "---------------------------------------"
-echo 'HaplotypeCaller' 
+mkdir $OUTDIR
 
-/usr/local/jdk1.8.0_131/bin/java -Djava.iodir=$PBS_JOBFS -Xms3200m -Xmx3600m -jar /usr/local/GenomeAnalysisTK-3.2.2/GenomeAnalysisTK.jar \
-    -T HaplotypeCaller \
-    -nt 10 \
-    -ERC GVCF \
-    --minPruning 3 \
-    --maxNumHaplotypesInPopulation 200 \
-    --variant_index_type LINEAR \
-    --variant_index_parameter 128000 \
-    -contamination 0.0 \
-    -R $INDEXTDIR \
-    -I SAMPLE.dupmarked.reheader.bam \
-    -o SAMPLE.haplotypecaller.g.vcf.gz
+echo "---------------------------------------"
+echo 'MarkDuplicates'
+
+/usr/local/jdk1.8.0_131/bin/java -Djava.iodir=$PBS_JOBFS -jar $PICARD \
+    MarkDuplicates AS=TRUE VALIDATION_STRINGENCY=LENIENT \
+    I=$INDIR/SAMPLE.sorted.bam \
+    O=$OUTDIR/SAMPLE.dupmarked.bam \
+    M=$OUTDIR/SAMPLE_picard_metrics_file.txt 
+
+echo "---------------------------------------"
+echo 'Change header @RG and index' 
+samtools view -H $OUTDIR/SAMPLE.dupmarked.bam | \
+    sed 's,^@RG.*,@RG\tID:SAMPLE\tSM:SAMPLE\tLB:None\tPL:Illumina,g' |  \
+    samtools reheader - $OUTDIR/SAMPLE.dupmarked.bam > $OUTDIR/SAMPLE.dupmarked.reheader.bam
+
+samtools index $OUTDIR/SAMPLE.dupmarked.reheader.bam 
 
 echo "---------------------------------------"
 echo 'Finished' 

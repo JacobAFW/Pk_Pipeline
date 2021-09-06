@@ -1,0 +1,26 @@
+#!/bin/bash
+#PBS -N merge_vcfs
+#PBS -j oe
+#PBS -m ae
+#PBS -l nodes=1
+#PBS -l ncpus=16
+#PBS -l mem=100gb
+#PBS -l walltime=48:00:00
+#PBS -M jacob.westaway@menzies.edu.au
+
+echo "---------------------------------------"
+echo "PBS: Job identifier is $PBS_JOBID"
+echo "PBS: Job name is $PBS_JOBNAME"
+
+echo "---------------------------------------"
+echo "Define paths to samtools and change to working directory"
+export PATH=$PATH:/home/jwestaway/pk_pipeline/tools/bcftools-1.13/
+cd /home/jwestaway/pk_pipeline/ZB_100/outputs/vcf_consensus/
+
+echo "---------------------------------------"
+echo 'Change to working directory and set env variables'
+
+bcftools query -i 'FMT/GQ>20 & FMT/DP>10' -f '%CHROM %POS %QUAL %DP\n' merged_GATK_samtools_variants.vcf.gz > filtered_merged_variants.vcf.gz
+
+echo "---------------------------------------"
+echo "Finished"
