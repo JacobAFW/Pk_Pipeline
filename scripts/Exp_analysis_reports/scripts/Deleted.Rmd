@@ -1,0 +1,1081 @@
+---
+title: "Deleted"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+Template_Test <- read_depth_data("data/read_depth/ZB_direct_depth_summary.tsv", "ZB", "Direct") %>% # read in direct read depth data
+  mutate_if(is.factor, as.character) %>% 
+  mutate_at(grep("ordered", colnames(.)), as.numeric) %>% 
+  add_column(Join = 1:nrow(.)) %>% # add column for joining with mapstats data
+  left_join(
+    (base_pairs("data/read_depth/ZB_direct_depth_summary.tsv", "ZB", "Direct") %>% # read in direct NA base pair data and join
+  mutate_if(is.factor, as.character) %>% 
+  mutate_at(grep("ordered", colnames(.)), as.numeric) %>% 
+  select(-Data, - Alignment))
+  ) %>% 
+  left_join( # join read depth and base NA data with map stat data via a new column called join
+    (BBMAP %>% 
+      filter(Genome != "Hg" & Data == "ZB" & Alignment == "Direct") %>%  
+      mutate(ID = str_replace(ID,".mapstats", "")) %>% 
+      add_column(Join = 1:nrow(.))
+     ), by = "Join") %>% 
+  select(-Data.y, -Alignment.y, -Join) %>% 
+  rename("Data" = "Data.x", "Alignment" = "Alignment.x") %>%  
+  relocate(ID, Data, Alignment) %>%
+  rbind(read_depth_data("data/read_depth/ZB_indirect_depth_summary.tsv", "ZB", "Indirect") %>%  # combine the df above with indirect data
+      mutate_if(is.factor, as.character) %>% 
+      mutate_at(grep("ordered", colnames(.)), as.numeric) %>% 
+      add_column(Join = 1:nrow(.)) %>% 
+      left_join(
+        (base_pairs("data/read_depth/ZB_indirect_depth_summary.tsv", "ZB", "Direct") %>%
+           mutate_if(is.factor, as.character) %>% 
+           mutate_at(grep("ordered", colnames(.)), as.numeric) %>% 
+           select(-Data, - Alignment))
+        ) %>% 
+      left_join(
+        (BBMAP %>% 
+           filter(Genome != "Hg" & Data == "ZB" & Alignment == "Indirect") %>%  
+           mutate(ID = str_replace(ID,".mapstats", "")) %>% 
+           add_column(Join = 1:nrow(.))
+         ), by = "Join") %>% 
+      select(-Data.y, -Alignment.y, -Join) %>% 
+      rename("Data" = "Data.x", "Alignment" = "Alignment.x") %>%  
+      relocate(ID, Data, Alignment))
+```
+
+# This takes the mapping data and read depth data for the direct alignment and binds them together, and rbinds this to the indirect version 
+
+```{r}
+# ZB
+Template_Test <- read_depth_data("data/read_depth/ZB_direct_depth_summary.tsv", "ZB", "Direct") %>% 
+  mutate_if(is.factor, as.character) %>% 
+  mutate_at(grep("ordered", colnames(.)), as.numeric) %>% 
+  add_column(Join = 1:nrow(.)) %>% 
+  left_join(
+    (BBMAP %>% 
+      filter(Genome != "Hg" & Data == "ZB" & Alignment == "Direct") %>%  
+      mutate(ID = str_replace(ID,".mapstats", "")) %>% 
+      add_column(Join = 1:nrow(.))
+     ), by = "Join") %>% 
+  select(-Data.y, -Alignment.y, -Join) %>% 
+  rename("Data" = "Data.x", "Alignment" = "Alignment.x") %>%  
+  relocate(ID, Data, Alignment) %>% 
+  rbind(
+    read_depth_data("data/read_depth/ZB_indirect_depth_summary.tsv", "ZB", "Indirect") %>% 
+      mutate_if(is.factor, as.character) %>% 
+      mutate_at(grep("ordered", colnames(.)), as.numeric) %>% 
+      add_column(Join = 1:nrow(.)) %>% 
+      left_join(
+        (BBMAP %>% 
+           filter(Genome != "Hg" & Data == "ZB" & Alignment == "Indirect") %>%  
+           mutate(ID = str_replace(ID,".mapstats", "")) %>% 
+           add_column(Join = 1:nrow(.))
+         ), by = "Join") %>% 
+      select(-Data.y, -Alignment.y, -Join) %>% 
+      rename("Data" = "Data.x", "Alignment" = "Alignment.x") %>%  
+      relocate(ID, Data, Alignment)
+) %>% 
+  rbind(
+# Subset
+read_depth_data("data/read_depth/SS_direct_depth_summary.tsv", "Initial Subset", "Direct") %>% 
+  mutate_if(is.factor, as.character) %>% 
+  mutate_at(grep("ordered", colnames(.)), as.numeric) %>% 
+  add_column(Join = 1:nrow(.)) %>% 
+  left_join(
+    (BBMAP %>% 
+      filter(Genome != "Hg" & Data == "SS" & Alignment == "Direct") %>%  
+      mutate(ID = str_replace(ID,".mapstats", "")) %>% 
+      add_column(Join = 1:nrow(.))
+     ), by = "Join") %>% 
+  select(-Data.y, -Alignment.y, -Join) %>% 
+  rename("Data" = "Data.x", "Alignment" = "Alignment.x") %>%  
+  relocate(ID, Data, Alignment) %>% 
+  rbind(
+    read_depth_data("data/read_depth/SS_indirect_depth_summary.tsv", "Initial Subset", "Indirect") %>% 
+      mutate_if(is.factor, as.character) %>% 
+      mutate_at(grep("ordered", colnames(.)), as.numeric) %>% 
+      add_column(Join = 1:nrow(.)) %>% 
+      left_join(
+        (BBMAP %>% 
+           filter(Genome != "Hg" & Data == "SS" & Alignment == "Indirect") %>%  
+           mutate(ID = str_replace(ID,".mapstats", "")) %>% 
+           add_column(Join = 1:nrow(.))
+         ), by = "Join") %>% 
+      select(-Data.y, -Alignment.y, -Join) %>% 
+      rename("Data" = "Data.x", "Alignment" = "Alignment.x") %>%  
+      relocate(ID, Data, Alignment)
+)
+) %>%
+  rbind(
+# Sanger
+read_depth_data("data/read_depth/S100_direct_depth_summary.tsv", "Sanger", "Direct") %>% 
+  mutate_if(is.factor, as.character) %>% 
+  mutate_at(grep("ordered", colnames(.)), as.numeric) %>% 
+  add_column(Join = 1:nrow(.)) %>% 
+  left_join(
+    (BBMAP %>% 
+      filter(Genome != "Hg" & Data == "S100" & Alignment == "Direct") %>%  
+      mutate(ID = str_replace(ID,".mapstats", "")) %>% 
+      add_column(Join = 1:nrow(.))
+     ), by = "Join") %>% 
+  select(-Data.y, -Alignment.y, -Join) %>% 
+  rename("Data" = "Data.x", "Alignment" = "Alignment.x") %>%  
+  relocate(ID, Data, Alignment) %>% 
+  rbind(
+    read_depth_data("data/read_depth/S100_indirect_depth_summary.tsv", "Sanger", "Indirect") %>% 
+      mutate_if(is.factor, as.character) %>% 
+      mutate_at(grep("ordered", colnames(.)), as.numeric) %>% 
+      add_column(Join = 1:nrow(.)) %>% 
+      left_join(
+        (BBMAP %>% 
+           filter(Genome != "Hg" & Data == "S100" & Alignment == "Indirect") %>%  
+           mutate(ID = str_replace(ID,".mapstats", "")) %>% 
+           add_column(Join = 1:nrow(.))
+         ), by = "Join") %>% 
+      select(-Data.y, -Alignment.y, -Join) %>% 
+      rename("Data" = "Data.x", "Alignment" = "Alignment.x") %>%  
+      relocate(ID, Data, Alignment)
+)
+)
+
+
+
+
+# Previous
+read_tsv("data/read_depth/previous_Pk_data.tsv", col_names = c("Contig", "Bases", "S01", "S02", "S03", "S04")) %>% 
+  select(!Bases) %>% 
+  filter(grepl("ordered", Contig)) %>% 
+  group_by(Contig) %>% 
+  summarise_all(mean) %>%
+  t() %>% 
+  as.data.frame() %>% 
+  row_to_names(1) %>% 
+  add_column(Data = "Previous_Pk_data", Alignment = "Direct") %>% 
+  rownames_to_column("Sample") %>%
+  mutate_if(is.factor, as.character) %>% 
+  mutate_at(grep("ordered", colnames(.)), as.numeric) 
+
+# ZB Redo
+read_tsv("data/read_depth/ZB_redo_direct_depth_summary.tsv", 
+    col_names = c("Contig", "Bases", "S01", "S02", "S03", "S04", "S05", "S06", "S07", "S08", "S09", "S10", "S11")) %>% 
+  select(!Bases) %>% 
+  filter(grepl("ordered", Contig)) %>% 
+  group_by(Contig) %>% 
+  summarise_all(mean) %>%
+  t() %>% 
+  as.data.frame() %>% 
+  row_to_names(1) %>% 
+  add_column(Data = "ZB_Redo", Alignment = "Direct") %>% 
+  rownames_to_column("Sample") %>%
+  mutate_if(is.factor, as.character) %>% 
+  mutate_at(grep("ordered", colnames(.)), as.numeric) %>% 
+  rbind(
+    read_tsv("data/read_depth/Finish_ZB_redo_direct_depth_summary.tsv", 
+    col_names = c("Contig", "Bases", "S12", "S13")) %>% 
+      select(!Bases) %>% 
+      filter(grepl("ordered", Contig)) %>% 
+      group_by(Contig) %>% 
+      summarise_all(mean) %>%
+      t() %>% 
+      as.data.frame() %>% 
+      row_to_names(1) %>% 
+      add_column(Data = "ZB_Redo", Alignment = "Direct") %>% 
+      rownames_to_column("Sample") %>%
+      mutate_if(is.factor, as.character) %>% 
+      mutate_at(grep("ordered", colnames(.)), as.numeric))
+```
+
+
+# BBMAP
+```{r}
+
+# S_100 
+# Direct Pk
+S100 <- read_csv("data/bbmap_summary/S100_PKD_summary_mapstats.csv", col_names = c("Variable", "Value")) %>%
+  mutate(Variable = str_remove(Variable, "==> ")) %>% 
+  filter(!grepl("ERR", Variable)) %>% # data specific
+  add_column(
+    (read_csv("data/bbmap_summary/S100_PKD_summary_mapstats.csv", col_names = c("Variable", "Value")) %>% 
+       mutate(Variable = str_remove(Variable, "==> ")) %>% 
+       filter(grepl("ERR", Variable)) %>% # data specific
+       mutate(Variable = Variable) %>% 
+       rbind(.,.,.,.,.,.,.,.,.,.,.,.) %>% # represents the number of variables
+       arrange(Variable) %>% 
+       mutate_if(is.character, as.factor) %>% 
+       select(Variable) %>% 
+       rename("ID" = Variable))) %>% 
+  pivot_wider(names_from = Variable, values_from = Value) %>% 
+  add_column(Data = "S100", Alignment = "Direct", Genome = "Pk") %>% 
+# Indirect Hg
+  rbind(
+    (read_csv("data/bbmap_summary/S100_HGA_summary_mapstats.csv", col_names = c("Variable", "Value")) %>%
+  mutate(Variable = str_remove(Variable, "==> ")) %>% 
+  filter(!grepl("ERR", Variable)) %>% # data specific
+  add_column(
+    (read_csv("data/bbmap_summary/S100_HGA_summary_mapstats.csv", col_names = c("Variable", "Value")) %>% 
+       mutate(Variable = str_remove(Variable, "==> ")) %>% 
+       filter(grepl("ERR", Variable)) %>% # data specific
+       mutate(Variable = Variable) %>% 
+       rbind(.,.,.,.,.,.,.,.,.,.,.,.) %>% # represents the number of variables
+       arrange(Variable) %>% 
+       mutate_if(is.character, as.factor) %>% 
+       select(Variable) %>% 
+       rename("ID" = Variable))) %>%
+  pivot_wider(names_from = Variable, values_from = Value) %>% 
+  add_column(Data = "S100", Alignment = "Indirect", Genome = "Hg"))) %>% 
+# Indirect Pk
+  rbind(
+    (read_csv("data/bbmap_summary/S100_HGR_summary_mapstats.csv", col_names = c("Variable", "Value")) %>%
+  mutate(Variable = str_remove(Variable, "==> ")) %>% 
+  filter(!grepl("ERR", Variable)) %>% # data specific
+  add_column(
+    (read_csv("data/bbmap_summary/S100_HGR_summary_mapstats.csv", col_names = c("Variable", "Value")) %>% 
+       mutate(Variable = str_remove(Variable, "==> ")) %>% 
+       filter(grepl("ERR", Variable)) %>% # data specific
+       mutate(Variable = Variable) %>% 
+       rbind(.,.,.,.,.,.,.,.,.,.,.,.) %>% # represents the number of variables
+       arrange(Variable) %>% 
+       mutate_if(is.character, as.factor) %>% 
+       select(Variable) %>% 
+       rename("ID" = Variable))) %>%
+  pivot_wider(names_from = Variable, values_from = Value) %>% 
+  add_column(Data = "S100", Alignment = "Indirect", Genome = "Pk"))) %>% 
+  mutate_if(is.character, as.factor)
+
+# SS
+# Direct Pk
+SS <- read_csv("data/bbmap_summary/SS_PKD_summary_mapstats.csv", col_names = c("Variable", "Value")) %>%
+  mutate(Variable = str_remove(Variable, "==> ")) %>% 
+  filter(!grepl("PKA", Variable)) %>% # data specific
+  add_column(
+    (read_csv("data/bbmap_summary/SS_PKD_summary_mapstats.csv", col_names = c("Variable", "Value")) %>% 
+       mutate(Variable = str_remove(Variable, "==> ")) %>% 
+       filter(grepl("PKA", Variable)) %>% # data specific
+       mutate(Variable = Variable) %>% 
+       rbind(.,.,.,.,.,.,.,.,.,.,.,.) %>% # represents the number of variables
+       arrange(Variable) %>% 
+       mutate_if(is.character, as.factor) %>% 
+       select(Variable) %>% 
+       rename("ID" = Variable))) %>% 
+  pivot_wider(names_from = Variable, values_from = Value) %>% 
+  add_column(Data = "SS", Alignment = "Direct", Genome = "Pk") %>% 
+# Indirect Hg
+  rbind(
+    (read_csv("data/bbmap_summary/SS_HGA_summary_mapstats.csv", col_names = c("Variable", "Value")) %>%
+  mutate(Variable = str_remove(Variable, "==> ")) %>% 
+  filter(!grepl("PKA", Variable)) %>% # data specific
+  add_column(
+    (read_csv("data/bbmap_summary/SS_HGA_summary_mapstats.csv", col_names = c("Variable", "Value")) %>% 
+       mutate(Variable = str_remove(Variable, "==> ")) %>% 
+       filter(grepl("PKA", Variable)) %>% # data specific
+       mutate(Variable = Variable) %>% 
+       rbind(.,.,.,.,.,.,.,.,.,.,.,.) %>% # represents the number of variables
+       arrange(Variable) %>% 
+       mutate_if(is.character, as.factor) %>% 
+       select(Variable) %>% 
+       rename("ID" = Variable))) %>%
+  pivot_wider(names_from = Variable, values_from = Value) %>% 
+  add_column(Data = "SS", Alignment = "Indirect", Genome = "Hg"))) %>% 
+# Indirect Pk
+  rbind(
+    (read_csv("data/bbmap_summary/SS_HGR_summary_mapstats.csv", col_names = c("Variable", "Value")) %>%
+  mutate(Variable = str_remove(Variable, "==> ")) %>% 
+  filter(!grepl("PKA", Variable)) %>% # data specific
+  add_column(
+    (read_csv("data/bbmap_summary/SS_HGR_summary_mapstats.csv", col_names = c("Variable", "Value")) %>% 
+       mutate(Variable = str_remove(Variable, "==> ")) %>% 
+       filter(grepl("PKA", Variable)) %>% # data specific
+       mutate(Variable = Variable) %>% 
+       rbind(.,.,.,.,.,.,.,.,.,.,.,.) %>% # represents the number of variables
+       arrange(Variable) %>% 
+       mutate_if(is.character, as.factor) %>% 
+       select(Variable) %>% 
+       rename("ID" = Variable))) %>%
+  pivot_wider(names_from = Variable, values_from = Value) %>% 
+  add_column(Data = "SS", Alignment = "Indirect", Genome = "Pk")))%>% 
+  mutate_if(is.character, as.factor)
+
+# ZB
+# Direct Pk
+ZB100 <- read_csv("data/bbmap_summary/ZB_PKD_summary_mapstats.csv", col_names = c("Variable", "Value")) %>%
+  mutate(Variable = str_remove(Variable, "==> ")) %>% 
+  filter(!grepl("PK_SB_DNA", Variable)) %>% # data specific
+  add_column(
+    (read_csv("data/bbmap_summary/ZB_PKD_summary_mapstats.csv", col_names = c("Variable", "Value")) %>% 
+       mutate(Variable = str_remove(Variable, "==> ")) %>% 
+       filter(grepl("PK_SB_DNA", Variable)) %>% 
+       mutate(Variable = Variable) %>% 
+       rbind(.,.,.,.,.,.,.,.,.,.,.,.) %>% # represents the number of variables
+       arrange(Variable) %>% 
+       mutate_if(is.character, as.factor) %>% 
+       select(Variable) %>% 
+       rename("ID" = Variable))) %>% 
+  pivot_wider(names_from = Variable, values_from = Value) %>% 
+  add_column(Data = "ZB", Alignment = "Direct", Genome = "Pk") %>% 
+# Indirect Hg
+  rbind(
+    (read_csv("data/bbmap_summary/ZB_HGA_summary_mapstats.csv", col_names = c("Variable", "Value")) %>%
+  mutate(Variable = str_remove(Variable, "==> ")) %>% 
+  filter(!grepl("PK_SB_DNA", Variable)) %>% 
+  add_column(
+    (read_csv("data/bbmap_summary/ZB_HGA_summary_mapstats.csv", col_names = c("Variable", "Value")) %>% 
+       mutate(Variable = str_remove(Variable, "==> ")) %>% 
+       filter(grepl("PK_SB_DNA", Variable)) %>% 
+       mutate(Variable = Variable) %>% 
+       rbind(.,.,.,.,.,.,.,.,.,.,.,.) %>% # represents the number of variables
+       arrange(Variable) %>% 
+       mutate_if(is.character, as.factor) %>% 
+       select(Variable) %>% 
+       rename("ID" = Variable))) %>%
+  pivot_wider(names_from = Variable, values_from = Value) %>% 
+  add_column(Data = "ZB", Alignment = "Indirect", Genome = "Hg"))) %>% 
+# Indirect Pk
+  rbind(
+    (read_csv("data/bbmap_summary/ZB_HGR_summary_mapstats.csv", col_names = c("Variable", "Value")) %>%
+  mutate(Variable = str_remove(Variable, "==> ")) %>% 
+  filter(!grepl("PK_SB_DNA", Variable)) %>% 
+  add_column(
+    (read_csv("data/bbmap_summary/ZB_HGR_summary_mapstats.csv", col_names = c("Variable", "Value")) %>% 
+       mutate(Variable = str_remove(Variable, "==> ")) %>% 
+       filter(grepl("PK_SB_DNA", Variable)) %>% 
+       mutate(Variable = Variable) %>% 
+       rbind(.,.,.,.,.,.,.,.,.,.,.,.) %>% # represents the number of variables
+       arrange(Variable) %>% 
+       mutate_if(is.character, as.factor) %>% 
+       select(Variable) %>% 
+       rename("ID" = Variable))) %>%
+  pivot_wider(names_from = Variable, values_from = Value) %>% 
+  add_column(Data = "ZB", Alignment = "Indirect", Genome = "Pk"))) %>% 
+  mutate_if(is.character, as.factor)
+
+BBMAP <- rbind(SS, S100, ZB100) %>% 
+  as.tibble(.name_repair = "universal") # remove spaces from names
+
+
+
+```
+
+# Adding previous data
+```{r}
+Previous_Pk <- read_csv("data/bbmap_summary/Previous_Pk_summary.csv", col_names = c("Variable", "Value")) %>%
+  mutate(Variable = str_remove(Variable, "==> ")) %>% 
+  filter(!grepl("ERR", Variable)) %>% # data specific
+  add_column(
+    (read_csv("data/bbmap_summary/Previous_Pk_summary.csv", col_names = c("Variable", "Value")) %>% 
+       mutate(Variable = str_remove(Variable, "==> ")) %>% 
+       filter(grepl("ERR", Variable)) %>% # data specific
+       mutate(Variable = Variable) %>% 
+       rbind(.,.,.,.,.,.,.,.,.,.,.,.) %>% # represents the number of variables
+       arrange(Variable) %>% 
+       mutate_if(is.character, as.factor) %>% 
+       select(Variable) %>% 
+       rename("ID" = Variable))) %>% 
+  pivot_wider(names_from = Variable, values_from = Value) %>% 
+  add_column(Data = "Previous_Pk", Alignment = "Direct", Genome = "Pk")  %>% 
+  as.tibble(.name_repair = "universal")
+```
+
+```{r}
+BBMAP <- BBMAP %>% rbind(
+(read_csv("data/bbmap_summary/bowtie2_HGA_summary.csv", col_names = c("Variable", "Value")) %>%
+  mutate(Variable = str_remove(Variable, "==> ")) %>% 
+  filter(!grepl("PK_SB_DNA", Variable)) %>% # data specific
+  add_column(
+    (read_csv("data/bbmap_summary/bowtie2_HGA_summary.csv", col_names = c("Variable", "Value")) %>% 
+       mutate(Variable = str_remove(Variable, "==> ")) %>% 
+       filter(grepl("PK_SB_DNA", Variable)) %>% # data specific
+       mutate(Variable = Variable) %>% 
+       rbind(.,.,.,.,.,.,.,.,.,.,.,.) %>% # represents the number of variables
+       arrange(Variable) %>% 
+       mutate_if(is.character, as.factor) %>% 
+       select(Variable) %>% 
+       rename("ID" = Variable))) %>% 
+  pivot_wider(names_from = Variable, values_from = Value) %>% 
+  add_column(Data = "ZB_bowtie", Alignment = "Indirect", Genome = "Hg")  %>% 
+  as.tibble(.name_repair = "universal"))
+) %>% 
+  rbind(
+(read_csv("data/bbmap_summary/bowtie2_HGR_summary.csv", col_names = c("Variable", "Value")) %>%
+  mutate(Variable = str_remove(Variable, "==> ")) %>% 
+  filter(!grepl("PK_SB_DNA", Variable)) %>% # data specific
+  add_column(
+    (read_csv("data/bbmap_summary/bowtie2_HGR_summary.csv", col_names = c("Variable", "Value")) %>% 
+       mutate(Variable = str_remove(Variable, "==> ")) %>% 
+       filter(grepl("PK_SB_DNA", Variable)) %>% # data specific
+       mutate(Variable = Variable) %>% 
+       rbind(.,.,.,.,.,.,.,.,.,.,.,.) %>% # represents the number of variables
+       arrange(Variable) %>% 
+       mutate_if(is.character, as.factor) %>% 
+       select(Variable) %>% 
+       rename("ID" = Variable))) %>% 
+  pivot_wider(names_from = Variable, values_from = Value) %>% 
+  add_column(Data = "ZB_bowtie", Alignment = "Indirect", Genome = "Pk")  %>% 
+  as.tibble(.name_repair = "universal"))
+) 
+```
+
+```{r}
+Summary_Data %>% 
+  filter(Data == "ZB_redo") %>% 
+  mutate(ID = str_remove(ID, "_DKDL2[a-zA-Z0-9-_]+")) %>% View()
+
+Summary_Data %>% 
+  filter(Data == "ZB_redo") %>% 
+  mutate(ID = str_remove(ID, "_DKDL2.*")) %>% View()
+```
+
+
+```{r}
+ZB_metadata %>% 
+  filter(Alignment == "Direct", Data == "ZB_redo") %>% 
+  select(1:18, 47) %>%  
+  pivot_longer(cols = !c(ID, Data, Alignment, Sample, parasitemia), names_to = "Contig", values_to = "Depth") %>% 
+  group_by(Sample) %>% 
+  summarise(Parasitemia = mean(parasitemia), Depth = mean(Depth)) %>%  
+  lm(Depth ~ Parasitemia, .) %>% 
+  car::Anova()
+
+  shapiro.test(
+    (ZB_metadata %>% 
+  filter(Alignment == "Direct", Data == "ZB_redo") %>% 
+  select(1:18, 47) %>%  
+  pivot_longer(cols = !c(ID, Data, Alignment, Sample, parasitemia), names_to = "Contig", values_to = "Depth") %>% 
+  group_by(Sample) %>% 
+  summarise(Parasitemia = mean(parasitemia), Depth = mean(Depth)))
+  $Depth)
+
+ZB_metadata %>% 
+  filter(Alignment == "Direct", Data == "ZB_redo") %>% 
+  select(1:18, 47) %>%  
+  pivot_longer(cols = !c(ID, Data, Alignment, Sample, parasitemia), names_to = "Contig", values_to = "Depth") %>% 
+  group_by(Sample) %>% 
+  summarise(Parasitemia = mean(parasitemia), Depth = mean(Depth)) %>%  
+  lme4::glmer(Depth ~ Parasitemia, .) %>% 
+  car::Anova()
+```
+
+
+
+
+
+
+**FROM WORKFLOW ON HPC**
+
+### Read in the data
+
+```{r,warning=F,message=F}
+library(tidyverse)
+```
+
+Version(s) = 1.3.0 (tidyverse), 1.2.1335 (RStudio) & 3.6.1 (R)
+File = bbmap.rmd (on local)
+
+The chunk below takes in the csv file specific to the dataset and type of alignment.
+It then filters to remove the sample names, creating a datframe with only statistics/variables.
+It then adds a column where we have filtered for the sample names, 'rbound' it to itself several times times and arranged it by samples names (so that each variable/statstic has an appropriate sample name in the adjaent column).
+This resultant dataframe is in the appropriate long format, so then `pivot.wider()` is used to create a [tidy](https://tidyr.tidyverse.org/articles/tidy-data.html) dataframe for analysis (where the first column is the sample numbers and each additional column is a variable).
+
+```{r,warning=F,message=F}
+# S_100 
+# Direct Pk
+S100 <- read_csv("data/bbmap_summary/S100_PKD_summary_mapstats.csv", col_names = c("Variable", "Value")) %>%
+  mutate(Variable = str_remove(Variable, "==> ")) %>% 
+  filter(!grepl("ERR", Variable)) %>% # data specific
+  add_column(
+    (read_csv("data/bbmap_summary/S100_PKD_summary_mapstats.csv", col_names = c("Variable", "Value")) %>% 
+       mutate(Variable = str_remove(Variable, "==> ")) %>% 
+       filter(grepl("ERR", Variable)) %>% # data specific
+       mutate(Variable = Variable) %>% 
+       rbind(.,.,.,.,.,.,.,.,.,.,.,.) %>% # represents the number of variables
+       arrange(Variable) %>% 
+       mutate_if(is.character, as.factor) %>% 
+       select(Variable) %>% 
+       rename("ID" = Variable))) %>% 
+  pivot_wider(names_from = Variable, values_from = Value) %>% 
+  add_column(Data = "S100", Alignment = "Direct", Genome = "Pk") %>% 
+# Indirect Hg
+  rbind(
+    (read_csv("data/bbmap_summary/S100_HGA_summary_mapstats.csv", col_names = c("Variable", "Value")) %>%
+  mutate(Variable = str_remove(Variable, "==> ")) %>% 
+  filter(!grepl("ERR", Variable)) %>% # data specific
+  add_column(
+    (read_csv("data/bbmap_summary/S100_HGA_summary_mapstats.csv", col_names = c("Variable", "Value")) %>% 
+       mutate(Variable = str_remove(Variable, "==> ")) %>% 
+       filter(grepl("ERR", Variable)) %>% # data specific
+       mutate(Variable = Variable) %>% 
+       rbind(.,.,.,.,.,.,.,.,.,.,.,.) %>% # represents the number of variables
+       arrange(Variable) %>% 
+       mutate_if(is.character, as.factor) %>% 
+       select(Variable) %>% 
+       rename("ID" = Variable))) %>%
+  pivot_wider(names_from = Variable, values_from = Value) %>% 
+  add_column(Data = "S100", Alignment = "Indirect", Genome = "Hg"))) %>% 
+# Indirect Pk
+  rbind(
+    (read_csv("data/bbmap_summary/S100_HGR_summary_mapstats.csv", col_names = c("Variable", "Value")) %>%
+  mutate(Variable = str_remove(Variable, "==> ")) %>% 
+  filter(!grepl("ERR", Variable)) %>% # data specific
+  add_column(
+    (read_csv("data/bbmap_summary/S100_HGR_summary_mapstats.csv", col_names = c("Variable", "Value")) %>% 
+       mutate(Variable = str_remove(Variable, "==> ")) %>% 
+       filter(grepl("ERR", Variable)) %>% # data specific
+       mutate(Variable = Variable) %>% 
+       rbind(.,.,.,.,.,.,.,.,.,.,.,.) %>% # represents the number of variables
+       arrange(Variable) %>% 
+       mutate_if(is.character, as.factor) %>% 
+       select(Variable) %>% 
+       rename("ID" = Variable))) %>%
+  pivot_wider(names_from = Variable, values_from = Value) %>% 
+  add_column(Data = "S100", Alignment = "Indirect", Genome = "Pk"))) %>% 
+  mutate_if(is.character, as.factor)
+
+# SS
+# Direct Pk
+SS <- read_csv("data/bbmap_summary/SS_PKD_summary_mapstats.csv", col_names = c("Variable", "Value")) %>%
+  mutate(Variable = str_remove(Variable, "==> ")) %>% 
+  filter(!grepl("PKA", Variable)) %>% # data specific
+  add_column(
+    (read_csv("data/bbmap_summary/SS_PKD_summary_mapstats.csv", col_names = c("Variable", "Value")) %>% 
+       mutate(Variable = str_remove(Variable, "==> ")) %>% 
+       filter(grepl("PKA", Variable)) %>% # data specific
+       mutate(Variable = Variable) %>% 
+       rbind(.,.,.,.,.,.,.,.,.,.,.,.) %>% # represents the number of variables
+       arrange(Variable) %>% 
+       mutate_if(is.character, as.factor) %>% 
+       select(Variable) %>% 
+       rename("ID" = Variable))) %>% 
+  pivot_wider(names_from = Variable, values_from = Value) %>% 
+  add_column(Data = "SS", Alignment = "Direct", Genome = "Pk") %>% 
+# Indirect Hg
+  rbind(
+    (read_csv("data/bbmap_summary/SS_HGA_summary_mapstats.csv", col_names = c("Variable", "Value")) %>%
+  mutate(Variable = str_remove(Variable, "==> ")) %>% 
+  filter(!grepl("PKA", Variable)) %>% # data specific
+  add_column(
+    (read_csv("data/bbmap_summary/SS_HGA_summary_mapstats.csv", col_names = c("Variable", "Value")) %>% 
+       mutate(Variable = str_remove(Variable, "==> ")) %>% 
+       filter(grepl("PKA", Variable)) %>% # data specific
+       mutate(Variable = Variable) %>% 
+       rbind(.,.,.,.,.,.,.,.,.,.,.,.) %>% # represents the number of variables
+       arrange(Variable) %>% 
+       mutate_if(is.character, as.factor) %>% 
+       select(Variable) %>% 
+       rename("ID" = Variable))) %>%
+  pivot_wider(names_from = Variable, values_from = Value) %>% 
+  add_column(Data = "SS", Alignment = "Indirect", Genome = "Hg"))) %>% 
+# Indirect Pk
+  rbind(
+    (read_csv("data/bbmap_summary/SS_HGR_summary_mapstats.csv", col_names = c("Variable", "Value")) %>%
+  mutate(Variable = str_remove(Variable, "==> ")) %>% 
+  filter(!grepl("PKA", Variable)) %>% # data specific
+  add_column(
+    (read_csv("data/bbmap_summary/SS_HGR_summary_mapstats.csv", col_names = c("Variable", "Value")) %>% 
+       mutate(Variable = str_remove(Variable, "==> ")) %>% 
+       filter(grepl("PKA", Variable)) %>% # data specific
+       mutate(Variable = Variable) %>% 
+       rbind(.,.,.,.,.,.,.,.,.,.,.,.) %>% # represents the number of variables
+       arrange(Variable) %>% 
+       mutate_if(is.character, as.factor) %>% 
+       select(Variable) %>% 
+       rename("ID" = Variable))) %>%
+  pivot_wider(names_from = Variable, values_from = Value) %>% 
+  add_column(Data = "SS", Alignment = "Indirect", Genome = "Pk")))%>% 
+  mutate_if(is.character, as.factor)
+
+# ZB
+# Direct Pk
+ZB100 <- read_csv("data/bbmap_summary/ZB_PKD_summary_mapstats.csv", col_names = c("Variable", "Value")) %>%
+  mutate(Variable = str_remove(Variable, "==> ")) %>% 
+  filter(!grepl("PK_SB_DNA", Variable)) %>% # data specific
+  add_column(
+    (read_csv("data/bbmap_summary/ZB_PKD_summary_mapstats.csv", col_names = c("Variable", "Value")) %>% 
+       mutate(Variable = str_remove(Variable, "==> ")) %>% 
+       filter(grepl("PK_SB_DNA", Variable)) %>% 
+       mutate(Variable = Variable) %>% 
+       rbind(.,.,.,.,.,.,.,.,.,.,.,.) %>% # represents the number of variables
+       arrange(Variable) %>% 
+       mutate_if(is.character, as.factor) %>% 
+       select(Variable) %>% 
+       rename("ID" = Variable))) %>% 
+  pivot_wider(names_from = Variable, values_from = Value) %>% 
+  add_column(Data = "ZB", Alignment = "Direct", Genome = "Pk") %>% 
+# Indirect Hg
+  rbind(
+    (read_csv("data/bbmap_summary/ZB_HGA_summary_mapstats.csv", col_names = c("Variable", "Value")) %>%
+  mutate(Variable = str_remove(Variable, "==> ")) %>% 
+  filter(!grepl("PK_SB_DNA", Variable)) %>% 
+  add_column(
+    (read_csv("data/bbmap_summary/ZB_HGA_summary_mapstats.csv", col_names = c("Variable", "Value")) %>% 
+       mutate(Variable = str_remove(Variable, "==> ")) %>% 
+       filter(grepl("PK_SB_DNA", Variable)) %>% 
+       mutate(Variable = Variable) %>% 
+       rbind(.,.,.,.,.,.,.,.,.,.,.,.) %>% # represents the number of variables
+       arrange(Variable) %>% 
+       mutate_if(is.character, as.factor) %>% 
+       select(Variable) %>% 
+       rename("ID" = Variable))) %>%
+  pivot_wider(names_from = Variable, values_from = Value) %>% 
+  add_column(Data = "ZB", Alignment = "Indirect", Genome = "Hg"))) %>% 
+# Indirect Pk
+  rbind(
+    (read_csv("data/bbmap_summary/ZB_HGR_summary_mapstats.csv", col_names = c("Variable", "Value")) %>%
+  mutate(Variable = str_remove(Variable, "==> ")) %>% 
+  filter(!grepl("PK_SB_DNA", Variable)) %>% 
+  add_column(
+    (read_csv("data/bbmap_summary/ZB_HGR_summary_mapstats.csv", col_names = c("Variable", "Value")) %>% 
+       mutate(Variable = str_remove(Variable, "==> ")) %>% 
+       filter(grepl("PK_SB_DNA", Variable)) %>% 
+       mutate(Variable = Variable) %>% 
+       rbind(.,.,.,.,.,.,.,.,.,.,.,.) %>% # represents the number of variables
+       arrange(Variable) %>% 
+       mutate_if(is.character, as.factor) %>% 
+       select(Variable) %>% 
+       rename("ID" = Variable))) %>%
+  pivot_wider(names_from = Variable, values_from = Value) %>% 
+  add_column(Data = "ZB", Alignment = "Indirect", Genome = "Pk"))) %>% 
+  mutate_if(is.character, as.factor)
+
+BBMAP <- rbind(SS, S100, ZB100) %>% 
+  as.tibble(.name_repair = "universal") # remove spaces from names
+```
+
+
+### Plots 
+
+#### Direct to Pk alignment
+
+```{r,warning=F,message=F,echo=F}
+BBMAP %>% 
+  filter(Alignment == "Direct") %>% 
+  ggplot() + 
+  geom_point(aes(x = ID, y = Reads/1000000, colour = Data)) +
+  geom_point(aes(x = ID, y = Mapped.reads/1000000, colour = Data), shape = 2) +
+  theme(axis.text.x = element_blank(), 
+        axis.ticks = element_blank(),
+        plot.title = element_text(vjust = - 20, size = 12)) +
+  labs(x = "Sample", y= "Reads (100K)", title = "total reads = circles & and mapped reads = triangles") 
+```
+
+#### Indirectly to Pk via removal of Hg
+
+For this plot, we want total reads (from before Hg removal) and mapped reads post-removal of Hg. So two seperate dataframe subsets are required, one from Direct alignment and the other from Indirect.
+
+```{r,warning=F,message=F,echo=F}
+ggplot() + 
+  geom_point((BBMAP %>% filter(Alignment == "Direct") %>% filter(Genome == "Pk")),
+    mapping = aes(x = ID, y = Reads/1000000, colour = Data)) +
+  geom_point(data = (BBMAP %>% filter(Alignment == "Indirect") %>% filter(Genome == "Pk")),
+    mapping = aes(x = ID, y = Mapped.reads/1000000, colour = Data), shape = 2) +
+  theme(axis.text.x = element_blank(), 
+        axis.ticks = element_blank(),
+        plot.title = element_text(vjust = - 20, size = 12)) +
+  labs(x = "Sample", y= "Reads (100K)", title = "total reads = circles & and mapped reads = triangles") 
+```
+
+#### Direct VS Indirect 
+
+```{r,warning=F,message=F,echo=F}
+BBMAP %>% 
+  filter(Genome == "Pk") %>%
+  ggplot() + 
+  geom_col(aes(x = ID, y = Mapped.reads/1000000, colour = Data)) +
+  theme(axis.text.x = element_blank(), axis.ticks = element_blank()) +
+  labs(x = "Samples", y= "Mapped reads (100K)") +
+  facet_wrap(~Alignment)
+```
+
+### Summary Statisitics 
+
+#### Aligned direct to Pk 
+
+```{r,warning=F,message=F,echo=F}
+BBMAP %>% 
+  filter(Alignment == "Direct") %>%
+  group_by(Data) %>% 
+  summarise_all(mean) %>% 
+  select(Data, Reads, Mapped.reads, Mapped.bases, Percent.mapped) 
+```
+
+#### Aligned to Hg 
+
+```{r,warning=F,message=F,echo=F}
+BBMAP %>% 
+  filter(Alignment == "Indirect") %>%
+  filter(Genome == "Hg") %>% 
+  group_by(Data) %>% 
+  summarise_all(mean) %>% 
+  select(Data, Reads, Mapped.reads, Mapped.bases, Percent.mapped) 
+```
+
+#### Hg removed alignment to Pk
+
+```{r,warning=F,message=F,echo=F}
+BBMAP %>% 
+  filter(Alignment == "Indirect") %>%
+  filter(Genome == "Pk") %>% 
+  group_by(Data) %>% 
+  summarise_all(mean) %>% 
+  select(Data, Reads, Mapped.reads, Mapped.bases, Percent.mapped)
+```
+
+#### Comparing direct and indirect alignment to Pk
+```{r,warning=F,message=F,echo=F}
+BBMAP %>% 
+  filter(Genome == "Pk") %>% 
+  group_by(Data, Alignment) %>% 
+  summarise_all(mean) %>% 
+  select(Data, Alignment, Reads, Mapped.reads, Mapped.bases) %>% 
+  unite(Data, Data, Alignment)
+```
+
+## Why are some samples losing so many reads to the Hg before Pk mapping?
+
+**Could be duplicates.**
+
+Take the samples that are losing the most reads from SS and ZB datasets direct alignment (S100 doesn't have any visibly significant changes), remove duplicates from the aligned BAM files and re-run some of the above stats and plots.
+
+### Get the filenames of samples that suffer a massive loss
+
+```{r,waring=F,message=F}
+BBMAP %>%
+  filter(Alignment == "Direct") %>%
+  filter(Data == "SS" | Data == "ZB") %>% 
+  select(ID, Mapped.reads) %>% 
+  arrange(desc(Mapped.reads))
+```
+
+##########################################################################################################################################
+
+File = read_depth.Rmd (laptop)
+Version(s) = 1.3.0 (tidyverse), 1.3.1 (readxl), 1.2.1335 (RStudio) & 3.6.1 (R)
+
+Below I group by the contigs and get the average read depth at each base using a function `read_depth_data()`. 
+The function takes samtools depth outputs as a tsv file, removes the column with the base name, filters for contigs only (they're labelled something like this = PKNH_ordered_1), I then group by the contigs and caclulate the average read depth.
+The last few lines of the function move the first row of the transposed df to colnames, creates new columns specific to the dataset and alignment type, and turns the rownames into a column.
+
+```{r,warning=F,message=F}
+library(tidyverse)
+library(janitor)
+library(readxl)
+```
+
+```{r,eval=F}
+read_depth_data <- function(file_path, dataset, alignment){
+read_tsv(file_path, col_names = c("Contig", "Bases", "S01", "S02", "S03", "S04", "S05", "S06", "S07", "S08", "S09", "S10", "S11", "S12", "S13")) %>% 
+  select(!Bases) %>% 
+  filter(grepl("ordered", Contig)) %>% 
+  group_by(Contig) %>% 
+  summarise_all(mean) %>%
+  t() %>% 
+  as.data.frame() %>% 
+  row_to_names(1) %>% 
+  add_column(Data = dataset, Alignment = alignment) %>% 
+  rownames_to_column("Sample")
+}
+
+depth_summary <- read_depth_data("data/read_depth/ZB_direct_depth_summary.tsv", "ZB", "Direct") %>% 
+  rbind((read_depth_data("data/read_depth/ZB_indirect_depth_summary.tsv", "ZB", "Indirect"))) %>% 
+  rbind((read_depth_data("data/read_depth/S100_direct_depth_summary.tsv", "Sanger", "Direct"))) %>%
+  rbind((read_depth_data("data/read_depth/S100_indirect_depth_summary.tsv", "Sanger", "Indirect"))) %>% 
+  rbind((read_depth_data("data/read_depth/SS_direct_depth_summary.tsv", "Initial Subset", "Direct"))) %>% 
+  rbind((read_depth_data("data/read_depth/SS_indirect_depth_summary.tsv", "Initial Subset", "Indirect"))) %>%
+  mutate_if(is.factor, as.character) %>% 
+  mutate_at(grep("ordered", colnames(.)), as.numeric)
+```
+
+## Plot depth by sample, shaped by alignment and coloured by data
+
+```{r,eval=F}
+depth_summary %>% 
+  ggplot() +
+  geom_point(mapping = aes(x = Sample, y = ordered_PKNH_01_v2, colour = Data, shape = Alignment)) +
+  scale_y_log10()
+```
+
+## To do the same above but with zeroes removed (bases where no alignment occured)
+
+This is made possible with the addition of the na_if(0) and na.rm=T.
+
+```{r,eval=F}
+read_depth_data_na <- function(file_path, dataset, alignment){
+read_tsv(file_path, col_names = c("Contig", "Bases", "S01", "S02", "S03", "S04", "S05", "S06", "S07", "S08", "S09", "S10", "S11", "S12", "S13")) %>% 
+  select(!Bases) %>% 
+  filter(grepl("ordered", Contig)) %>% 
+  na_if(0) %>% 
+  group_by(Contig) %>% 
+  summarise_all(mean, na.rm=T) %>%
+  t() %>% 
+  as.data.frame() %>% 
+  row_to_names(1) %>% 
+  add_column(Data = dataset, Alignment = alignment) %>% 
+  rownames_to_column("Sample")
+}
+
+depth_summary_no_na <- read_depth_data_na("data/read_depth/ZB_direct_depth_summary.tsv", "ZB", "Direct") %>% 
+  rbind((read_depth_data_na("data/read_depth/ZB_indirect_depth_summary.tsv", "ZB", "Indirect"))) %>% 
+  rbind((read_depth_data_na("data/read_depth/S100_direct_depth_summary.tsv", "Sanger", "Direct"))) %>%
+  rbind((read_depth_data_na("data/read_depth/S100_indirect_depth_summary.tsv", "Sanger", "Indirect"))) %>% 
+  rbind((read_depth_data_na("data/read_depth/SS_direct_depth_summary.tsv", "Initial Subset", "Direct"))) %>% 
+  rbind((read_depth_data_na("data/read_depth/SS_indirect_depth_summary.tsv", "Initial Subset", "Indirect"))) %>%
+  mutate_if(is.factor, as.character) %>% 
+  mutate_at(grep("ordered", colnames(.)), as.numeric)
+
+depth_summary_no_na %>% 
+  ggplot() +
+  geom_point(mapping = aes(x = Sample, y = ordered_PKNH_01_v2, colour = Data, shape = Alignment)) +
+  scale_y_log10()
+```
+
+## Average read depth at each contig for each dataset and alignment
+
+```{r,eval=F}
+depth_summary %>% 
+  select(!1) %>% 
+  group_by(Data, Alignment) %>% 
+  summarise_all(mean) %>% 
+  pivot_longer(cols = !c(Data, Alignment), names_to = "Contig", values_to = "Depth") %>% 
+  ggplot() +
+  geom_point(mapping = aes(x = Contig, y = Depth, colour = Data, shape = Alignment)) +
+  theme(axis.text.x = element_blank(), axis.ticks = element_blank()) +
+  ggtitle("Average read depth at each contig for each dataset")
+```
+
+## Calculate the percentage of NA values (bases with no coverage) at each contig and within each sample
+
+```{r,eval=F}
+base_pairs <- function(file_path, dataset, alignment){
+read_tsv(file_path, col_names = c("Contig", "Bases", "S01", "S02", "S03", "S04", "S05", "S06", "S07", "S08", "S09", "S10", "S11", "S12", "S13")) %>% 
+  select(!Bases) %>% 
+  filter(grepl("ordered", Contig)) %>% 
+  na_if(0) %>% 
+  group_by(Contig) %>% 
+  summarise_all(funs(sum(is.na(.))/length(.) * 100)) %>% 
+  t() %>% 
+  as.data.frame() %>% 
+  row_to_names(1) %>% 
+  add_column(Data = dataset, Alignment = alignment) %>% 
+  rownames_to_column("Sample")
+}
+
+
+base_pair_summary <- base_pairs("data/read_depth/ZB_direct_depth_summary.tsv", "ZB", "Direct") %>% 
+  rbind((base_pairs("data/read_depth/ZB_indirect_depth_summary.tsv", "ZB", "Indirect"))) %>% 
+  rbind((base_pairs("data/read_depth/S100_direct_depth_summary.tsv", "Sanger", "Direct"))) %>%
+  rbind((base_pairs("data/read_depth/S100_indirect_depth_summary.tsv", "Sanger", "Indirect"))) %>% 
+  rbind((base_pairs("data/read_depth/SS_direct_depth_summary.tsv", "Initial Subset", "Direct"))) %>% 
+  rbind((base_pairs("data/read_depth/SS_indirect_depth_summary.tsv", "Initial Subset", "Indirect"))) %>%
+  mutate_if(is.factor, as.character) %>% 
+  mutate_at(grep("ordered", colnames(.)), as.numeric)
+```
+
+## Average NA at each contig for each dataset 
+
+```{r,eval=F}
+base_pair_summary %>% 
+  select(!1) %>% 
+  group_by(Data, Alignment) %>% 
+  summarise_all(mean) %>% 
+  pivot_longer(cols = !c(Data, Alignment), names_to = "Contig", values_to = "Bases") %>% 
+  ggplot() +
+  geom_point(mapping = aes(x = Contig, y = Bases, colour = Data, shape = Alignment)) +
+  theme(axis.text.x = element_blank(), axis.ticks = element_blank()) +
+  ggtitle("Average percentage of bases WITHOUT coverage for each contig")
+```
+
+
+**Despite obious trends showing ZB data is on top, and some pretty good looking averages, when looking at the raw data there are some poor samples. Hopefully looking at the parasite load will shed some light here.**
+
+
+
+## Read in metadata for ZB data and combine with summary data
+
+```{r,eval=F}
+read_metadata <- function(file_path){
+  
+# select desired samples fromt the metadata
+temp1 <- readxl::read_excel(file_path) %>% 
+  filter(sampleid == "PK_SB_DNA_006" |
+         sampleid == "PK_SB_DNA_008" |
+         sampleid == "PK_SB_DNA_009" |
+         sampleid == "PK_SB_DNA_011" |
+         sampleid == "PK_SB_DNA_012" |
+         sampleid == "PK_SB_DNA_014" |
+         sampleid == "PK_SB_DNA_015" |
+         sampleid == "PK_SB_DNA_019" |
+         sampleid == "PK_SB_DNA_023" |
+         sampleid == "PK_SB_DNA_030" |
+         sampleid == "PK_SB_DNA_031" | 
+         sampleid == "PK_SB_DNA_033" |
+         sampleid == "PK_SB_DNA_034") %>% 
+  add_column(Sample = 1:13) 
+
+# change levels of subset to match depth/base data
+temp2 <- temp1 %>% 
+  slice(1:9) %>% 
+  mutate(Sample = as.character(Sample)) %>% 
+  mutate(Sample = paste0("S0", Sample)) 
+
+# change levels of subset to match depth/base data
+temp3 <- temp1 %>% 
+  slice(10:13) %>% 
+  mutate(Sample = as.character(Sample)) %>% 
+  mutate(Sample = paste0("S", Sample)) 
+
+# combine 
+temp4 <- temp2 %>% rbind(temp3)
+
+# filter depth/base data for ZB data, join them together and then combine with the metadata wrangled above
+depth_summary %>% 
+  filter(Data == "ZB") %>% 
+  pivot_longer(cols = !c(Sample, Data, Alignment), names_to = "Contig", values_to = "Depth") %>%  
+  left_join(
+    (base_pair_summary %>% 
+       filter(Data == "ZB") %>% 
+       pivot_longer(cols = !c(Sample, Data, Alignment), names_to = "Contig", values_to = "Bases"))) %>% 
+  right_join(temp4)
+  
+}
+
+ZB_metadata <- read_metadata("data/metadata/PK_Sabah_Sample_naming_indexes.xlsx")
+```
+
+## Plot depth of each sample (direct alignment) at each contig
+
+```{r,eval=F}
+ZB_metadata %>% 
+  filter(Alignment == "Direct") %>% 
+  ggplot(mapping = aes(x = Sample, y = Depth)) +
+  geom_col() +
+  facet_wrap(~Contig) +
+  ggtitle("Depth of each sample (direct alignment) at each contig") +
+  theme(axis.text.x = element_blank(), axis.ticks.x = element_blank())
+```
+
+*Why does sample 11 have much higher read depth? Parasitemia?*
+
+## Parasitemia per sample at each contig
+
+```{r,eval=F}
+ZB_metadata %>% 
+  filter(Alignment == "Direct") %>% 
+  ggplot(mapping = aes(x = Sample, y = parasitemia)) +
+  geom_col() +
+  facet_wrap(~Contig) +
+  theme(axis.text.x = element_blank(), axis.ticks.x = element_blank()) +
+  ggtitle("Parasitemia of each sample (direct alignment)") 
+```
+## Plot relationship between depth across samples in relation to parasitemia, faceted by contig
+
+```{r,eval=F}
+ZB_metadata %>%
+  filter(Sample != "S11") %>% 
+  ggplot(mapping = aes(x = parasitemia, y = Depth)) +
+  geom_point() +
+  scale_y_log10() +
+  geom_smooth(method = "lm", se = T) +
+  facet_wrap(~Contig) +
+  ylab("Depth (log10)")
+```
+
+## Plot relationship between depth across samples in relation to NA bases, faceted by contig
+
+```{r,eval=F}
+ZB_metadata %>%
+  filter(Sample != "S11") %>% 
+  ggplot(mapping = aes(x = parasitemia, y = Bases)) +
+  geom_point() +
+  scale_y_log10() +
+  geom_smooth(method = "lm", se = T) +
+  facet_wrap(~Contig) +
+  ylab("Bases (log10)")
+```
+
+## Plot relationship between depth and disease severity, faceted by contig
+
+```{r,eval=F}
+ZB_metadata %>%
+  filter(Sample != "S11") %>% 
+  ggplot(mapping = aes(x = severe, y = Depth)) +
+  geom_point() +
+  geom_boxplot() +
+  scale_y_log10() +
+  geom_smooth(method = "lm", se = T) +
+  facet_wrap(~Contig) +
+  ylab("Depth (log10)")
+```
+
+## Comparing our samples to those in previous studies
+
+```{r,eval=F}
+depth_summary_updated <- depth_summary %>% 
+  rbind(
+    read_tsv("data/read_depth/previous_Pk_data.tsv", col_names = c("Contig", "Bases", "S01", "S02", "S03", "S04")) %>% 
+       select(!Bases) %>% 
+       filter(grepl("ordered", Contig)) %>% 
+      group_by(Contig) %>% 
+      summarise_all(mean) %>%
+      t() %>% 
+      as.data.frame() %>% 
+      row_to_names(1) %>% 
+      add_column(Data = "Previous_Pk_data", Alignment = "Direct") %>% 
+      rownames_to_column("Sample")) %>%
+  mutate_if(is.factor, as.character) %>% 
+  mutate_at(grep("ordered", colnames(.)), as.numeric) 
+
+depth_summary_updated %>% 
+  select(!1) %>% 
+  group_by(Data, Alignment) %>% 
+  summarise_all(mean) %>% 
+  pivot_longer(cols = !c(Data, Alignment), names_to = "Contig", values_to = "Depth") %>% 
+  ggplot() +
+  geom_point(mapping = aes(x = Contig, y = Depth, colour = Data, shape = Alignment)) +
+  theme(axis.text.x = element_blank(), axis.ticks = element_blank()) 
+```
+## Plot read depth at each contig for previous Pk data
+
+```{r,eval=F}
+depth_summary_updated %>% 
+  filter(Data == "Previous_Pk_data") %>% 
+  select(1:15) %>% 
+  pivot_longer(cols = !Sample, names_to = "Contig", values_to = "Depth") %>%  
+  ggplot(mapping = aes(x = Sample, y = Depth)) +
+  geom_col() +
+  facet_wrap(~Contig) +
+  theme(axis.text.x = element_blank(), axis.ticks.x = element_blank())
+```
+
+## Calculate the percentage of NA values (bases with no coverage) at each contig and within each sample
+
+```{r,eval=F}
+base_pair_summary_updated <- base_pair_summary %>% 
+  rbind(
+    read_tsv("data/read_depth/previous_Pk_data.tsv", col_names = c("Contig", "Bases", "S01", "S02", "S03", "S04")) %>% 
+       select(!Bases) %>% 
+       filter(grepl("ordered", Contig)) %>% 
+      na_if(0) %>%
+      group_by(Contig) %>% 
+  summarise_all(funs(sum(is.na(.))/length(.) * 100)) %>% 
+      t() %>% 
+      as.data.frame() %>% 
+      row_to_names(1) %>% 
+      add_column(Data = "Previous_Pk_data", Alignment = "Direct") %>% 
+      rownames_to_column("Sample")) %>%
+  mutate_if(is.factor, as.character) %>% 
+  mutate_at(grep("ordered", colnames(.)), as.numeric) 
+
+base_pair_summary_updated %>% 
+  select(!1) %>% 
+  group_by(Data, Alignment) %>% 
+  summarise_all(mean) %>% 
+  pivot_longer(cols = !c(Data, Alignment), names_to = "Contig", values_to = "Bases") %>% 
+  ggplot() +
+  geom_point(mapping = aes(x = Contig, y = Bases, colour = Data, shape = Alignment)) +
+  theme(axis.text.x = element_blank(), axis.ticks = element_blank()) +
+  ggtitle("Average percentage of bases WITHOUT coverage for each contig")
+```
+**END**

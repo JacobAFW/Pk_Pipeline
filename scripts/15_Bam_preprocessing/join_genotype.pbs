@@ -41,6 +41,7 @@ echo 'GenotypeGVCFs'
     -T GenotypeGVCFs \
     -nt 20 \
     -R $INDEXTDIR \
+    #  -L /g/data/u86/variantdb/v2.38/conf/human/GRCh38/fasta/intervals/3.intervals \
     -V Combined.g.vcf.gz \
     -o $OUTDIR/Genotyped.vcf.gz
 

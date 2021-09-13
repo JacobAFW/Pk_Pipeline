@@ -1,0 +1,13 @@
+---------------------------------------
+PBS: Job identifier is 1235215.cheetah
+PBS: Job name is merge_vcfs
+---------------------------------------
+Define paths to samtools
+---------------------------------------
+Change to working directory and set env variables
+---------------------------------------
+Execute bcftools merge
+[W::bcf_hdr_merge] Trying to combine "AD" tag definitions of different lengths
+[W::bcf_hdr_merge] Trying to combine "MQ" tag definitions of different types
+---------------------------------------
+Finished

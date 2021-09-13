@@ -3534,6 +3534,7 @@ echo 'HaplotypeCaller'
     --variant_index_type LINEAR \
     --variant_index_parameter 128000 \
     -contamination 0.0 \
+    -G Standard \
     -R $INDEXTDIR \
     -I SAMPLE.dupmarked.reheader.bam \
     -o SAMPLE.haplotypecaller.g.vcf.gz
@@ -3588,6 +3589,7 @@ echo 'CombineGVCFs'
 /usr/local/jdk1.8.0_131/bin/java -Djava.iodir=$PBS_JOBFS -Xms3200m -Xmx3600m -jar /usr/local/GenomeAnalysisTK-3.2.2/GenomeAnalysisTK.jar \
     -T CombineGVCFs \
     -R $INDEXTDIR \
+    -G Standard -G AS_Standard \
     -V ERR274221.haplotypecaller.g.vcf.gz -V ERR274222.haplotypecaller.g.vcf.gz -V ERR274224.haplotypecaller.g.vcf.gz -V ERR274225.haplotypecaller.g.vcf.gz -V PK_SB_DNA_006_DKDL210002135-1a_HWHGKDSXY_L4.haplotypecaller.g.vcf.gz -V PK_SB_DNA_008_DKDL210002137-1a_HWHGKDSXY_L4.haplotypecaller.g.vcf.gz -V PK_SB_DNA_009_DKDL210002138-1a_HWHGKDSXY_L4.haplotypecaller.g.vcf.gz -V PK_SB_DNA_011_DKDL210002140-1a_HWHGKDSXY_L4.haplotypecaller.g.vcf.gz -V PK_SB_DNA_012_DKDL210002141-1a_HWHGKDSXY_L4.haplotypecaller.g.vcf.gz -V PK_SB_DNA_014_DKDL210002143-1a_HWHGKDSXY_L4.haplotypecaller.g.vcf.gz -V PK_SB_DNA_015_DKDL210002144-1a_HWHGKDSXY_L4.haplotypecaller.g.vcf.gz -V PK_SB_DNA_019_DKDL210002148-1a_HWHGKDSXY_L4.haplotypecaller.g.vcf.gz -V PK_SB_DNA_023_DKDL210002152-1a_HWHGKDSXY_L4.haplotypecaller.g.vcf.gz -V PK_SB_DNA_030_DKDL210002159-1a_HWHGKDSXY_L4.haplotypecaller.g.vcf.gz -V PK_SB_DNA_031_DKDL210002160-1a_HWHGKDSXY_L4.haplotypecaller.g.vcf.gz -V PK_SB_DNA_033_DKDL210002162-1a_HWHGKDSXY_L4.haplotypecaller.g.vcf.gz -V PK_SB_DNA_034_DKDL210002163-1a_HWHGKDSXY_L4.haplotypecaller.g.vcf.gz -V PK_SB_DNA_057_DKDL210002186-1a_HWHGKDSXY_L4.haplotypecaller.g.vcf.gz -V PK_SB_DNA_058_DKDL210002187-1a_HWHGKDSXY_L4.haplotypecaller.g.vcf.gz -V PK_SB_DNA_061_DKDL210002190-1a_HWHGKDSXY_L4.haplotypecaller.g.vcf.gz -V PK_SB_DNA_063_DKDL210002192-1a_HWHGKDSXY_L4.haplotypecaller.g.vcf.gz -V PK_SB_DNA_064_DKDL210002193-1a_HWHGKDSXY_L4.haplotypecaller.g.vcf.gz -V PK_SB_DNA_065_DKDL210002194-1a_HWHGKDSXY_L4.haplotypecaller.g.vcf.gz -V PK_SB_DNA_066_DKDL210002195-1a_HWHGKDSXY_L4.haplotypecaller.g.vcf.gz -V PK_SB_DNA_070_DKDL210002199-1a_HWHGKDSXY_L4.haplotypecaller.g.vcf.gz -V PK_SB_DNA_073_DKDL210002202-1a_HWHGKDSXY_L4.haplotypecaller.g.vcf.gz -V PK_SB_DNA_074_DKDL210002203-1a_HWHGKDSXY_L4.haplotypecaller.g.vcf.gz -V PK_SB_DNA_075_DKDL210002204-1a_HWHGKDSXY_L4.haplotypecaller.g.vcf.gz -V PK_SB_DNA_076_DKDL210002205-1a_HWHGKDSXY_L4.haplotypecaller.g.vcf.gz -V PK_SB_DNA_080_DKDL210002209-1a_HWHGKDSXY_L4.haplotypecaller.g.vcf.gz -V PK_SB_DNA_092_DKDL210002221-1a_HWHGKDSXY_L4.haplotypecaller.g.vcf.gz -V PK_SB_DNA_093_DKDL210002222-1a_HWHGKDSXY_L4.haplotypecaller.g.vcf.gz -V PK_SB_DNA_094_DKDL210002223-1a_HWHGKDSXY_L4.haplotypecaller.g.vcf.gz -V SRR2221468.haplotypecaller.g.vcf.gz -V SRR2222335.haplotypecaller.g.vcf.gz -V SRR2225467.haplotypecaller.g.vcf.gz -V SRR2225571.haplotypecaller.g.vcf.gz -V SRR2225573.haplotypecaller.g.vcf.gz -V SRR3135172.haplotypecaller.g.vcf.gz \
     -o Combined.g.vcf.gz
 
@@ -3598,6 +3600,7 @@ echo 'GenotypeGVCFs'
     -T GenotypeGVCFs \
     -nt 20 \
     -R $INDEXTDIR \
+    -G Standard -G AS_Standard \
     -V Combined.g.vcf.gz \
     -o $OUTDIR/Genotyped.vcf.gz
 
@@ -3899,12 +3902,17 @@ Jobs split and run as a PBS script for each sample.
 
 > for file in *L4.pbs; do qsub $file; done
 
-The resulting files can be found in 14_Indel_realignment, and an example is given below.
+The resulting files can be found in **????????????????**, and an example is given below.
 File = PK_SB_DNA_006_DKDL210002135-1a_HWHGKDSXY_L4.pbs
 Version(s) = 1.12 (samtools), 1.8.0_131-b1 (Java), 2.21.9 (picard) & 3.2.2 (GATK).
 
 GATK is run through Java, which requires compatible [jdk and jre](https://www.guru99.com/difference-between-jdk-jre-jvm.html#:~:text=The%20full%20form%20of%20JDK%20is%20Java%20Development,also%20platform%20dependent%2C%20but%20JVM%20is%20platform%20independent. installations).
 Java uses a [Picard](https://github.com/broadinstitute/picard) jar file to run GATK.
+
+
+The VCF file for the known variant sites (VCF) had to be amended to accomodate GATK's nuances:
+
+'sed /ID=VDB/d PK_consensus.vcf | sed /Number=R/d > PK_consensus_corrected.vcf'
 
 ```{R,eval=F}
 

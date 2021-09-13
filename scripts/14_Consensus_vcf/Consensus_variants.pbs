@@ -7,7 +7,7 @@
 #PBS -l mem=300gb
 #PBS -l pmem=300gb
 #PBS -l file=200gb
-#PBS -l walltime=48:00:00
+#PBS -l walltime=8:00:00
 #PBS -M jacob.westaway@menzies.edu.au
 
 echo "---------------------------------------"

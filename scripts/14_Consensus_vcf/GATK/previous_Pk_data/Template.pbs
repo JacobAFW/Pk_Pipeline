@@ -29,7 +29,6 @@ echo 'HaplotypeCaller'
 
 /usr/local/jdk1.8.0_131/bin/java -Djava.iodir=$PBS_JOBFS -Xms3200m -Xmx3600m -jar /usr/local/GenomeAnalysisTK-3.2.2/GenomeAnalysisTK.jar \
     -T HaplotypeCaller \
-    -nt 1 \
     -ERC GVCF \
     --minPruning 3 \
     --maxNumHaplotypesInPopulation 200 \
@@ -37,6 +36,7 @@ echo 'HaplotypeCaller'
     --variant_index_type LINEAR \
     --variant_index_parameter 128000 \
     -contamination 0.0 \
+    -G Standard \
     -R $INDEXTDIR \
     -I SAMPLE.dupmarked.reheader.bam \
     -o SAMPLE.haplotypecaller.g.vcf.gz

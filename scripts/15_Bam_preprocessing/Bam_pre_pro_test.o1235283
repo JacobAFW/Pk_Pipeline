@@ -1,0 +1,185 @@
+---------------------------------------
+PBS: Job identifier is 1235283.cheetah
+PBS: Job name is Bam_pre_pro_test
+---------------------------------------
+Define paths to samtools
+---------------------------------------
+---------------------------------------
+Change to working directory and set env variables
+---------------------------------------
+RealignerTargetCreator
+INFO  14:45:23,983 HelpFormatter - -------------------------------------------------------------------------------- 
+INFO  14:45:23,986 HelpFormatter - The Genome Analysis Toolkit (GATK) v3.2-2-gec30cee, Compiled 2014/07/17 15:22:03 
+INFO  14:45:23,987 HelpFormatter - Copyright (c) 2010 The Broad Institute 
+INFO  14:45:23,987 HelpFormatter - For support and documentation go to http://www.broadinstitute.org/gatk 
+INFO  14:45:24,002 HelpFormatter - Program Args: -T RealignerTargetCreator -nt 10 -R /home/jwestaway/pk_pipeline/ref_genomes/PKA1H1/fasta/strain_A1_H.1.Icor.fasta -I /home/jwestaway/pk_pipeline/ZB_100/outputs/vcf_consensus/GATK/PK_SB_DNA_006_DKDL210002135-1a_HWHGKDSXY_L4/PK_SB_DNA_006_DKDL210002135-1a_HWHGKDSXY_L4.dupmarked.reheader.bam --intervals /home/jwestaway/pk_pipeline/ref_genomes/PKA1H1/strain_A1_H.1.Icor.fasta.bed -known /home/jwestaway/pk_pipeline/ZB_100/outputs/vcf_consensus/PK_consensus_corrected.vcf -o /home/jwestaway/pk_pipeline/ZB_100/outputs/vcf_consensus/GATK/PK_SB_DNA_006_DKDL210002135-1a_HWHGKDSXY_L4/PK_SB_DNA_006_DKDL210002135-1a_HWHGKDSXY_L4.dupmarked.realigner.intervals 
+INFO  14:45:24,011 HelpFormatter - Executing as jwestaway@cheetah06 on Linux 2.6.32-754.14.2.el6.x86_64 amd64; Java HotSpot(TM) 64-Bit Server VM 1.8.0_131-b11. 
+INFO  14:45:24,013 HelpFormatter - Date/Time: 2021/09/13 14:45:23 
+INFO  14:45:24,014 HelpFormatter - -------------------------------------------------------------------------------- 
+INFO  14:45:24,015 HelpFormatter - -------------------------------------------------------------------------------- 
+INFO  14:45:25,117 GenomeAnalysisEngine - Strictness is SILENT 
+INFO  14:45:25,300 GenomeAnalysisEngine - Downsampling Settings: Method: BY_SAMPLE, Target Coverage: 1000 
+INFO  14:45:25,308 SAMDataSource$SAMReaders - Initializing SAMRecords in serial 
+INFO  14:45:25,330 SAMDataSource$SAMReaders - Done initializing BAM readers: total time 0.02 
+INFO  14:45:25,553 IntervalUtils - Processing 24320447 bp from intervals 
+INFO  14:45:25,566 MicroScheduler - Running the GATK in parallel mode with 10 total threads, 1 CPU thread(s) for each of 10 data thread(s), of 1 processors available on this machine 
+WARN  14:45:25,569 MicroScheduler - Number of requested GATK threads 10 is more than the number of available processors on this machine 1 
+INFO  14:45:25,695 GenomeAnalysisEngine - Preparing for traversal over 1 BAM files 
+INFO  14:45:25,750 GenomeAnalysisEngine - Done preparing for traversal 
+INFO  14:45:25,755 ProgressMeter - [INITIALIZATION COMPLETE; STARTING PROCESSING] 
+INFO  14:45:25,761 ProgressMeter -                 | processed |    time |    per 1M |           |   total | remaining 
+INFO  14:45:25,762 ProgressMeter -        Location |     sites | elapsed |     sites | completed | runtime |   runtime 
+INFO  14:45:25,819 SAMDataSource$SAMReaders - Initializing SAMRecords in serial 
+INFO  14:45:25,845 SAMDataSource$SAMReaders - Done initializing BAM readers: total time 0.03 
+INFO  14:45:25,857 SAMDataSource$SAMReaders - Initializing SAMRecords in serial 
+INFO  14:45:25,867 SAMDataSource$SAMReaders - Done initializing BAM readers: total time 0.01 
+INFO  14:45:25,908 SAMDataSource$SAMReaders - Initializing SAMRecords in serial 
+INFO  14:45:25,975 SAMDataSource$SAMReaders - Done initializing BAM readers: total time 0.07 
+INFO  14:45:25,985 SAMDataSource$SAMReaders - Initializing SAMRecords in serial 
+INFO  14:45:25,999 SAMDataSource$SAMReaders - Done initializing BAM readers: total time 0.01 
+INFO  14:45:26,061 SAMDataSource$SAMReaders - Initializing SAMRecords in serial 
+INFO  14:45:26,063 SAMDataSource$SAMReaders - Done initializing BAM readers: total time 0.00 
+INFO  14:45:26,070 SAMDataSource$SAMReaders - Initializing SAMRecords in serial 
+INFO  14:45:26,073 SAMDataSource$SAMReaders - Done initializing BAM readers: total time 0.00 
+INFO  14:45:26,076 SAMDataSource$SAMReaders - Initializing SAMRecords in serial 
+INFO  14:45:26,079 SAMDataSource$SAMReaders - Done initializing BAM readers: total time 0.00 
+INFO  14:45:26,099 SAMDataSource$SAMReaders - Initializing SAMRecords in serial 
+INFO  14:45:26,101 SAMDataSource$SAMReaders - Done initializing BAM readers: total time 0.00 
+INFO  14:45:26,105 SAMDataSource$SAMReaders - Initializing SAMRecords in serial 
+INFO  14:45:26,107 SAMDataSource$SAMReaders - Done initializing BAM readers: total time 0.00 
+INFO  14:45:55,774 ProgressMeter - ordered_PKNH_01_v2:376833    229376.0    30.0 s       2.2 m        1.5%    32.3 m      31.8 m 
+INFO  14:46:25,804 ProgressMeter - ordered_PKNH_01_v2:770549    622592.0    60.0 s      96.0 s        3.2%    31.6 m      30.6 m 
+INFO  14:46:55,805 ProgressMeter - ordered_PKNH_02_v2:313397   1056410.0    90.0 s      85.0 s        5.0%    30.3 m      28.8 m 
+INFO  14:47:25,806 ProgressMeter - ordered_PKNH_03_v2:245761   1778520.0   120.0 s      67.0 s        7.9%    25.3 m      23.3 m 
+INFO  14:47:55,807 ProgressMeter - ordered_PKNH_03_v2:950473   2483032.0     2.5 m      60.0 s       10.8%    23.1 m      20.6 m 
+INFO  14:48:25,808 ProgressMeter - ordered_PKNH_04_v2:655661   3238690.0     3.0 m      55.0 s       13.9%    21.5 m      18.5 m 
+INFO  14:48:55,809 ProgressMeter - ordered_PKNH_05_v2:229577   3944730.0     3.5 m      53.0 s       16.8%    20.8 m      17.3 m 
+INFO  14:49:25,812 ProgressMeter - ordered_PKNH_06_v2:279629   4792711.0     4.0 m      50.0 s       20.2%    19.8 m      15.8 m 
+INFO  14:49:55,819 ProgressMeter - ordered_PKNH_07_v2:16385   5595527.0     4.5 m      48.0 s       23.6%    19.1 m      14.6 m 
+INFO  14:50:25,820 ProgressMeter - ordered_PKNH_07_v2:902521   6479575.0     5.0 m      46.0 s       27.3%    18.3 m      13.3 m 
+INFO  14:50:55,821 ProgressMeter - ordered_PKNH_08_v2:213193   7313523.0     5.5 m      45.0 s       30.7%    17.9 m      12.4 m 
+INFO  14:51:25,822 ProgressMeter - ordered_PKNH_08_v2:787233   7886963.0     6.0 m      45.0 s       33.0%    18.2 m      12.2 m 
+INFO  14:51:55,824 ProgressMeter - ordered_PKNH_08_v2:1558081   8673395.0     6.5 m      44.0 s       36.2%    18.0 m      11.5 m 
+INFO  14:52:25,825 ProgressMeter - ordered_PKNH_09_v2:508305   9532890.0     7.0 m      44.0 s       39.8%    17.6 m      10.6 m 
+INFO  14:52:55,826 ProgressMeter - ordered_PKNH_09_v2:1295037   1.0319322E7     7.5 m      43.0 s       43.0%    17.4 m       9.9 m 
+INFO  14:53:25,827 ProgressMeter - ordered_PKNH_09_v2:2162789   1.1187674E7     8.0 m      42.0 s       46.6%    17.2 m       9.2 m 
+INFO  14:53:55,828 ProgressMeter - ordered_PKNH_10_v2:775749   1.1990523E7     8.5 m      42.0 s       49.9%    17.0 m       8.5 m 
+INFO  14:54:25,829 ProgressMeter - ordered_PKNH_11_v2:1201   1.2744187E7     9.0 m      42.0 s       53.0%    17.0 m       8.0 m 
+INFO  14:54:55,830 ProgressMeter - ordered_PKNH_11_v2:852069   1.3589425E7     9.5 m      41.0 s       56.5%    16.8 m       7.3 m 
+INFO  14:55:25,831 ProgressMeter - ordered_PKNH_11_v2:1689953   1.4425009E7    10.0 m      41.0 s       59.9%    16.7 m       6.7 m 
+INFO  14:55:55,839 ProgressMeter - ordered_PKNH_12_v2:801   1.5113137E7    10.5 m      41.0 s       62.7%    16.7 m       6.2 m 
+INFO  14:56:25,840 ProgressMeter - ordered_PKNH_12_v2:917805   1.6023628E7    11.0 m      41.0 s       66.5%    16.5 m       5.5 m 
+INFO  14:56:55,841 ProgressMeter - ordered_PKNH_12_v2:1737005   1.6859212E7    11.5 m      40.0 s       69.9%    16.5 m       5.0 m 
+INFO  14:57:25,842 ProgressMeter - ordered_PKNH_12_v2:2621541   1.7727564E7    12.0 m      40.0 s       73.5%    16.3 m       4.3 m 
+INFO  14:57:55,843 ProgressMeter - ordered_PKNH_13_v2:344265   1.8611897E7    12.5 m      40.0 s       77.1%    16.2 m       3.7 m 
+INFO  14:58:25,844 ProgressMeter - ordered_PKNH_13_v2:1147481   1.9431097E7    13.0 m      40.0 s       80.4%    16.2 m       3.2 m 
+INFO  14:58:55,845 ProgressMeter - ordered_PKNH_13_v2:1983965   2.0250297E7    13.5 m      40.0 s       83.9%    16.1 m       2.6 m 
+INFO  14:59:25,850 ProgressMeter - ordered_PKNH_14_v2:328881   2.1192524E7    14.0 m      39.0 s       87.7%    16.0 m     117.0 s 
+INFO  14:59:55,851 ProgressMeter - ordered_PKNH_14_v2:1231301   2.2110028E7    14.5 m      39.0 s       91.5%    15.9 m      81.0 s 
+INFO  15:00:25,852 ProgressMeter - ordered_PKNH_14_v2:2097753   2.297838E7    15.0 m      39.0 s       95.0%    15.8 m      47.0 s 
+INFO  15:00:55,853 ProgressMeter - ordered_PKNH_14_v2:2871801   2.3732044E7    15.5 m      39.0 s       98.2%    15.8 m      16.0 s 
+INFO  15:01:17,598 ProgressMeter -            done   2.4320447E7    15.9 m      39.0 s      100.0%    15.9 m       0.0 s 
+INFO  15:01:17,598 ProgressMeter - Total runtime 951.85 secs, 15.86 min, 0.26 hours 
+INFO  15:01:17,599 MicroScheduler - 9223523 reads were filtered out during the traversal out of approximately 17700006 total reads (52.11%) 
+INFO  15:01:17,599 MicroScheduler -   -> 0 reads (0.00% of total) failing BadCigarFilter 
+INFO  15:01:17,599 MicroScheduler -   -> 1033396 reads (5.84% of total) failing BadMateFilter 
+INFO  15:01:17,600 MicroScheduler -   -> 4079101 reads (23.05% of total) failing DuplicateReadFilter 
+INFO  15:01:17,600 MicroScheduler -   -> 0 reads (0.00% of total) failing FailsVendorQualityCheckFilter 
+INFO  15:01:17,600 MicroScheduler -   -> 0 reads (0.00% of total) failing MalformedReadFilter 
+INFO  15:01:17,600 MicroScheduler -   -> 0 reads (0.00% of total) failing MappingQualityUnavailableFilter 
+INFO  15:01:17,601 MicroScheduler -   -> 3989582 reads (22.54% of total) failing MappingQualityZeroFilter 
+INFO  15:01:17,602 MicroScheduler -   -> 121444 reads (0.69% of total) failing NotPrimaryAlignmentFilter 
+INFO  15:01:17,602 MicroScheduler -   -> 0 reads (0.00% of total) failing Platform454Filter 
+INFO  15:01:17,602 MicroScheduler -   -> 0 reads (0.00% of total) failing UnmappedReadFilter 
+---------------------------------------
+IndelRealigner
+##### ERROR ------------------------------------------------------------------------------------------
+##### ERROR A USER ERROR has occurred (version 3.2-2-gec30cee): 
+##### ERROR
+##### ERROR This means that one or more arguments or inputs in your command are incorrect.
+##### ERROR The error message below tells you what is the problem.
+##### ERROR
+##### ERROR If the problem is an invalid argument, please check the online documentation guide
+##### ERROR (or rerun your command with --help) to view allowable command-line arguments for this tool.
+##### ERROR
+##### ERROR Visit our website and forum for extensive documentation and answers to 
+##### ERROR commonly asked questions http://www.broadinstitute.org/gatk
+##### ERROR
+##### ERROR Please do NOT post this error to the GATK forum unless you have really tried to fix it yourself.
+##### ERROR
+##### ERROR MESSAGE: Invalid argument value '-' at position 2.
+##### ERROR Invalid argument value 'nt' at position 3.
+##### ERROR Invalid argument value '10' at position 4.
+##### ERROR ------------------------------------------------------------------------------------------
+---------------------------------------
+BaseRecalibrator - create recal table
+##### ERROR ------------------------------------------------------------------------------------------
+##### ERROR A USER ERROR has occurred (version 3.2-2-gec30cee): 
+##### ERROR
+##### ERROR This means that one or more arguments or inputs in your command are incorrect.
+##### ERROR The error message below tells you what is the problem.
+##### ERROR
+##### ERROR If the problem is an invalid argument, please check the online documentation guide
+##### ERROR (or rerun your command with --help) to view allowable command-line arguments for this tool.
+##### ERROR
+##### ERROR Visit our website and forum for extensive documentation and answers to 
+##### ERROR commonly asked questions http://www.broadinstitute.org/gatk
+##### ERROR
+##### ERROR Please do NOT post this error to the GATK forum unless you have really tried to fix it yourself.
+##### ERROR
+##### ERROR MESSAGE: Argument with name 'known' isn't defined.
+##### ERROR ------------------------------------------------------------------------------------------
+---------------------------------------
+PrintReads - get recal reads
+##### ERROR ------------------------------------------------------------------------------------------
+##### ERROR A USER ERROR has occurred (version 3.2-2-gec30cee): 
+##### ERROR
+##### ERROR This means that one or more arguments or inputs in your command are incorrect.
+##### ERROR The error message below tells you what is the problem.
+##### ERROR
+##### ERROR If the problem is an invalid argument, please check the online documentation guide
+##### ERROR (or rerun your command with --help) to view allowable command-line arguments for this tool.
+##### ERROR
+##### ERROR Visit our website and forum for extensive documentation and answers to 
+##### ERROR commonly asked questions http://www.broadinstitute.org/gatk
+##### ERROR
+##### ERROR Please do NOT post this error to the GATK forum unless you have really tried to fix it yourself.
+##### ERROR
+##### ERROR MESSAGE: Invalid argument value '-' at position 2.
+##### ERROR Invalid argument value 'nt' at position 3.
+##### ERROR Invalid argument value '10' at position 4.
+##### ERROR ------------------------------------------------------------------------------------------
+/var/spool/torque/mom_priv/jobs/1235283.cheetah.SC: line 82: -BQSR: command not found
+---------------------------------------
+HaplotypeCaller
+INFO  15:02:08,284 HelpFormatter - -------------------------------------------------------------------------------- 
+INFO  15:02:08,287 HelpFormatter - The Genome Analysis Toolkit (GATK) v3.2-2-gec30cee, Compiled 2014/07/17 15:22:03 
+INFO  15:02:08,300 HelpFormatter - Copyright (c) 2010 The Broad Institute 
+INFO  15:02:08,301 HelpFormatter - For support and documentation go to http://www.broadinstitute.org/gatk 
+INFO  15:02:08,306 HelpFormatter - Program Args: -T HaplotypeCaller -ERC GVCF --minPruning 3 --maxNumHaplotypesInPopulation 200 --variant_index_type LINEAR --variant_index_parameter 128000 -contamination 0.0 -G Standard -R /home/jwestaway/pk_pipeline/ref_genomes/PKA1H1/fasta/strain_A1_H.1.Icor.fasta --intervals /home/jwestaway/pk_pipeline/ref_genomes/PKA1H1/strain_A1_H.1.Icor.fasta.bed -I PK_SB_DNA_006_DKDL210002135-1a_HWHGKDSXY_L4.dupmarked.realigned.recal.bam -o PK_SB_DNA_006_DKDL210002135-1a_HWHGKDSXY_L4.dupmarked.realigned.recal.vcf.gz 
+INFO  15:02:08,313 HelpFormatter - Executing as jwestaway@cheetah06 on Linux 2.6.32-754.14.2.el6.x86_64 amd64; Java HotSpot(TM) 64-Bit Server VM 1.8.0_131-b11. 
+INFO  15:02:08,314 HelpFormatter - Date/Time: 2021/09/13 15:02:08 
+INFO  15:02:08,315 HelpFormatter - -------------------------------------------------------------------------------- 
+INFO  15:02:08,317 HelpFormatter - -------------------------------------------------------------------------------- 
+WARN  15:02:08,347 GATKVCFUtils - Creating Tabix index for PK_SB_DNA_006_DKDL210002135-1a_HWHGKDSXY_L4.dupmarked.realigned.recal.vcf.gz, ignoring user-specified index type and parameter 
+INFO  15:02:09,738 GenomeAnalysisEngine - Strictness is SILENT 
+INFO  15:02:09,917 GenomeAnalysisEngine - Downsampling Settings: Method: BY_SAMPLE, Target Coverage: 250 
+INFO  15:02:09,931 SAMDataSource$SAMReaders - Initializing SAMRecords in serial 
+##### ERROR ------------------------------------------------------------------------------------------
+##### ERROR A USER ERROR has occurred (version 3.2-2-gec30cee): 
+##### ERROR
+##### ERROR This means that one or more arguments or inputs in your command are incorrect.
+##### ERROR The error message below tells you what is the problem.
+##### ERROR
+##### ERROR If the problem is an invalid argument, please check the online documentation guide
+##### ERROR (or rerun your command with --help) to view allowable command-line arguments for this tool.
+##### ERROR
+##### ERROR Visit our website and forum for extensive documentation and answers to 
+##### ERROR commonly asked questions http://www.broadinstitute.org/gatk
+##### ERROR
+##### ERROR Please do NOT post this error to the GATK forum unless you have really tried to fix it yourself.
+##### ERROR
+##### ERROR MESSAGE: Couldn't read file /home/jwestaway/pk_pipeline/PK_SB_DNA_006_DKDL210002135-1a_HWHGKDSXY_L4.dupmarked.realigned.recal.bam because java.io.FileNotFoundException: PK_SB_DNA_006_DKDL210002135-1a_HWHGKDSXY_L4.dupmarked.realigned.recal.bam (No such file or directory)
+##### ERROR ------------------------------------------------------------------------------------------
+---------------------------------------
+Finished

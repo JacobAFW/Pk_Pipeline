@@ -1,0 +1,436 @@
+---
+title: "Exploring PKNH 03 Contig"
+author: "Jacob Westaway"
+date: "Last updated on `r Sys.Date()`"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_knit$set(root.dir = 'C:/Users/Jacob/Desktop/Menzies/Knowlesi/Pipeline/Pk_Pipeline/')
+library(tidyverse)
+library(janitor)
+```
+
+```{r,warning=F,message=F,include=F}
+# Create a function to read in the BBmap data
+
+bbmap_func <- function(file_path, grep_pattern, bbmap_data, alignment, genome){ 
+read_csv(file_path, col_names = c("Variable", "Value")) %>%
+  mutate(Variable = str_remove(Variable, "==> ")) %>% 
+  filter(!grepl(grep_pattern, Variable)) %>% # data specific
+  add_column(
+    (read_csv(file_path, col_names = c("Variable", "Value")) %>% 
+       mutate(Variable = str_remove(Variable, "==> ")) %>% 
+       filter(grepl(grep_pattern, Variable)) %>% # data specific
+       mutate(Variable = Variable) %>% 
+       rbind(.,.,.,.,.,.,.,.,.,.,.,.) %>% # represents the number of variables
+       arrange(Variable) %>% 
+       mutate_if(is.character, as.factor) %>% 
+       select(Variable) %>% 
+       rename("ID" = Variable))) %>% 
+  pivot_wider(names_from = Variable, values_from = Value) %>% 
+  add_column(Data = bbmap_data, Alignment = alignment, Genome = genome)  %>% 
+  as.tibble(.name_repair = "universal")
+}
+
+# Mapstats 
+BBMAP <- 
+# S_100 
+bbmap_func("data/bbmap_summary/S100_PKD_summary_mapstats.csv", "ERR", "S100", "Direct", "Pk") %>%  # Direct Pk
+  rbind(bbmap_func("data/bbmap_summary/S100_HGA_summary_mapstats.csv", "ERR", "S100", "Indirect", "Hg")) %>% # Indirect Hg
+  rbind(bbmap_func("data/bbmap_summary/S100_HGR_summary_mapstats.csv", "ERR", "S100", "Indirect", "Pk")) %>% # Indirect Pk
+  rbind(
+# SS
+(bbmap_func("data/bbmap_summary/SS_PKD_summary_mapstats.csv", "PKA", "SS", "Direct", "Pk") %>%  
+  rbind(bbmap_func("data/bbmap_summary/SS_HGA_summary_mapstats.csv", "PKA", "SS", "Indirect", "Hg")) %>% 
+  rbind(bbmap_func("data/bbmap_summary/SS_HGR_summary_mapstats.csv", "PKA", "SS", "Indirect", "Pk")) 
+)) %>%
+  rbind(
+# ZB
+(bbmap_func("data/bbmap_summary/ZB_PKD_summary_mapstats.csv", "PK_SB_DNA", "ZB", "Direct", "Pk") %>%  
+  rbind(bbmap_func("data/bbmap_summary/ZB_HGA_summary_mapstats.csv", "PK_SB_DNA", "ZB", "Indirect", "Hg")) %>% 
+  rbind(bbmap_func("data/bbmap_summary/ZB_HGR_summary_mapstats.csv", "PK_SB_DNA", "ZB", "Indirect", "Pk")) 
+)) %>% 
+  rbind(
+# Previous Pk data
+  bbmap_func("data/bbmap_summary/Previous_Pk_summary.csv", "ERR", "Previous_Pk", "Direct", "Pk")) %>%
+  rbind(
+# ZB redo
+(bbmap_func("data/bbmap_summary/bowtie2_HGA_summary.csv", "PK_SB_DNA", "ZB_bowtie", "Indirect", "Hg") %>%  
+  rbind(bbmap_func("data/bbmap_summary/bowtie2_HGR_summary.csv", "PK_SB_DNA", "ZB_bowtie", "Indirect", "Pk"))) %>% 
+  rbind(bbmap_func("data/bbmap_summary/ZB_redo_HGA_summary_mapstats.csv", "PK_SB_DNA", "ZB_redo", "Indirect", "Hg")) %>% 
+  rbind(bbmap_func("data/bbmap_summary/ZB_redo_HGR_summary_mapstats.csv", "PK_SB_DNA", "ZB_redo", "Indirect", "Pk")) %>% 
+  rbind(bbmap_func("data/bbmap_summary/ZB_redo_PKD_summary_mapstats.csv", "PK_SB_DNA", "ZB_redo", "Direct", "Pk"))
+  ) %>% 
+  rbind(bbmap_func("data/bbmap_summary/low_para_mapstats.csv", "PK_SB_DNA", "ZB_LP", "Direct", "Pk"))
+```
+
+```{r,message=F,warning=F,echo=F}
+# Wrangle data to contig 3 and summarise for every 100kbs
+
+Contig_3 <- read_tsv("data/read_depth/low_para_depth_summary.tsv", 
+              col_names = c("Contig", "Bases", "S01", "S02", "S03", "S04", "S05", "S06", "S07", "S08")) %>% 
+      filter(grepl("ordered", Contig)) %>% 
+      filter(Contig == "ordered_PKNH_03_v2") %>% 
+  select(!c(Contig, Bases)) %>% 
+  group_by(KBs=gl(n = n()/100000, k = 100000)) %>%  # n=number of levels & k=number of replciates in a level
+  summarise_all(mean) %>% 
+  left_join(
+    read_tsv("data/read_depth/low_para_batch_2_depth_summary.tsv", 
+             col_names = c("Contig", "Bases", "S09", "S10", "S11", "S12", "S13", "S14", "S15", "S16")) %>%
+      filter(grepl("ordered", Contig)) %>% 
+      filter(Contig == "ordered_PKNH_03_v2") %>% 
+      select(!c(Contig, Bases)) %>% 
+      group_by(KBs=gl(n = n()/100000, k = 100000)) %>%  
+      summarise_all(mean) 
+    )
+```
+
+```{r,message=F,warning=F,echo=F}
+# Add parasitemia data per sample
+
+Contig_3 <- Contig_3 %>% 
+  t() %>%  
+  as.data.frame() %>%  
+  row_to_names(1) %>% 
+  rownames_to_column("Sample") %>% 
+  cbind(
+    BBMAP %>% 
+      filter(Data == "ZB_LP") %>% 
+      select(ID)
+  ) %>%  
+  mutate(ID = str_remove(ID, "_DKDL2.*")) %>% 
+  rename("sampleid" = ID) %>%  
+  left_join(readxl::read_excel("data/metadata/PK_Sabah_Sample_naming_indexes.xlsx") %>% 
+              select(sampleid, parasitemia)) %>% 
+    rename("ID" = sampleid) 
+```
+
+# Compare read depth across the 100kb regions
+
+```{r,warning=F,message=F,echo=F}
+Contig_3 %>% 
+  pivot_longer(cols = !c(ID, Sample, parasitemia), names_to = "100kbs", values_to = "Depth") %>% 
+  mutate_if(is.factor, as.character) %>% 
+  mutate(Depth = as.numeric(Depth)) %>%  
+  rename("kbs" = "100kbs") %>% 
+  ggplot(mapping = aes(x = kbs, y = Depth, fill = parasitemia)) +
+  geom_col() +
+  theme(axis.text.x = element_blank(), axis.ticks.x = element_blank()) +
+  scale_fill_continuous(name = "Parasitemia (k)") +
+  facet_wrap(~Sample) +
+  xlab("100kbs regions")
+```
+
+# Compare parasitemia vs depth
+
+```{r,warning=F,message=F,echo=F}
+Contig_3 %>% 
+  pivot_longer(cols = !c(ID, Sample, parasitemia), names_to = "100kbs", values_to = "Depth") %>% 
+  mutate_if(is.factor, as.character) %>% 
+  mutate(Depth = as.numeric(Depth)) %>% 
+  group_by(ID) %>% 
+  summarise_at(vars(parasitemia, Depth), mean) %>% 
+  ggplot(mapping = aes(x = parasitemia, y = Depth)) +
+  geom_point() +
+  geom_smooth(method = "lm", se = T) +
+  ylab("Depth") +
+  xlab("Parasitemia (K)") +
+  ggpubr::stat_regline_equation(label.y = 150, aes(label = ..rr.label..)) 
+```
+
+# Compare parasitemia vs depth within each 100kbs region
+
+```{r,warning=F,message=F,echo=F}
+Contig_3 %>% 
+  pivot_longer(cols = !c(ID, Sample, parasitemia), names_to = "100kbs", values_to = "Depth") %>% 
+  mutate_if(is.factor, as.character) %>% 
+  mutate(Depth = as.numeric(Depth)) %>%  
+  rename("kbs" = "100kbs") %>% 
+  ggplot(mapping = aes(x = parasitemia, y = Depth)) +
+  geom_point() +
+  geom_smooth(method = "lm", se = T) +
+  ylab("Depth") +
+  xlab("Parasitemia (K)") +
+  ggpubr::stat_regline_equation(label.y = 600, label.x = 2500, aes(label = ..rr.label..)) +
+  facet_wrap(~kbs)
+```
+
+**It is interesting to see that the negative relationship is restricted to a small region of the contig. Could this be related to specific genes?**
+
+# Subset the 7th region of the contig by 10KB
+
+```{r,message=F,warning=F,echo=F}
+# Wrangle data to bases 700,000-8000,000 in contig 3 and summarise for every 1kb
+
+Contig_3_sub <- read_tsv("data/read_depth/low_para_depth_summary.tsv", 
+              col_names = c("Contig", "Bases", "S01", "S02", "S03", "S04", "S05", "S06", "S07", "S08")) %>% 
+      filter(grepl("ordered", Contig)) %>% 
+      filter(Contig == "ordered_PKNH_03_v2") %>% 
+      filter(Bases > 600000 & Bases <= 700000) %>% 
+      select(!c(Contig, Bases)) %>%
+      group_by(KBs=gl(n = n()/10000, k = 10000)) %>%  # n=number of levels & k=number of replciates in a level
+      summarise_all(mean) %>% 
+  left_join(
+    read_tsv("data/read_depth/low_para_batch_2_depth_summary.tsv", 
+             col_names = c("Contig", "Bases", "S09", "S10", "S11", "S12", "S13", "S14", "S15", "S16")) %>%
+      filter(grepl("ordered", Contig)) %>% 
+      filter(Contig == "ordered_PKNH_03_v2") %>% 
+      filter(Bases > 600000 & Bases <= 700000) %>%
+      select(!c(Contig, Bases)) %>%
+      group_by(KBs=gl(n = n()/10000, k = 10000)) %>%  # n=number of levels & k=number of replciates in a level
+      summarise_all(mean)
+    )
+
+# Add parasitemia data per sample
+
+Contig_3_sub <- Contig_3_sub %>% 
+  t() %>%  
+  as.data.frame() %>%  
+  row_to_names(1) %>% 
+  rownames_to_column("Sample") %>% 
+  cbind(
+    BBMAP %>% 
+      filter(Data == "ZB_LP") %>% 
+      select(ID)
+  ) %>%  
+  mutate(ID = str_remove(ID, "_DKDL2.*")) %>% 
+  rename("sampleid" = ID) %>%  
+  left_join(readxl::read_excel("data/metadata/PK_Sabah_Sample_naming_indexes.xlsx") %>% 
+              select(sampleid, parasitemia)) %>% 
+    rename("ID" = sampleid) 
+```
+
+# Plot the relationship between parsitemia and read depth across the 10KB subsets in the 7th 100KB region of contig 3
+
+```{r}
+Contig_3_sub %>% 
+  pivot_longer(cols = !c(ID, Sample, parasitemia), names_to = "10kbs", values_to = "Depth") %>% 
+  mutate_if(is.factor, as.character) %>% 
+  mutate(Depth = as.numeric(Depth)) %>%  
+  rename("kbs" = "10kbs") %>% 
+  ggplot(mapping = aes(x = parasitemia, y = Depth)) +
+  geom_point() +
+  geom_smooth(method = "lm", se = T) +
+  ylab("Depth") +
+  xlab("Parasitemia (K)") +
+  ggpubr::stat_regline_equation(label.y = 600, label.x = 2500, aes(label = ..rr.label..)) +
+  facet_wrap(~kbs)
+```
+
+# Subset again - 1KB
+
+```{r,message=F,warning=F,echo=F}
+# Wrangle data to bases 700,000-8000,000 in contig 3 and summarise for every 1kb
+
+Contig_3_sub <- read_tsv("data/read_depth/low_para_depth_summary.tsv", 
+              col_names = c("Contig", "Bases", "S01", "S02", "S03", "S04", "S05", "S06", "S07", "S08")) %>% 
+      filter(grepl("ordered", Contig)) %>% 
+      filter(Contig == "ordered_PKNH_03_v2") %>% 
+      filter(Bases > 600000 & Bases <= 700000) %>% 
+      select(!c(Contig, Bases)) %>%
+      group_by(KBs=gl(n = n()/1000, k = 1000)) %>%  # n=number of levels & k=number of replciates in a level
+      summarise_all(mean) %>% 
+  left_join(
+    read_tsv("data/read_depth/low_para_batch_2_depth_summary.tsv", 
+             col_names = c("Contig", "Bases", "S09", "S10", "S11", "S12", "S13", "S14", "S15", "S16")) %>%
+      filter(grepl("ordered", Contig)) %>% 
+      filter(Contig == "ordered_PKNH_03_v2") %>% 
+      filter(Bases > 600000 & Bases <= 700000) %>%
+      select(!c(Contig, Bases)) %>%
+      group_by(KBs=gl(n = n()/1000, k = 1000)) %>%  # n=number of levels & k=number of replciates in a level
+      summarise_all(mean)
+    )
+
+# Add parasitemia data per sample
+
+Contig_3_sub <- Contig_3_sub %>% 
+  t() %>%  
+  as.data.frame() %>%  
+  row_to_names(1) %>% 
+  rownames_to_column("Sample") %>% 
+  cbind(
+    BBMAP %>% 
+      filter(Data == "ZB_LP") %>% 
+      select(ID)
+  ) %>%  
+  mutate(ID = str_remove(ID, "_DKDL2.*")) %>% 
+  rename("sampleid" = ID) %>%  
+  left_join(readxl::read_excel("data/metadata/PK_Sabah_Sample_naming_indexes.xlsx") %>% 
+              select(sampleid, parasitemia)) %>% 
+    rename("ID" = sampleid) 
+```
+
+# Plot the relationship between parsitemia and read depth in across the 10KB subsets in the 7th 100KB region of contig 3
+
+```{r,message=F,warning=F,echo=F}
+Contig_3_sub %>% 
+  pivot_longer(cols = !c(ID, Sample, parasitemia), names_to = "10kbs", values_to = "Depth") %>% 
+  mutate_if(is.factor, as.character) %>% 
+  mutate(Depth = as.numeric(Depth)) %>%  
+  rename("kbs" = "10kbs") %>% 
+  ggplot(mapping = aes(x = parasitemia, y = Depth)) +
+  geom_point() +
+  geom_smooth(method = "lm", se = T) +
+  ylab("Depth") +
+  xlab("Parasitemia (K)") +
+  ggpubr::stat_regline_equation(label.y = 60000, label.x = 2000, aes(label = ..rr.label..)) +
+  facet_wrap(~kbs)
+```
+
+# Susbet the data based on where you estimate the gene to be based on the analyses above
+ 
+- because of how the data was summarised, I don't know if the gene will actually fall between 637KB and 638KB, and so I need to filter the original dataset to this region and see if the negative relationship is actually in this region, and where specifically.
+- if not, I will need to expand this range and subset the data again, until I find the actual bases that contain the gene of interest.
+
+```{r,message=F,warning=F,echo=F}
+read_tsv("data/read_depth/low_para_depth_summary.tsv", 
+              col_names = c("Contig", "Bases", "S01", "S02", "S03", "S04", "S05", "S06", "S07", "S08")) %>% 
+      filter(grepl("ordered", Contig)) %>% 
+      filter(Contig == "ordered_PKNH_03_v2") %>% 
+      filter(Bases > 637000 & Bases <= 639000) %>% # filtered down to the 1kb region that has the strong negative relationship 
+      select(!c(Contig, Bases)) %>%
+      group_by(KBs=gl(n = n()/200, k = 200)) %>%  # n=number of levels & k=number of replciates in a level
+      summarise_all(mean) %>%
+  left_join(
+    read_tsv("data/read_depth/low_para_batch_2_depth_summary.tsv", 
+             col_names = c("Contig", "Bases", "S09", "S10", "S11", "S12", "S13", "S14", "S15", "S16")) %>%
+      filter(grepl("ordered", Contig)) %>% 
+      filter(Contig == "ordered_PKNH_03_v2") %>% 
+      filter(Bases > 637000 & Bases <= 639000) %>% 
+      select(!c(Contig, Bases)) %>%
+      group_by(KBs=gl(n = n()/200, k = 200)) %>%  # n=number of levels & k=number of replciates in a level
+      summarise_all(mean)
+    ) %>% 
+  t() %>%  
+  as.data.frame() %>%  
+  row_to_names(1) %>% 
+  rownames_to_column("Sample") %>% 
+  cbind(
+    BBMAP %>% 
+      filter(Data == "ZB_LP") %>% 
+      select(ID)
+  ) %>%  
+  mutate(ID = str_remove(ID, "_DKDL2.*")) %>% 
+  rename("sampleid" = ID) %>%  
+  left_join(readxl::read_excel("data/metadata/PK_Sabah_Sample_naming_indexes.xlsx") %>% 
+              select(sampleid, parasitemia)) %>% 
+    rename("ID" = sampleid) %>% 
+  pivot_longer(cols = !c(ID, Sample, parasitemia), names_to = "10kbs", values_to = "Depth") %>% 
+  mutate_if(is.factor, as.character) %>% 
+  mutate(Depth = as.numeric(Depth)) %>%  
+  rename("kbs" = "10kbs") %>% 
+  ggplot(mapping = aes(x = parasitemia, y = Depth)) +
+  geom_point() +
+  geom_smooth(method = "lm", se = T) +
+  ylab("Depth") +
+  xlab("Parasitemia (K)") +
+  ggpubr::stat_regline_equation(label.y = 60000, label.x = 2000, aes(label = ..rr.label..)) +
+  facet_wrap(~kbs)
+```
+
+**Pretty confident that the potential gene of interest would be between 637,800 and 638,000. Within the gff, there is a 'conitg' between 631005 and 696822, but the first gene starts at 643466.**
+
+# Plot the distribution of read in this region
+
+```{r,message=F,warning=F,echo=F}
+read_tsv("data/read_depth/low_para_depth_summary.tsv", 
+              col_names = c("Contig", "Bases", "S01", "S02", "S03", "S04", "S05", "S06", "S07", "S08")) %>% 
+      filter(grepl("ordered", Contig)) %>% 
+      filter(Contig == "ordered_PKNH_03_v2") %>% 
+      filter(Bases > 637000 & Bases <= 639000) %>% # filtered down to the 1kb region that has the strong negative relationship 
+  left_join(
+    read_tsv("data/read_depth/low_para_batch_2_depth_summary.tsv", 
+             col_names = c("Contig", "Bases", "S09", "S10", "S11", "S12", "S13", "S14", "S15", "S16")) %>%
+      filter(grepl("ordered", Contig)) %>% 
+      filter(Contig == "ordered_PKNH_03_v2") %>% 
+      filter(Bases > 637000 & Bases <= 639000)
+    ) %>% 
+  pivot_longer(cols = !c(Contig, Bases), names_to = "Samples", values_to = "Depth") %>% 
+  group_by(Bases) %>% 
+  summarise(Depth = mean(Depth)) %>% 
+  ggplot(mapping = aes(x=Bases, y=Depth)) +
+  geom_line()
+```
+
+# Reading in genome annotation
+
+We need to break the baove 10Kb region into genes using the gff, and then we can plot the relationship between parasitemia and read depth per gene
+
+```{r,warning=F,message=F,include=F}
+Names <- c() # X1 is the first columns
+for (i in 1:9){
+  Names <- append(Names, print(paste0("X", i)))
+}
+read_tsv("data/contig_3_strain_A1_H.1.gff.tsv", col_names =  Names) %>% 
+  filter(X4 >= 630000 & X4 <=650000) %>%  View()
+
+```
+
+
+**Huge spike in read count at 637837-637921. Read depth seems excessively high - I suspect that that is a sequencing artifact.** 
+
+
+# Plot relationship between parasitemia and read depth just in the spiked region
+
+```{r}
+read_tsv("data/read_depth/low_para_depth_summary.tsv", 
+              col_names = c("Contig", "Bases", "S01", "S02", "S03", "S04", "S05", "S06", "S07", "S08")) %>% 
+      filter(grepl("ordered", Contig)) %>% 
+      filter(Contig == "ordered_PKNH_03_v2") %>% 
+      filter(Bases > 637837 & Bases <= 637921) %>% # filtered down to the 1kb region that has the strong negative relationship 
+  left_join(
+    read_tsv("data/read_depth/low_para_batch_2_depth_summary.tsv", 
+             col_names = c("Contig", "Bases", "S09", "S10", "S11", "S12", "S13", "S14", "S15", "S16")) %>%
+      filter(grepl("ordered", Contig)) %>% 
+      filter(Contig == "ordered_PKNH_03_v2") %>% 
+      filter(Bases > 637837 & Bases <= 637921)
+    ) %>% select(!c(Contig, Bases)) %>% 
+   t() %>% 
+  as.data.frame() %>%  
+  rownames_to_column("Sample") %>% 
+  cbind(
+    BBMAP %>% 
+      filter(Data == "ZB_LP") %>% 
+      select(ID)
+  ) %>% 
+  mutate(ID = str_remove(ID, "_DKDL2.*")) %>% 
+  rename("sampleid" = ID) %>%  
+  left_join(readxl::read_excel("data/metadata/PK_Sabah_Sample_naming_indexes.xlsx") %>% 
+              select(sampleid, parasitemia)) %>% 
+  pivot_longer(cols = !c(Sample, sampleid, parasitemia), names_to = "Regions", values_to = "Depth") %>% 
+  group_by(sampleid) %>% 
+  summarise_all(mean) %>% 
+  ggplot(mapping = aes(x = parasitemia, y = Depth)) +
+  geom_point() +
+  geom_smooth(method = "lm", se = T) +
+  ylab("Depth") +
+  xlab("Parasitemia (K)") +
+  ggpubr::stat_regline_equation(label.y = 60000, label.x = 2000, aes(label = ..rr.label..)) 
+  
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

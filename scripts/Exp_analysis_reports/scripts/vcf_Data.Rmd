@@ -1,0 +1,133 @@
+---
+title: "VCF Data"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_knit$set(root.dir = 'C:/Users/Jacob/Desktop/Menzies/Knowlesi/Pipeline/Pk_Pipeline/')
+library(tidyverse)
+library(janitor)
+```
+
+
+```{r,warning=F,message=F}
+# BBMAP 
+BBMAP <- BBMAP %>% 
+  rbind(bbmap_func("data/bbmap_summary/high_qual_mapstats.csv", "RR", "High_qual", "Direct", "Pk"))
+
+
+Summary_Data <- Summary_Data %>% 
+  rbind(
+  read_depth_data("data/read_depth/high_qual_depth_summary.tsv", "High_qual", "Direct") %>% # read in direct read depth data
+    mutate_if(is.factor, as.character) %>% 
+    mutate_at(grep("ordered", colnames(.)), as.numeric) %>% 
+  left_join(
+    (base_pairs("data/read_depth/high_qual_depth_summary.tsv", "High_qual", "Direct") %>% # read in direct NA base pair data and join
+      mutate_if(is.factor, as.character) %>% 
+      mutate_at(grep("ordered", colnames(.)), as.numeric) %>% 
+      select(-Data, - Alignment)) 
+  ) %>%  
+  slice(1:9) %>% 
+  add_column(Join = 1:nrow(.)) %>% # add column for joining with mapstats data
+  left_join( # join read depth and base NA data with map stat data via a new column called join
+    (BBMAP %>% 
+      filter(Genome != "Hg" & Data == "High_qual" & Alignment == "Direct") %>%  
+      mutate(ID = str_replace(ID,".mapstats", "")) %>% 
+      add_column(Join = 1:nrow(.))
+     ), by = "Join") %>% 
+  select(-Data.y, -Alignment.y, -Join) %>% 
+  rename("Data" = "Data.x", "Alignment" = "Alignment.x") %>%  
+  relocate(ID, Data, Alignment) 
+)
+```
+
+# Comparison of the number reads mapping to Pk across all datasets and for different alignments
+
+```{r,warning=F,message=F,echo=F}
+BBMAP %>% 
+  filter(Genome == "Pk", Alignment == "Direct") %>% 
+  filter(Data == "ZB_LP" | Data =="High_qual" | Data == "ZB_redo") %>% 
+  ggplot() + 
+  geom_col(aes(x = ID, y = Mapped.reads/10000000, colour = Data)) +
+  theme(axis.text.x = element_blank(), axis.ticks = element_blank()) +
+  labs(x = "Samples", y = "Mapped reads (M)")
+```
+
+
+# Calculate the average mapped reads
+
+```{r,warning=F,message=F,echo=F}
+BBMAP %>% 
+  filter(Data == "ZB_redo" & Alignment == "Direct") %>% 
+  rbind(BBMAP %>% 
+          filter(Data == "ZB_LP" & Genome == "Pk")) %>%
+  rbind(BBMAP %>% 
+          filter(Data == "High_qual")) %>%
+  group_by(Data) %>% 
+  summarise_all(mean) %>% 
+  select(-ID, - Ref.scaffolds, -Ref.bases, -Alignment, -Genome, -Percent.mapped, -Percent.proper.pairs,
+         -Standard.deviation, -Percent.scaffolds.with.any.coverage, -Percent.scaffolds.with.any.coverage) %>% 
+  t() %>% 
+  row_to_names(1) %>% 
+  as.data.frame() %>% 
+  rename("Low" = ZB_LP, "High" = ZB_redo) %>%
+  knitr::kable()
+```
+
+# Plot the average read depth per contig 
+
+```{r,warning=F,message=F,echo=F}
+Summary_Data %>% 
+  filter(Genome == "Pk", Alignment == "Direct") %>% 
+  filter(Data == "ZB_LP" | Data =="High_qual" | Data == "ZB_redo") %>% 
+  group_by(Data, Alignment) %>% 
+  summarise_all(mean) %>% 
+  select(1:16) %>%  
+  select(-3, -4) %>% 
+  pivot_longer(cols = !c(Data, Alignment), names_to = "Contig", values_to = "Depth") %>% 
+  ggplot() +
+  geom_point(mapping = aes(x = Contig, y = Depth, colour = Data, shape = Alignment)) +
+  theme(axis.text.x = element_blank(), axis.ticks = element_blank()) 
+```
+
+# Calculate the average read depth for all three datasets
+
+```{r,warning=F,message=F,echo=F}
+Summary_Data %>% 
+  filter(Genome == "Pk", Alignment == "Direct") %>% 
+  filter(Data == "ZB_LP" | Data =="High_qual" | Data == "ZB_redo") %>%  
+  select(1:18) %>% 
+  group_by(Data) %>% 
+  summarise_all(mean) %>% 
+  select(1, 5:ncol(.)) %>% 
+  column_to_rownames("Data") %>% 
+  t() %>% 
+  as.data.frame() %>% 
+  rownames_to_column("Data") %>% 
+  mutate(Data = str_remove(Data, "ordered_")) %>% 
+  mutate(Data = str_remove(Data, "_v2")) %>% 
+  rename("Low" = ZB_LP, "High" = ZB_redo, "Contig" = Data) %>% 
+  knitr::kable()
+```
+
+# Compare reads, mapped reads and read depth between ZB data and previous high quality Pk data
+
+```{r,warning=F,message=F}
+Summary_Data %>% 
+  filter(Genome == "Pk", Alignment == "Direct") %>% 
+  filter(Data == "ZB_LP" | Data =="High_qual" | Data == "ZB_redo") %>%  
+  select(1:18, 33:34) %>% 
+  group_by(Data) %>% 
+  summarise_all(mean) %>% 
+  select(1, 5:ncol(.)) %>% 
+  pivot_longer(cols = !c(Data, Reads, Mapped.reads),  names_to = "Contig", values_to = "Depth") %>% 
+  select(-Contig) %>% 
+  group_by(Data) %>% 
+  summarise_all(mean) %>% 
+  knitr::kable()
+```
+
+
+
+

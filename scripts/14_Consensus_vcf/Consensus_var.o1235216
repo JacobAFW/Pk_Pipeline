@@ -1,0 +1,158 @@
+---------------------------------------
+PBS: Job identifier is 1235216.cheetah
+PBS: Job name is Consensus_var
+---------------------------------------
+Define paths to bcftools and miniconda, load the R module, change to working directory and create an output directory
+---------------------------------------
+Exectute bcftools to select variants that pass a specific threshold: FMT/GQ>30 & FMT/DP>10
+---------------------------------------
+Execute R script to get consensus variants and stats
+
+Attaching package: ‘dplyr’
+
+The following objects are masked from ‘package:stats’:
+
+    filter, lag
+
+The following objects are masked from ‘package:base’:
+
+    intersect, setdiff, setequal, union
+
+[1] "Sample_1"
+[1] "Sample_2"
+[1] "Sample_3"
+[1] "Sample_4"
+[1] "Sample_5"
+[1] "Sample_6"
+[1] "Sample_7"
+[1] "Sample_8"
+[1] "Sample_9"
+[1] "Sample_10"
+[1] "Sample_11"
+[1] "Sample_12"
+[1] "Sample_13"
+[1] "Sample_14"
+[1] "Sample_15"
+[1] "Sample_16"
+[1] "Sample_17"
+[1] "Sample_18"
+[1] "Sample_19"
+[1] "Sample_20"
+[1] "Sample_21"
+[1] "Sample_22"
+[1] "Sample_23"
+[1] "Sample_24"
+[1] "Sample_25"
+[1] "Sample_26"
+[1] "Sample_27"
+[1] "Sample_28"
+[1] "Sample_29"
+[1] "Sample_30"
+[1] "Sample_31"
+[1] "Sample_32"
+[1] "Sample_33"
+[1] "Sample_34"
+[1] "Sample_35"
+[1] "Sample_36"
+[1] "Sample_37"
+[1] "Sample_38"
+[1] "Sample_39"
+[1] "Sample_40"
+[1] "Sample_41"
+[1] "Sample_42"
+[1] "Sample_43"
+[1] "Sample_44"
+[1] "Sample_45"
+[1] "Sample_46"
+[1] "Sample_47"
+[1] "Sample_48"
+[1] "Sample_49"
+[1] "Sample_50"
+[1] "Sample_51"
+[1] "Sample_52"
+[1] "Sample_53"
+[1] "Sample_54"
+[1] "Sample_55"
+[1] "Sample_56"
+[1] "Sample_57"
+[1] "Sample_58"
+[1] "Sample_59"
+[1] "Sample_60"
+[1] "Sample_61"
+[1] "Sample_62"
+[1] "Sample_63"
+[1] "Sample_64"
+[1] "Sample_65"
+[1] "Sample_66"
+[1] "Sample_67"
+[1] "Sample_68"
+[1] "Sample_69"
+[1] "Sample_70"
+[1] "Sample_71"
+[1] "Sample_72"
+[1] "Sample_73"
+[1] "Sample_74"
+[1] "Sample_75"
+[1] "Sample_76"
+[1] "Sample_77"
+[1] "Sample_78"
+[1] "Sample_79"
+[1] "Sample_80"
+[1] "Sample_81"
+[1] "Sample_82"
+[1] "Sample_83"
+[1] "Sample_84"
+[1] "Sample_85"
+[1] "Sample_86"
+[1] "Sample_87"
+[1] "Sample_88"
+[1] "Sample_89"
+[1] "Sample_90"
+[1] "Sample_91"
+[1] "Sample_92"
+[1] "Sample_93"
+[1] "Sample_94"
+[1] "Sample_95"
+[1] "Sample_96"
+[1] "Sample_97"
+[1] "Sample_98"
+[1] "Sample_99"
+[1] "Sample_100"
+Parsed with column specification:
+cols(
+  .default = col_character()
+)
+See spec(...) for full column specifications.
+Warning: 2394348 parsing failures.
+row col    expected    actual                                                                  file
+  1  -- 101 columns 7 columns '/home/jwestaway/pk_pipeline/ZB_100/outputs/vcf_consensus/merged.tsv'
+  2  -- 101 columns 5 columns '/home/jwestaway/pk_pipeline/ZB_100/outputs/vcf_consensus/merged.tsv'
+  3  -- 101 columns 2 columns '/home/jwestaway/pk_pipeline/ZB_100/outputs/vcf_consensus/merged.tsv'
+  4  -- 101 columns 3 columns '/home/jwestaway/pk_pipeline/ZB_100/outputs/vcf_consensus/merged.tsv'
+  5  -- 101 columns 8 columns '/home/jwestaway/pk_pipeline/ZB_100/outputs/vcf_consensus/merged.tsv'
+... ... ........... ......... .....................................................................
+See problems(...) for more details.
+
+[1] "1. TSV read in, wrangled into Summary_Data for all variants/samples and output as vcf_full_summary.tsv."
+`summarise()` ungrouping output (override with `.groups` argument)
+[1] "2. Summary of the two tools output as vcf_tool_summary.tsv."
+`summarise()` ungrouping output (override with `.groups` argument)
+[1] "3. Calculated the number of variants and output them as vcf_variant_counts_in_tool.tsv."
+[1] "4. Calculated the variants that were called by both calling tools and output as vcf_variant_names.tsv."
+[1] "5. Calculated the FMT averages for the variants that were called by both tools and output as vcf_variants_and_metrics.tsv."
+---------------------------------------
+Use vcf_variant_names to filter the original merged vcf for variants called by both tools
+---------------------------------------
+Create a seperate file that contains all the header information for the vcf
+
+gzip: stdout: Broken pipe
+---------------------------------------
+Remove the column names from the variant names document to create a list of grep patterns
+---------------------------------------
+Change default language to ASCII - fewer characters than UTF8
+---------------------------------------
+Filter for variants from the original vcf that are called by both callers by using grep to match patterns created above
+---------------------------------------
+Concatenate the vcf header in the variants called by both callers
+---------------------------------------
+Finished 
