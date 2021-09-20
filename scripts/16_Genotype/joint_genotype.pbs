@@ -1,0 +1,51 @@
+#!/bin/bash
+#PBS -N GATK_genotype
+#PBS -j oe
+#PBS -m ae
+#PBS -l nodes=1
+#PBS -l ncpus=21
+#PBS -l mem=200gb
+#PBS -l walltime=48:00:00
+#PBS -M jacob.westaway@menzies.edu.au
+
+echo "---------------------------------------"
+echo "PBS: Job identifier is $PBS_JOBID"
+echo "PBS: Job name is $PBS_JOBNAME"
+
+echo "---------------------------------------"
+echo "Define paths to samtools"
+export PATH=$PATH:/usr/local/jdk1.8.0_131/bin
+export PATH=$PATH:/usr/local/jre1.8.0_111/bin
+export PATH=$PATH:/usr/local/GenomeAnalysisTK-3.2.2 
+export PATH=$PATH:/usr/local/miniconda3/envs/assembly/bin/
+
+echo "---------------------------------------"
+echo 'Set env variables'
+INDIR="/home/jwestaway/pk_pipeline/ZB_100/outputs/variant_calling/gVCFs"
+OUTDIR="/home/jwestaway/pk_pipeline/ZB_100/outputs/variant_calling/"
+PICARD="/usr/local/miniconda3/pkgs/picard-2.21.9-0/share/picard-2.21.9-0/picard.jar"
+INDEXTDIR="/home/jwestaway/pk_pipeline/ref_genomes/PKA1H1/fasta/strain_A1_H.1.Icor.fasta"
+cd /home/jwestaway/pk_pipeline/ZB_100/outputs/vcf_consensus/GATK/GVCFs
+
+echo "---------------------------------------"
+echo 'CombineGVCFs'
+/usr/local/jdk1.8.0_131/bin/java -Djava.iodir=$PBS_JOBFS -Xms3200m -Xmx3600m -jar /usr/local/GenomeAnalysisTK-3.2.2/GenomeAnalysisTK.jar \
+    -T CombineGVCFs \
+    -R $INDEXTDIR \
+    # -V $INDIR
+    -o $OUTDIR/Combined.g.vcf.gz
+
+echo "---------------------------------------"
+echo 'GenotypeGVCFs' 
+
+/usr/local/jdk1.8.0_131/bin/java -Djava.iodir=$PBS_JOBFS -Xms3200m -Xmx3600m -jar /usr/local/GenomeAnalysisTK-3.2.2/GenomeAnalysisTK.jar \
+    -T GenotypeGVCFs \
+    -nt 20 \
+    -R $INDEXTDIR \
+    -V $OUTDIR/Combined.g.vcf.gz \
+    -hets 0.015 \
+    -indelHeterozygosity 0.01 \
+    -o $OUTDIR/Genotyped.vcf.gz
+
+echo "---------------------------------------"
+echo 'Finished' 
