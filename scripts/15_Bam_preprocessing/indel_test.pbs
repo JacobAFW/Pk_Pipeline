@@ -24,40 +24,11 @@ echo "---------------------------------------"
 echo 'Change to working directory and set env variables'
 
 INDIR="/home/jwestaway/pk_pipeline/ZB_100/outputs/direct_alignment/"
-OUTDIR="/home/jwestaway/pk_pipeline/ZB_100/outputs/variant_calling/SAMPLE"
+OUTDIR="/home/jwestaway/pk_pipeline/ZB_100/outputs/vcf_consensus/GATK/PK_SB_DNA_006_DKDL210002135-1a_HWHGKDSXY_L4/"
 PICARD="/usr/local/miniconda3/pkgs/picard-2.21.9-0/share/picard-2.21.9-0/picard.jar"
 INDEXTDIR="/home/jwestaway/pk_pipeline/ref_genomes/PKA1H1/fasta/strain_A1_H.1.Icor.fasta"
 INTERVALS="/home/jwestaway/pk_pipeline/ref_genomes/PKA1H1/strain_A1_H.1.Icor.fasta.bed"
 KNOWNSITES="/home/jwestaway/pk_pipeline/ZB_100/outputs/vcf_consensus/"
-
-mkdir $OUTDIR
- 
-echo "---------------------------------------"
-echo 'Sort and Index bam files'
-
-cd /home/jwestaway/pk_pipeline/ZB_100/outputs/direct_alignment
-
-samtools sort -@ 10 SAMPLE.bam > SAMPLE.sorted.bam
-
-samtools index -@ 10 SAMPLE.sorted.bam
-
-echo "---------------------------------------"
-echo 'MarkDuplicates'
-
-/usr/local/jdk1.8.0_131/bin/java -Djava.iodir=$PBS_JOBFS -jar $PICARD \
-    MarkDuplicates AS=TRUE VALIDATION_STRINGENCY=LENIENT \
-    I=$INDIR/SAMPLE.sorted.bam \
-    O=$OUTDIR/SAMPLE.dupmarked.bam \
-    M=$OUTDIR/SAMPLE_picard_metrics_file.txt 
-
-echo "---------------------------------------"
-echo 'Change header @RG and index' 
-
-samtools view -H $OUTDIR/SAMPLE.dupmarked.bam | \
-    sed 's,^@RG.*,@RG\tID:SAMPLE\tSM:SAMPLE\tLB:None\tPL:Illumina,g' |  \
-    samtools reheader - $OUTDIR/SAMPLE.dupmarked.bam > $OUTDIR/SAMPLE.dupmarked.reheader.bam
-
-samtools index $OUTDIR/SAMPLE.dupmarked.reheader.bam 
 
 echo "---------------------------------------"
 echo 'RealignerTargetCreator'
@@ -66,10 +37,10 @@ echo 'RealignerTargetCreator'
     -T RealignerTargetCreator \
     -nt 10 \
     -R $INDEXTDIR \
-    -I $OUTDIR/SAMPLE.dupmarked.reheader.bam \
+    -I $OUTDIR/PK_SB_DNA_006_DKDL210002135-1a_HWHGKDSXY_L4.dupmarked.reheader.bam \
     --intervals $INTERVALS \
     -known $KNOWNSITES/PK_consensus_corrected_indels.vcf \
-    -o $OUTDIR/SAMPLE.dupmarked.realigner.intervals
+    -o $OUTDIR/TEST_PK_SB_DNA_006_DKDL210002135-1a_HWHGKDSXY_L4.dupmarked.realigner.intervals
 
 echo "---------------------------------------"
 echo 'IndelRealigner' 
@@ -79,11 +50,11 @@ echo 'IndelRealigner'
     --consensusDeterminationModel KNOWNS_ONLY \
     -LOD 0.4 \
     -R $INDEXTDIR \
-    -I $OUTDIR/SAMPLE.dupmarked.reheader.bam \
+    -I $OUTDIR/PK_SB_DNA_006_DKDL210002135-1a_HWHGKDSXY_L4.dupmarked.reheader.bam \
     --intervals $INTERVALS \
     -known $KNOWNSITES/PK_consensus_corrected_indels.vcf \
-    -targetIntervals $OUTDIR/SAMPLE.dupmarked.realigner.intervals \
-    -o $OUTDIR/SAMPLE.dupmarked.realigned.bam
+    -targetIntervals $OUTDIR/TEST_PK_SB_DNA_006_DKDL210002135-1a_HWHGKDSXY_L4.dupmarked.realigner.intervals \
+    -o $OUTDIR/TEST_PK_SB_DNA_006_DKDL210002135-1a_HWHGKDSXY_L4.dupmarked.realigned.bam
 
 echo "---------------------------------------"
 echo 'BaseRecalibrator - create recal table' 
@@ -91,10 +62,10 @@ echo 'BaseRecalibrator - create recal table'
 /usr/local/jdk1.8.0_131/bin/java -Djava.iodir=$PBS_JOBFS -Xms3200m -Xmx3600m -jar /usr/local/GenomeAnalysisTK-3.2.2/GenomeAnalysisTK.jar \
     -T BaseRecalibrator \
     -R $INDEXTDIR \
-    -I $OUTDIR/SAMPLE.dupmarked.realigned.bam \
+    -I $OUTDIR/TEST_PK_SB_DNA_006_DKDL210002135-1a_HWHGKDSXY_L4.dupmarked.realigned.bam \
     --intervals $INTERVALS \
     -knownSites $KNOWNSITES/PK_consensus_corrected.vcf \
-    -o $OUTDIR/SAMPLE.dupmarked.realigned.recal.table
+    -o $OUTDIR/TEST_PK_SB_DNA_006_DKDL210002135-1a_HWHGKDSXY_L4.dupmarked.realigned.recal.table
 
 echo "---------------------------------------"
 echo 'PrintReads - get recal reads' 
@@ -103,28 +74,9 @@ echo 'PrintReads - get recal reads'
     -T PrintReads \
     -R $INDEXTDIR \
     --intervals $INTERVALS \
-    -I $OUTDIR/SAMPLE.dupmarked.realigned.bam \
-    -BQSR $OUTDIR/SAMPLE.dupmarked.realigned.recal.table \
-    -o $OUTDIR/SAMPLE.dupmarked.realigned.recal.bam
-
-echo "---------------------------------------"
-echo 'HaplotypeCaller' 
-
-/usr/local/jdk1.8.0_131/bin/java -Djava.iodir=$PBS_JOBFS -Xms3200m -Xmx3600m -jar /usr/local/GenomeAnalysisTK-3.2.2/GenomeAnalysisTK.jar \
-    -T HaplotypeCaller \
-    -ERC GVCF \
-    --minPruning 3 \
-    --maxNumHaplotypesInPopulation 200 \
-    --variant_index_type LINEAR \
-    --variant_index_parameter 128000 \
-    -contamination 0.0 \
-    -G Standard \
-    -R $INDEXTDIR \
-    --intervals $INTERVALS \
-    -hets 0.015 \
-    -indelHeterozygosity 0.01 \
-    -I $OUTDIR/SAMPLE.dupmarked.realigned.recal.bam \
-    -o $OUTDIR/SAMPLE.dupmarked.realigned.recal.vcf.gz
+    -I $OUTDIR/TEST_PK_SB_DNA_006_DKDL210002135-1a_HWHGKDSXY_L4.dupmarked.realigned.bam \
+    -BQSR $OUTDIR/TEST_PK_SB_DNA_006_DKDL210002135-1a_HWHGKDSXY_L4.dupmarked.realigned.recal.table \
+    -o $OUTDIR/TEST_PK_SB_DNA_006_DKDL210002135-1a_HWHGKDSXY_L4.dupmarked.realigned.recal.bam
 
 echo "---------------------------------------"
 echo 'Finished' 

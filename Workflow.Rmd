@@ -3911,13 +3911,30 @@ The VCF file for the known variant sites (VCF) had to be amended to accomodate G
 
 'sed /ID=VDB/d PK_consensus.vcf | sed /Number=R/d > PK_consensus_corrected.vcf'
 
-Arguments:
  
 To calculate the average number of homozygous genotypes per site (needed for -hets and -indelHeterozygosity arguments)
 `bcftools view -v snps PK_consensus_corrected.vcf > PK_consensus_corrected_snps.vcf`
 `bcftools view -v snps PK_consensus_corrected.vcf > PK_consensus_corrected_indels.vcf`
 `awk -F\0\/0: '!/^ *#/ {total += NF-1; count++} END { print total/count }' PK_consensus_corrected_indels.vcf`
 `awk -F\0\/0: '!/^ *#/ {total += NF-1; count++} END { print total/count }' PK_consensus_corrected_snps.vcf`
+
+GATK does not provide support for previous iterations of their software, so any additional information required needs to be obtained using `--help`.
+Arguments:
+  - T - GATK tool
+  - intervals - genomic intervals (i.e. contigs and their base positon - BED file)
+  - known - known indels - VCF file
+  - knownsites - known variants - VCF file
+  - consensusDeterminationModel - model for computing possible alternates - KNOWNS_ONLY uses known indels only
+  - LOD - threshold for cleaning above
+  - ERC - mode for emitting experimental reference confidence scores 
+  - minPruning - minimum allowed pruning factor in assembly graph - paths with < x supporting kmers are pruned for the graph
+  - maxNumHaplotypesInPopulation - self explanatory - number needs to be increased when calling organisms with high heterozygosity
+  - variant_index_type - type of index creator
+  - variant_index_parameter - to be passed to the VCF index creator
+  - contamination - fraction of contamination in seq data to aggresively remove 
+  - G - annotation
+  - hets - heterozygosity value to be used to compute likelihoods 
+  - indelHeterozygosity - heterozygosity value to be used for variant calling
 
 ```{R,eval=F}
 #!/bin/bash
