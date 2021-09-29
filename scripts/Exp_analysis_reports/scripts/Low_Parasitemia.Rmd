@@ -17,11 +17,11 @@ library(janitor)
 After sharing the previous comparisons with Matt G, it was noted that none of the samples in the previous subset had low parasitemia (< 5000). Thus, another subset of only low parasitemia samples (16) was created, to determine if ZB's methods capture enough depth and coverage at lower parasitemia.
 Key terms/abbreviations:
 
- - ZB_LP: data from Singapore/Zbynek Bozdech with low parsitemia.
- - ZB: data from Singapore/Zbynek Bozdech (truncated).
- - ZB_redo: data from Singapore/Zbynek Bozdech (not truncated).
- - SS: initial subset from Matt Grigg.
- - S100: data from Sanger.
+ - ZB_LP: data from Singapore with low parsitemia.
+ - ZB: data from Singapore (truncated).
+ - ZB_redo: data from Singapore (not truncated).
+ - SS: initial subset from Matt.
+ - S100: data from S*****.
  - Previous_Pk: data from a previous study provided by Ernest.
  - Direct: aligning/mapping to Pk genome without removal of human contamination.
  - Indirect: aligning/mapping to Pk after removal of human contamination.

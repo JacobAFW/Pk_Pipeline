@@ -21,10 +21,10 @@ From this work it seems safe to say that **ZB**'s data, along with aligning **di
 
 Key terms/abbreviations:
 
- - ZB: data from Singapore/Zbynek Bozdech (truncated).
- - ZB_redo: data from Singapore/Zbynek Bozdech (not truncated).
- - SS: initial subset from Matt Grigg.
- - S100: data from Sanger.
+ - ZB: data from Singapore (truncated).
+ - ZB_redo: data from Singapore (not truncated).
+ - SS: initial subset from Matt.
+ - S100: data from S*****.
  - Previous_Pk: data from a previous study provided by Ernest.
  - Direct: aligning/mapping to Pk genome without removal of human contamination.
  - Indirect: aligning/mapping to Pk after removal of human contamination.
