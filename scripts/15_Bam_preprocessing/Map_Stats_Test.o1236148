@@ -1,0 +1,21 @@
+---------------------------------------
+PBS: Job identifier is 1236148.cheetah
+PBS: Job name is Map_Stats_Test
+---------------------------------------
+Define paths to bbmap and samtools
+---------------------------------------
+MAP STATS
+---------------------------------------
+Change to working directory and set env variables
+---------------------------------------
+Exectue samtools & bbmap
+---------------------------------------
+Read Depth
+---------------------------------------
+Define paths to samtools
+---------------------------------------
+Change to working directory and set env variables
+---------------------------------------
+Exectue samtools depth
+---------------------------------------
+Finsihed!
