@@ -1,0 +1,158 @@
+---
+title: "Bam pre-processing comparison"
+author: "Jacob Westaway"
+date: "Last updated on `r Sys.Date()`"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_knit$set(root.dir = 'C:/Users/Jacob/Desktop/Menzies/Knowlesi/Pipeline/Pk_Pipeline/')
+library(tidyverse)
+library(janitor)
+```
+
+# About 
+
+After completing the bam-preprocessing steps, I noticed a significant drop in file size. 
+
+Original alignment bam = 4.2GB > duplicates marked = 4GB > indel realignment and base recalibration = 3GB.
+
+So I ran some summary stats on the mapping and read depth, as done previously, to compare these files and determine if this loss of data will have a significant impact on mapped reads, read depth or base coverage. In short, there is a significant drop in **total** reads from the original BAM file to the recalibrated file, but NO drop in the **mapped** reads. So the steps just seem to be removing contamination/errors. However, there is also a drop in **read depth** from the **original** bam file to the **duplicates marked**, and an insignificant drop from **duplicates marked** to post **indel realignment and base recalibration**. There is not change in the % of **bases with/without coverage**. IGV suggests that the losses we do see are relatively evenl distributed across the genome.
+
+I have only run one sample through this process so far. My only concern at this stage is whether or not we still have enough depth to call variants. However, I have not discussed this with Ernest or Matt F yet, but based on this sample, we still have enough. If the proportion of loss for this sample is the same for low parasitemia I suspect that those samples will be fine as well. However, if we lose the same absolute value and not the proportion then I would concerned. However, I don't see why that would be the case.
+
+Key terms/abbreviations:
+
+ - ZB_redo: data from Singapore/Zbynek Bozdech.
+ - ZB_bam_test : data post bam pre-processing.
+ - Post-alignment: initial bam file from alignment directly to the Pk genome.
+ - Post dups: bam file after the initial step of bam pre-processing, where 'mark-duplicates'.
+ - Post recal: bame file after indel realignment and base recalibration.
+ - Reads - number of reads from sequencing.
+ - Mapped reads - number of reads that are aligning to the reference genome.
+ - Depth - the average coverage for reads aligning to the genome.
+ 
+```{r,warning=F,message=F,include=F}
+Summary_Data <- read_csv('data/Summary_Data.csv') 
+```
+
+```{r,message=F,warning=F,echo=F}
+bbmap_func <- function(file_path, grep_pattern, bbmap_data, alignment, genome){ 
+read_csv(file_path, col_names = c("Variable", "Value")) %>%
+  mutate(Variable = str_remove(Variable, "==> ")) %>% 
+  filter(!grepl(grep_pattern, Variable)) %>% # data specific
+  add_column(
+    (read_csv(file_path, col_names = c("Variable", "Value")) %>% 
+       mutate(Variable = str_remove(Variable, "==> ")) %>% 
+       filter(grepl(grep_pattern, Variable)) %>% # data specific
+       mutate(Variable = Variable) %>% 
+       rbind(.,.,.,.,.,.,.,.,.,.,.,.) %>% # represents the number of variables
+       arrange(Variable) %>% 
+       mutate_if(is.character, as.factor) %>% 
+       select(Variable) %>% 
+       rename("ID" = Variable))) %>% 
+  pivot_wider(names_from = Variable, values_from = Value) %>% 
+  add_column(Data = bbmap_data, Alignment = alignment, Genome = genome)  %>% 
+  as.tibble(.name_repair = "universal")
+}
+
+
+Bam_pre_pro_comparison <- read_tsv("data/read_depth/bam_pre_test.tsv", col_names = c("Contig", "Bases", "S01", "S02")) %>% 
+  select(!Bases) %>% 
+  filter(grepl("ordered", Contig)) %>% 
+  group_by(Contig) %>% 
+  summarise_all(mean) %>%
+  t() %>% 
+  as.data.frame() %>% 
+  row_to_names(1) %>% 
+  add_column(Data = "ZB_bam_test", Alignment = "Direct") %>% 
+  rownames_to_column("Sample") %>% 
+  left_join(
+    read_tsv("data/read_depth/bam_pre_test.tsv", col_names = c("Contig", "Bases", "S01", "S02")) %>% 
+  select(!Bases) %>% 
+  filter(grepl("ordered", Contig)) %>% 
+  na_if(0) %>% 
+  group_by(Contig) %>% 
+  summarise_all(funs(sum(is.na(.))/length(.) * 100)) %>% 
+  t() %>% 
+  as.data.frame() %>% 
+  row_to_names(1) %>% 
+  add_column(Data = "ZB_bam_test", Alignment = "Direct") %>% 
+  rownames_to_column("Sample") %>% 
+  rename("PKNH_01_NA_bases" = "ordered_PKNH_01_v2", "PKNH_02_NA_bases" ="ordered_PKNH_02_v2", 
+         "PKNH_03_NA_bases" = "ordered_PKNH_03_v2", "PKNH_04_NA_bases" = "ordered_PKNH_04_v2", 
+         "PKNH_05_NA_bases" = "ordered_PKNH_05_v2", "PKNH_06_NA_bases" = "ordered_PKNH_06_v2", 
+         "PKNH_07_NA_bases" = "ordered_PKNH_07_v2", "PKNH_08_NA_bases" = "ordered_PKNH_08_v2", 
+         "PKNH_09_NA_bases" = "ordered_PKNH_09_v2", "PKNH_10_NA_bases" = "ordered_PKNH_10_v2", 
+         "PKNH_11_NA_bases" = "ordered_PKNH_11_v2", "PKNH_12_NA_bases" = "ordered_PKNH_12_v2", 
+         "PKNH_13_NA_bases" = "ordered_PKNH_13_v2", "PKNH_14_NA_bases" = "ordered_PKNH_14_v2") %>% 
+  mutate_at(c(2:15), as.character) %>% 
+  mutate_at(c(2:15), as.numeric)
+  ) %>% 
+  add_column(Join = 1:nrow(.)) %>% 
+  left_join(
+    (bbmap_func("data/bbmap_summary/bam_pre_test.csv", "PK_SB_DNA", "ZB_bam_test", "Direct", "Pk") %>%  
+      mutate(ID = str_replace(ID,".mapstats", "")) %>% 
+      add_column(Join = 1:nrow(.))
+     ), by = "Join") %>% 
+  select(-Data.y, -Alignment.y, -Join) %>% 
+  rename("Data" = "Data.x", "Alignment" = "Alignment.x") %>%  
+  relocate(ID, Data, Alignment) %>% 
+  mutate_at(c(5:18), as.character) %>% 
+  mutate_at(c(5:18), as.numeric) %>% 
+  rbind(
+    Summary_Data %>% 
+      filter(Data == "ZB_redo" & Alignment == "Direct") %>% 
+      filter(grepl("006" , ID))
+  ) %>% 
+  select(-Sample) %>% 
+  add_column(Sample = 1:nrow(.))
+```
+
+\newpage
+```{r,warning=F,message=F,echo=F,fig.cap="Total reads (circles) and mapped reads (triangles)"}
+Bam_pre_pro_comparison %>% 
+  ggplot() + 
+  geom_point(aes(x = ID, y = Reads/10000000, colour = Data)) +
+  geom_point(aes(x = ID, y = Mapped.reads/10000000, colour = Data), shape = 2) +
+  scale_x_discrete(labels=c("Post-alignment", "Post recal", "Post dups")) +
+  labs(x = "Sample", y= "Reads (M)", title = "") 
+```
+
+```{r,warning=F,message=F,echo=F, fig.cap="Read depth: pre and post bam pre-processing"}
+Bam_pre_pro_comparison %>% 
+  group_by(Sample) %>% 
+  summarise_all(mean) %>% 
+  select(1:16,) %>%  
+  select(-2, -3, -4) %>% 
+  pivot_longer(cols = !c(Sample), names_to = "Contig", values_to = "Depth") %>% 
+  mutate(Sample = as.factor(Sample)) %>% 
+  ggplot() +
+  geom_jitter(mapping = aes(x = Contig, y = Depth, colour = Sample)) +
+  theme(axis.text.x = element_blank(), axis.ticks = element_blank()) +
+  scale_color_discrete(labels=c("Post recal", "Post dups", "Post-alignment")) +
+  ylim(0, 65)
+```
+
+
+```{r,warning=F,message=F,echo=F, fig.cap="Bases without coverage: pre and post bam pre-processing"}
+Bam_pre_pro_comparison %>% 
+  group_by(Sample) %>% 
+  summarise_all(mean) %>% 
+  select(1:2, 19:32) %>% 
+  pivot_longer(cols = !c(Sample), names_to = "Contig", values_to = "Bases") %>%
+  mutate(Sample = as.factor(Sample)) %>% 
+  ggplot() +
+  geom_jitter(mapping = aes(x = Contig, y = Bases, colour = Sample)) +
+  theme(axis.text.x = element_blank(), axis.ticks = element_blank()) +
+  scale_color_discrete(labels=c("Post recal", "Post dups", "Post-alignment")) +
+  ylab("% of NA bases")  
+```
+
+
+![Comparison of the distribution of read depth across the genome the three bam files. Coloured by data: initial bam = red, post mark duplicates = dark blue & post indel realignment and base recalibration = light. blue.](C:/Users/Jacob/Desktop/Menzies/Knowlesi/Pipeline/Pk_Pipeline/data/IGV/igv_bam_pre_test.png)
+
+
+
+

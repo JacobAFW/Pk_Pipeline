@@ -1,0 +1,324 @@
+---
+title: "bbmap"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_knit$set(root.dir = 'C:/Users/Jacob/Desktop/Menzies/Knowlesi/Pipeline/Pk_Pipeline/')
+```
+
+# Packages 
+
+```{r}
+library(tidyverse)
+```
+
+
+```{r,warning=F,message=F}
+bbmap_func <- function(file_path, grep_pattern, bbmap_data, alignment, genome){ 
+read_csv(file_path, col_names = c("Variable", "Value")) %>%
+  mutate(Variable = str_remove(Variable, "==> ")) %>% 
+  filter(!grepl(grep_pattern, Variable)) %>% # data specific
+  add_column(
+    (read_csv(file_path, col_names = c("Variable", "Value")) %>% 
+       mutate(Variable = str_remove(Variable, "==> ")) %>% 
+       filter(grepl(grep_pattern, Variable)) %>% # data specific
+       mutate(Variable = Variable) %>% 
+       rbind(.,.,.,.,.,.,.,.,.,.,.,.) %>% # represents the number of variables
+       arrange(Variable) %>% 
+       mutate_if(is.character, as.factor) %>% 
+       select(Variable) %>% 
+       rename("ID" = Variable))) %>% 
+  pivot_wider(names_from = Variable, values_from = Value) %>% 
+  add_column(Data = bbmap_data, Alignment = alignment, Genome = genome)  %>% 
+  as.tibble(.name_repair = "universal")
+}
+
+
+BBMAP <- 
+# S_100 
+bbmap_func("data/bbmap_summary/S100_PKD_summary_mapstats.csv", "ERR", "S100", "Direct", "Pk") %>%  # Direct Pk
+  rbind(bbmap_func("data/bbmap_summary/S100_HGA_summary_mapstats.csv", "ERR", "S100", "Indirect", "Hg")) %>% # Indirect Hg
+  rbind(bbmap_func("data/bbmap_summary/S100_HGR_summary_mapstats.csv", "ERR", "S100", "Indirect", "Pk")) %>% # Indirect Pk
+  rbind(
+# SS
+(bbmap_func("data/bbmap_summary/SS_PKD_summary_mapstats.csv", "PKA", "SS", "Direct", "Pk") %>%  
+  rbind(bbmap_func("data/bbmap_summary/SS_HGA_summary_mapstats.csv", "PKA", "SS", "Indirect", "Hg")) %>% 
+  rbind(bbmap_func("data/bbmap_summary/SS_HGR_summary_mapstats.csv", "PKA", "SS", "Indirect", "Pk")) 
+)) %>%
+  rbind(
+# ZB
+(bbmap_func("data/bbmap_summary/ZB_PKD_summary_mapstats.csv", "PK_SB_DNA", "ZB", "Direct", "Pk") %>%  
+  rbind(bbmap_func("data/bbmap_summary/ZB_HGA_summary_mapstats.csv", "PK_SB_DNA", "ZB", "Indirect", "Hg")) %>% 
+  rbind(bbmap_func("data/bbmap_summary/ZB_HGR_summary_mapstats.csv", "PK_SB_DNA", "ZB", "Indirect", "Pk")) 
+))
+
+```
+
+```{r,warning=F,message=F,echo=F}
+BBMAP %>% 
+  filter(Alignment == "Direct") %>% 
+  ggplot() + 
+  geom_point(aes(x = ID, y = Reads/1000000, colour = Data)) +
+  geom_point(aes(x = ID, y = Mapped.reads/1000000, colour = Data), shape = 2) +
+  theme(axis.text.x = element_blank(), axis.ticks = element_blank()) +
+  labs(x = "Sample", y= "Reads (100K)", title = "Total reads (circles) and mapped reads (traingles) across datasets.") 
+```
+
+# Plot total and mapped reads for Pk
+
+```{r,warning=F,message=F}
+BBMAP %>% 
+  filter(Alignment == "Direct") %>% 
+  filter(Data != "ZB") %>% 
+  ggplot() + 
+  geom_point(aes(x = ID, y = Reads/1000000, colour = Data)) +
+  geom_point(aes(x = ID, y = Mapped.reads/1000000, colour = Data), shape = 2) +
+  theme(axis.text.x = element_blank(), axis.ticks = element_blank()) +
+  labs(x = "Sample", y= "Reads (100K)", title = "Total reads (circles) and mapped reads (traingles) across datasets.") 
+```
+
+# Plot total reads (before Hg removed) and mapped for Pk (after Hg removal)
+
+```{r,warning=F,message=F,echo=F}
+ggplot() + 
+  geom_point((BBMAP %>% filter(Alignment == "Direct") %>% filter(Genome == "Pk")),
+    mapping = aes(x = ID, y = Reads/1000000, colour = Data)) +
+  geom_point(data = (BBMAP %>% filter(Alignment == "Indirect") %>% filter(Genome == "Pk")),
+    mapping = aes(x = ID, y = Mapped.reads/1000000, colour = Data), shape = 2) +
+  theme(axis.text.x = element_blank(), axis.ticks = element_blank()) +
+  labs(x = "Sample", y= "Reads (100K)", title = "Total reads (circles) and mapped reads (traingles) across datasets.") 
+```
+
+
+```{r}
+BBMAP %>% 
+  filter(Genome == "Pk") %>%
+  ggplot() + 
+  geom_col(aes(x = ID, y = Mapped.reads/1000000, colour = Data)) +
+  theme(axis.text.x = element_blank(), axis.ticks = element_blank()) +
+  labs(x = "Samples", y= "Mapped reads (100K)") +
+  facet_wrap(~Alignment)
+```
+
+# Summary Statisitics 
+
+## Aligned direct to Pk 
+
+```{r,warning=F,message=F}
+BBMAP %>% 
+  filter(Alignment == "Direct") %>%
+  group_by(Data) %>% 
+  summarise_all(mean)
+```
+
+## Aligned to Hg 
+```{r,warning=F,message=F}
+BBMAP %>% 
+  filter(Alignment == "Indirect") %>%
+  filter(Genome == "Hg") %>% 
+  group_by(Data) %>% 
+  summarise_all(mean)
+```
+
+## Hg removed alignment to Pk
+```{r,warning=F,message=F}
+BBMAP %>% 
+  filter(Alignment == "Indirect") %>%
+  filter(Genome == "Pk") %>% 
+  group_by(Data) %>% 
+  summarise_all(mean)
+```
+
+# Comparing direct and indirect alignment to Pk
+
+NB. Percentages are not comparable as the total reads are obviously not the same.
+
+```{r,warning=F,message=F}
+BBMAP %>% 
+  filter(Genome == "Pk") %>% 
+  group_by(Data, Alignment) %>% 
+  summarise_all(mean)
+```
+
+
+```{r}
+BBMAP %>% 
+  filter(Genome == "Pk") %>% 
+  group_by(Data, Alignment) %>% 
+  summarise_all(mean) %>% 
+  add_column(Datasets = c(1,2,3,4,5,6)) %>% 
+  ggplot() +
+  geom_col(aes(x = Datasets, y = Mapped.reads, colour = Data)) +
+  facet_wrap(~Alignment) +
+  theme(axis.text.x = element_blank(), axis.ticks = element_blank()) 
+```
+
+## Why are we losing so many reads for a couple of sampples?
+
+```{r}
+BBMAP %>% 
+  filter(Genome == "Pk") %>%
+  ggplot() + 
+  geom_col(aes(x = ID, y = Mapped.reads/1000000, colour = Data)) +
+  theme(axis.text.x = element_blank(), axis.ticks = element_blank()) +
+  labs(x = "Samples", y= "Mapped reads (100K)") +
+  facet_wrap(~Alignment)
+```
+
+## Get the sample names for the highest mapped reads for SS and ZB, as they have drastic losses post-Hg removal.
+
+```{r}
+BBMAP %>%
+  filter(Alignment == "Direct") %>%
+  filter(Data == "SS" | Data == "ZB") %>% 
+  select(ID, Mapped.reads) %>% 
+  arrange(desc(Mapped.reads))
+```
+
+## Read in the BBMAP summary of the samples that duplicates removed.
+
+Create a dataframe for ALL sample rows that had duplicates removed and plot a comparison (direct vs indirect coloured by Data and include sample names)
+
+```{r}
+DUPS <- read_csv("data/bbmap_summary/DUPS_summary_mapstats.csv", col_names = c("Variable", "Value")) %>%
+  mutate(Variable = str_remove(Variable, "==> ")) %>% 
+  filter(!grepl("mapstats", Variable)) %>% # data specific
+  add_column(
+    (read_csv("data/bbmap_summary/DUPS_summary_mapstats.csv", col_names = c("Variable", "Value")) %>% 
+       mutate(Variable = str_remove(Variable, "==> ")) %>% 
+       filter(grepl("mapstats", Variable)) %>% # data specific
+       mutate(Variable = Variable) %>% 
+       rbind(.,.,.,.,.,.,.,.,.,.,.,.) %>% # represents the number of variables
+       arrange(desc(Variable)) %>% 
+       mutate_if(is.character, as.factor) %>% 
+       select(Variable) %>% 
+       rename("ID" = Variable))) %>% 
+  pivot_wider(names_from = Variable, values_from = Value) %>% 
+  add_column(Data = "DUPS", Alignment = "Direct", Genome = "Pk") %>% 
+  as.tibble(.name_repair = "universal") %>% 
+  mutate(ID = str_replace(ID, "_124", "")) %>% 
+  mutate(ID = str_replace(ID, "mapstats", "dups_removed"))
+```
+
+## Plot the mapped reads with the duplicate-removed samples included
+
+```{r}
+BBMAP %>% 
+  rbind(DUPS) %>% 
+  filter(Genome == "Pk") %>%
+  ggplot() + 
+  geom_col(aes(x = ID, y = Mapped.reads/1000000, colour = Data)) +
+  theme(axis.text.x = element_blank(), axis.ticks = element_blank()) +
+  labs(x = "Samples", y= "Mapped reads (100K)") +
+  facet_wrap(~Alignment)
+```
+
+## Plot just the samples that have had duplicates removed (with the originals included)
+
+```{r}
+DUPS %>% 
+  rbind(
+    (BBMAP %>% filter(Genome == "Pk" & (ID == "PK_SB_DNA_031_DKDL210002160-1a_HWHGKDSXY_L4.mapstats" | ID == "PKAS13.mapstats")))) %>%
+  mutate(ID = recode(ID, "PK_SB_DNA_031_DKDL210002160-1a_HWHGKDSXY_L4.dups_removed" = "ZB_31_dups", 
+                     "PKAS13.dups_removed" = "SS_13_dups", 
+                     "PKAS13.mapstats" = "SS_13",
+                     "PK_SB_DNA_031_DKDL210002160-1a_HWHGKDSXY_L4.mapstats" = "ZB_31")) %>% 
+  ggplot() + 
+  geom_col(aes(x = ID, y = Mapped.reads/1000000, colour = Data)) +
+  theme(axis.text.x = element_text(angle = 90), axis.ticks = element_blank()) +
+  labs(x = "Samples", y= "Mapped reads (100K)") +
+  facet_wrap(~Alignment)
+```
+
+## Compare direct alignment statistics for samples that have/haven't had duplicates removed
+
+```{r}
+DUPS %>% 
+  rbind((BBMAP %>% 
+           filter(Genome == "Pk" & (ID == "PK_SB_DNA_031_DKDL210002160-1a_HWHGKDSXY_L4.mapstats" | ID == "PKAS13.mapstats")))) %>% 
+  arrange(ID) %>% 
+  select(ID, Alignment, Reads, Mapped.reads, Mapped.bases)
+```
+
+```{r}
+100 - ((25349991 - 16786072) / (25349991 - 13445096) * 100) # SS difference unexplained by duplicates 
+100 - ((36040809 - 28250246) / (36040809 - 18600685) * 100) # ZB difference unexplained by duplicates 
+```
+
+# Add 'Previous Pk Data' to BBMAP
+```{r}
+BBMAP <- BBMAP %>% rbind(
+  bbmap_func("data/bbmap_summary/Previous_Pk_summary.csv", "ERR", "Previous_Pk", "Direct", "Pk")
+)
+```
+
+# Add ZB redo (direct and indirect) & bowtie2
+```{r}
+BBMAP <- BBMAP %>% 
+  rbind(
+bbmap_func("data/bbmap_summary/bowtie2_HGA_summary.csv", "PK_SB_DNA", "ZB_bowtie", "Indirect", "Hg") %>%  
+  rbind(bbmap_func("data/bbmap_summary/bowtie2_HGR_summary.csv", "PK_SB_DNA", "ZB_bowtie", "Indirect", "Pk"))) %>% 
+  rbind(bbmap_func("data/bbmap_summary/ZB_redo_HGA_summary_mapstats.csv", "PK_SB_DNA", "ZB_redo", "Indirect", "Hg")) %>% 
+  rbind(bbmap_func("data/bbmap_summary/ZB_redo_HGR_summary_mapstats.csv", "PK_SB_DNA", "ZB_redo", "Indirect", "Pk")) %>% 
+  rbind(bbmap_func("data/bbmap_summary/ZB_redo_PKD_summary_mapstats.csv", "PK_SB_DNA", "ZB_redo", "Direct", "Pk"))
+```
+
+## Compare across ZB dataset
+
+```{r}
+gridExtra::grid.arrange(
+BBMAP %>% 
+  filter(grepl("ZB", Data)) %>%
+  filter(Alignment == "Direct") %>% 
+  ggplot() + 
+  geom_col(aes(x = ID, y = Mapped.reads/1000000, colour = Data)) +
+  theme(axis.text.x = element_blank(), axis.ticks = element_blank()) +
+  labs(x = "Samples", y= "Mapped reads (100K)") +
+  facet_wrap(~Data),
+
+BBMAP %>% 
+  filter(grepl("ZB", Data)) %>%
+  filter(Alignment == "Indirect", Genome == "Pk") %>% 
+  ggplot() + 
+  geom_col(aes(x = ID, y = Mapped.reads/1000000, colour = Data)) +
+  theme(axis.text.x = element_blank(), axis.ticks = element_blank()) +
+  labs(x = "Samples", y= "Mapped reads (100K)") +
+  facet_wrap(~Data)
+)
+
+```
+
+**Bowtie2 and the direct Pk redo look VERY similar. Compare these two alignments.**
+
+# Plot Pk alignments for bowtie2 and ZB_redo_direct
+
+```{r}
+BBMAP %>% 
+  filter(Data == "ZB_redo" & Alignment == "Direct") %>% 
+  rbind(BBMAP %>% 
+          filter(Data == "ZB_bowtie" & Genome == "Pk")) %>% 
+  ggplot() + 
+  geom_col(aes(x = ID, y = Mapped.reads/1000000, colour = Data)) +
+  theme(axis.text.x = element_blank(), axis.ticks = element_blank()) +
+  labs(x = "Samples", y= "Mapped reads (100K)") +
+  facet_wrap(~Alignment)
+```
+
+
+## Calculate the averages for these two alignmetns
+```{r}
+BBMAP %>% 
+  filter(Data == "ZB_redo" & Alignment == "Direct") %>% 
+  rbind(BBMAP %>% 
+          filter(Data == "ZB_bowtie" & Genome == "Pk")) %>%
+  group_by(Data) %>% 
+  summarise_all(mean)
+```
+
+**Extremely close in the number of mapped reads but the ZB direct alignment edges out bowtie2 but around ~1.8 million reads.**
+
+
+
+

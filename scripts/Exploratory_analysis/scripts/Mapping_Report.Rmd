@@ -1,0 +1,424 @@
+---
+title: "Mapping Report"
+author: "Jacob Westaway"
+date: "Last updated on `r Sys.Date()`"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_knit$set(root.dir = 'C:/Users/Jacob/Desktop/Menzies/Knowlesi/Pipeline/Pk_Pipeline/')
+library(tidyverse)
+library(janitor)
+```
+
+# About 
+
+This report briefly goes through some of the comparisons we have made over the last couple of months to determine what might be the best combination of data (sample preperationa) and alignment type. In brief, we ran three datasets: the initial datset provided by Matt, data from Sanger and data from ZB. 
+We tried aligning directly to the Pk genome (with *bwa*), and indirectly via removal of human contamination (with *bwa*/*bowtie2*). We ran mapping statistics (*bbmap*) and read depth calculations (*samtools*) on this data to get the number of reads aligning and the depth of reads at each position along the Pk genome. We also imported some of this data into *IGV*/*tablet* to do additonal visual comparisons, and downloaded some data from a previous study provided by Ernest to see how our best outputs (ZB's data) compared to a previously successful workflow. Lastly, we used metadata to explore the relationship between ZB's data and parasitemia.
+
+From this work it seems safe to say that **ZB**'s data, along with aligning **directly** to the Pk genome with bwa, is the best approach.
+
+Key terms/abbreviations:
+
+ - ZB: data from Singapore (truncated).
+ - ZB_redo: data from Singapore (not truncated).
+ - SS: initial subset from Matt.
+ - S100: data from S******.
+ - Previous_Pk: data from a previous study provided by Ernest.
+ - Direct: aligning/mapping to Pk genome without removal of human contamination.
+ - Indirect: aligning/mapping to Pk after removal of human contamination.
+
+```{r,warning=F,message=F,include=F}
+# Create a function to read in the BBmap data
+
+bbmap_func <- function(file_path, grep_pattern, bbmap_data, alignment, genome){ 
+read_csv(file_path, col_names = c("Variable", "Value")) %>%
+  mutate(Variable = str_remove(Variable, "==> ")) %>% 
+  filter(!grepl(grep_pattern, Variable)) %>% # data specific
+  add_column(
+    (read_csv(file_path, col_names = c("Variable", "Value")) %>% 
+       mutate(Variable = str_remove(Variable, "==> ")) %>% 
+       filter(grepl(grep_pattern, Variable)) %>% # data specific
+       mutate(Variable = Variable) %>% 
+       rbind(.,.,.,.,.,.,.,.,.,.,.,.) %>% # represents the number of variables
+       arrange(Variable) %>% 
+       mutate_if(is.character, as.factor) %>% 
+       select(Variable) %>% 
+       rename("ID" = Variable))) %>% 
+  pivot_wider(names_from = Variable, values_from = Value) %>% 
+  add_column(Data = bbmap_data, Alignment = alignment, Genome = genome)  %>% 
+  as.tibble(.name_repair = "universal")
+}
+
+
+BBMAP <- 
+# S_100 
+bbmap_func("data/bbmap_summary/S100_PKD_summary_mapstats.csv", "ERR", "S100", "Direct", "Pk") %>%  # Direct Pk
+  rbind(bbmap_func("data/bbmap_summary/S100_HGA_summary_mapstats.csv", "ERR", "S100", "Indirect", "Hg")) %>% # Indirect Hg
+  rbind(bbmap_func("data/bbmap_summary/S100_HGR_summary_mapstats.csv", "ERR", "S100", "Indirect", "Pk")) %>% # Indirect Pk
+  rbind(
+# SS
+(bbmap_func("data/bbmap_summary/SS_PKD_summary_mapstats.csv", "PKA", "SS", "Direct", "Pk") %>%  
+  rbind(bbmap_func("data/bbmap_summary/SS_HGA_summary_mapstats.csv", "PKA", "SS", "Indirect", "Hg")) %>% 
+  rbind(bbmap_func("data/bbmap_summary/SS_HGR_summary_mapstats.csv", "PKA", "SS", "Indirect", "Pk")) 
+)) %>%
+  rbind(
+# ZB
+(bbmap_func("data/bbmap_summary/ZB_PKD_summary_mapstats.csv", "PK_SB_DNA", "ZB", "Direct", "Pk") %>%  
+  rbind(bbmap_func("data/bbmap_summary/ZB_HGA_summary_mapstats.csv", "PK_SB_DNA", "ZB", "Indirect", "Hg")) %>% 
+  rbind(bbmap_func("data/bbmap_summary/ZB_HGR_summary_mapstats.csv", "PK_SB_DNA", "ZB", "Indirect", "Pk")) 
+)) %>% 
+  rbind(
+# Previous Pk data
+  bbmap_func("data/bbmap_summary/Previous_Pk_summary.csv", "ERR", "Previous_Pk", "Direct", "Pk")) %>%
+  rbind(
+# ZB redo
+(bbmap_func("data/bbmap_summary/bowtie2_HGA_summary.csv", "PK_SB_DNA", "ZB_bowtie", "Indirect", "Hg") %>%  
+  rbind(bbmap_func("data/bbmap_summary/bowtie2_HGR_summary.csv", "PK_SB_DNA", "ZB_bowtie", "Indirect", "Pk"))) %>% 
+  rbind(bbmap_func("data/bbmap_summary/ZB_redo_HGA_summary_mapstats.csv", "PK_SB_DNA", "ZB_redo", "Indirect", "Hg")) %>% 
+  rbind(bbmap_func("data/bbmap_summary/ZB_redo_HGR_summary_mapstats.csv", "PK_SB_DNA", "ZB_redo", "Indirect", "Pk")) %>% 
+  rbind(bbmap_func("data/bbmap_summary/ZB_redo_PKD_summary_mapstats.csv", "PK_SB_DNA", "ZB_redo", "Direct", "Pk"))
+  )
+  
+```
+
+```{r,warning=F,message=F,include=F,eval=F}
+# Create a function that nests previously created functions for reading in data and wrangling it for depth and NA bp, and join data together with mapstats data
+
+# define read depth function to get read depth per contig
+read_depth_data <- function(file_path, dataset, alignment){
+read_tsv(file_path, col_names = c("Contig", "Bases", "S01", "S02", "S03", "S04", "S05", "S06", "S07", "S08", "S09", "S10", "S11", "S12", "S13")) %>% 
+  select(!Bases) %>% 
+  filter(grepl("ordered", Contig)) %>% 
+  group_by(Contig) %>% 
+  summarise_all(mean) %>%
+  t() %>% 
+  as.data.frame() %>% 
+  row_to_names(1) %>% 
+  add_column(Data = dataset, Alignment = alignment) %>% 
+  rownames_to_column("Sample")
+}
+
+# define base_pairs function to change names and get percentage of bases that are NA
+base_pairs <- function(file_path, dataset, alignment){
+read_tsv(file_path, col_names = c("Contig", "Bases", "S01", "S02", "S03", "S04", "S05", "S06", "S07", "S08", "S09", "S10", "S11", "S12", "S13")) %>% 
+  select(!Bases) %>% 
+  filter(grepl("ordered", Contig)) %>% 
+  na_if(0) %>% 
+  group_by(Contig) %>% 
+  summarise_all(funs(sum(is.na(.))/length(.) * 100)) %>% 
+  t() %>% 
+  as.data.frame() %>% 
+  row_to_names(1) %>% 
+  add_column(Data = dataset, Alignment = alignment) %>% 
+  rownames_to_column("Sample") %>% 
+  rename("PKNH_01_NA_bases" = "ordered_PKNH_01_v2", "PKNH_02_NA_bases" ="ordered_PKNH_02_v2", 
+         "PKNH_03_NA_bases" = "ordered_PKNH_03_v2", "PKNH_04_NA_bases" = "ordered_PKNH_04_v2", 
+         "PKNH_05_NA_bases" = "ordered_PKNH_05_v2", "PKNH_06_NA_bases" = "ordered_PKNH_06_v2", 
+         "PKNH_07_NA_bases" = "ordered_PKNH_07_v2", "PKNH_08_NA_bases" = "ordered_PKNH_08_v2", 
+         "PKNH_09_NA_bases" = "ordered_PKNH_09_v2", "PKNH_10_NA_bases" = "ordered_PKNH_10_v2", 
+         "PKNH_11_NA_bases" = "ordered_PKNH_11_v2", "PKNH_12_NA_bases" = "ordered_PKNH_12_v2", 
+         "PKNH_13_NA_bases" = "ordered_PKNH_13_v2", "PKNH_14_NA_bases" = "ordered_PKNH_14_v2") %>% 
+  mutate_at(c(2:15), as.character) %>% 
+  mutate_at(c(2:15), as.numeric)
+}
+
+# nest the functions above in another function that combines this data the mapping data
+create_sum_tab <- function(PATH, DATA, ALIGNMENT){
+read_depth_data(PATH, DATA, ALIGNMENT) %>% # read in direct read depth data
+  mutate_if(is.factor, as.character) %>% 
+  mutate_at(grep("ordered", colnames(.)), as.numeric) %>% 
+  add_column(Join = 1:nrow(.)) %>% # add column for joining with mapstats data
+  left_join(
+    (base_pairs(PATH, DATA, ALIGNMENT) %>% # read in direct NA base pair data and join
+  mutate_if(is.factor, as.character) %>% 
+  mutate_at(grep("ordered", colnames(.)), as.numeric) %>% 
+  select(-Data, - Alignment))
+  ) %>% 
+  left_join( # join read depth and base NA data with map stat data via a new column called join
+    (BBMAP %>% 
+      filter(Genome != "Hg" & Data == DATA & Alignment == ALIGNMENT) %>%  
+      mutate(ID = str_replace(ID,".mapstats", "")) %>% 
+      add_column(Join = 1:nrow(.))
+     ), by = "Join") %>% 
+  select(-Data.y, -Alignment.y, -Join) %>% 
+  rename("Data" = "Data.x", "Alignment" = "Alignment.x") %>%  
+  relocate(ID, Data, Alignment)
+}
+ 
+     
+Summary_Data <- create_sum_tab("data/read_depth/ZB_direct_depth_summary.tsv", "ZB", "Direct") %>% 
+  rbind(create_sum_tab("data/read_depth/ZB_indirect_depth_summary.tsv", "ZB", "Indirect")) %>% 
+  rbind(create_sum_tab("data/read_depth/SS_direct_depth_summary.tsv", "SS", "Direct")) %>% 
+  rbind(create_sum_tab("data/read_depth/SS_indirect_depth_summary.tsv", "SS", "Indirect")) %>% 
+  rbind(create_sum_tab("data/read_depth/S100_direct_depth_summary.tsv", "S100", "Direct")) %>% 
+  rbind(create_sum_tab("data/read_depth/S100_indirect_depth_summary.tsv", "S100", "Indirect")) %>% 
+  rbind(create_sum_tab("data/read_depth/previous_Pk_data.tsv", "Previous_Pk", "Direct")) %>% 
+  slice(-c(83:91)) %>% 
+  rbind(create_sum_tab("data/read_depth/ZB_bowtie2_depth_summary.tsv", "ZB_bowtie", "Indirect"))%>% 
+  rbind(create_sum_tab("data/read_depth/ZB_redo_direct_depth_summary.tsv", "ZB_redo", "Direct")) %>% 
+  rbind(create_sum_tab("data/read_depth/ZB_redo_indirect_depth_summary.tsv", "ZB_redo", "Indirect"))
+
+Summary_Data <- Summary_Data %>% 
+  rbind(create_sum_tab("data/read_depth/ZB_redo_direct_depth_summary.tsv", "ZB_redo", "Direct")) %>% 
+  rbind(create_sum_tab("data/read_depth/ZB_redo_indirect_depth_summary.tsv", "ZB_redo", "Indirect"))
+
+write_csv(Summary_Data, 'data/Summary_Data.csv')
+```
+
+```{r,warning=F,message=F,include=F,}
+Summary_Data <- read_csv('data/Summary_Data.csv') 
+```
+
+```{r,warning=F,message=F,include=F}
+## Summary table to be performed on collated data
+Summary_Data %>% 
+  group_by(Data, Alignment) %>% 
+  summarise_all(mean) %>% 
+  select(-ID, -Sample, -Genome)
+```
+
+\newpage
+
+# Map Stats: number of reads mapping to reference genome
+
+### Plot total and mapped reads for Pk
+
+```{r,warning=F,message=F,echo=F}
+BBMAP %>% 
+  filter(Alignment == "Direct") %>% 
+  filter(Data != "ZB") %>% 
+  ggplot() + 
+  geom_point(aes(x = ID, y = Reads/10000000, colour = Data)) +
+  geom_point(aes(x = ID, y = Mapped.reads/10000000, colour = Data), shape = 2) +
+  theme(axis.text.x = element_blank(), axis.ticks = element_blank()) +
+  labs(x = "Sample", y= "Reads (M)", title = "Total reads (circles) and mapped reads (triangles) across datasets.") 
+```
+
+### Comparison across ZB dataset
+
+Firstly, Field and I found an error in my trimming step on the ZB dataset that meant that I was working with truncated files. This resutled in running the ZB data through the workflow again. The plot below shows the difference it made on the number of reads mapping, with ZB_redo and ZB_bowtie using the 'corrected' dataset. Both outputs (ZB and ZB_redo) are included in some subsequent plots for more comparison.
+
+```{r,warning=F,message=F,echo=F}
+gridExtra::grid.arrange(
+BBMAP %>% 
+  filter(grepl("ZB", Data)) %>%
+  filter(Alignment == "Direct") %>% 
+  ggplot() + 
+  geom_col(aes(x = ID, y = Mapped.reads/10000000, colour = Data)) +
+  theme(axis.text.x = element_blank(), axis.ticks = element_blank()) +
+  labs(x = "Samples", y= "Mapped reads (M)") +
+  facet_wrap(~Data) +
+  ggtitle("Reads mapped when aligning directly to Pk."),
+
+BBMAP %>% 
+  filter(grepl("ZB", Data)) %>%
+  filter(Alignment == "Indirect", Genome == "Pk") %>% 
+  ggplot() + 
+  geom_col(aes(x = ID, y = Mapped.reads/10000000, colour = Data)) +
+  theme(axis.text.x = element_blank(), axis.ticks = element_blank()) +
+  labs(x = "Samples", y= "Mapped reads (M)") +
+  facet_wrap(~Data) +
+  ggtitle("Reads mapped with human contamination removed.")
+)
+
+```
+
+## Comparison of the number reads mapping to Pk across all datasets and for different alignments
+
+```{r,warning=F,message=F,echo=F}
+BBMAP %>% 
+  filter(Genome == "Pk") %>% 
+  filter(Data != "ZB", Data != "ZB_bowtie") %>% 
+  rbind(BBMAP %>% 
+          filter(Data == "ZB_bowtie" & Genome =="Pk") %>% # wranlge the bowtie2 data so that it doesn't share names with other data - 'stacks' othersise
+          select(-ID) %>% 
+          add_column(ID = 1:13) %>% 
+          mutate(ID = as.character(ID)) %>% 
+          mutate(ID = as.factor(ID))) %>% 
+  ggplot() + 
+  geom_col(aes(x = ID, y = Mapped.reads/10000000, colour = Data)) +
+  theme(axis.text.x = element_blank(), axis.ticks = element_blank()) +
+  labs(x = "Samples", y = "Mapped reads (M)") +
+  facet_wrap(~Alignment) 
+```
+
+**Key points:**
+
+ - ZB's data (ZB_redo) appears to get the most reads.
+ - ZB's data is comparable to 'Previous Pk' data.
+ - Mapping directly to Pk with bwa & indirectly via removal of the human genome with bowite2 is comparable.
+ 
+
+## Plot a comparisons of mapped reads on ZB data for the indirect alignments with bowtie2 (for removing human contamination) and direct with bwa
+
+```{r,warning=F,message=F,echo=F}
+BBMAP %>% 
+  filter(Data == "ZB_redo" & Alignment == "Direct") %>% 
+  rbind(BBMAP %>% filter(Data == "ZB_bowtie" & Genome == "Pk")) %>% 
+  ggplot() + 
+  geom_col(aes(x = ID, y = Mapped.reads/10000000, colour = Data)) +
+  theme(axis.text.x = element_blank(), axis.ticks = element_blank()) +
+  labs(x = "Samples", y = "Mapped reads (M)") +
+  facet_wrap(~Alignment)
+```
+
+### Calculate the average mapped reads for these two alignmetns
+
+```{r,warning=F,message=F,echo=F}
+BBMAP %>% 
+  filter(Data == "ZB_redo" & Alignment == "Direct") %>% 
+  rbind(BBMAP %>% 
+          filter(Data == "ZB_bowtie" & Genome == "Pk")) %>%
+  group_by(Data) %>% 
+  summarise_all(mean) %>% 
+  select(-ID, - Ref.scaffolds, -Ref.bases, -Alignment, -Genome, -Percent.mapped, -Percent.proper.pairs,
+         -Standard.deviation, -Percent.scaffolds.with.any.coverage, -Percent.scaffolds.with.any.coverage) %>% 
+  t() %>% 
+  knitr::kable()
+```
+
+**Key points:**
+
+ - Comparable, but mapping directly to Pk with bwa leads to more mapped reads and more coverage.
+
+\newpage
+
+# Read depth: number of reads aligning at each base
+
+## Plot the average read depth per contig 
+
+```{r,warning=F,message=F,echo=F}
+Summary_Data %>% 
+  group_by(Data, Alignment) %>% 
+  summarise_all(mean) %>% 
+  select(1:16) %>%  
+  select(-3, -4) %>% 
+  pivot_longer(cols = !c(Data, Alignment), names_to = "Contig", values_to = "Depth") %>% 
+  ggplot() +
+  geom_point(mapping = aes(x = Contig, y = Depth, colour = Data, shape = Alignment)) +
+  theme(axis.text.x = element_blank(), axis.ticks = element_blank()) 
+```
+
+## IGV
+
+![Comparison of read depth across the genome for ZB_redo and Previous_Pk data (direct alignments)](C:/Users/Jacob/Desktop/Menzies/Knowlesi/Pipeline/Pk_Pipeline/data/IGV/igv_hist_ZBvsPREVIOUS.png)
+
+Coloured by data:
+
+ - Previous Pk data = light blue.
+ - ZB data = dark blue.
+ 
+![Comparison of read depth across the genome for ZB data](C:/Users/Jacob/Desktop/Menzies/Knowlesi/Pipeline/Pk_Pipeline/data/IGV/igv_hist_ZBvsBowtie2.png)
+
+Coloured by alignment:
+
+ - To Pk with bwa via removal of human contamination with bowtie2 = light blue.
+ - Direct to Pk with BWA = red.
+ - To Pk with bwa via removal of human contamination with bwa = dark blue.
+ 
+## Plot the percentage of bases WITHOUT coverage
+ 
+```{r,warning=F,message=F,echo=F}
+Summary_Data %>% 
+  group_by(Data, Alignment) %>% 
+  summarise_all(mean) %>% 
+  select(1:2, 19:32) %>% 
+  pivot_longer(cols = !c(Data, Alignment), names_to = "Contig", values_to = "Bases") %>% 
+  ggplot() +
+  geom_point(mapping = aes(x = Contig, y = Bases, colour = Data, shape = Alignment)) +
+  theme(axis.text.x = element_blank(), axis.ticks = element_blank()) +
+  ylab("% of NA bases")
+```
+
+**Key points:**
+
+ - Using ZB's data (ZB_redo) and aligning directly to the Pk genome produces the greatest read depth and is comparable to previous work (Previous_Pk) provided by Ernest.
+ - Using ZB's data and aligning directly to the Pk genome also produces the lowest percentage of bases without coverage.
+ - Despite being the best on average, IGV suggests there is inconsistency between samples within the ZB dataset.
+
+# Explore the ZB data in more detail
+
+## plott the read depth of each sample (direct alignment - ZB) at each contig
+
+```{r,warning=F,message=F,echo=F}
+Summary_Data %>% 
+  filter(Alignment == "Direct", Data == "ZB_redo") %>% 
+  select(1:18) %>%  
+  pivot_longer(cols = !c(ID, Data, Alignment, Sample), names_to = "Contig", values_to = "Depth") %>% 
+  ggplot(mapping = aes(x = Sample, y = Depth)) +
+  geom_col() +
+  facet_wrap(~Contig) +
+  theme(axis.text.x = element_blank(), axis.ticks.x = element_blank())
+```
+
+**Key points:**
+
+ - Despite a great average, the read depth per a sample is inconsistent.
+ - The read depth across contigs within a sample is consistent.
+ 
+## Read in metadata and combine with summary data to explore the effect of parasitemia alignment
+
+```{r,warning=F,message=F,echo=F}
+ZB_metadata <- Summary_Data %>% 
+  filter(Data == "ZB_redo") %>% 
+  mutate(ID = str_remove(ID, "_DKDL2.*")) %>%
+  rename("sampleid" = ID) %>%  
+  left_join(readxl::read_excel("data/metadata/PK_Sabah_Sample_naming_indexes.xlsx") %>% 
+              select(sampleid, severe, parasitemia)) %>% 
+  rename("ID" = sampleid)
+```
+
+## Explore the relationship between parasitemia read depth across samples
+
+```{r,warning=F,message=F,echo=F}
+ZB_metadata %>% 
+  filter(Alignment == "Direct", Data == "ZB_redo") %>% 
+  select(1:18, 47) %>%  
+  pivot_longer(cols = !c(ID, Data, Alignment, Sample, parasitemia), names_to = "Contig", values_to = "Depth") %>% 
+  ggplot(mapping = aes(x = Sample, y = Depth, fill = parasitemia/1000)) +
+  geom_col() +
+  facet_wrap(~Contig) +
+  theme(axis.text.x = element_blank(), axis.ticks.x = element_blank()) +
+  scale_fill_continuous(name = "Parasitemia (k)")
+```
+
+## Plot relationship between depth across samples in relation to parasitemia, faceted by contig
+
+```{r,warning=F,message=F,echo=F}
+ZB_metadata %>% 
+  filter(Alignment == "Direct", Data == "ZB_redo") %>% 
+  select(1:18, 47) %>%  
+  pivot_longer(cols = !c(ID, Data, Alignment, Sample, parasitemia), names_to = "Contig", values_to = "Depth") %>% 
+  ggplot(mapping = aes(x = parasitemia/1000, y = Depth)) +
+  geom_point() +
+  geom_smooth(method = "lm", se = T) +
+  facet_wrap(~Contig) +
+  ylab("Depth") +
+  xlab("Parasitemia (K)") +
+  ggpubr::stat_regline_equation(label.y = 300, aes(label = ..rr.label..))
+```
+
+## Plot relationship between depth across samples in relation to parasitemia in the lower parasitemia samples, faceted by contig
+
+```{r,warning=F,message=F,echo=F}
+ZB_metadata %>% 
+  filter(Alignment == "Direct", Data == "ZB_redo") %>% 
+  select(1:18, 47) %>%  
+  pivot_longer(cols = !c(ID, Data, Alignment, Sample, parasitemia), names_to = "Contig", values_to = "Depth") %>% 
+  ggplot(mapping = aes(x = parasitemia/1000, y = Depth)) +
+  geom_point() +
+  geom_smooth(method = "lm", se = T) +
+  facet_wrap(~Contig) +
+  ylab("Depth") +
+  xlab("Parasitemia (K)") +
+  xlim(0, 100) +
+  ggpubr::stat_regline_equation(label.y = 250, aes(label = ..rr.label..))
+```
+
+**Key points:**
+
+ - There may be a **slight** relationship between paraistemia and read depth, that is stronger at the lower levels of parasitemia.
+ 
+ 

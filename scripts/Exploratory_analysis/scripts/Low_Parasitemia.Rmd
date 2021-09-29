@@ -1,0 +1,637 @@
+---
+title: "Final Mapping Report"
+author: "Jacob Westaway"
+date: "Last updated on `r Sys.Date()`"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_knit$set(root.dir = 'C:/Users/Jacob/Desktop/Menzies/Knowlesi/Pipeline/Pk_Pipeline/')
+library(tidyverse)
+library(janitor)
+```
+
+# About 
+
+After sharing the previous comparisons with Matt G, it was noted that none of the samples in the previous subset had low parasitemia (< 5000). Thus, another subset of only low parasitemia samples (16) was created, to determine if ZB's methods capture enough depth and coverage at lower parasitemia.
+Key terms/abbreviations:
+
+ - ZB_LP: data from Singapore with low parsitemia.
+ - ZB: data from Singapore (truncated).
+ - ZB_redo: data from Singapore (not truncated).
+ - SS: initial subset from Matt.
+ - S100: data from S*****.
+ - Previous_Pk: data from a previous study provided by Ernest.
+ - Direct: aligning/mapping to Pk genome without removal of human contamination.
+ - Indirect: aligning/mapping to Pk after removal of human contamination.
+
+```{r,warning=F,message=F,include=F}
+# Create a function to read in the BBmap data
+
+bbmap_func <- function(file_path, grep_pattern, bbmap_data, alignment, genome){ 
+read_csv(file_path, col_names = c("Variable", "Value")) %>%
+  mutate(Variable = str_remove(Variable, "==> ")) %>% 
+  filter(!grepl(grep_pattern, Variable)) %>% # data specific
+  add_column(
+    (read_csv(file_path, col_names = c("Variable", "Value")) %>% 
+       mutate(Variable = str_remove(Variable, "==> ")) %>% 
+       filter(grepl(grep_pattern, Variable)) %>% # data specific
+       mutate(Variable = Variable) %>% 
+       rbind(.,.,.,.,.,.,.,.,.,.,.,.) %>% # represents the number of variables
+       arrange(Variable) %>% 
+       mutate_if(is.character, as.factor) %>% 
+       select(Variable) %>% 
+       rename("ID" = Variable))) %>% 
+  pivot_wider(names_from = Variable, values_from = Value) %>% 
+  add_column(Data = bbmap_data, Alignment = alignment, Genome = genome)  %>% 
+  as.tibble(.name_repair = "universal")
+}
+
+# define read depth function to get read depth per contig
+read_depth_data <- function(file_path, dataset, alignment){
+read_tsv(file_path, col_names = c("Contig", "Bases", "S01", "S02", "S03", "S04", "S05", "S06", "S07", "S08", "S09", "S10", "S11", "S12", "S13")) %>% 
+  select(!Bases) %>% 
+  filter(grepl("ordered", Contig)) %>% 
+  group_by(Contig) %>% 
+  summarise_all(mean) %>%
+  t() %>% 
+  as.data.frame() %>% 
+  row_to_names(1) %>% 
+  add_column(Data = dataset, Alignment = alignment) %>% 
+  rownames_to_column("Sample")
+}
+
+# define base_pairs function to change names and get percentage of bases that are NA
+base_pairs <- function(file_path, dataset, alignment){
+read_tsv(file_path, col_names = c("Contig", "Bases", "S01", "S02", "S03", "S04", "S05", "S06", "S07", "S08", "S09", "S10", "S11", "S12", "S13")) %>% 
+  select(!Bases) %>% 
+  filter(grepl("ordered", Contig)) %>% 
+  na_if(0) %>% 
+  group_by(Contig) %>% 
+  summarise_all(funs(sum(is.na(.))/length(.) * 100)) %>% 
+  t() %>% 
+  as.data.frame() %>% 
+  row_to_names(1) %>% 
+  add_column(Data = dataset, Alignment = alignment) %>% 
+  rownames_to_column("Sample") %>% 
+  rename("PKNH_01_NA_bases" = "ordered_PKNH_01_v2", "PKNH_02_NA_bases" ="ordered_PKNH_02_v2", 
+         "PKNH_03_NA_bases" = "ordered_PKNH_03_v2", "PKNH_04_NA_bases" = "ordered_PKNH_04_v2", 
+         "PKNH_05_NA_bases" = "ordered_PKNH_05_v2", "PKNH_06_NA_bases" = "ordered_PKNH_06_v2", 
+         "PKNH_07_NA_bases" = "ordered_PKNH_07_v2", "PKNH_08_NA_bases" = "ordered_PKNH_08_v2", 
+         "PKNH_09_NA_bases" = "ordered_PKNH_09_v2", "PKNH_10_NA_bases" = "ordered_PKNH_10_v2", 
+         "PKNH_11_NA_bases" = "ordered_PKNH_11_v2", "PKNH_12_NA_bases" = "ordered_PKNH_12_v2", 
+         "PKNH_13_NA_bases" = "ordered_PKNH_13_v2", "PKNH_14_NA_bases" = "ordered_PKNH_14_v2") %>% 
+  mutate_at(c(2:15), as.character) %>% 
+  mutate_at(c(2:15), as.numeric)
+}
+
+
+```
+
+```{r,warning=F,message=F,include=F}
+# Mapstats 
+BBMAP <- 
+# S_100 
+bbmap_func("data/bbmap_summary/S100_PKD_summary_mapstats.csv", "ERR", "S100", "Direct", "Pk") %>%  # Direct Pk
+  rbind(bbmap_func("data/bbmap_summary/S100_HGA_summary_mapstats.csv", "ERR", "S100", "Indirect", "Hg")) %>% # Indirect Hg
+  rbind(bbmap_func("data/bbmap_summary/S100_HGR_summary_mapstats.csv", "ERR", "S100", "Indirect", "Pk")) %>% # Indirect Pk
+  rbind(
+# SS
+(bbmap_func("data/bbmap_summary/SS_PKD_summary_mapstats.csv", "PKA", "SS", "Direct", "Pk") %>%  
+  rbind(bbmap_func("data/bbmap_summary/SS_HGA_summary_mapstats.csv", "PKA", "SS", "Indirect", "Hg")) %>% 
+  rbind(bbmap_func("data/bbmap_summary/SS_HGR_summary_mapstats.csv", "PKA", "SS", "Indirect", "Pk")) 
+)) %>%
+  rbind(
+# ZB
+(bbmap_func("data/bbmap_summary/ZB_PKD_summary_mapstats.csv", "PK_SB_DNA", "ZB", "Direct", "Pk") %>%  
+  rbind(bbmap_func("data/bbmap_summary/ZB_HGA_summary_mapstats.csv", "PK_SB_DNA", "ZB", "Indirect", "Hg")) %>% 
+  rbind(bbmap_func("data/bbmap_summary/ZB_HGR_summary_mapstats.csv", "PK_SB_DNA", "ZB", "Indirect", "Pk")) 
+)) %>% 
+  rbind(
+# Previous Pk data
+  bbmap_func("data/bbmap_summary/Previous_Pk_summary.csv", "ERR", "Previous_Pk", "Direct", "Pk")) %>%
+  rbind(
+# ZB redo
+(bbmap_func("data/bbmap_summary/bowtie2_HGA_summary.csv", "PK_SB_DNA", "ZB_bowtie", "Indirect", "Hg") %>%  
+  rbind(bbmap_func("data/bbmap_summary/bowtie2_HGR_summary.csv", "PK_SB_DNA", "ZB_bowtie", "Indirect", "Pk"))) %>% 
+  rbind(bbmap_func("data/bbmap_summary/ZB_redo_HGA_summary_mapstats.csv", "PK_SB_DNA", "ZB_redo", "Indirect", "Hg")) %>% 
+  rbind(bbmap_func("data/bbmap_summary/ZB_redo_HGR_summary_mapstats.csv", "PK_SB_DNA", "ZB_redo", "Indirect", "Pk")) %>% 
+  rbind(bbmap_func("data/bbmap_summary/ZB_redo_PKD_summary_mapstats.csv", "PK_SB_DNA", "ZB_redo", "Direct", "Pk"))
+  ) %>% 
+  rbind(bbmap_func("data/bbmap_summary/low_para_mapstats.csv", "PK_SB_DNA", "ZB_LP", "Direct", "Pk"))
+
+```
+
+```{r,warning=F,message=F,include=F,eval=F}
+# Read depth - 2 seperate files so we can't just use create_sum_tab
+Summary_Data <- Summary_Data %>% 
+  rbind(
+  read_depth_data("data/read_depth/low_para_depth_summary.tsv", "ZB_LP", "Direct") %>% # read in direct read depth data
+  mutate_if(is.factor, as.character) %>% 
+  mutate_at(grep("ordered", colnames(.)), as.numeric) %>% 
+  left_join(
+    (base_pairs("data/read_depth/low_para_depth_summary.tsv", "ZB_LP", "Direct") %>% # read in direct NA base pair data and join
+  mutate_if(is.factor, as.character) %>% 
+  mutate_at(grep("ordered", colnames(.)), as.numeric) %>% 
+  select(-Data, - Alignment))
+  ) %>% 
+  slice(1:8) %>% 
+  rbind(
+read_depth_data("data/read_depth/low_para_batch_2_depth_summary.tsv", "ZB_LP", "Direct") %>% # read in direct read depth data
+  mutate_if(is.factor, as.character) %>% 
+  mutate_at(grep("ordered", colnames(.)), as.numeric) %>% 
+  left_join(
+    (base_pairs("data/read_depth/low_para_depth_summary.tsv", "ZB_LP", "Direct") %>% # read in direct NA base pair data and join
+  mutate_if(is.factor, as.character) %>% 
+  mutate_at(grep("ordered", colnames(.)), as.numeric) %>% 
+  select(-Data, - Alignment)) 
+  ) %>% 
+  slice(1:8)
+  ) %>% 
+  add_column(Join = 1:nrow(.)) %>% # add column for joining with mapstats data
+  left_join( # join read depth and base NA data with map stat data via a new column called join
+    (BBMAP %>% 
+      filter(Genome != "Hg" & Data == "ZB_LP" & Alignment == "Direct") %>%  
+      mutate(ID = str_replace(ID,".mapstats", "")) %>% 
+      add_column(Join = 1:nrow(.))
+     ), by = "Join") %>% 
+  select(-Data.y, -Alignment.y, -Join) %>% 
+  rename("Data" = "Data.x", "Alignment" = "Alignment.x") %>%  
+  relocate(ID, Data, Alignment)
+)
+
+write_csv(Summary_Data, 'data/Summary_Data.csv')
+```
+
+```{r,warning=F,message=F,include=F}
+Summary_Data <- read_csv('data/Summary_Data.csv') 
+```
+
+## Comparison of the number reads mapping to Pk across all datasets and for different alignments
+
+```{r,warning=F,message=F,echo=F}
+BBMAP %>% 
+  filter(Genome == "Pk") %>% 
+  filter(Data != "ZB", Data != "ZB_bowtie") %>% 
+  rbind(BBMAP %>% 
+          filter(Data == "ZB_bowtie" & Genome =="Pk") %>% # wranlge the bowtie2 data so that it doesn't share names with other data - 'stacks' othersise
+          select(-ID) %>% 
+          add_column(ID = 1:13) %>% 
+          mutate(ID = as.character(ID)) %>% 
+          mutate(ID = as.factor(ID))) %>% 
+  ggplot() + 
+  geom_col(aes(x = ID, y = Mapped.reads/10000000, colour = Data)) +
+  theme(axis.text.x = element_blank(), axis.ticks = element_blank()) +
+  labs(x = "Samples", y = "Mapped reads (M)") +
+  facet_wrap(~Alignment) 
+```
+
+## Plot a comparisons of mapped reads on ZB data for high and low parasitemia 
+
+```{r,warning=F,message=F,echo=F}
+BBMAP %>% 
+  filter(Data == "ZB_redo" & Alignment == "Direct") %>% 
+  rbind(BBMAP %>% filter(Data == "ZB_LP" & Genome == "Pk")) %>% 
+  ggplot() + 
+  geom_col(aes(x = ID, y = Mapped.reads/10000000, colour = Data)) +
+  theme(axis.text.x = element_blank(), axis.ticks = element_blank()) +
+  labs(x = "Samples", y = "Mapped reads (M)") +
+  facet_wrap(~Alignment) +
+  scale_color_discrete(labels=c("Low", "High"))
+```
+
+### Calculate the average mapped reads for both low and 'high' parasitemia
+
+```{r,warning=F,message=F,echo=F}
+BBMAP %>% 
+  filter(Data == "ZB_redo" & Alignment == "Direct") %>% 
+  rbind(BBMAP %>% 
+          filter(Data == "ZB_LP" & Genome == "Pk")) %>%
+  group_by(Data) %>% 
+  summarise_all(mean) %>% 
+  select(-ID, - Ref.scaffolds, -Ref.bases, -Alignment, -Genome, -Percent.mapped, -Percent.proper.pairs,
+         -Standard.deviation, -Percent.scaffolds.with.any.coverage, -Percent.scaffolds.with.any.coverage) %>% 
+  t() %>% 
+  row_to_names(1) %>% 
+  as.data.frame() %>% 
+  rename("Low" = ZB_LP, "High" = ZB_redo) %>%
+  knitr::kable()
+```
+
+**Key points:**
+
+ - On average, the low parasitemia samples have roughly half the number of mapped reads.
+ - Low parasitemia samples also have less coverage.
+
+\newpage
+
+# Read depth: number of reads aligning at each base
+
+## Plot the average read depth per contig 
+
+```{r,warning=F,message=F,echo=F}
+Summary_Data %>% 
+  group_by(Data, Alignment) %>% 
+  summarise_all(mean) %>% 
+  select(1:16) %>%  
+  select(-3, -4) %>% 
+  pivot_longer(cols = !c(Data, Alignment), names_to = "Contig", values_to = "Depth") %>% 
+  ggplot() +
+  geom_point(mapping = aes(x = Contig, y = Depth, colour = Data, shape = Alignment)) +
+  theme(axis.text.x = element_blank(), axis.ticks = element_blank()) 
+```
+ 
+### Calculate the average read depth for both low and 'high' parasitemia per contig
+
+```{r,warning=F,message=F,echo=F}
+Summary_Data %>% 
+  filter(Data == "ZB_redo" & Alignment == "Direct") %>% 
+  rbind(Summary_Data %>% 
+          filter(Data == "ZB_LP" & Genome == "Pk")) %>% 
+  select(1:18) %>% 
+  group_by(Data) %>% 
+  summarise_all(mean) %>% 
+  select(1, 5:ncol(.)) %>% 
+  column_to_rownames("Data") %>% 
+  t() %>% 
+  as.data.frame() %>% 
+  rownames_to_column("Data") %>% 
+  mutate(Data = str_remove(Data, "ordered_")) %>% 
+  mutate(Data = str_remove(Data, "_v2")) %>% 
+  rename("Low" = ZB_LP, "High" = ZB_redo, "Contig" = Data) %>% 
+  knitr::kable()
+```
+
+### Calculate the average read depth for low parasitemia samples
+
+```{r,warning=F,message=F,echo=F}
+Summary_Data %>% 
+  filter(Data == "ZB_LP" & Genome == "Pk") %>% 
+  select(1:18) %>% 
+  group_by(ID) %>% 
+  summarise_all(mean) %>% 
+  select(1, 5:ncol(.)) %>% 
+  pivot_longer(cols = !ID, names_to = "Contig", values_to = "Depth") %>% 
+  select(-Contig) %>% 
+  group_by(ID) %>% 
+  summarise(Depth = mean(Depth)) %>% 
+  mutate(ID = str_remove(ID, "_DKD.*")) %>% 
+  knitr::kable()
+```
+
+**Key points:**
+ 
+ - Low parasitemia samples have far lower read depth.
+ - The read depth is relatively consistent across contigs, with the exception of contig 3.
+ - The read depth is not consistent across samples - may be related to parasitemia - explored downstream.
+ 
+## IGV
+
+![Comparison of read depth across the genome for high and low parasitemia data (direct alignments)](C:/Users/Jacob/Desktop/Menzies/Knowlesi/Pipeline/Pk_Pipeline/data/IGV/igv_hist_lowVShigh.png)
+
+Coloured by data:
+
+ - Low parasitemia = light blue.
+ - High parasitemia = dark blue.
+
+## Plot the percentage of bases WITHOUT coverage
+ 
+```{r,warning=F,message=F,echo=F}
+Summary_Data %>% 
+  group_by(Data, Alignment) %>% 
+  summarise_all(mean) %>% 
+  select(1:2, 19:32) %>% 
+  pivot_longer(cols = !c(Data, Alignment), names_to = "Contig", values_to = "Bases") %>% 
+  ggplot() +
+  geom_point(mapping = aes(x = Contig, y = Bases, colour = Data, shape = Alignment)) +
+  theme(axis.text.x = element_blank(), axis.ticks = element_blank()) +
+  ylab("% of NA bases")
+```
+
+### Calculate the average percentage of bases without coverage for low and 'high' parasitemia
+
+```{r,warning=F,message=F,echo=F}
+Summary_Data %>% 
+  filter(Data == "ZB_redo" & Alignment == "Direct") %>% 
+  rbind(Summary_Data %>% 
+          filter(Data == "ZB_LP" & Genome == "Pk")) %>% 
+  select(1:3, 18:32) %>% 
+  group_by(Data) %>% 
+  summarise_all(mean) %>% 
+  select(1, 5:ncol(.)) %>% 
+  column_to_rownames("Data") %>% 
+  t() %>% 
+  as.data.frame() %>% 
+  rownames_to_column("Data") %>% 
+  mutate(Data = str_remove(Data, "_NA_bases")) %>% 
+  mutate(Data = str_remove(Data, "_v2")) %>% 
+  rename("Low" = ZB_LP, "High" = ZB_redo, "Contig" = Data) %>% 
+  knitr::kable()
+```
+
+**Key points:**
+
+ - Low parasitemia samples have more base pairs without coverage.
+
+# Effect of parasitemia on read depth in low parasitemia samples
+
+## Read in metadata and combine with summary data to explore the effect of parasitemia on read depth
+
+```{r,warning=F,message=F,echo=F}
+ZB_metadata <- Summary_Data %>% 
+  filter(Data == "ZB_LP" | (Data == "ZB_redo" & Alignment == "Direct")) %>% 
+  mutate(ID = str_remove(ID, "_DKDL2.*")) %>%
+  rename("sampleid" = ID) %>%  
+  left_join(readxl::read_excel("data/metadata/PK_Sabah_Sample_naming_indexes.xlsx") %>% 
+              select(sampleid, severe, parasitemia)) %>% 
+  rename("ID" = sampleid)
+```
+
+## Explore the relationship between parasitemia read depth across samples
+
+```{r,warning=F,message=F,echo=F}
+ZB_metadata %>% 
+  filter(Alignment == "Direct", Data == "ZB_LP") %>% 
+  select(1:18, 47) %>%  
+  pivot_longer(cols = !c(ID, Data, Alignment, Sample, parasitemia), names_to = "Contig", values_to = "Depth") %>% 
+  ggplot(mapping = aes(x = ID, y = Depth, fill = parasitemia/1000)) +
+  geom_col() +
+  facet_wrap(~Contig) +
+  theme(axis.text.x = element_blank(), axis.ticks.x = element_blank()) +
+  scale_fill_continuous(name = "Parasitemia (k)") +
+  xlab("Sample")
+```
+
+## Plot relationship between depth across samples in relation to parasitemia 
+
+```{r,warning=F,message=F,echo=F}
+ZB_metadata %>% 
+  filter(Alignment == "Direct", Data == "ZB_LP") %>% 
+  select(1:18, 47) %>%  
+  pivot_longer(cols = !c(ID, Data, Alignment, Sample, parasitemia), names_to = "Contig", values_to = "Depth") %>% 
+  group_by(ID) %>% 
+  summarise_at(vars(parasitemia, Depth), mean) %>% 
+  ggplot(mapping = aes(x = parasitemia/1000, y = Depth)) +
+  geom_point() +
+  geom_smooth(method = "lm", se = T) +
+  ylab("Depth") +
+  xlab("Parasitemia (K)") +
+  ggpubr::stat_regline_equation(label.y = 100, aes(label = ..rr.label..)) 
+```
+
+**Key points:**
+
+ - The outlier (ID = 70) in the last two plots is interesting, having the highest read depth and one of the lowest paraistemias of the 'low'paraistemia samples. I checked out several metrics, and the number of duplicates, all other quality metrics, reads and mapped reads are all comparable to other samples. So I'm not sure why we are getting such good depth for this low parasitemia sample. 
+ 
+## Plot relationship between depth across samples in relation to parasitemia - outlier removed
+
+```{r,warning=F,message=F,echo=F}
+ZB_metadata %>% 
+  filter(Alignment == "Direct", Data == "ZB_LP") %>% 
+  select(1:18, 47) %>%  
+  pivot_longer(cols = !c(ID, Data, Alignment, Sample, parasitemia), names_to = "Contig", values_to = "Depth") %>% 
+  group_by(ID) %>% 
+  summarise_at(vars(parasitemia, Depth), mean) %>% 
+  ggplot(mapping = aes(x = parasitemia/1000, y = Depth)) +
+  geom_point() +
+  geom_smooth(method = "lm", se = T) +
+  ylab("Depth") +
+  xlab("Parasitemia (K)") +
+  ggpubr::stat_regline_equation(label.y = 100, aes(label = ..rr.label..)) +
+  ylim(0, 100)
+```
+
+## Plot relationship between depth across samples in relation to parasitemia, faceted by contig and outlier removed
+
+```{r,warning=F,message=F,echo=F}
+ZB_metadata %>% 
+  filter(Alignment == "Direct", Data == "ZB_LP") %>% 
+  select(1:18, 47) %>%  
+  pivot_longer(cols = !c(ID, Data, Alignment, Sample, parasitemia), names_to = "Contig", values_to = "Depth") %>% 
+  ggplot(mapping = aes(x = parasitemia/1000, y = Depth)) +
+  geom_point() +
+  geom_smooth(method = "lm", se = T) +
+  facet_wrap(~Contig) +
+  ylab("Depth") +
+  xlab("Parasitemia (K)") +
+  ggpubr::stat_regline_equation(label.y = 100, aes(label = ..rr.label..)) +
+  ylim(0,100)
+```
+
+**Key points:**
+
+ - Moderate relationship between read depth and parasitemia for low parasitemia samples.
+ 
+## Compare read depth and parasitemia across both low and high parasitemia 
+
+```{r,warning=F,message=F,echo=F}
+ZB_metadata %>% 
+  select(1:18, 47) %>%  
+  pivot_longer(cols = !c(ID, Data, Alignment, Sample, parasitemia), names_to = "Contig", values_to = "Depth") %>% 
+  ggplot(mapping = aes(x = parasitemia/1000, y = Depth)) +
+  geom_point() +
+  geom_smooth(method = "lm", se = T) +
+  facet_wrap(~Contig) +
+  ylab("Depth") +
+  xlab("Parasitemia (K)") +
+  ggpubr::stat_regline_equation(label.y = 300, aes(label = ..rr.label..))
+```
+
+
+## Summary of mapping statisitcs, ordered by parasitemia
+
+```{r,warning=F,message=F,echo=F}
+ZB_metadata %>% 
+  select(1, 5:18, 33, 34, 38, 40, 44, 47) %>% 
+  pivot_longer(cols = !c(ID, Reads, Mapped.reads, Percent.mapped, Average.coverage, Percent.of.reference.bases.covered,
+    parasitemia), names_to = "Contig", values_to = "Depth") %>% 
+  select(-Contig) %>% 
+  group_by(ID) %>% 
+  summarise_all(mean) %>% 
+  left_join(
+    ZB_metadata %>% 
+  select(1, 19:32) %>% 
+  pivot_longer(cols = !ID, names_to = "Contig", values_to = "Percent_NA") %>% 
+  select(-Contig) %>% 
+  group_by(ID) %>% 
+  summarise_all(mean)
+  ) %>% 
+  mutate(Parasite.burden = ifelse(parasitemia < 5000, "Low", "High")) %>% 
+  relocate(ID, Reads, Mapped.reads, Percent.mapped, Depth, parasitemia, Parasite.burden, Average.coverage, 
+    Percent.of.reference.bases.covered, Percent_NA) %>% 
+  rename("Coverage.bbmap" = Average.coverage, "Percent.covered.bbmap" = Percent.of.reference.bases.covered,
+         "Percent.not.covered.samtools" = Percent_NA, "Parasitemia" = parasitemia) %>% 
+  mutate(ID = str_remove(ID, "PK_SB_DNA_")) %>%
+  select(ID, Reads, Mapped.reads, Percent.mapped, Depth, Parasitemia) %>% 
+  arrange(Parasitemia) %>% 
+  knitr::kable()
+```
+
+## Avergaes for high vs low parasitemia 
+
+```{r,warning=F,message=F,echo=F}
+ZB_metadata %>% 
+  select(1:2, 5:18, 33, 34, 38, 40, 44, 47) %>% 
+  mutate(Data = ifelse(Data == "ZB_LP", "Low", "High")) %>% 
+  pivot_longer(cols = !c(ID, Data, Reads, Mapped.reads, Percent.mapped, Average.coverage, Percent.of.reference.bases.covered,
+    parasitemia), names_to = "Contig", values_to = "Depth") %>% 
+  select(-Contig, -ID) %>% 
+  group_by(Data) %>% 
+  summarise_all(mean) %>% 
+  rename("Parasitemia" = parasitemia, "Percent.bases.covered" = Percent.of.reference.bases.covered) %>% 
+  t() %>% 
+  knitr::kable()
+```
+
+## Plot the relationship between reads, mapped reads, read depth and parasitemia in the low parasitemia samples
+
+```{r,warning=F,message=F,echo=F}
+ZB_metadata %>% 
+  select(1, 5:18, 33, 34, 38, 40, 44, 47) %>% 
+  pivot_longer(cols = !c(ID, Reads, Mapped.reads, Percent.mapped, Average.coverage, Percent.of.reference.bases.covered,
+    parasitemia), names_to = "Contig", values_to = "Depth") %>% 
+  select(-Contig) %>% 
+  group_by(ID) %>% 
+  summarise_all(mean) %>% 
+  left_join(
+    ZB_metadata %>% 
+  select(1, 19:32) %>% 
+  pivot_longer(cols = !ID, names_to = "Contig", values_to = "Percent_NA") %>% 
+  select(-Contig) %>% 
+  group_by(ID) %>% 
+  summarise_all(mean)
+  ) %>% 
+  mutate(Parasite.burden = ifelse(parasitemia < 5000, "Low", "High")) %>% 
+  relocate(ID, Reads, Mapped.reads, Percent.mapped, Depth, parasitemia, Parasite.burden, Average.coverage, 
+    Percent.of.reference.bases.covered, Percent_NA) %>% 
+  rename("Coverage.bbmap" = Average.coverage, "Percent.covered.bbmap" = Percent.of.reference.bases.covered,
+         "Percent.not.covered.samtools" = Percent_NA, "Parasitemia" = parasitemia) %>% 
+  filter(Parasite.burden == "Low") %>% 
+  ggplot() +
+  geom_point(aes(x = Parasitemia, y = Depth, size = Mapped.reads/1000000, colour = Reads/1000000)) +
+  scale_size_continuous(name = "Mapped Reads (M)") +
+  scale_colour_continuous(name = "Reads (M)")  
+```
+
+## For the entire dataset
+
+```{r,warning=F,message=F,echo=F}
+ZB_metadata %>% 
+  select(1, 5:18, 33, 34, 38, 40, 44, 47) %>% 
+  pivot_longer(cols = !c(ID, Reads, Mapped.reads, Percent.mapped, Average.coverage, Percent.of.reference.bases.covered,
+    parasitemia), names_to = "Contig", values_to = "Depth") %>% 
+  select(-Contig) %>% 
+  group_by(ID) %>% 
+  summarise_all(mean) %>% 
+  left_join(
+    ZB_metadata %>% 
+  select(1, 19:32) %>% 
+  pivot_longer(cols = !ID, names_to = "Contig", values_to = "Percent_NA") %>% 
+  select(-Contig) %>% 
+  group_by(ID) %>% 
+  summarise_all(mean)
+  ) %>% 
+  mutate(Parasite.burden = ifelse(parasitemia < 5000, "Low", "High")) %>% 
+  relocate(ID, Reads, Mapped.reads, Percent.mapped, Depth, parasitemia, Parasite.burden, Average.coverage, 
+    Percent.of.reference.bases.covered, Percent_NA) %>% 
+  rename("Coverage.bbmap" = Average.coverage, "Percent.covered.bbmap" = Percent.of.reference.bases.covered,
+         "Percent.not.covered.samtools" = Percent_NA, "Parasitemia" = parasitemia) %>% 
+  ggplot() +
+  geom_point(aes(x = Parasitemia, y = Depth, size = Mapped.reads/1000000, colour = Reads/1000000)) +
+  scale_x_log10() +
+  scale_colour_continuous(name = "Reads (M)") +
+  scale_size_continuous(name = "Mapped Reads (M)") +
+  xlab("Parasitemia log10")
+```
+
+## Depth vs mapped reads
+
+```{r,warning=F,message=F,echo=F}
+ZB_metadata %>% 
+  select(1, 5:18, 33, 34, 38, 40, 44, 47) %>% 
+  pivot_longer(cols = !c(ID, Reads, Mapped.reads, Percent.mapped, Average.coverage, Percent.of.reference.bases.covered,
+    parasitemia), names_to = "Contig", values_to = "Depth") %>% 
+  select(-Contig) %>% 
+  group_by(ID) %>% 
+  summarise_all(mean) %>% 
+  left_join(
+    ZB_metadata %>% 
+  select(1, 19:32) %>% 
+  pivot_longer(cols = !ID, names_to = "Contig", values_to = "Percent_NA") %>% 
+  select(-Contig) %>% 
+  group_by(ID) %>% 
+  summarise_all(mean)
+  ) %>% 
+  mutate(Parasite.burden = ifelse(parasitemia < 5000, "Low", "High")) %>% 
+  relocate(ID, Reads, Mapped.reads, Percent.mapped, Depth, parasitemia, Parasite.burden, Average.coverage, 
+    Percent.of.reference.bases.covered, Percent_NA) %>% 
+  rename("Coverage.bbmap" = Average.coverage, "Percent.covered.bbmap" = Percent.of.reference.bases.covered,
+         "Percent.not.covered.samtools" = Percent_NA, "Parasitemia" = parasitemia) %>% 
+  ggplot() +
+  geom_point(aes(x = Mapped.reads/1000000, y = Depth, size = Parasitemia, colour = Reads/1000000)) +
+  scale_colour_continuous(name = "Reads (M)") +
+  scale_size_continuous(name = "Parasitemia") +
+  xlab("Mapped Reads (M)")
+```
+
+## Depth vs reads
+
+```{r,warning=F,message=F,echo=F}
+ZB_metadata %>% 
+  select(1, 5:18, 33, 34, 38, 40, 44, 47) %>% 
+  pivot_longer(cols = !c(ID, Reads, Mapped.reads, Percent.mapped, Average.coverage, Percent.of.reference.bases.covered,
+    parasitemia), names_to = "Contig", values_to = "Depth") %>% 
+  select(-Contig) %>% 
+  group_by(ID) %>% 
+  summarise_all(mean) %>% 
+  left_join(
+    ZB_metadata %>% 
+  select(1, 19:32) %>% 
+  pivot_longer(cols = !ID, names_to = "Contig", values_to = "Percent_NA") %>% 
+  select(-Contig) %>% 
+  group_by(ID) %>% 
+  summarise_all(mean)
+  ) %>% 
+  mutate(Parasite.burden = ifelse(parasitemia < 5000, "Low", "High")) %>% 
+  relocate(ID, Reads, Mapped.reads, Percent.mapped, Depth, parasitemia, Parasite.burden, Average.coverage, 
+    Percent.of.reference.bases.covered, Percent_NA) %>% 
+  rename("Coverage.bbmap" = Average.coverage, "Percent.covered.bbmap" = Percent.of.reference.bases.covered,
+         "Percent.not.covered.samtools" = Percent_NA, "Parasitemia" = parasitemia) %>% 
+  ggplot() +
+  geom_point(aes(x = Reads/1000000, y = Depth, size = Parasitemia, colour = Mapped.reads/1000000)) +
+  scale_colour_continuous(name = "Mapped Reads (M)") +
+  scale_size_continuous(name = "Parasitemia") +
+  xlab("Reads (M)")
+```
+
+**Key points:**
+
+ - Another outlier on the far left, with low reads and yet high depth (sample 31). Has a relatively high parasitemia of 48339.
+ 
+ 
+**Conclusions:**
+
+ - The read depth is far lower in low parasitemia samples, as there appears to be a low to moderate correlation between parasitemia and read depth.
+ - The average read depth of ~30 in the low parasitemia samples should be enough to call variants.
+ - The lower read depth in some low parasitemia samples, those that are maybe below ~2132.312 (mean for low parasitemia), may result in their exclusion from anlayses.
+
+
+# Sanger vs ZB
+
+```{r}
+BBMAP %>% 
+  filter(Data == "ZB_redo" & Alignment == "Direct") %>% 
+  rbind(BBMAP %>% 
+          filter(Data == "S100" & Genome == "Pk")) %>%
+  group_by(Data) %>% 
+  summarise_all(mean) %>% 
+  select(-ID, - Ref.scaffolds, -Ref.bases, -Alignment, -Genome, -Percent.mapped, -Percent.proper.pairs,
+         -Standard.deviation, -Percent.scaffolds.with.any.coverage, -Percent.scaffolds.with.any.coverage) %>% 
+  t() %>% 
+  row_to_names(1) %>% 
+  as.data.frame() %>% 
+  rename("Sanger" = S100, "ZB" = ZB_redo) %>%
+  knitr::kable()
+```
+
