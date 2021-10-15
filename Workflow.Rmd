@@ -3883,6 +3883,83 @@ print("5. Calculated the FMT averages for the variants that were called by both 
 
 ```
 
+#### Create VCFs for SNPs/Indels only
+
+For bam pre-processing, there are arguments that require either all known variants or only a single type of variant. 
+Thus we need to create additional VCF files that are specific to variant types.
+
+Versions: 
+File: snps_and_indels.pbs
+
+```{R,eval=F}
+#!/bin/bash
+#PBS -N Calc_snps_&_indels
+#PBS -j oe
+#PBS -m ae
+#PBS -l nodes=1
+#PBS -l ncpus=11
+#PBS -l mem=50gb
+#PBS -l walltime=12:00:00
+#PBS -M jacob.westaway@menzies.edu.au
+
+echo "---------------------------------------"
+echo "PBS: Job identifier is $PBS_JOBID"
+echo "PBS: Job name is $PBS_JOBNAME"
+
+echo "---------------------------------------"
+echo "Define paths and change to working directory"
+INDEXTDIR="/home/jwestaway/pk_pipeline/ref_genomes/PKA1H1/fasta/strain_A1_H.1.Icor.fasta"
+cd /home/jwestaway/pk_pipeline/ZB_100/outputs/vcf_consensus
+
+echo "---------------------------------------"
+echo "SNPs"
+
+/usr/local/jdk1.8.0_131/bin/java -Djava.iodir=$PBS_JOBFS -Xms3200m -Xmx3600m -jar /home/jwestaway/pk_pipeline/tools/gatk-4.2.2.0/gatk-package-4.2.2.0-local.jar \
+    SelectVariants \
+    -R $INDEXTDIR \
+    -V PK_consensus.vcf \
+    --select-type-to-include SNP \
+    -O GVCFall_SNPs.vcf
+
+echo "---------------------------------------"
+echo "Indels"
+
+/usr/local/jdk1.8.0_131/bin/java -Djava.iodir=$PBS_JOBFS -Xms3200m -Xmx3600m -jar /home/jwestaway/pk_pipeline/tools/gatk-4.2.2.0/gatk-package-4.2.2.0-local.jar \
+    SelectVariants \
+    -R $INDEXTDIR \
+    -V PK_consensus.vcf \
+    --select-type-to-include INDEL \
+    -O GVCFall_INDELs.vcf
+
+echo "---------------------------------------"
+echo "Finsihed"
+```
+The VCF file for the known variant sites (VCF) had to be amended to accomodate GATK's nuances:
+
+'sed /ID=VDB/d PK_consensus.vcf | sed /Number=R/d > PK_consensus_corrected.vcf'
+
+Consensus VCF files:
+ - PK_consensus_corrected.vcf
+ - PK_consensus_corrected_snps.vcf
+ - PK_consensus_corrected_indels.vcf
+
+
+## Filtering Variants 
+
+Need to determine the filtering parameters for variant calling that we should use. 
+In addition, we need to apply filtering to our truth set to produce the most "real" datset possible, so that indel realignment and the training of models for VQSR are accurate.
+
+
+
+
+
+
+
+
+
+
+
+
 
 # Bam Preprocessing 
 
@@ -3901,29 +3978,18 @@ Jobs split and run as a PBS script for each sample.
 
 The resulting files can be found in **????????????????**, and an example is given below.
 File = PK_SB_DNA_006_DKDL210002135-1a_HWHGKDSXY_L4.pbs
-Version(s) = 1.12 (samtools), 1.8.0_131-b1 (Java), 2.21.9 (picard) & 3.2.2 (GATK).
+Version(s) = 1.12 (samtools), 1.8.0_131-b1 (Java), 2.21.9 (picard), 3.2.2 (GATK), 4.2.2 (GATK - updated for haplotype caller).
 
 GATK is run through Java, which requires compatible [jdk and jre](https://www.guru99.com/difference-between-jdk-jre-jvm.html#:~:text=The%20full%20form%20of%20JDK%20is%20Java%20Development,also%20platform%20dependent%2C%20but%20JVM%20is%20platform%20independent. installations).
 Java uses a [Picard](https://github.com/broadinstitute/picard) jar file to run GATK.
 
 
-The VCF file for the known variant sites (VCF) had to be amended to accomodate GATK's nuances:
-
-'sed /ID=VDB/d PK_consensus.vcf | sed /Number=R/d > PK_consensus_corrected.vcf'
-
- 
-To calculate the average number of homozygous genotypes per site (needed for -hets and -indelHeterozygosity arguments)
-`bcftools view -v snps PK_consensus_corrected.vcf > PK_consensus_corrected_snps.vcf`
-`bcftools view -v snps PK_consensus_corrected.vcf > PK_consensus_corrected_indels.vcf`
-`awk -F\0\/0: '!/^ *#/ {total += NF-1; count++} END { print total/count }' PK_consensus_corrected_indels.vcf`
-`awk -F\0\/0: '!/^ *#/ {total += NF-1; count++} END { print total/count }' PK_consensus_corrected_snps.vcf`
-
 GATK does not provide support for previous iterations of their software, so any additional information required needs to be obtained using `--help`.
 Arguments:
   - T - GATK tool
   - intervals - genomic intervals (i.e. contigs and their base positon - BED file)
-  - known - known indels - VCF file
-  - knownsites - known variants - VCF file
+  - known - known **indels** - VCF file
+  - knownsites - known **variants** - VCF file
   - consensusDeterminationModel - model for computing possible alternates - KNOWNS_ONLY uses known indels only
   - LOD - threshold for cleaning above
   - ERC - mode for emitting experimental reference confidence scores 
@@ -3936,13 +4002,44 @@ Arguments:
   - hets - heterozygosity value to be used to compute likelihoods 
   - indelHeterozygosity - heterozygosity value to be used for variant calling
 
+Calculate approximate heterozygosity (needed for -hets and -indelHeterozygosity arguments):
+
+Approximate heterozygosity = ((number of sites with Indels)/(Total number of sites))*(1-(average number of homozygous genotypes per site)/(total number of individuals))
+
+To calculate the average number of homozygous genotypes per site:
+
+`bcftools view -v snps PK_consensus_corrected.vcf > PK_consensus_corrected_snps.vcf`
+`bcftools view -v snps PK_consensus_corrected.vcf > PK_consensus_corrected_indels.vcf`
+
+`awk -F\0\/0: '!/^ *#/ {total += NF-1; count++} END { print total/count }' PK_consensus_corrected_indels.vcf` = 33.4156
+`awk -F\0\/0: '!/^ *#/ {total += NF-1; count++} END { print total/count }' PK_consensus_corrected_snps.vcf` = 46.0537
+
+To calculate the number of sites with indels:
+(Lines in VCF) - (Lines in VCF header)
+bcftools view PK_consensus_corrected_indels.vcf | wc -l 
+135618 - 81 = 135537 = number of sites with indels 
+
+To calculate the number of sites with SNPs:
+(Lines in VCF) - (Lines in VCF header)
+bcftools view PK_consensus_corrected_snps.vcf | wc -l 
+1536942 - 81 = 1536861 
+
+Total number of sites/bases:
+
+24301727
+
+
+Indels: (135537 / 24301727) * (1 - (33.42 / 78)) = 0.0032 
+SNPs: (1536861 / 24301727) * (1 - (46.05 / 78)) = 0.0259 
+Indels and SNPs : ((135537 + 1536861) / 24301727) * (1 - ((33.42 + 46.05) / 78)) = -0.0013 
+
 ```{R,eval=F}
 #!/bin/bash
 #PBS -N Indel_Realign_ZB_Test
 #PBS -j oe
 #PBS -m ae
 #PBS -l nodes=1
-#PBS -l ncpus=10
+#PBS -l ncpus=11
 #PBS -l mem=50gb
 #PBS -l walltime=12:00:00
 #PBS -M jacob.westaway@menzies.edu.au
@@ -3967,7 +4064,7 @@ OUTDIR="/home/jwestaway/pk_pipeline/ZB_100/outputs/variant_calling/SAMPLE"
 PICARD="/usr/local/miniconda3/pkgs/picard-2.21.9-0/share/picard-2.21.9-0/picard.jar"
 INDEXTDIR="/home/jwestaway/pk_pipeline/ref_genomes/PKA1H1/fasta/strain_A1_H.1.Icor.fasta"
 INTERVALS="/home/jwestaway/pk_pipeline/ref_genomes/PKA1H1/strain_A1_H.1.Icor.fasta.bed"
-KNOWNSITES="/home/jwestaway/pk_pipeline/ZB_100/outputs/vcf_consensus/PK_consensus.vcf"
+KNOWNSITES="/home/jwestaway/pk_pipeline/ZB_100/outputs/vcf_consensus/"
 
 mkdir $OUTDIR
  
@@ -4003,10 +4100,11 @@ echo 'RealignerTargetCreator'
 
 /usr/local/jdk1.8.0_131/bin/java -Djava.iodir=$PBS_JOBFS -Xms3200m -Xmx3600m -jar /usr/local/GenomeAnalysisTK-3.2.2/GenomeAnalysisTK.jar \
     -T RealignerTargetCreator \
+    -nt 10 \
     -R $INDEXTDIR \
     -I $OUTDIR/SAMPLE.dupmarked.reheader.bam \
     --intervals $INTERVALS \
-    -known $KNOWNSITES \
+    -known $KNOWNSITES/PK_consensus_corrected_indels.vcf \
     -o $OUTDIR/SAMPLE.dupmarked.realigner.intervals
 
 echo "---------------------------------------"
@@ -4019,7 +4117,7 @@ echo 'IndelRealigner'
     -R $INDEXTDIR \
     -I $OUTDIR/SAMPLE.dupmarked.reheader.bam \
     --intervals $INTERVALS \
-    -known $KNOWNSITES \
+    -known $KNOWNSITES/PK_consensus_corrected_indels.vcf \
     -targetIntervals $OUTDIR/SAMPLE.dupmarked.realigner.intervals \
     -o $OUTDIR/SAMPLE.dupmarked.realigned.bam
 
@@ -4028,11 +4126,10 @@ echo 'BaseRecalibrator - create recal table'
 
 /usr/local/jdk1.8.0_131/bin/java -Djava.iodir=$PBS_JOBFS -Xms3200m -Xmx3600m -jar /usr/local/GenomeAnalysisTK-3.2.2/GenomeAnalysisTK.jar \
     -T BaseRecalibrator \
-    -nt 10 \
     -R $INDEXTDIR \
     -I $OUTDIR/SAMPLE.dupmarked.realigned.bam \
     --intervals $INTERVALS \
-    -known $KNOWNSITES \
+    -knownSites $KNOWNSITES/PK_consensus_corrected.vcf \
     -o $OUTDIR/SAMPLE.dupmarked.realigned.recal.table
 
 echo "---------------------------------------"
@@ -4040,7 +4137,6 @@ echo 'PrintReads - get recal reads'
 
 /usr/local/jdk1.8.0_131/bin/java -Djava.iodir=$PBS_JOBFS -Xms3200m -Xmx3600m -jar /usr/local/GenomeAnalysisTK-3.2.2/GenomeAnalysisTK.jar  \
     -T PrintReads \
-    - nt 10 \
     -R $INDEXTDIR \
     --intervals $INTERVALS \
     -I $OUTDIR/SAMPLE.dupmarked.realigned.bam \

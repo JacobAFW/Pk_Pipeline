@@ -1,12 +1,7 @@
 # Wrangle variant calling data
 
 # Load Packages
-library(dplyr)
-library(tidyr)
-library(readr)
-library(tibble)
-library(stringr)
-library(forcats)
+library(tidyverse)
 
 # Read in and wrangle data to get full summary data
 
@@ -16,7 +11,7 @@ for (i in 1:100){
   Names <- append(Names, print(paste0("Sample_", i)))
 }
 
-Summary_Data <- read_tsv("/home/jwestaway/pk_pipeline/ZB_100/outputs/vcf_consensus/merged.tsv", col_names =  Names) %>% 
+Summary_Data <- read_tsv("/home/jwestaway/pk_pipeline/ZB_100/outputs/vcf_consensus/head_merged.tsv", col_names =  Names) %>% 
   separate(X1, sep =" ", c("Contig", "Base", "ID", "Ref", "Alt")) %>% 
   pivot_longer(cols = !c(Contig, Base, ID, Ref, Alt)) %>%  
   select(-name) %>% 
@@ -29,7 +24,7 @@ Summary_Data <- read_tsv("/home/jwestaway/pk_pipeline/ZB_100/outputs/vcf_consens
   mutate(PL = str_remove(PL, "PL=")) %>% 
   mutate_at(c("DP", "GQ", "MQ"), as.numeric)
 
-write_tsv(Summary_Data, "/home/jwestaway/pk_pipeline/ZB_100/outputs/vcf_consensus/wranlged_vcf/vcf_full_summary.tsv")
+write_tsv(Summary_Data, "/home/jwestaway/pk_pipeline/ZB_100/outputs/vcf_consensus/temp/wranlged_vcf/vcf_full_summary.tsv")
 
 print("1. TSV read in, wrangled into Summary_Data for all variants/samples and output as vcf_full_summary.tsv.")
 
@@ -41,7 +36,7 @@ Summary_Data %>%
                    GQ = mean(GQ),
                    DP = mean(DP),
                    MQ = mean(MQ)) %>% 
-  write_tsv("/home/jwestaway/pk_pipeline/ZB_100/outputs/vcf_consensus/wranlged_vcf/vcf_summary.tsv")
+  write_tsv("/home/jwestaway/pk_pipeline/ZB_100/outputs/vcf_consensus/temp/wranlged_vcf/vcf_summary.tsv")
 
 print("2. Summary of the two tools output as vcf_tool_summary.tsv.")
   
@@ -51,7 +46,7 @@ Summary_Data %>%
   mutate_if(is.character, as.factor) %>% 
   group_by(V_Call_Tool) %>% 
   dplyr::summarise(Variants = length(unique(Variant))) %>% 
-  write_tsv("/home/jwestaway/pk_pipeline/ZB_100/outputs/vcf_consensus/wranlged_vcf/vcf_variant_counts_in_tool.tsv")
+  write_tsv("/home/jwestaway/pk_pipeline/ZB_100/outputs/vcf_consensus/temp/wranlged_vcf/vcf_variant_counts_in_tool.tsv")
 
 print("3. Calculated the number of variants and output them as vcf_variant_counts_in_tool.tsv.")
 
@@ -71,7 +66,7 @@ Summary_Data %>%
       unique()), by = "Variant") %>% 
   select("Variant") %>% 
   separate(Variant, sep = "-", c("CHROM", "POS", "ID", "REF", "ALT")) %>%
-  write_tsv("/home/jwestaway/pk_pipeline/ZB_100/outputs/vcf_consensus/wranlged_vcf/vcf_variant_names.tsv")
+  write_tsv("/home/jwestaway/pk_pipeline/ZB_100/outputs/vcf_consensus/temp/wranlged_vcf/vcf_variant_names.tsv")
 
 print("4. Calculated the variants that were called by both calling tools and output as vcf_variant_names.tsv.")
 
@@ -94,6 +89,6 @@ Summary_Data %>%
          GQ = (GQ.x + GQ.y)/2,
          MQ = (MQ.x + MQ.y)/2) %>% 
   select(1, 8:10)%>% 
-  write_tsv("/home/jwestaway/pk_pipeline/ZB_100/outputs/vcf_consensus/wranlged_vcf/vcf_variants_and_metrics.tsv")
+  write_tsv("/home/jwestaway/pk_pipeline/ZB_100/outputs/vcf_consensus/temp/wranlged_vcf/vcf_variants_and_metrics.tsv")
 
 print("5. Calculated the FMT averages for the variants that were called by both tools and output as vcf_variants_and_metrics.tsv.")

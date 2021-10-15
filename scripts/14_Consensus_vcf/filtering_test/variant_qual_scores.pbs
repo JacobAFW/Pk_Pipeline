@@ -1,0 +1,52 @@
+#!/bin/bash
+#PBS -N Variant_qual_fil
+#PBS -j oe
+#PBS -m ae
+#PBS -l nodes=1
+#PBS -l ncpus=11
+#PBS -l mem=50gb
+#PBS -l walltime=12:00:00
+#PBS -M jacob.westaway@menzies.edu.au
+
+echo "---------------------------------------"
+echo "PBS: Job identifier is $PBS_JOBID"
+echo "PBS: Job name is $PBS_JOBNAME"
+
+echo "---------------------------------------"
+echo "Define paths to samtools"
+export PATH=$PATH:/usr/local/jdk1.8.0_131/bin
+export PATH=$PATH:/usr/local/jre1.8.0_111/bin
+export PATH=$PATH:/usr/local/miniconda3/envs/assembly/bin/
+
+echo "---------------------------------------"
+echo "---------------------------------------"
+echo 'Change to working directory and set env variables'
+
+OUTDIR="/home/jwestaway/pk_pipeline/ZB_100/outputs/vcf_consensus/filtering_tests"
+PICARD="/usr/local/miniconda3/pkgs/picard-2.21.9-0/share/picard-2.21.9-0/picard.jar"
+INDEXTDIR="/home/jwestaway/pk_pipeline/ref_genomes/PKA1H1/fasta/strain_A1_H.1.Icor.fasta"
+
+cd /home/jwestaway/pk_pipeline/ZB_100/outputs/vcf_consensus
+
+echo "---------------------------------------"
+echo 'Make diagnostic tables for Variants Scores - snps'
+
+/usr/local/jdk1.8.0_131/bin/java -Djava.iodir=$PBS_JOBFS -Xms3200m -Xmx3600m -jar /home/jwestaway/pk_pipeline/tools/gatk-4.2.2.0/gatk-package-4.2.2.0-local.jar \
+    VariantsToTable \
+    -R $INDEXTDIR \
+    -V PK_consensus_corrected_snps.vcf \
+    -F CHROM -F POS -F QUAL -F QD -F DP -F MQ -F GQ -F MQRankSum -F FS -F ReadPosRankSum -F SOR \
+    -O filtering_tests/GVCFall_SNPs.table
+
+echo "---------------------------------------"
+echo 'Make diagnostic tables for Variants Scores - indels'
+
+/usr/local/jdk1.8.0_131/bin/java -Djava.iodir=$PBS_JOBFS -Xms3200m -Xmx3600m -jar /home/jwestaway/pk_pipeline/tools/gatk-4.2.2.0/gatk-package-4.2.2.0-local.jar \
+    VariantsToTable \
+    -R $INDEXTDIR \
+    -V PK_consensus_corrected_indels.vcf \
+    -F CHROM -F POS -F QUAL -F QD -F DP -F MQ -F GQ -F MQRankSum -F FS -F ReadPosRankSum -F SOR \
+    -O filtering_tests/GVCFall_INDELs.table
+
+echo "---------------------------------------"
+echo 'Finished'

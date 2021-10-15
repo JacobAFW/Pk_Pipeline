@@ -16,7 +16,6 @@ echo "---------------------------------------"
 echo "Define paths to samtools"
 export PATH=$PATH:/usr/local/jdk1.8.0_131/bin
 export PATH=$PATH:/usr/local/jre1.8.0_111/bin
-export PATH=$PATH:/usr/local/GenomeAnalysisTK-3.2.2 
 export PATH=$PATH:/usr/local/miniconda3/envs/assembly/bin/
 
 echo "---------------------------------------"
@@ -110,21 +109,19 @@ echo 'PrintReads - get recal reads'
 echo "---------------------------------------"
 echo 'HaplotypeCaller' 
 
-/usr/local/jdk1.8.0_131/bin/java -Djava.iodir=$PBS_JOBFS -Xms3200m -Xmx3600m -jar /usr/local/GenomeAnalysisTK-3.2.2/GenomeAnalysisTK.jar \
-    -T HaplotypeCaller \
+/usr/local/jdk1.8.0_131/bin/java -Djava.iodir=$PBS_JOBFS -Xms3200m -Xmx3600m -jar /home/jwestaway/pk_pipeline/tools/gatk-4.2.2.0/gatk-package-4.2.2.0-local.jar \
+    HaplotypeCaller \
     -ERC GVCF \
-    --minPruning 3 \
-    --maxNumHaplotypesInPopulation 200 \
-    --variant_index_type LINEAR \
-    --variant_index_parameter 128000 \
+    -ploidy 2 \
+    --num-pruning-samples 3 \
+    --max-num-haplotypes-in-population 200 \
     -contamination 0.0 \
-    -G Standard \
+    -G StandardAnnotation \
+    -G AS_StandardAnnotation \
     -R $INDEXTDIR \
     --intervals $INTERVALS \
-    -hets 0.015 \
-    -indelHeterozygosity 0.01 \
     -I $OUTDIR/SAMPLE.dupmarked.realigned.recal.bam \
-    -o $OUTDIR/SAMPLE.dupmarked.realigned.recal.vcf.gz
+    -O $OUTDIR/SAMPLE.dupmarked.realigned.recal.vcf.gz
 
 echo "---------------------------------------"
 echo 'Finished' 

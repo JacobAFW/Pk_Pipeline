@@ -1,0 +1,33 @@
+#!/bin/bash
+#PBS -N Mixed_ploidy_test_bcftools
+#PBS -j oe
+#PBS -m ae
+#PBS -l nodes=1
+#PBS -l ncpus=16
+#PBS -l mem=100gb
+#PBS -l walltime=24:00:00
+#PBS -M jacob.westaway@menzies.edu.au
+
+echo "---------------------------------------"
+echo "PBS: Job identifier is $PBS_JOBID"
+echo "PBS: Job name is $PBS_JOBNAME"
+
+echo "---------------------------------------"
+echo "Define paths to samtools"
+export PATH=$PATH:/home/jwestaway/pk_pipeline/tools/bcftools-1.13/
+
+echo "---------------------------------------"
+echo 'Change to working directory and set env variables'
+cd /home/jwestaway/pk_pipeline/ZB_100/outputs/vcf_consensus/GATK/ploidy_test
+
+echo "---------------------------------------"
+echo 'Execute bcftools concat'
+bcftools concat --threads 15 -a -o bcftools_merged_allow_overlap.vcf.gz PK_SB_DNA_006_DKDL210002135-1a_HWHGKDSXY_L4.haploid.vcf.gz PK_SB_DNA_006_DKDL210002135-1a_HWHGKDSXY_L4.diploid.vcf.gz
+
+bcftools concat --threads 15 -a -d all -o bcftools__merged_remove_all_dups.vcf.gz PK_SB_DNA_006_DKDL210002135-1a_HWHGKDSXY_L4.haploid.vcf.gz PK_SB_DNA_006_DKDL210002135-1a_HWHGKDSXY_L4.diploid.vcf.gz
+
+bcftools concat --threads 15 -a -D -o bcftools__merged_remove_exact_dups.vcf.gz PK_SB_DNA_006_DKDL210002135-1a_HWHGKDSXY_L4.haploid.vcf.gz PK_SB_DNA_006_DKDL210002135-1a_HWHGKDSXY_L4.diploid.vcf.gz
+
+
+echo "---------------------------------------"
+echo 'Finished' 
