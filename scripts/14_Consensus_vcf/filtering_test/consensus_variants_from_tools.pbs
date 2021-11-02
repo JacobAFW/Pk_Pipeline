@@ -1,0 +1,85 @@
+#!/bin/bash
+#PBS -N Consensus_from_tools
+#PBS -j oe
+#PBS -m ae
+#PBS -l nodes=1
+#PBS -l ncpus=30
+#PBS -l mem=300gb
+#PBS -l pmem=300gb
+#PBS -l file=200gb
+#PBS -l walltime=8:00:00
+#PBS -M jacob.westaway@menzies.edu.au
+
+echo "---------------------------------------"
+echo "PBS: Job identifier is $PBS_JOBID"
+echo "PBS: Job name is $PBS_JOBNAME"
+
+echo "---------------------------------------"
+echo "Define paths and set variables"
+export PATH=$PATH:/home/jwestaway/pk_pipeline/tools/bcftools-1.13/
+GATK="/home/jwestaway/pk_pipeline/ZB_100/outputs/vcf_consensus/GATK/"
+bcftools="/home/jwestaway/pk_pipeline/ZB_100/outputs/vcf_consensus/samtools/"
+cd /home/jwestaway/pk_pipeline/ZB_100/outputs/vcf_consensus/variants_only_test/
+
+
+echo "---------------------------------------"
+echo "GATK"
+echo "---------------------------------------"
+
+
+echo "---------------------------------------"
+echo "Use vcf_variant_names to filter the original merged vcf for variants called by both tools"
+
+echo "---------------------------------------"
+echo "Create a seperate file that contains all the header information for the vcf"
+zcat $GATK/Genotyped.vcf.gz | head -n 85 > $GATK/vcf_head.vcf 
+
+echo "---------------------------------------"
+echo "Change default language to ASCII - fewer characters than UTF8"
+LC_ALL=C
+
+echo "---------------------------------------"
+echo "Filter for variants from the original vcf that are called by both callers by using grep to match patterns created above" 
+bcftools view $GATK/Genotyped.vcf.gz | fgrep -f grep_patterns.txt - > $GATK/Genotyped_filtered.vcf.gz
+
+echo "---------------------------------------"
+echo "Concatenate the vcf header in the variants called by both callers"
+cat $GATK/vcf_head.vcf $GATK/Genotyped_filtered.vcf.gz > $GATK/GATK_consensus.vcf
+
+echo "---------------------------------------"
+echo "Clean up GATK"
+rm $GATK/Genotyped_filtered.vcf.gz
+rm $GATK/vcf_head.vcf 
+
+
+echo "---------------------------------------"
+echo "bcftools"
+echo "---------------------------------------"
+
+
+echo "---------------------------------------"
+echo "Use vcf_variant_names to filter the original merged vcf for variants called by both tools"
+
+echo "---------------------------------------"
+echo "Create a seperate file that contains all the header information for the vcf"
+zcat $bcftools/PK_samtools_variants_only_header.raw.vcf.gz | head -n 85 > $bcftools/vcf_head.vcf 
+
+echo "---------------------------------------"
+echo "Change default language to ASCII - fewer characters than UTF8"
+LC_ALL=C
+
+echo "---------------------------------------"
+echo "Filter for variants from the original vcf that are called by both callers by using grep to match patterns created above" 
+bcftools view $bcftools/PK_samtools_variants_only_header.raw.vcf.gz | fgrep -f grep_patterns.txt - > $bcftools/Genotyped_filtered.vcf.gz
+
+echo "---------------------------------------"
+echo "Concatenate the vcf header in the variants called by both callers"
+cat $bcftools/vcf_head.vcf $bcftools/Genotyped_filtered.vcf.gz > $bcftools/bcftools_consensus.vcf
+
+echo "---------------------------------------"
+echo "Clean up samtools"
+rm $bcftools/Genotyped_filtered.vcf.gz
+rm $bcftools/vcf_head.vcf 
+
+echo "---------------------------------------"
+echo "Finished "

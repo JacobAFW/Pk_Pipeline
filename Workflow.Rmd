@@ -3555,6 +3555,9 @@ After running HaplotypeCaller, we need to move all these files to the same locat
 Versions: 1.8.0_131 (Java), 2.21.9 (picard), 3.2.2 (GATK)
 File: Template.pbs
 
+Arguments:
+ - G - annotations
+
 ```{R,eval=F}
 #!/bin/bash
 #PBS -N GATK_genotype
@@ -3624,17 +3627,26 @@ ls /home/jwestaway/pk_pipeline/ZB_100/outputs/vcf_consensus/GATK/bams/*.dupmarke
     > input_bam_files.list
 
 Versions: 1.13 (bcftools)
-File: bcftools_vcf.pbs
+File: bcftools_variants_only.pbs (in /variants_only_test)
+
+**NB** The variants_only_test was a directory that was used to test for selecting only variants from with the bcftools caller. 
+As this turned out to be the correct method, many of the subsequent files are redirected through this directory, and the correseponding output directory.
+
+Arguments:
+ - m - Alternative model for multiallelic and rare-variant calling
+ - Oz - compressed output
+ - a - annotate with the following parameters
+ - v - variants only  
 
 ```{R,eval=F}
 #!/bin/bash
-#PBS -N VCF_con_samtools
+#PBS -N bcftools_variants_only
 #PBS -j oe
 #PBS -m ae
 #PBS -l nodes=1
 #PBS -l ncpus=21
 #PBS -l mem=200gb
-#PBS -l walltime=96:00:00
+#PBS -l walltime=24:00:00
 #PBS -M jacob.westaway@menzies.edu.au
 
 echo "---------------------------------------"
@@ -3650,15 +3662,14 @@ echo 'Change to working directory and set env variables'
 cd /home/jwestaway/pk_pipeline/ZB_100/outputs/vcf_consensus/GATK/bams
 INDEXTDIR="/home/jwestaway/pk_pipeline/ref_genomes/PKA1H1/fasta/strain_A1_H.1.Icor.fasta"
 OUTDIR="/home/jwestaway/pk_pipeline/ZB_100/outputs/vcf_consensus/samtools/"
-mkdir $OUTDIR
 
 echo "---------------------------------------"
 echo 'Call variants with samtools'
 
 bcftools mpileup --threads 20 -f $INDEXTDIR -b input_bam_files.list \
-   | bcftools call -m -Oz -o $OUTDIR/PK_samtools.raw.vcf.gz
+   | bcftools call -m -Oz -a FORMAT/GQ,FORMAT/GP,INFO/PV4 -v -o $OUTDIR/PK_samtools_variants_only_header.raw.vcf.gz
 
-bcftools index --threads 20 -t -o $OUTDIR/PK_samtools.raw.vcf.gz.tbi $OUTDIR/Pk_samtools.raw.vcf.gz
+bcftools index --threads 20 -t -o $OUTDIR/PK_samtools_variants_only_header.raw.vcf.gz.tbi $OUTDIR/PK_samtools_variants_only_header.raw.vcf.gz
 
 echo "---------------------------------------"
 echo "Finsihed!"
@@ -3667,10 +3678,10 @@ echo "Finsihed!"
 ### Merge consensus variants
 
 Versions: 1.13 (bcftools)
-File: samtools_merge_vcfs.pbs
+File: samtools_merge_vcfs.pbs (in /variants_only_test)
 
 Arguments:
- - forece-samples - the same samples were called on both variant callers and so the names in the two vcf files are the same. This argument will assign a prefix of '2:' to the names from the second VCF file, so that we can differentiate between the two.
+ - force-samples - the same samples were called on both variant callers and so the names in the two vcf files are the same. This argument will assign a prefix of '2:' to the names from the second VCF file, so that we can differentiate between the two.
 
 ```{R,eval=F}
 #!/bin/bash
@@ -3697,7 +3708,7 @@ cd /home/jwestaway/pk_pipeline/ZB_100/outputs/vcf_consensus/
 
 echo "---------------------------------------"
 echo 'Execute bcftools merge'
-bcftools merge --threads 15 --force-samples -o merged_GATK_samtools_variants.vcf.gz GATK/Genotyped.vcf.gz samtools/PK_samtools.raw.vcf.gz
+bcftools merge --threads 15 --force-samples -o variants_only_test/merged_variants_only.vcf.gz GATK/Genotyped.vcf.gz samtools/PK_samtools_variants_only_header.raw.vcf.gz
 
 echo "---------------------------------------"
 echo 'Finished' 
@@ -3709,12 +3720,17 @@ Versions: 1.13 (bcftools), 3.6.2 (R)
 File: Consensus_variants.pbs
 
 This script filters the merged VCF file for variants the fulfil the defined criteria, and outputs these variants and the samples they were observed in, along with several variant metrics, to a TSV file.
-The resulting TSV is then wrangled in R (script below), producing several summary statistices, along with a TSV containing a list of the variants that were called by both variant calling tools.
-This TSV then has the header removed and is converted into a txt file containing a list of all the consensus variants.
-We then use fgrep to search the original merged VCF for all patterns (consensus variants) in the previously created txt file.
-This is then combined with the first 85 lines of the merged VCF to create a new consensus VCF file.
+
+The script queries the two tool-specific VCF files to get a list of the variants found in both.
+An R script is then used to select variants found by both tools (consesnus/overlap).
+This list of consensus variants is then used to select (fgrep) the 'consensus variants' from the merged VCF file (above), creating a Consensus VCF.
 The default language was changed to ASCII (fewer characters than UTF8) and fgrep used to speed up the grep process. The language change reduces the number of possible characters from ~11,000 to 123, and fgrep searchs for matches of the entire string pattern instead of by characrter within the string.
 
+Arguments:
+  - bcftools query
+    - f - format - inside the square brackets are for the annotation-specific column, whereas the annotations outside have their own column
+  - fgrep 
+    - f - file of patterns to search for
 
 ```{R,eval=F}
 #!/bin/bash
@@ -3726,7 +3742,7 @@ The default language was changed to ASCII (fewer characters than UTF8) and fgrep
 #PBS -l mem=300gb
 #PBS -l pmem=300gb
 #PBS -l file=200gb
-#PBS -l walltime=48:00:00
+#PBS -l walltime=8:00:00
 #PBS -M jacob.westaway@menzies.edu.au
 
 echo "---------------------------------------"
@@ -3737,18 +3753,18 @@ echo "---------------------------------------"
 echo "Define paths to bcftools and miniconda, load the R module, change to working directory and create an output directory"
 export PATH=$PATH:/home/jwestaway/pk_pipeline/tools/bcftools-1.13/
 module load software/R_3.6.2
-cd /home/jwestaway/pk_pipeline/ZB_100/outputs/vcf_consensus/
-mkdir /home/jwestaway/pk_pipeline/ZB_100/outputs/vcf_consensus/wranlged_vcf
+cd /home/jwestaway/pk_pipeline/ZB_100/outputs/vcf_consensus/variants_only_test/
 
 echo "---------------------------------------"
-echo "Exectute bcftools to select variants that pass a specific threshold: FMT/GQ>30 & FMT/DP>10"
-bcftools query -i 'QUAL>30 & FMT/GQ>30 & FMT/DP>10' -f '%CHROM %POS %ID %REF %ALT [\t%SAMPLE DP=%DP GQ=%GQ MQ=%MQ PL=%PL]\n' merged_GATK_samtools_variants.vcf.gz > merged.tsv
+echo "Exectute bcftools to select variants that pass a specific threshold"
+bcftools query -f '%CHROM %POS %ID %REF %ALT [\t%SAMPLE DP=%DP GQ=%GQ MQ=%MQ PL=%PL]\n' /home/jwestaway/pk_pipeline/ZB_100/outputs/vcf_consensus/GATK/Genotyped.vcf.gz > GATK_query.tsv
+bcftools query -f '%CHROM %POS %ID %REF %ALT [\t%SAMPLE DP=%DP GQ=%GQ MQ=%MQ PL=%PL]\n' /home/jwestaway/pk_pipeline/ZB_100/outputs/vcf_consensus/samtools/PK_samtools_variants_only_header.raw.vcf.gz > samtools_query.tsv
 
 echo "---------------------------------------"
 echo "Execute R script to get consensus variants and stats"
 source /usr/local/miniconda3/etc/profile.d/conda.sh
 conda activate R_3.6.2
-Rscript /home/jwestaway/pk_pipeline/ZB_100/scripts/14_Consensus_vcf/vcf_wrangle.R
+Rscript /home/jwestaway/pk_pipeline/ZB_100/scripts/14_Consensus_vcf/vcf_wrangle_2.R
 conda deactivate
 
 echo "---------------------------------------"
@@ -3756,11 +3772,11 @@ echo "Use vcf_variant_names to filter the original merged vcf for variants calle
 
 echo "---------------------------------------"
 echo "Create a seperate file that contains all the header information for the vcf"
-zcat merged_GATK_samtools_variants.vcf.gz | head -n 85 > vcf_head.vcf 
+zcat merged_variants_only.vcf.gz | head -n 85 > vcf_head.vcf 
 
 echo "---------------------------------------"
 echo "Remove the column names from the variant names document to create a list of grep patterns"
-tail -n +2 wranlged_vcf/vcf_variant_names.tsv > grep_patterns.txt 
+tail -n +2 vcf_variant_names2.tsv > grep_patterns.txt 
 
 echo "---------------------------------------"
 echo "Change default language to ASCII - fewer characters than UTF8"
@@ -3768,7 +3784,7 @@ LC_ALL=C
 
 echo "---------------------------------------"
 echo "Filter for variants from the original vcf that are called by both callers by using grep to match patterns created above" 
-bcftools view merged_GATK_samtools_variants.vcf.gz | fgrep -f grep_patterns.txt - > filtered.vcf
+bcftools view merged_variants_only.vcf.gz | fgrep -f grep_patterns.txt - > filtered.vcf
 
 echo "---------------------------------------"
 echo "Concatenate the vcf header in the variants called by both callers"
@@ -3778,11 +3794,12 @@ echo "---------------------------------------"
 echo "Finished "
 ```
 
+
 #### Wrangling R script
 
-```{R,eval=F}
-# Wrangle variant calling data
+File = vcf_wrangle_2.R
 
+```{R,eval=F}
 # Load Packages
 library(dplyr)
 library(tidyr)
@@ -3791,102 +3808,34 @@ library(tibble)
 library(stringr)
 library(forcats)
 
-# Read in and wrangle data to get full summary data
-
-## Need to create names for the columns as the first row only has 7 columns, and thus R assumes all rows only have 7 columns and we end up losing a significant amount of data
 Names <- c("X1") # X1 is the first columns
 for (i in 1:100){
   Names <- append(Names, print(paste0("Sample_", i)))
 }
 
-Summary_Data <- read_tsv("/home/jwestaway/pk_pipeline/ZB_100/outputs/vcf_consensus/merged.tsv", col_names =  Names) %>% 
+read_tsv("/home/jwestaway/pk_pipeline/ZB_100/outputs/vcf_consensus/GATK/GATK_query.tsv", col_names =  Names) %>% 
+  select(X1) %>% 
+  inner_join(read_tsv("/home/jwestaway/pk_pipeline/ZB_100/outputs/vcf_consensus/samtools/samtools_query.tsv", col_names =  Names) %>% 
+               select(X1)) %>% 
   separate(X1, sep =" ", c("Contig", "Base", "ID", "Ref", "Alt")) %>% 
-  pivot_longer(cols = !c(Contig, Base, ID, Ref, Alt)) %>%  
-  select(-name) %>% 
-  na.omit() %>% 
-  mutate(V_Call_Tool = ifelse(grepl("2:", value), "BCFTOOLS", "GATK")) %>% 
-  separate(value, sep = " ", c("Sample", "DP", "GQ", "MQ", "PL")) %>% 
-  mutate(DP = str_remove(DP, "DP=")) %>% 
-  mutate(GQ = str_remove(GQ, "GQ=")) %>% 
-  mutate(MQ = str_remove(MQ, "MQ=")) %>% 
-  mutate(PL = str_remove(PL, "PL=")) %>% 
-  mutate_at(c("DP", "GQ", "MQ"), as.numeric)
-
-write_tsv(Summary_Data, "/home/jwestaway/pk_pipeline/ZB_100/outputs/vcf_consensus/wranlged_vcf/vcf_full_summary.tsv")
-
-print("1. TSV read in, wrangled into Summary_Data for all variants/samples and output as vcf_full_summary.tsv.")
-
-# Read in and wrangle data to summaries of each - the n() will actually give the number of samples with variants
-Summary_Data %>% 
-  unite(Variant, Contig, Base, ID, Ref, Alt, sep = "-") %>% # create a unique variant code (Variant) based on these variables
-  group_by(V_Call_Tool) %>% 
-  dplyr::summarise(Samples_with_variants = n(), 
-                   GQ = mean(GQ),
-                   DP = mean(DP),
-                   MQ = mean(MQ)) %>% 
-  write_tsv("/home/jwestaway/pk_pipeline/ZB_100/outputs/vcf_consensus/wranlged_vcf/vcf_summary.tsv")
-
-print("2. Summary of the two tools output as vcf_tool_summary.tsv.")
-  
-# Get counts of Variants 
-Summary_Data %>% 
-  unite(Variant, Contig, Base, ID, Ref, Alt, sep = "-") %>% 
-  mutate_if(is.character, as.factor) %>% 
-  group_by(V_Call_Tool) %>% 
-  dplyr::summarise(Variants = length(unique(Variant))) %>% 
-  write_tsv("/home/jwestaway/pk_pipeline/ZB_100/outputs/vcf_consensus/wranlged_vcf/vcf_variant_counts_in_tool.tsv")
-
-print("3. Calculated the number of variants and output them as vcf_variant_counts_in_tool.tsv.")
-
-# Get variants that are found within both tools
-Summary_Data %>% 
-  unite(Variant, Contig, Base, ID, Ref, Alt, sep = "-") %>%  # create a unique variant code (Variant) based on these variables
-  select(Variant, V_Call_Tool) %>% 
-  filter(V_Call_Tool == "BCFTOOLS") %>% 
-  mutate_if(is.character, as.factor) %>%
-  unique() %>% 
-  inner_join(
-    (Summary_Data %>% 
-      unite(Variant, Contig, Base, ID, Ref, Alt, sep = "-") %>%
-      select(Variant, V_Call_Tool) %>%
-      filter(V_Call_Tool == "GATK") %>% 
-      mutate_if(is.character, as.factor) %>% 
-      unique()), by = "Variant") %>% 
-  select("Variant") %>% 
-  separate(Variant, sep = "-", c("CHROM", "POS", "ID", "REF", "ALT")) %>%
-  write_tsv("/home/jwestaway/pk_pipeline/ZB_100/outputs/vcf_consensus/wranlged_vcf/vcf_variant_names.tsv")
-
-print("4. Calculated the variants that were called by both calling tools and output as vcf_variant_names.tsv.")
-
-# Get the FMT scores for the variants found in both tools
-Summary_Data %>% 
-  unite(Variant, Contig, Base, ID, Ref, Alt, sep = "-") %>% # create a unique variant code (Variant) based on these variables
-  filter(V_Call_Tool == "BCFTOOLS") %>% 
-  select(!c(Sample, PL, V_Call_Tool)) %>%
-  group_by(Variant) %>% 
-  summarise_all(mean) %>%  # mean value for each varint
-  inner_join(
-    (Summary_Data %>% 
-       unite(Variant, Contig, Base, ID, Ref, Alt, sep = "-") %>% 
-       filter(V_Call_Tool == "GATK") %>% 
-       select(!c(Sample, PL, V_Call_Tool)) %>% 
-       group_by(Variant) %>% 
-       summarise_all(mean)), 
-    by = "Variant") %>% # inner join by variants to only select those the are found by both tools
-  mutate(DP = (DP.x + DP.y)/2, # calculating the means for the two tools
-         GQ = (GQ.x + GQ.y)/2,
-         MQ = (MQ.x + MQ.y)/2) %>% 
-  select(1, 8:10)%>% 
-  write_tsv("/home/jwestaway/pk_pipeline/ZB_100/outputs/vcf_consensus/wranlged_vcf/vcf_variants_and_metrics.tsv")
-
-print("5. Calculated the FMT averages for the variants that were called by both tools and output as vcf_variants_and_metrics.tsv.")
-
+  write_tsv("/home/jwestaway/pk_pipeline/ZB_100/outputs/vcf_consensus/variants_only_test/vcf_variant_names2.tsv")
 ```
 
-#### Create VCFs for SNPs/Indels only
 
-For bam pre-processing, there are arguments that require either all known variants or only a single type of variant. 
-Thus we need to create additional VCF files that are specific to variant types.
+###########################################################################################################################################################
+
+
+# Filtering Variants 
+
+Testing different filtering paramaters against our consensus VCF to determine what will be best for our data. 
+These filters can be used to improve our truth/consensus set and downstream when calling variants during our actual analysis.
+Need to determine the filtering parameters for variant calling that we should use. 
+In addition, we need to apply filtering to our truth set to produce the most "real" datset possible, so that indel realignment and the training of models for VQSR are accurate.
+
+
+## Create VCFs for SNPs/Indels only from the PK Consensus
+
+Required for variant-specific filtering & bam-preprocessing later on.
 
 Versions: 
 File: snps_and_indels.pbs
@@ -3909,7 +3858,7 @@ echo "PBS: Job name is $PBS_JOBNAME"
 echo "---------------------------------------"
 echo "Define paths and change to working directory"
 INDEXTDIR="/home/jwestaway/pk_pipeline/ref_genomes/PKA1H1/fasta/strain_A1_H.1.Icor.fasta"
-cd /home/jwestaway/pk_pipeline/ZB_100/outputs/vcf_consensus
+cd /home/jwestaway/pk_pipeline/ZB_100/outputs/vcf_consensus/variants_only_test/
 
 echo "---------------------------------------"
 echo "SNPs"
@@ -3934,20 +3883,1088 @@ echo "Indels"
 echo "---------------------------------------"
 echo "Finsihed"
 ```
-The VCF file for the known variant sites (VCF) had to be amended to accomodate GATK's nuances:
-
-'sed /ID=VDB/d PK_consensus.vcf | sed /Number=R/d > PK_consensus_corrected.vcf'
-
-Consensus VCF files:
- - PK_consensus_corrected.vcf
- - PK_consensus_corrected_snps.vcf
- - PK_consensus_corrected_indels.vcf
 
 
-## Filtering Variants 
+## Create VCFs for SNPs/Indels only for tool-specific VCF files
 
-Need to determine the filtering parameters for variant calling that we should use. 
-In addition, we need to apply filtering to our truth set to produce the most "real" datset possible, so that indel realignment and the training of models for VQSR are accurate.
+We create these tool-specific SNP and Indels VCF files so that we can see how the different filters effect the different tools, and not just the consensus. 
+This can give us an idea of the quality of the two variant callers, and how their quality may effect the final consenus post-filtering, as poor variant quality in one tool may bring down the average of the two tools and result in a greater loss of variants.
+
+Versions: 
+File: snps_and_indels.pbs
+
+```{R,eval=F}
+#!/bin/bash
+#PBS -N Calc_snps_&_indels
+#PBS -j oe
+#PBS -m ae
+#PBS -l nodes=1
+#PBS -l ncpus=11
+#PBS -l mem=50gb
+#PBS -l walltime=12:00:00
+#PBS -M jacob.westaway@menzies.edu.au
+
+echo "---------------------------------------"
+echo "PBS: Job identifier is $PBS_JOBID"
+echo "PBS: Job name is $PBS_JOBNAME"
+
+echo "---------------------------------------"
+echo "Define paths and change to working directory"
+INDEXTDIR="/home/jwestaway/pk_pipeline/ref_genomes/PKA1H1/fasta/strain_A1_H.1.Icor.fasta"
+cd /home/jwestaway/pk_pipeline/ZB_100/outputs/vcf_consensus
+
+
+echo "---------------------------------------"
+echo "GATK"
+
+
+echo "---------------------------------------"
+echo "SNPs"
+
+/usr/local/jdk1.8.0_131/bin/java -Djava.iodir=$PBS_JOBFS -Xms3200m -Xmx3600m -jar /home/jwestaway/pk_pipeline/tools/gatk-4.2.2.0/gatk-package-4.2.2.0-local.jar \
+    SelectVariants \
+    -R $INDEXTDIR \
+    -V GATK/Genotyped.vcf.gz \
+    --select-type-to-include SNP \
+    -O GATK/GVCFall_SNPs_GATK.vcf
+
+echo "---------------------------------------"
+echo "Indels"
+
+/usr/local/jdk1.8.0_131/bin/java -Djava.iodir=$PBS_JOBFS -Xms3200m -Xmx3600m -jar /home/jwestaway/pk_pipeline/tools/gatk-4.2.2.0/gatk-package-4.2.2.0-local.jar \
+    SelectVariants \
+    -R $INDEXTDIR \
+    -V GATK/Genotyped.vcf.gz \
+    --select-type-to-include INDEL \
+    -O GATK/GVCFall_INDELs_GATK.vcf
+
+
+echo "---------------------------------------"
+echo "samtools/bcftools"
+
+
+echo "---------------------------------------"
+echo "SNPs"
+
+/usr/local/jdk1.8.0_131/bin/java -Djava.iodir=$PBS_JOBFS -Xms3200m -Xmx3600m -jar /home/jwestaway/pk_pipeline/tools/gatk-4.2.2.0/gatk-package-4.2.2.0-local.jar \
+    SelectVariants \
+    -R $INDEXTDIR \
+    -V samtools/PK_samtools_variants_only_header.raw.vcf.gz \
+    --select-type-to-include SNP \
+    -O samtools/GVCFall_SNPs_bcftools.vcf
+
+echo "---------------------------------------"
+echo "Indels"
+
+/usr/local/jdk1.8.0_131/bin/java -Djava.iodir=$PBS_JOBFS -Xms3200m -Xmx3600m -jar /home/jwestaway/pk_pipeline/tools/gatk-4.2.2.0/gatk-package-4.2.2.0-local.jar \
+    SelectVariants \
+    -R $INDEXTDIR \
+    -V samtools/PK_samtools_variants_only_header.raw.vcf.gz \
+    --select-type-to-include INDEL \
+    -O samtools/GVCFall_INDELs_bcftools.vcf
+
+echo "---------------------------------------"
+echo "Finsihed"
+```
+
+
+## Filtering tests 
+
+### Original Dataset
+
+This is just to calculate the SNPs and Indels in the original data for comparisons sake.
+
+Versions: 4.2.2 (GATK), 1.8.0_131-b1 (Java), 2.21.9 (picard)
+File: original/variant_filtering.pbs
+
+```{R,eval=F}
+#!/bin/bash
+#PBS -N Filter_variants_original
+#PBS -j oe
+#PBS -m ae
+#PBS -l nodes=1
+#PBS -l ncpus=16
+#PBS -l mem=50gb
+#PBS -l walltime=24:00:00
+#PBS -M jacob.westaway@menzies.edu.au
+
+echo "---------------------------------------"
+echo "PBS: Job identifier is $PBS_JOBID"
+echo "PBS: Job name is $PBS_JOBNAME"
+
+echo "---------------------------------------"
+echo "---------------------------------------"
+echo 'Change to working directory and set env variables'
+OUTDIR="/home/jwestaway/pk_pipeline/ZB_100/outputs/vcf_consensus/filtering_tests/original"
+PICARD="/usr/local/miniconda3/pkgs/picard-2.21.9-0/share/picard-2.21.9-0/picard.jar"
+INDEXTDIR="/home/jwestaway/pk_pipeline/ref_genomes/PKA1H1/fasta/strain_A1_H.1.Icor.fasta"
+mkdir $OUTDIR
+cd /home/jwestaway/pk_pipeline/ZB_100/outputs/vcf_consensus/
+
+echo "---------------------------------------"
+echo 'Make diagnostic tables for Variants Scores - snps'
+
+/usr/local/jdk1.8.0_131/bin/java -Djava.iodir=$PBS_JOBFS -Xms3200m -Xmx3600m -jar /home/jwestaway/pk_pipeline/tools/gatk-4.2.2.0/gatk-package-4.2.2.0-local.jar \
+    VariantsToTable \
+    -R $INDEXTDIR \
+    -V variats_only_test/GVCFall_SNPs.vcf \
+    -F CHROM -F POS -F QUAL -F QD -F DP -F MQ -F GQ -F MQRankSum -F FS -F ReadPosRankSum -F SOR \
+    -O $OUTDIR/GVCFall_SNPs.table
+
+
+echo "---------------------------------------"
+echo 'Make diagnostic tables for Variants Scores - indels'
+
+/usr/local/jdk1.8.0_131/bin/java -Djava.iodir=$PBS_JOBFS -Xms3200m -Xmx3600m -jar /home/jwestaway/pk_pipeline/tools/gatk-4.2.2.0/gatk-package-4.2.2.0-local.jar \
+    VariantsToTable \
+    -R $INDEXTDIR \
+    -V variats_only_test/GVCFall_INDELs.vcf \
+    -F CHROM -F POS -F QUAL -F QD -F DP -F MQ -F GQ -F MQRankSum -F FS -F ReadPosRankSum -F SOR \
+    -O $OUTDIR/GVCFall_INDELs.table
+
+
+echo "---------------------------------------"
+echo 'Query data for comparison'
+echo "---------------------------------------"
+
+echo "---------------------------------------"
+echo "SNPs"
+
+echo "---------------------------------------"
+echo "Exectute bcftools to select variants that pass a specific threshold: FMT/GQ>30 & FMT/DP>10"
+bcftools query -f '%CHROM %POS %ID %REF %ALT [\t%SAMPLE DP=%DP GQ=%GQ MQ=%MQ PL=%PL]\n' variants_only_test/GVCFall_SNPs.vcf > $OUTDIR/SNPs.tsv
+
+echo "---------------------------------------"
+echo "Indels"
+
+echo "---------------------------------------"
+echo "Exectute bcftools to select variants that pass a specific threshold: FMT/GQ>30 & FMT/DP>10"
+bcftools query -f '%CHROM %POS %ID %REF %ALT [\t%SAMPLE DP=%DP GQ=%GQ MQ=%MQ PL=%PL]\n' variants_only_test/GVCFall_INDELs.vcf > $OUTDIR/indels.tsv
+
+
+
+echo "---------------------------------------"
+echo "query tool-specific data"
+echo "---------------------------------------"
+
+
+
+echo "---------------------------------------"
+echo 'GATK'
+
+echo "---------------------------------------"
+echo 'Make diagnostic tables for Variants Scores - snps'
+
+/usr/local/jdk1.8.0_131/bin/java -Djava.iodir=$PBS_JOBFS -Xms3200m -Xmx3600m -jar /home/jwestaway/pk_pipeline/tools/gatk-4.2.2.0/gatk-package-4.2.2.0-local.jar \
+    VariantsToTable \
+    -R $INDEXTDIR \
+    -V GATK/GVCFall_SNPs_GATK.vcf \
+    -F CHROM -F POS -F QUAL -F QD -F DP -F MQ -F GQ -F MQRankSum -F FS -F ReadPosRankSum -F SOR \
+    -O $OUTDIR/GVCFall_SNPs_GATK.table
+
+echo "---------------------------------------"
+echo 'Make diagnostic tables for Variants Scores - indels'
+
+/usr/local/jdk1.8.0_131/bin/java -Djava.iodir=$PBS_JOBFS -Xms3200m -Xmx3600m -jar /home/jwestaway/pk_pipeline/tools/gatk-4.2.2.0/gatk-package-4.2.2.0-local.jar \
+    VariantsToTable \
+    -R $INDEXTDIR \
+    -V GATK/GVCFall_INDELs_GATK.vcf \
+    -F CHROM -F POS -F QUAL -F QD -F DP -F MQ -F GQ -F MQRankSum -F FS -F ReadPosRankSum -F SOR \
+    -O $OUTDIR/GVCFall_INDELs_GATK.table
+
+echo "---------------------------------------"
+echo "Exectute bcftools to select variants"
+bcftools query -f '%CHROM %POS %ID %REF %ALT [\t%SAMPLE DP=%DP GQ=%GQ MQ=%MQ PL=%PL]\n' GATK/GVCFall_SNPs_GATK.vcf > $OUTDIR/SNPs_GATK.tsv
+
+echo "---------------------------------------"
+echo "Indels"
+
+echo "---------------------------------------"
+echo "Exectute bcftools to select variants"
+bcftools query -f '%CHROM %POS %ID %REF %ALT [\t%SAMPLE DP=%DP GQ=%GQ MQ=%MQ PL=%PL]\n' GATK/GVCFall_INDELs_GATK.vcf > $OUTDIR/indels_GATK.tsv
+
+
+
+echo "---------------------------------------"
+echo 'samtools'
+
+echo "---------------------------------------"
+echo 'Make diagnostic tables for Variants Scores - snps'
+
+/usr/local/jdk1.8.0_131/bin/java -Djava.iodir=$PBS_JOBFS -Xms3200m -Xmx3600m -jar /home/jwestaway/pk_pipeline/tools/gatk-4.2.2.0/gatk-package-4.2.2.0-local.jar \
+    VariantsToTable \
+    -R $INDEXTDIR \
+    -V samtools/GVCFall_SNPs_bcftools.vcf \
+    -F CHROM -F POS -F QUAL -F QD -F DP -F MQ -F GQ -F MQRankSum -F FS -F ReadPosRankSum -F SOR \
+    -O $OUTDIR/GVCFall_SNPs_bcftools.table
+
+echo "---------------------------------------"
+echo 'Make diagnostic tables for Variants Scores - indels'
+
+/usr/local/jdk1.8.0_131/bin/java -Djava.iodir=$PBS_JOBFS -Xms3200m -Xmx3600m -jar /home/jwestaway/pk_pipeline/tools/gatk-4.2.2.0/gatk-package-4.2.2.0-local.jar \
+    VariantsToTable \
+    -R $INDEXTDIR \
+    -V samtools/GVCFall_INDELs_bcftools.vcf \
+    -F CHROM -F POS -F QUAL -F QD -F DP -F MQ -F GQ -F MQRankSum -F FS -F ReadPosRankSum -F SOR \
+    -O $OUTDIR/GVCFall_INDELs_bcftools.table
+
+echo "---------------------------------------"
+echo "Exectute bcftools to select variants"
+bcftools query -f '%CHROM %POS %ID %REF %ALT [\t%SAMPLE DP=%DP GQ=%GQ MQ=%MQ PL=%PL]\n' samtools/GVCFall_SNPs_bcftools.vcf > $OUTDIR/SNPs_bcftools.tsv
+
+echo "---------------------------------------"
+echo "Exectute bcftools to select variants"
+bcftools query -f '%CHROM %POS %ID %REF %ALT [\t%SAMPLE DP=%DP GQ=%GQ MQ=%MQ PL=%PL]\n' samtools/GVCFall_INDELs_bcftools.vcf > $OUTDIR/indels_bcftools.tsv
+
+echo "---------------------------------------"
+echo 'Finished'
+```
+
+### GATK Best Practices Filter
+
+These filtering parameters are based on GATK best practices.
+
+https://gatk.broadinstitute.org/hc/en-us/articles/360035531112--How-to-Filter-variants-either-with-VQSR-or-by-hard-filtering
+
+Versions: 4.2.2 (GATK), 1.8.0_131-b1 (Java), 2.21.9 (picard)
+File: GATK_BP/variant_filtering.pbs
+
+```{R,eval=F}
+#!/bin/bash
+#PBS -N Filter_variants_GATK_BP
+#PBS -j oe
+#PBS -m ae
+#PBS -l nodes=1
+#PBS -l ncpus=16
+#PBS -l mem=50gb
+#PBS -l walltime=24:00:00
+#PBS -M jacob.westaway@menzies.edu.au
+
+echo "---------------------------------------"
+echo "PBS: Job identifier is $PBS_JOBID"
+echo "PBS: Job name is $PBS_JOBNAME"
+
+echo "---------------------------------------"
+echo "---------------------------------------"
+echo 'Change to working directory and set env variables'
+OUTDIR="/home/jwestaway/pk_pipeline/ZB_100/outputs/vcf_consensus/filtering_tests/GATK_BP"
+PICARD="/usr/local/miniconda3/pkgs/picard-2.21.9-0/share/picard-2.21.9-0/picard.jar"
+INDEXTDIR="/home/jwestaway/pk_pipeline/ref_genomes/PKA1H1/fasta/strain_A1_H.1.Icor.fasta"
+mkdir $OUTDIR
+cd /home/jwestaway/pk_pipeline/ZB_100/outputs/vcf_consensus
+
+
+echo "---------------------------------------"
+echo 'filter snps'
+/usr/local/jdk1.8.0_131/bin/java -Djava.iodir=$PBS_JOBFS -Xms3200m -Xmx3600m -jar /home/jwestaway/pk_pipeline/tools/gatk-4.2.2.0/gatk-package-4.2.2.0-local.jar \
+    VariantFiltration \
+    -V variants_only_test/GVCFall_SNPs.vcf \
+    -filter "QD < 2.0" --filter-name "QD2" \
+    -filter "QUAL < 30.0" --filter-name "QUAL30" \
+    -filter "SOR > 3.0" --filter-name "SOR3" \
+    -filter "FS > 60.0" --filter-name "FS60" \
+    -filter "MQ < 40.0" --filter-name "MQ40" \
+    -filter "MQRankSum < -12.5" --filter-name "MQRankSum-12.5" \
+    -filter "ReadPosRankSum < -8.0" --filter-name "ReadPosRankSum-8" \
+    -O $OUTDIR/snps_filtered.vcf
+
+
+echo "---------------------------------------"
+echo 'filter indels'
+/usr/local/jdk1.8.0_131/bin/java -Djava.iodir=$PBS_JOBFS -Xms3200m -Xmx3600m -jar /home/jwestaway/pk_pipeline/tools/gatk-4.2.2.0/gatk-package-4.2.2.0-local.jar \
+    VariantFiltration \
+    -V variants_only_test/GVCFall_INDELs.vcf \
+    -filter "QD < 2.0" --filter-name "QD2" \
+    -filter "QUAL < 30.0" --filter-name "QUAL30" \
+    -filter "FS > 200.0" --filter-name "FS200" \
+    -filter "ReadPosRankSum < -20.0" --filter-name "ReadPosRankSum-20" \
+    -O $OUTDIR/indels_filtered.vcf
+
+
+echo "---------------------------------------"
+echo 'Make diagnostic tables for Variants Scores - snps'
+
+/usr/local/jdk1.8.0_131/bin/java -Djava.iodir=$PBS_JOBFS -Xms3200m -Xmx3600m -jar /home/jwestaway/pk_pipeline/tools/gatk-4.2.2.0/gatk-package-4.2.2.0-local.jar \
+    VariantsToTable \
+    -R $INDEXTDIR \
+    -V $OUTDIR/snps_filtered.vcf \
+    -F CHROM -F POS -F QUAL -F QD -F DP -F MQ -F GQ -F MQRankSum -F FS -F ReadPosRankSum -F SOR \
+    -O $OUTDIR/GVCFall_SNPs.table
+
+
+echo "---------------------------------------"
+echo 'Make diagnostic tables for Variants Scores - indels'
+
+/usr/local/jdk1.8.0_131/bin/java -Djava.iodir=$PBS_JOBFS -Xms3200m -Xmx3600m -jar /home/jwestaway/pk_pipeline/tools/gatk-4.2.2.0/gatk-package-4.2.2.0-local.jar \
+    VariantsToTable \
+    -R $INDEXTDIR \
+    -V $OUTDIR/indels_filtered.vcf \
+    -F CHROM -F POS -F QUAL -F QD -F DP -F MQ -F GQ -F MQRankSum -F FS -F ReadPosRankSum -F SOR \
+    -O $OUTDIR/GVCFall_INDELs.table
+
+
+echo "---------------------------------------"
+echo 'Query data for download/comparison'
+echo "---------------------------------------"
+
+echo "---------------------------------------"
+echo "SNPs"
+
+echo "---------------------------------------"
+echo "Exectute bcftools to select variants"
+bcftools query -f '%CHROM %POS %ID %REF %ALT %FILTER [\t%SAMPLE DP=%DP GQ=%GQ MQ=%MQ PL=%PL]\n' $OUTDIR/snps_filtered.vcf | fgrep 'PASS' > $OUTDIR/SNPs.tsv
+
+echo "---------------------------------------"
+echo "Indels"
+
+echo "---------------------------------------"
+echo "Exectute bcftools to select variants"
+bcftools query -f '%CHROM %POS %ID %REF %ALT %FILTER [\t%SAMPLE DP=%DP GQ=%GQ MQ=%MQ PL=%PL]\n' $OUTDIR/indels_filtered.vcf | fgrep 'PASS' > $OUTDIR/indels.tsv
+
+
+
+echo "---------------------------------------"
+echo "Filter applied to pre-merged tool-specific data"
+echo "---------------------------------------"
+
+
+
+echo "---------------------------------------"
+echo 'GATK'
+
+echo "---------------------------------------"
+echo 'filter snps'
+/usr/local/jdk1.8.0_131/bin/java -Djava.iodir=$PBS_JOBFS -Xms3200m -Xmx3600m -jar /home/jwestaway/pk_pipeline/tools/gatk-4.2.2.0/gatk-package-4.2.2.0-local.jar \
+    VariantFiltration \
+    -V GATK/GVCFall_SNPs_GATK.vcf \
+    -filter "QD < 2.0" --filter-name "QD2" \
+    -filter "QUAL < 30.0" --filter-name "QUAL30" \
+    -filter "SOR > 3.0" --filter-name "SOR3" \
+    -filter "FS > 60.0" --filter-name "FS60" \
+    -filter "MQ < 40.0" --filter-name "MQ40" \
+    -filter "MQRankSum < -12.5" --filter-name "MQRankSum-12.5" \
+    -filter "ReadPosRankSum < -8.0" --filter-name "ReadPosRankSum-8" \
+    -O $OUTDIR/snps_filtered_GATK.vcf
+
+
+echo "---------------------------------------"
+echo 'filter indels'
+/usr/local/jdk1.8.0_131/bin/java -Djava.iodir=$PBS_JOBFS -Xms3200m -Xmx3600m -jar /home/jwestaway/pk_pipeline/tools/gatk-4.2.2.0/gatk-package-4.2.2.0-local.jar \
+    VariantFiltration \
+    -V GATK/GVCFall_INDELs_GATK.vcf \
+    -filter "QD < 2.0" --filter-name "QD2" \
+    -filter "QUAL < 30.0" --filter-name "QUAL30" \
+    -filter "FS > 200.0" --filter-name "FS200" \
+    -filter "ReadPosRankSum < -20.0" --filter-name "ReadPosRankSum-20" \
+    -O $OUTDIR/indels_filtered_GATK.vcf
+
+
+echo "---------------------------------------"
+echo 'Make diagnostic tables for Variants Scores - snps'
+
+/usr/local/jdk1.8.0_131/bin/java -Djava.iodir=$PBS_JOBFS -Xms3200m -Xmx3600m -jar /home/jwestaway/pk_pipeline/tools/gatk-4.2.2.0/gatk-package-4.2.2.0-local.jar \
+    VariantsToTable \
+    -R $INDEXTDIR \
+    -V $OUTDIR/snps_filtered_GATK.vcf \
+    -F CHROM -F POS -F QUAL -F QD -F DP -F MQ -F GQ -F MQRankSum -F FS -F ReadPosRankSum -F SOR \
+    -O $OUTDIR/GVCFall_SNPs_GATK.table
+
+
+echo "---------------------------------------"
+echo 'Make diagnostic tables for Variants Scores - indels'
+
+/usr/local/jdk1.8.0_131/bin/java -Djava.iodir=$PBS_JOBFS -Xms3200m -Xmx3600m -jar /home/jwestaway/pk_pipeline/tools/gatk-4.2.2.0/gatk-package-4.2.2.0-local.jar \
+    VariantsToTable \
+    -R $INDEXTDIR \
+    -V $OUTDIR/indels_filtered_GATK.vcf \
+    -F CHROM -F POS -F QUAL -F QD -F DP -F MQ -F GQ -F MQRankSum -F FS -F ReadPosRankSum -F SOR \
+    -O $OUTDIR/GVCFall_INDELs_GATK.table
+
+echo "---------------------------------------"
+echo "Exectute bcftools to select variants"
+bcftools query -f '%CHROM %POS %ID %REF %ALT %FILTER [\t%SAMPLE DP=%DP GQ=%GQ MQ=%MQ PL=%PL]\n' $OUTDIR/snps_filtered_GATK.vcf | fgrep 'PASS' > $OUTDIR/SNPs_GATK.tsv
+
+echo "---------------------------------------"
+echo "Indels"
+
+echo "---------------------------------------"
+echo "Exectute bcftools to select variants"
+bcftools query -f '%CHROM %POS %ID %REF %ALT %FILTER [\t%SAMPLE DP=%DP GQ=%GQ MQ=%MQ PL=%PL]\n' $OUTDIR/indels_filtered_GATK.vcf | fgrep 'PASS' > $OUTDIR/indels_GATK.tsv
+
+
+
+echo "---------------------------------------"
+echo 'samtools'
+
+echo "---------------------------------------"
+echo 'filter snps'
+/usr/local/jdk1.8.0_131/bin/java -Djava.iodir=$PBS_JOBFS -Xms3200m -Xmx3600m -jar /home/jwestaway/pk_pipeline/tools/gatk-4.2.2.0/gatk-package-4.2.2.0-local.jar \
+    VariantFiltration \
+    -V samtools/GVCFall_SNPs_bcftools.vcf \
+    -filter "QD < 2.0" --filter-name "QD2" \
+    -filter "QUAL < 30.0" --filter-name "QUAL30" \
+    -filter "SOR > 3.0" --filter-name "SOR3" \
+    -filter "FS > 60.0" --filter-name "FS60" \
+    -filter "MQ < 40.0" --filter-name "MQ40" \
+    -filter "MQRankSum < -12.5" --filter-name "MQRankSum-12.5" \
+    -filter "ReadPosRankSum < -8.0" --filter-name "ReadPosRankSum-8" \
+    -O $OUTDIR/snps_filtered_bcftools.vcf
+
+
+echo "---------------------------------------"
+echo 'filter indels'
+/usr/local/jdk1.8.0_131/bin/java -Djava.iodir=$PBS_JOBFS -Xms3200m -Xmx3600m -jar /home/jwestaway/pk_pipeline/tools/gatk-4.2.2.0/gatk-package-4.2.2.0-local.jar \
+    VariantFiltration \
+    -V samtools/GVCFall_INDELs_bcftools.vcf \
+    -filter "QD < 2.0" --filter-name "QD2" \
+    -filter "QUAL < 30.0" --filter-name "QUAL30" \
+    -filter "FS > 200.0" --filter-name "FS200" \
+    -filter "ReadPosRankSum < -20.0" --filter-name "ReadPosRankSum-20" \
+    -O $OUTDIR/indels_filtered_bcftools.vcf
+
+
+echo "---------------------------------------"
+echo 'Make diagnostic tables for Variants Scores - snps'
+
+/usr/local/jdk1.8.0_131/bin/java -Djava.iodir=$PBS_JOBFS -Xms3200m -Xmx3600m -jar /home/jwestaway/pk_pipeline/tools/gatk-4.2.2.0/gatk-package-4.2.2.0-local.jar \
+    VariantsToTable \
+    -R $INDEXTDIR \
+    -V $OUTDIR/snps_filtered_bcftools.vcf \
+    -F CHROM -F POS -F QUAL -F QD -F DP -F MQ -F GQ -F MQRankSum -F FS -F ReadPosRankSum -F SOR \
+    -O $OUTDIR/GVCFall_SNPs_bcftools.table
+
+
+echo "---------------------------------------"
+echo 'Make diagnostic tables for Variants Scores - indels'
+
+/usr/local/jdk1.8.0_131/bin/java -Djava.iodir=$PBS_JOBFS -Xms3200m -Xmx3600m -jar /home/jwestaway/pk_pipeline/tools/gatk-4.2.2.0/gatk-package-4.2.2.0-local.jar \
+    VariantsToTable \
+    -R $INDEXTDIR \
+    -V $OUTDIR/indels_filtered_bcftools.vcf \
+    -F CHROM -F POS -F QUAL -F QD -F DP -F MQ -F GQ -F MQRankSum -F FS -F ReadPosRankSum -F SOR \
+    -O $OUTDIR/GVCFall_INDELs_bcftools.table
+
+echo "---------------------------------------"
+echo "Exectute bcftools to select variants"
+bcftools query -f '%CHROM %POS %ID %REF %ALT %FILTER [\t%SAMPLE DP=%DP GQ=%GQ MQ=%MQ PL=%PL]\n' $OUTDIR/snps_filtered_bcftools.vcf | fgrep 'PASS' > $OUTDIR/SNPs_bcftools.tsv
+
+echo "---------------------------------------"
+echo "Exectute bcftools to select variants"
+bcftools query -f '%CHROM %POS %ID %REF %ALT %FILTER [\t%SAMPLE DP=%DP GQ=%GQ MQ=%MQ PL=%PL]\n' $OUTDIR/indels_filtered_bcftools.vcf | fgrep 'PASS' > $OUTDIR/indels_bcftools.tsv
+
+
+echo "---------------------------------------"
+echo 'Finished'
+```
+
+### Vivax Filter 
+
+These filtering parameters are those appalied to *P. vivax* by the Sanger Institute.
+
+Versions: 4.2.2 (GATK), 1.8.0_131-b1 (Java), 2.21.9 (picard)
+File: Vivax/variant_filtering.pbs 
+
+```{R,eval=F}
+#!/bin/bash
+#PBS -N Filter_variants_vivax
+#PBS -j oe
+#PBS -m ae
+#PBS -l nodes=1
+#PBS -l ncpus=11
+#PBS -l mem=50gb
+#PBS -l walltime=24:00:00
+#PBS -M jacob.westaway@menzies.edu.au
+
+echo "---------------------------------------"
+echo "PBS: Job identifier is $PBS_JOBID"
+echo "PBS: Job name is $PBS_JOBNAME"
+
+echo "---------------------------------------"
+echo "---------------------------------------"
+echo 'Change to working directory and set env variables'
+OUTDIR="/home/jwestaway/pk_pipeline/ZB_100/outputs/vcf_consensus/filtering_tests/Vivax"
+PICARD="/usr/local/miniconda3/pkgs/picard-2.21.9-0/share/picard-2.21.9-0/picard.jar"
+INDEXTDIR="/home/jwestaway/pk_pipeline/ref_genomes/PKA1H1/fasta/strain_A1_H.1.Icor.fasta"
+mkdir $OUTDIR
+cd /home/jwestaway/pk_pipeline/ZB_100/outputs/vcf_consensus
+
+echo "---------------------------------------"
+echo 'filter snps'
+/usr/local/jdk1.8.0_131/bin/java -Djava.iodir=$PBS_JOBFS -Xms3200m -Xmx3600m -jar /home/jwestaway/pk_pipeline/tools/gatk-4.2.2.0/gatk-package-4.2.2.0-local.jar \
+    VariantFiltration \
+    -V variants_only_test/GVCFall_SNPs.vcf \
+    -filter "QD < 12.43" --filter-name "QD2" \
+    -filter "FS > 14.63418" --filter-name "FS60" \
+    -filter "MQ < 51.6" --filter-name "MQ40" \
+    -O $OUTDIR/snps_filtered.vcf
+
+
+echo "---------------------------------------"
+echo 'filter indels'
+/usr/local/jdk1.8.0_131/bin/java -Djava.iodir=$PBS_JOBFS -Xms3200m -Xmx3600m -jar /home/jwestaway/pk_pipeline/tools/gatk-4.2.2.0/gatk-package-4.2.2.0-local.jar \
+    VariantFiltration \
+    -V variants_only_test/GVCFall_INDELs.vcf \
+    -filter "QD < 12.43" --filter-name "QD2" \
+    -filter "FS > 14.63418" --filter-name "FS60" \
+    -filter "MQ < 51.6" --filter-name "MQ40" \
+    -O $OUTDIR/indels_filtered.vcf
+
+
+echo "---------------------------------------"
+echo 'Make diagnostic tables for Variants Scores - snps'
+
+/usr/local/jdk1.8.0_131/bin/java -Djava.iodir=$PBS_JOBFS -Xms3200m -Xmx3600m -jar /home/jwestaway/pk_pipeline/tools/gatk-4.2.2.0/gatk-package-4.2.2.0-local.jar \
+    VariantsToTable \
+    -R $INDEXTDIR \
+    -V $OUTDIR/snps_filtered.vcf \
+    -F CHROM -F POS -F QUAL -F QD -F DP -F MQ -F GQ -F MQRankSum -F FS -F ReadPosRankSum -F SOR \
+    -O $OUTDIR/GVCFall_SNPs.table
+
+
+echo "---------------------------------------"
+echo 'Make diagnostic tables for Variants Scores - indels'
+
+/usr/local/jdk1.8.0_131/bin/java -Djava.iodir=$PBS_JOBFS -Xms3200m -Xmx3600m -jar /home/jwestaway/pk_pipeline/tools/gatk-4.2.2.0/gatk-package-4.2.2.0-local.jar \
+    VariantsToTable \
+    -R $INDEXTDIR \
+    -V $OUTDIR/indels_filtered.vcf \
+    -F CHROM -F POS -F QUAL -F QD -F DP -F MQ -F GQ -F MQRankSum -F FS -F ReadPosRankSum -F SOR \
+    -O $OUTDIR/GVCFall_INDELs.table
+
+
+echo "---------------------------------------"
+echo 'Query data for download/comparison'
+echo "---------------------------------------"
+
+echo "---------------------------------------"
+echo "SNPs"
+
+echo "---------------------------------------"
+echo "Exectute bcftools to select variants that pass a specific threshold: FMT/GQ>30 & FMT/DP>10"
+bcftools query -f '%CHROM %POS %ID %REF %ALT %FILTER [\t%SAMPLE DP=%DP GQ=%GQ MQ=%MQ PL=%PL]\n' $OUTDIR/snps_filtered.vcf | fgrep 'PASS' > $OUTDIR/SNPs.tsv
+
+echo "---------------------------------------"
+echo "Indels"
+
+echo "---------------------------------------"
+echo "Exectute bcftools to select variants that pass a specific threshold: FMT/GQ>30 & FMT/DP>10"
+bcftools query -f '%CHROM %POS %ID %REF %ALT %FILTER [\t%SAMPLE DP=%DP GQ=%GQ MQ=%MQ PL=%PL]\n' $OUTDIR/indels_filtered.vcf | fgrep 'PASS' > $OUTDIR/indels.tsv
+
+
+echo "---------------------------------------"
+echo "Filter applied to pre-merged tool-specific data"
+echo "---------------------------------------"
+
+
+echo "---------------------------------------"
+echo 'GATK'
+
+echo "---------------------------------------"
+echo 'filter snps'
+/usr/local/jdk1.8.0_131/bin/java -Djava.iodir=$PBS_JOBFS -Xms3200m -Xmx3600m -jar /home/jwestaway/pk_pipeline/tools/gatk-4.2.2.0/gatk-package-4.2.2.0-local.jar \
+    VariantFiltration \
+    -V GATK/GVCFall_SNPs_GATK.vcf \
+    -filter "QD < 12.43" --filter-name "QD2" \
+    -filter "FS > 14.63418" --filter-name "FS60" \
+    -filter "MQ < 51.6" --filter-name "MQ40" \
+    -O $OUTDIR/snps_filtered_GATK.vcf
+
+
+echo "---------------------------------------"
+echo 'filter indels'
+/usr/local/jdk1.8.0_131/bin/java -Djava.iodir=$PBS_JOBFS -Xms3200m -Xmx3600m -jar /home/jwestaway/pk_pipeline/tools/gatk-4.2.2.0/gatk-package-4.2.2.0-local.jar \
+    VariantFiltration \
+    -V GATK/GVCFall_INDELs_GATK.vcf \
+    -filter "QD < 12.43" --filter-name "QD2" \
+    -filter "FS > 14.63418" --filter-name "FS60" \
+    -filter "MQ < 51.6" --filter-name "MQ40" \
+    -O $OUTDIR/indels_filtered_GATK.vcf
+
+echo "---------------------------------------"
+echo 'Make diagnostic tables for Variants Scores - snps'
+
+/usr/local/jdk1.8.0_131/bin/java -Djava.iodir=$PBS_JOBFS -Xms3200m -Xmx3600m -jar /home/jwestaway/pk_pipeline/tools/gatk-4.2.2.0/gatk-package-4.2.2.0-local.jar \
+    VariantsToTable \
+    -R $INDEXTDIR \
+    -V $OUTDIR/snps_filtered_GATK.vcf \
+    -F CHROM -F POS -F QUAL -F QD -F DP -F MQ -F GQ -F MQRankSum -F FS -F ReadPosRankSum -F SOR \
+    -O $OUTDIR/GVCFall_SNPs_GATK.table
+
+
+echo "---------------------------------------"
+echo 'Make diagnostic tables for Variants Scores - indels'
+
+/usr/local/jdk1.8.0_131/bin/java -Djava.iodir=$PBS_JOBFS -Xms3200m -Xmx3600m -jar /home/jwestaway/pk_pipeline/tools/gatk-4.2.2.0/gatk-package-4.2.2.0-local.jar \
+    VariantsToTable \
+    -R $INDEXTDIR \
+    -V $OUTDIR/indels_filtered_GATK.vcf \
+    -F CHROM -F POS -F QUAL -F QD -F DP -F MQ -F GQ -F MQRankSum -F FS -F ReadPosRankSum -F SOR \
+    -O $OUTDIR/GVCFall_INDELs_GATK.table
+
+echo "---------------------------------------"
+echo "Exectute bcftools to select variants"
+bcftools query -f '%CHROM %POS %ID %REF %ALT %FILTER [\t%SAMPLE DP=%DP GQ=%GQ MQ=%MQ PL=%PL]\n' $OUTDIR/snps_filtered_GATK.vcf | fgrep 'PASS' > $OUTDIR/SNPs_GATK.tsv
+
+echo "---------------------------------------"
+echo "Indels"
+
+echo "---------------------------------------"
+echo "Exectute bcftools to select variants"
+bcftools query -f '%CHROM %POS %ID %REF %ALT %FILTER [\t%SAMPLE DP=%DP GQ=%GQ MQ=%MQ PL=%PL]\n' $OUTDIR/indels_filtered_GATK.vcf | fgrep 'PASS' > $OUTDIR/indels_GATK.tsv
+
+
+
+echo "---------------------------------------"
+echo 'samtools'
+
+echo "---------------------------------------"
+echo 'filter snps'
+/usr/local/jdk1.8.0_131/bin/java -Djava.iodir=$PBS_JOBFS -Xms3200m -Xmx3600m -jar /home/jwestaway/pk_pipeline/tools/gatk-4.2.2.0/gatk-package-4.2.2.0-local.jar \
+    VariantFiltration \
+    -V samtools/GVCFall_SNPs_bcftools.vcf \
+    -filter "QD < 12.43" --filter-name "QD2" \
+    -filter "FS > 14.63418" --filter-name "FS60" \
+    -filter "MQ < 51.6" --filter-name "MQ40" \
+    -O $OUTDIR/snps_filtered_bcftools.vcf
+
+
+echo "---------------------------------------"
+echo 'filter indels'
+/usr/local/jdk1.8.0_131/bin/java -Djava.iodir=$PBS_JOBFS -Xms3200m -Xmx3600m -jar /home/jwestaway/pk_pipeline/tools/gatk-4.2.2.0/gatk-package-4.2.2.0-local.jar \
+    VariantFiltration \
+    -V samtools/GVCFall_INDELs_bcftools.vcf \
+    -filter "QD < 12.43" --filter-name "QD2" \
+    -filter "FS > 14.63418" --filter-name "FS60" \
+    -filter "MQ < 51.6" --filter-name "MQ40" \
+    -O $OUTDIR/indels_filtered_bcftools.vcf
+
+echo "---------------------------------------"
+echo 'Make diagnostic tables for Variants Scores - snps'
+
+/usr/local/jdk1.8.0_131/bin/java -Djava.iodir=$PBS_JOBFS -Xms3200m -Xmx3600m -jar /home/jwestaway/pk_pipeline/tools/gatk-4.2.2.0/gatk-package-4.2.2.0-local.jar \
+    VariantsToTable \
+    -R $INDEXTDIR \
+    -V $OUTDIR/snps_filtered_bcftools.vcf \
+    -F CHROM -F POS -F QUAL -F QD -F DP -F MQ -F GQ -F MQRankSum -F FS -F ReadPosRankSum -F SOR \
+    -O $OUTDIR/GVCFall_SNPs_bcftools.table
+
+
+echo "---------------------------------------"
+echo 'Make diagnostic tables for Variants Scores - indels'
+
+/usr/local/jdk1.8.0_131/bin/java -Djava.iodir=$PBS_JOBFS -Xms3200m -Xmx3600m -jar /home/jwestaway/pk_pipeline/tools/gatk-4.2.2.0/gatk-package-4.2.2.0-local.jar \
+    VariantsToTable \
+    -R $INDEXTDIR \
+    -V $OUTDIR/indels_filtered_bcftools.vcf \
+    -F CHROM -F POS -F QUAL -F QD -F DP -F MQ -F GQ -F MQRankSum -F FS -F ReadPosRankSum -F SOR \
+    -O $OUTDIR/GVCFall_INDELs_bcftools.table
+
+echo "---------------------------------------"
+echo "Exectute bcftools to select variants"
+bcftools query -f '%CHROM %POS %ID %REF %ALT %FILTER [\t%SAMPLE DP=%DP GQ=%GQ MQ=%MQ PL=%PL]\n' $OUTDIR/snps_filtered_bcftools.vcf | fgrep 'PASS' > $OUTDIR/SNPs_bcftools.tsv
+
+
+echo "---------------------------------------"
+echo "Exectute bcftools to select variants"
+bcftools query -f '%CHROM %POS %ID %REF %ALT %FILTER [\t%SAMPLE DP=%DP GQ=%GQ MQ=%MQ PL=%PL]\n' $OUTDIR/indels_filtered_bcftools.vcf | fgrep 'PASS' > $OUTDIR/indels_bcftools.tsv
+
+echo "---------------------------------------"
+echo 'Finished'
+
+```
+
+### Creating a summary
+
+Versions: 3.6.2 (R)
+File: filter_summary.pbs
+
+
+```{R,eval=F}
+#!/bin/bash
+#PBS -N Filter_summary
+#PBS -j oe
+#PBS -m ae
+#PBS -l nodes=1
+#PBS -l ncpus=30
+#PBS -l mem=150gb
+#PBS -l walltime=48:00:00
+#PBS -M jacob.westaway@menzies.edu.au
+
+echo "---------------------------------------"
+echo "PBS: Job identifier is $PBS_JOBID"
+echo "PBS: Job name is $PBS_JOBNAME"
+
+echo "---------------------------------------"
+echo "Load the R module"
+module load software/R_3.6.2
+
+echo "---------------------------------------"
+echo "Execute R script to get summary of different filters"
+source /usr/local/miniconda3/etc/profile.d/conda.sh
+conda activate R_3.6.2
+Rscript /home/jwestaway/pk_pipeline/ZB_100/scripts/14_Consensus_vcf/filtering_test/filter_comparison.R
+conda deactivate
+
+echo "---------------------------------------"
+echo "Finished"
+```
+
+#### R script nested in the PBS script above
+
+File = filter_comparison.R
+
+```{R,eval=F}
+# Load Packages
+library(dplyr)
+library(tidyr)
+library(readr)
+library(tibble)
+library(stringr)
+library(forcats)
+
+#########################################################################################################################################################
+
+# Define function for variant totals
+
+variant_count_total <- function(INDEL_TSV, SNP_TSV, FILTER){
+
+Names <- c("X1") # X1 is the first columns
+for (i in 1:100){
+  Names <- append(Names, print(paste0("Sample_", i)))
+}
+# Need to create names for the columns as the first row only has 7 columns, and thus R assumes all rows only have 7 columns and we end up losing a significant amount of data
+Variants <- read_tsv(INDEL_TSV, col_names =  Names) %>% 
+  separate(X1, sep =" ", c("Contig", "Base", "ID", "Ref", "Alt")) %>%  
+  pivot_longer(cols = !c(Contig, Base, ID, Ref, Alt)) %>%  
+  select(-name) %>% 
+  na.omit() %>% 
+  mutate(V_Call_Tool = ifelse(grepl("2:", value), "BCFTOOLS", "GATK")) %>% 
+  separate(value, sep = " ", c("Sample", "DP", "GQ", "MQ", "PL")) %>% 
+  mutate(DP = str_remove(DP, "DP=")) %>% 
+  mutate(GQ = str_remove(GQ, "GQ=")) %>% 
+  mutate(MQ = str_remove(MQ, "MQ=")) %>% 
+  mutate(PL = str_remove(PL, "PL=")) %>% 
+  mutate_at(c("DP", "GQ", "MQ"), as.numeric) %>% 
+  add_column(Variant = "Indel") %>% 
+  rbind(
+   read_tsv(SNP_TSV, col_names =  Names) %>% 
+     separate(X1, sep =" ", c("Contig", "Base", "ID", "Ref", "Alt")) %>% 
+     pivot_longer(cols = !c(Contig, Base, ID, Ref, Alt)) %>%  
+     select(-name) %>% 
+     na.omit() %>% 
+     mutate(V_Call_Tool = ifelse(grepl("2:", value), "BCFTOOLS", "GATK")) %>% 
+     separate(value, sep = " ", c("Sample", "DP", "GQ", "MQ", "PL")) %>% 
+     mutate(DP = str_remove(DP, "DP=")) %>% 
+     mutate(GQ = str_remove(GQ, "GQ=")) %>% 
+     mutate(MQ = str_remove(MQ, "MQ=")) %>% 
+     mutate(PL = str_remove(PL, "PL=")) %>% 
+     mutate_at(c("DP", "GQ", "MQ"), as.numeric) %>% 
+     add_column(Variant = "SNP")  
+   ) %>% 
+  separate(Alt, c("ALT1", "ALT2", "ALT3", "ALT4", "ALT5", "ALT6"), sep = ",") %>% 
+  pivot_longer(5:10, names_to = "ALT_N", values_to = "Alt") %>% 
+  select(-ALT_N) %>% 
+  na.omit(Alt)
+
+Variants_2 <- Variants %>% # up to here produces a df that lists every variant-sample combination & below summarises this to give us counts
+  unite(Variant_ID, Contig, Base, ID, Ref, Alt, sep = "-") %>% 
+  mutate_if(is.character, as.factor) %>% 
+  group_by(Variant) %>% 
+  dplyr::summarise(Variant_Count = length(unique(Variant_ID)), 
+                   GQ = mean(GQ),
+                   DP = mean(DP),
+                   MQ = mean(MQ)) 
+
+Variants_2 %>% 
+  add_column(Filter = FILTER) %>% 
+  select(-c(GQ, DP, MQ)) %>% 
+  pivot_wider(c(Filter, Variant_Count), names_from = Variant, values_from = Variant_Count) %>% 
+  left_join(
+    Variants_2 %>% 
+  add_column(Filter = FILTER) %>% 
+    select(Filter, GQ, DP, MQ) %>% 
+    group_by(Filter) %>% 
+    summarise_all(mean)) %>% 
+  mutate(Total = Indel + SNP) %>% 
+  relocate(Filter, Total, SNP, Indel)
+}
+
+#########################################################################################################################################################
+
+# Define function for tool-specific counts
+
+variant_count_tool_spec <- function(INDEL_TSV, SNP_TSV, FILTER, TOOL){
+
+Names <- c("X1") # X1 is the first columns
+for (i in 1:100){
+  Names <- append(Names, print(paste0("Sample_", i)))
+}
+# Need to create names for the columns as the first row only has 7 columns, and thus R assumes all rows only have 7 columns and we end up losing a significant amount of data
+Variants <- read_tsv(INDEL_TSV, col_names =  Names) %>% 
+  separate(X1, sep =" ", c("Contig", "Base", "ID", "Ref", "Alt")) %>% 
+  pivot_longer(cols = !c(Contig, Base, ID, Ref, Alt)) %>%  
+  select(-name) %>% 
+  na.omit() %>% 
+  separate(value, sep = " ", c("Sample", "DP", "GQ", "MQ", "PL")) %>% 
+  mutate(DP = str_remove(DP, "DP=")) %>% 
+  mutate(GQ = str_remove(GQ, "GQ=")) %>% 
+  mutate(MQ = str_remove(MQ, "MQ=")) %>% 
+  mutate(PL = str_remove(PL, "PL=")) %>% 
+  mutate_at(c("DP", "GQ", "MQ"), as.numeric) %>% 
+  add_column(Variant = "Indel") %>% 
+  rbind(
+   read_tsv(SNP_TSV, col_names =  Names) %>% 
+     separate(X1, sep =" ", c("Contig", "Base", "ID", "Ref", "Alt"))  %>% 
+     pivot_longer(cols = !c(Contig, Base, ID, Ref, Alt)) %>%  
+     select(-name) %>% 
+     na.omit() %>% 
+     separate(value, sep = " ", c("Sample", "DP", "GQ", "MQ", "PL")) %>% 
+     mutate(DP = str_remove(DP, "DP=")) %>% 
+     mutate(GQ = str_remove(GQ, "GQ=")) %>% 
+     mutate(MQ = str_remove(MQ, "MQ=")) %>% 
+     mutate(PL = str_remove(PL, "PL=")) %>% 
+     mutate_at(c("DP", "GQ", "MQ"), as.numeric) %>% 
+     add_column(Variant = "SNP")  
+   ) %>% 
+  separate(Alt, c("ALT1", "ALT2", "ALT3", "ALT4", "ALT5", "ALT6"), sep = ",") %>% 
+  pivot_longer(5:10, names_to = "ALT_N", values_to = "Alt") %>% 
+  select(-ALT_N) %>% 
+  na.omit(Alt)
+
+Variants_2 <- Variants %>% # up to here produces a df that lists every variant-sample combination & below summarises this to give us counts
+  unite(Variant_ID, Contig, Base, ID, Ref, Alt, sep = "-") %>% 
+  mutate_if(is.character, as.factor) %>% 
+  group_by(Variant) %>% 
+  dplyr::summarise(Variant_Count = length(unique(Variant_ID)), 
+                   GQ = mean(GQ),
+                   DP = mean(DP),
+                   MQ = mean(MQ)) 
+
+Variants_2 %>% 
+  add_column(Filter = FILTER) %>% 
+  select(-c(GQ, DP, MQ)) %>% 
+  pivot_wider(c(Filter, Variant_Count), names_from = Variant, values_from = Variant_Count) %>% 
+  left_join(
+    Variants_2 %>% 
+  add_column(Filter = FILTER) %>% 
+    select(Filter, GQ, DP, MQ) %>% 
+    group_by(Filter) %>% 
+    summarise_all(mean)) %>% 
+  mutate(Total = Indel + SNP) %>% 
+  relocate(Filter, Total, SNP, Indel)  %>% 
+  rename_at(vars(SNP), funs(paste0(TOOL, "_SNP"))) %>% 
+  rename_at(vars(Indel), funs(paste0(TOOL, "_Indel"))) %>% 
+  select(1,3:4)
+
+}
+
+#########################################################################################################################################################
+
+# Use functions with left_join to combine 'orgiginal data'
+
+# ORIGINAL
+ORIGINAL <- variant_count_total("/home/jwestaway/pk_pipeline/ZB_100/outputs/vcf_consensus/filtering_tests/original/indels.tsv", 
+                    "/home/jwestaway/pk_pipeline/ZB_100/outputs/vcf_consensus/filtering_tests/original/SNPs.tsv", 
+                    "ORIGINAL") %>% 
+  left_join(variant_count_tool_spec("/home/jwestaway/pk_pipeline/ZB_100/outputs/vcf_consensus/filtering_tests/original/indels_GATK.tsv", 
+                        "/home/jwestaway/pk_pipeline/ZB_100/outputs/vcf_consensus/filtering_tests/original/SNPs_GATK.tsv", 
+                        "ORIGINAL", "GATK")) %>% 
+  left_join(variant_count_tool_spec("/home/jwestaway/pk_pipeline/ZB_100/outputs/vcf_consensus/filtering_tests/original/indels_bcftools.tsv", 
+                        "/home/jwestaway/pk_pipeline/ZB_100/outputs/vcf_consensus/filtering_tests/original/SNPs_bcftools.tsv", 
+                        "ORIGINAL", "bcftools")) 
+
+
+#########################################################################################################################################################
+
+# Alter Functions for filters
+
+#########################################################################################################################################################
+
+# Define function for variant totals
+
+variant_count_total <- function(INDEL_TSV, SNP_TSV, FILTER){
+
+Names <- c("X1") # X1 is the first columns
+for (i in 1:100){
+  Names <- append(Names, print(paste0("Sample_", i)))
+}
+# Need to create names for the columns as the first row only has 7 columns, and thus R assumes all rows only have 7 columns and we end up losing a significant amount of data
+Variants <- read_tsv(INDEL_TSV, col_names =  Names) %>% 
+  separate(X1, sep =" ", c("Contig", "Base", "ID", "Ref", "Alt", "FILTER")) %>% 
+  select(-FILTER) %>% 
+  pivot_longer(cols = !c(Contig, Base, ID, Ref, Alt)) %>%  
+  select(-name) %>% 
+  na.omit() %>% 
+  mutate(V_Call_Tool = ifelse(grepl("2:", value), "BCFTOOLS", "GATK")) %>% 
+  separate(value, sep = " ", c("Sample", "DP", "GQ", "MQ", "PL")) %>% 
+  mutate(DP = str_remove(DP, "DP=")) %>% 
+  mutate(GQ = str_remove(GQ, "GQ=")) %>% 
+  mutate(MQ = str_remove(MQ, "MQ=")) %>% 
+  mutate(PL = str_remove(PL, "PL=")) %>% 
+  mutate_at(c("DP", "GQ", "MQ"), as.numeric) %>% 
+  add_column(Variant = "Indel") %>% 
+  rbind(
+   read_tsv(SNP_TSV, col_names =  Names) %>% 
+     separate(X1, sep =" ", c("Contig", "Base", "ID", "Ref", "Alt", "FILTER")) %>% 
+     select(-FILTER) %>% 
+     pivot_longer(cols = !c(Contig, Base, ID, Ref, Alt)) %>%  
+     select(-name) %>% 
+     na.omit() %>% 
+     mutate(V_Call_Tool = ifelse(grepl("2:", value), "BCFTOOLS", "GATK")) %>% 
+     separate(value, sep = " ", c("Sample", "DP", "GQ", "MQ", "PL")) %>% 
+     mutate(DP = str_remove(DP, "DP=")) %>% 
+     mutate(GQ = str_remove(GQ, "GQ=")) %>% 
+     mutate(MQ = str_remove(MQ, "MQ=")) %>% 
+     mutate(PL = str_remove(PL, "PL=")) %>% 
+     mutate_at(c("DP", "GQ", "MQ"), as.numeric) %>% 
+     add_column(Variant = "SNP")  
+   ) %>% 
+  separate(Alt, c("ALT1", "ALT2", "ALT3", "ALT4", "ALT5", "ALT6"), sep = ",") %>% 
+  pivot_longer(5:10, names_to = "ALT_N", values_to = "Alt") %>% 
+  select(-ALT_N) %>% 
+  na.omit(Alt)
+
+Variants_2 <- Variants %>% # up to here produces a df that lists every variant-sample combination & below summarises this to give us counts
+  unite(Variant_ID, Contig, Base, ID, Ref, Alt, sep = "-") %>% 
+  mutate_if(is.character, as.factor) %>% 
+  group_by(Variant) %>% 
+  dplyr::summarise(Variant_Count = length(unique(Variant_ID)), 
+                   GQ = mean(GQ),
+                   DP = mean(DP),
+                   MQ = mean(MQ)) 
+
+Variants_2 %>% 
+  add_column(Filter = FILTER) %>% 
+  select(-c(GQ, DP, MQ)) %>% 
+  pivot_wider(c(Filter, Variant_Count), names_from = Variant, values_from = Variant_Count) %>% 
+  left_join(
+    Variants_2 %>% 
+  add_column(Filter = FILTER) %>% 
+    select(Filter, GQ, DP, MQ) %>% 
+    group_by(Filter) %>% 
+    summarise_all(mean)) %>% 
+  mutate(Total = Indel + SNP) %>% 
+  relocate(Filter, Total, SNP, Indel)
+}
+
+#########################################################################################################################################################
+
+# Define function for tool-specific counts
+
+variant_count_tool_spec <- function(INDEL_TSV, SNP_TSV, FILTER, TOOL){
+
+Names <- c("X1") # X1 is the first columns
+for (i in 1:100){
+  Names <- append(Names, print(paste0("Sample_", i)))
+}
+# Need to create names for the columns as the first row only has 7 columns, and thus R assumes all rows only have 7 columns and we end up losing a significant amount of data
+Variants <- read_tsv(INDEL_TSV, col_names =  Names) %>% 
+  separate(X1, sep =" ", c("Contig", "Base", "ID", "Ref", "Alt", "FILTER")) %>% 
+  select(-FILTER) %>% 
+  pivot_longer(cols = !c(Contig, Base, ID, Ref, Alt)) %>%  
+  select(-name) %>% 
+  na.omit() %>% 
+  separate(value, sep = " ", c("Sample", "DP", "GQ", "MQ", "PL")) %>% 
+  mutate(DP = str_remove(DP, "DP=")) %>% 
+  mutate(GQ = str_remove(GQ, "GQ=")) %>% 
+  mutate(MQ = str_remove(MQ, "MQ=")) %>% 
+  mutate(PL = str_remove(PL, "PL=")) %>% 
+  mutate_at(c("DP", "GQ", "MQ"), as.numeric) %>% 
+  add_column(Variant = "Indel") %>% 
+  rbind(
+   read_tsv(SNP_TSV, col_names =  Names) %>% 
+     separate(X1, sep =" ", c("Contig", "Base", "ID", "Ref", "Alt", "FILTER")) %>% 
+     select(-FILTER) %>% 
+     pivot_longer(cols = !c(Contig, Base, ID, Ref, Alt)) %>%  
+     select(-name) %>% 
+     na.omit() %>% 
+     separate(value, sep = " ", c("Sample", "DP", "GQ", "MQ", "PL")) %>% 
+     mutate(DP = str_remove(DP, "DP=")) %>% 
+     mutate(GQ = str_remove(GQ, "GQ=")) %>% 
+     mutate(MQ = str_remove(MQ, "MQ=")) %>% 
+     mutate(PL = str_remove(PL, "PL=")) %>% 
+     mutate_at(c("DP", "GQ", "MQ"), as.numeric) %>% 
+     add_column(Variant = "SNP")  
+   ) %>% 
+  separate(Alt, c("ALT1", "ALT2", "ALT3", "ALT4", "ALT5", "ALT6"), sep = ",") %>% 
+  pivot_longer(5:10, names_to = "ALT_N", values_to = "Alt") %>% 
+  select(-ALT_N) %>% 
+  na.omit(Alt)
+
+Variants_2 <- Variants %>% # up to here produces a df that lists every variant-sample combination & below summarises this to give us counts
+  unite(Variant_ID, Contig, Base, ID, Ref, Alt, sep = "-") %>% 
+  mutate_if(is.character, as.factor) %>% 
+  group_by(Variant) %>% 
+  dplyr::summarise(Variant_Count = length(unique(Variant_ID)), 
+                   GQ = mean(GQ),
+                   DP = mean(DP),
+                   MQ = mean(MQ)) 
+
+Variants_2 %>% 
+  add_column(Filter = FILTER) %>% 
+  select(-c(GQ, DP, MQ)) %>% 
+  pivot_wider(c(Filter, Variant_Count), names_from = Variant, values_from = Variant_Count) %>% 
+  left_join(
+    Variants_2 %>% 
+  add_column(Filter = FILTER) %>% 
+    select(Filter, GQ, DP, MQ) %>% 
+    group_by(Filter) %>% 
+    summarise_all(mean)) %>% 
+  mutate(Total = Indel + SNP) %>% 
+  relocate(Filter, Total, SNP, Indel)  %>% 
+  rename_at(vars(SNP), funs(paste0(TOOL, "_SNP"))) %>% 
+  rename_at(vars(Indel), funs(paste0(TOOL, "_Indel"))) %>% 
+  select(1,3:4)
+
+}
+
+#########################################################################################################################################################
+
+# Use functions with left_join to combine filters
+
+# GATK_BP
+GATK_BP <- variant_count_total("/home/jwestaway/pk_pipeline/ZB_100/outputs/vcf_consensus/filtering_tests/GATK_BP/indels.tsv", 
+                    "/home/jwestaway/pk_pipeline/ZB_100/outputs/vcf_consensus/filtering_tests/GATK_BP/SNPs.tsv", 
+                    "GATK_BP") %>% 
+  left_join(variant_count_tool_spec("/home/jwestaway/pk_pipeline/ZB_100/outputs/vcf_consensus/filtering_tests/GATK_BP/indels_GATK.tsv", 
+                        "/home/jwestaway/pk_pipeline/ZB_100/outputs/vcf_consensus/filtering_tests/GATK_BP/SNPs_GATK.tsv", 
+                        "GATK_BP", "GATK")) %>% 
+  left_join(variant_count_tool_spec("/home/jwestaway/pk_pipeline/ZB_100/outputs/vcf_consensus/filtering_tests/GATK_BP/indels_bcftools.tsv", 
+                        "/home/jwestaway/pk_pipeline/ZB_100/outputs/vcf_consensus/filtering_tests/GATK_BP/SNPs_bcftools.tsv", 
+                        "GATK_BP", "bcftools")) 
+
+# VIVAX
+VIVAX <- variant_count_total("/home/jwestaway/pk_pipeline/ZB_100/outputs/vcf_consensus/filtering_tests/Vivax/indels.tsv", 
+                    "/home/jwestaway/pk_pipeline/ZB_100/outputs/vcf_consensus/filtering_tests/Vivax/SNPs.tsv", 
+                    "VIVAX") %>% 
+  left_join(variant_count_tool_spec("/home/jwestaway/pk_pipeline/ZB_100/outputs/vcf_consensus/filtering_tests/Vivax/indels_GATK.tsv", 
+                        "/home/jwestaway/pk_pipeline/ZB_100/outputs/vcf_consensus/filtering_tests/Vivax/SNPs_GATK.tsv", 
+                        "VIVAX", "GATK")) %>% 
+  left_join(variant_count_tool_spec("/home/jwestaway/pk_pipeline/ZB_100/outputs/vcf_consensus/filtering_tests/Vivax/indels_bcftools.tsv", 
+                        "/home/jwestaway/pk_pipeline/ZB_100/outputs/vcf_consensus/filtering_tests/Vivax/SNPs_bcftools.tsv", 
+                        "VIVAX", "bcftools")) 
+
+#########################################################################################################################################################
+
+# Use rbind to create a summary files
+
+ORIGINAL %>%
+    rbind(GATK_BP) %>%
+    rbind(VIVAX) %>%
+    write_tsv("/home/jwestaway/pk_pipeline/ZB_100/outputs/vcf_consensus/filtering_tests/Filtering_Summary.tsv")
+
+```
+
+
+### Single parameter filters 
+
+Versions: 4.2.2 (GATK), 1.8.0_131-b1 (Java), 2.21.9 (picard)
+File: snps_and_indels.pbs
+
+
+
+
+
 
 
 

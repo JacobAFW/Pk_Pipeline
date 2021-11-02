@@ -1,0 +1,34 @@
+#!/bin/bash
+#PBS -N bcftools_variants_only
+#PBS -j oe
+#PBS -m ae
+#PBS -l nodes=1
+#PBS -l ncpus=21
+#PBS -l mem=200gb
+#PBS -l walltime=24:00:00
+#PBS -M jacob.westaway@menzies.edu.au
+
+echo "---------------------------------------"
+echo "PBS: Job identifier is $PBS_JOBID"
+echo "PBS: Job name is $PBS_JOBNAME"
+
+echo "---------------------------------------"
+echo "Define paths to samtools"
+export PATH=$PATH:/home/jwestaway/pk_pipeline/tools/bcftools-1.13/
+
+echo "---------------------------------------"
+echo 'Change to working directory and set env variables'
+cd /home/jwestaway/pk_pipeline/ZB_100/outputs/vcf_consensus/GATK/bams
+INDEXTDIR="/home/jwestaway/pk_pipeline/ref_genomes/PKA1H1/fasta/strain_A1_H.1.Icor.fasta"
+OUTDIR="/home/jwestaway/pk_pipeline/ZB_100/outputs/vcf_consensus/samtools/"
+
+echo "---------------------------------------"
+echo 'Call variants with samtools'
+
+bcftools mpileup --threads 20 -f $INDEXTDIR -b input_bam_files.list \
+   | bcftools call -m -Oz -a FORMAT/GQ,FORMAT/GP,INFO/PV4 -v -o $OUTDIR/PK_samtools_variants_only_header.raw.vcf.gz
+
+bcftools index --threads 20 -t -o $OUTDIR/PK_samtools_variants_only_header.raw.vcf.gz.tbi $OUTDIR/PK_samtools_variants_only_header.raw.vcf.gz
+
+echo "---------------------------------------"
+echo "Finsihed!"

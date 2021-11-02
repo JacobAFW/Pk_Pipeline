@@ -1,0 +1,28 @@
+#!/bin/bash
+#PBS -N Consensus_var
+#PBS -j oe
+#PBS -m ae
+#PBS -l nodes=1
+#PBS -l ncpus=30
+#PBS -l mem=300gb
+#PBS -l pmem=300gb
+#PBS -l file=200gb
+#PBS -l walltime=8:00:00
+#PBS -M jacob.westaway@menzies.edu.au
+
+echo "---------------------------------------"
+echo "PBS: Job identifier is $PBS_JOBID"
+echo "PBS: Job name is $PBS_JOBNAME"
+
+echo "---------------------------------------"
+echo "Define paths to bcftools and miniconda, load the R module, change to working directory and create an output directory"
+export PATH=$PATH:/home/jwestaway/pk_pipeline/tools/bcftools-1.13/
+
+cd /home/jwestaway/pk_pipeline/ZB_100/outputs/vcf_consensus/
+
+echo "---------------------------------------"
+echo "Exectute bcftools to select variants that pass a specific threshold: FMT/GQ>30 & FMT/DP>10"
+bcftools query -f '%CHROM %POS %ID %REF %ALT [\t%SAMPLE DP=%DP GQ=%GQ MQ=%MQ PL=%PL]\n' merged_GATK_samtools_variants.vcf.gz > merged_no_filter.tsv.gz
+
+echo "---------------------------------------"
+echo "Finished "
