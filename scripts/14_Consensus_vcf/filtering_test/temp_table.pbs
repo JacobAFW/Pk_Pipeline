@@ -1,0 +1,175 @@
+#!/bin/bash
+#PBS -N Create_filter_tables
+#PBS -j oe
+#PBS -m ae
+#PBS -l nodes=1
+#PBS -l ncpus=21
+#PBS -l mem=50gb
+#PBS -l walltime=24:00:00
+#PBS -M jacob.westaway@menzies.edu.au
+
+echo "---------------------------------------"
+echo "PBS: Job identifier is $PBS_JOBID"
+echo "PBS: Job name is $PBS_JOBNAME"
+
+echo "---------------------------------------------------------------------------------------------------------------------"
+echo 'ORIGINAL'
+
+echo "---------------------------------------"
+echo "---------------------------------------"
+echo 'Change to working directory and set env variables'
+OUTDIR="/home/jwestaway/pk_pipeline/ZB_100/outputs/vcf_consensus/filtering_tests/original"
+PICARD="/usr/local/miniconda3/pkgs/picard-2.21.9-0/share/picard-2.21.9-0/picard.jar"
+INDEXTDIR="/home/jwestaway/pk_pipeline/ref_genomes/PKA1H1/fasta/strain_A1_H.1.Icor.fasta"
+
+cd /home/jwestaway/pk_pipeline/ZB_100/outputs/vcf_consensus/
+
+
+echo "---------------------------------------"
+echo 'Make diagnostic tables for Variants Scores - snps'
+
+/usr/local/jdk1.8.0_131/bin/java -Djava.iodir=$PBS_JOBFS -Xms3200m -Xmx3600m -jar /home/jwestaway/pk_pipeline/tools/gatk-4.2.2.0/gatk-package-4.2.2.0-local.jar \
+    VariantsToTable \
+    -R $INDEXTDIR \
+    -V variants_only_test/GVCFall_SNPs.vcf \
+    -F CHROM -F POS -F QUAL -F QD -F DP -F MQ -F GQ -F MQRankSum -F FS -F ReadPosRankSum -F SOR \
+    -O $OUTDIR/GVCFall_SNPs.table
+
+echo "---------------------------------------"
+echo 'Make diagnostic tables for Variants Scores - indels'
+
+/usr/local/jdk1.8.0_131/bin/java -Djava.iodir=$PBS_JOBFS -Xms3200m -Xmx3600m -jar /home/jwestaway/pk_pipeline/tools/gatk-4.2.2.0/gatk-package-4.2.2.0-local.jar \
+    VariantsToTable \
+    -R $INDEXTDIR \
+    -V variants_only_test/GVCFall_INDELs.vcf \
+    -F CHROM -F POS -F QUAL -F QD -F DP -F MQ -F GQ -F MQRankSum -F FS -F ReadPosRankSum -F SOR \
+    -O $OUTDIR/GVCFall_INDELs.table
+
+
+echo "---------------------------------------------------------------------------------------------------------------------"
+echo 'GATK_BP'
+
+echo "---------------------------------------"
+echo "---------------------------------------"
+echo 'Change to working directory and set env variables'
+OUTDIR="/home/jwestaway/pk_pipeline/ZB_100/outputs/vcf_consensus/filtering_tests/GATK_BP"
+PICARD="/usr/local/miniconda3/pkgs/picard-2.21.9-0/share/picard-2.21.9-0/picard.jar"
+INDEXTDIR="/home/jwestaway/pk_pipeline/ref_genomes/PKA1H1/fasta/strain_A1_H.1.Icor.fasta"
+cd /home/jwestaway/pk_pipeline/ZB_100/outputs/vcf_consensus
+
+
+echo "---------------------------------------"
+echo 'filter snps'
+/usr/local/jdk1.8.0_131/bin/java -Djava.iodir=$PBS_JOBFS -Xms3200m -Xmx3600m -jar /home/jwestaway/pk_pipeline/tools/gatk-4.2.2.0/gatk-package-4.2.2.0-local.jar \
+    VariantFiltration \
+    -V variants_only_test/GVCFall_SNPs.vcf \
+    -filter "QD < 2.0" --filter-name "QD2" \
+    -filter "QUAL < 30.0" --filter-name "QUAL30" \
+    -filter "SOR > 3.0" --filter-name "SOR3" \
+    -filter "FS > 60.0" --filter-name "FS60" \
+    -filter "MQ < 40.0" --filter-name "MQ40" \
+    -filter "MQRankSum < -12.5" --filter-name "MQRankSum-12.5" \
+    -filter "ReadPosRankSum < -8.0" --filter-name "ReadPosRankSum-8" \
+    -O $OUTDIR/snps_filtered.vcf
+
+
+echo "---------------------------------------"
+echo 'filter indels'
+/usr/local/jdk1.8.0_131/bin/java -Djava.iodir=$PBS_JOBFS -Xms3200m -Xmx3600m -jar /home/jwestaway/pk_pipeline/tools/gatk-4.2.2.0/gatk-package-4.2.2.0-local.jar \
+    VariantFiltration \
+    -V variants_only_test/GVCFall_INDELs.vcf \
+    -filter "QD < 2.0" --filter-name "QD2" \
+    -filter "QUAL < 30.0" --filter-name "QUAL30" \
+    -filter "FS > 200.0" --filter-name "FS200" \
+    -filter "ReadPosRankSum < -20.0" --filter-name "ReadPosRankSum-20" \
+    -O $OUTDIR/indels_filtered.vcf
+
+
+echo "---------------------------------------"
+echo 'Make diagnostic tables for Variants Scores - snps'
+
+/usr/local/jdk1.8.0_131/bin/java -Djava.iodir=$PBS_JOBFS -Xms3200m -Xmx3600m -jar /home/jwestaway/pk_pipeline/tools/gatk-4.2.2.0/gatk-package-4.2.2.0-local.jar \
+    VariantsToTable \
+    -R $INDEXTDIR \
+    -V $OUTDIR/snps_filtered.vcf \
+    -F CHROM -F POS -F QUAL -F QD -F DP -F MQ -F GQ -F MQRankSum -F FS -F ReadPosRankSum -F SOR \
+    -O $OUTDIR/GVCFall_SNPs.table
+
+
+echo "---------------------------------------"
+echo 'Make diagnostic tables for Variants Scores - indels'
+
+/usr/local/jdk1.8.0_131/bin/java -Djava.iodir=$PBS_JOBFS -Xms3200m -Xmx3600m -jar /home/jwestaway/pk_pipeline/tools/gatk-4.2.2.0/gatk-package-4.2.2.0-local.jar \
+    VariantsToTable \
+    -R $INDEXTDIR \
+    -V $OUTDIR/indels_filtered.vcf \
+    -F CHROM -F POS -F QUAL -F QD -F DP -F MQ -F GQ -F MQRankSum -F FS -F ReadPosRankSum -F SOR \
+    -O $OUTDIR/GVCFall_INDELs.table
+
+echo "---------------------------------------"
+echo 'CLEAN'
+
+rm $OUTDIR/*filtered*
+
+
+echo "---------------------------------------------------------------------------------------------------------------------"
+echo 'Vivax'
+
+echo "---------------------------------------"
+echo "---------------------------------------"
+echo 'Change to working directory and set env variables'
+OUTDIR="/home/jwestaway/pk_pipeline/ZB_100/outputs/vcf_consensus/filtering_tests/Vivax"
+PICARD="/usr/local/miniconda3/pkgs/picard-2.21.9-0/share/picard-2.21.9-0/picard.jar"
+INDEXTDIR="/home/jwestaway/pk_pipeline/ref_genomes/PKA1H1/fasta/strain_A1_H.1.Icor.fasta"
+cd /home/jwestaway/pk_pipeline/ZB_100/outputs/vcf_consensus
+
+echo "---------------------------------------"
+echo 'filter snps'
+/usr/local/jdk1.8.0_131/bin/java -Djava.iodir=$PBS_JOBFS -Xms3200m -Xmx3600m -jar /home/jwestaway/pk_pipeline/tools/gatk-4.2.2.0/gatk-package-4.2.2.0-local.jar \
+    VariantFiltration \
+    -V variants_only_test/GVCFall_SNPs.vcf \
+    -filter "QD < 12.43" --filter-name "QD2" \
+    -filter "FS > 14.63418" --filter-name "FS60" \
+    -filter "MQ < 51.6" --filter-name "MQ40" \
+    -O $OUTDIR/snps_filtered.vcf
+
+
+echo "---------------------------------------"
+echo 'filter indels'
+/usr/local/jdk1.8.0_131/bin/java -Djava.iodir=$PBS_JOBFS -Xms3200m -Xmx3600m -jar /home/jwestaway/pk_pipeline/tools/gatk-4.2.2.0/gatk-package-4.2.2.0-local.jar \
+    VariantFiltration \
+    -V variants_only_test/GVCFall_INDELs.vcf \
+    -filter "QD < 12.43" --filter-name "QD2" \
+    -filter "FS > 14.63418" --filter-name "FS60" \
+    -filter "MQ < 51.6" --filter-name "MQ40" \
+    -O $OUTDIR/indels_filtered.vcf
+
+
+echo "---------------------------------------"
+echo 'Make diagnostic tables for Variants Scores - snps'
+
+/usr/local/jdk1.8.0_131/bin/java -Djava.iodir=$PBS_JOBFS -Xms3200m -Xmx3600m -jar /home/jwestaway/pk_pipeline/tools/gatk-4.2.2.0/gatk-package-4.2.2.0-local.jar \
+    VariantsToTable \
+    -R $INDEXTDIR \
+    -V $OUTDIR/snps_filtered.vcf \
+    -F CHROM -F POS -F QUAL -F QD -F DP -F MQ -F GQ -F MQRankSum -F FS -F ReadPosRankSum -F SOR \
+    -O $OUTDIR/GVCFall_SNPs.table
+
+
+echo "---------------------------------------"
+echo 'Make diagnostic tables for Variants Scores - indels'
+
+/usr/local/jdk1.8.0_131/bin/java -Djava.iodir=$PBS_JOBFS -Xms3200m -Xmx3600m -jar /home/jwestaway/pk_pipeline/tools/gatk-4.2.2.0/gatk-package-4.2.2.0-local.jar \
+    VariantsToTable \
+    -R $INDEXTDIR \
+    -V $OUTDIR/indels_filtered.vcf \
+    -F CHROM -F POS -F QUAL -F QD -F DP -F MQ -F GQ -F MQRankSum -F FS -F ReadPosRankSum -F SOR \
+    -O $OUTDIR/GVCFall_INDELs.table
+
+echo "---------------------------------------"
+echo 'CLEAN'
+
+rm $OUTDIR/*filtered*
+
+echo "---------------------------------------"
+echo 'FINISHED'

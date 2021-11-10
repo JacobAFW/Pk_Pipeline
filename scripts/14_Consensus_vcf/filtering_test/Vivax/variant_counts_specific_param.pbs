@@ -1,0 +1,17 @@
+#!/bin/bash
+#PBS -N Counts_specific_param_vivax
+#PBS -j oe
+#PBS -m ae
+#PBS -l nodes=1
+#PBS -l ncpus=21
+#PBS -l mem=50gb
+#PBS -l walltime=8:00:00
+#PBS -M jacob.westaway@menzies.edu.au
+
+echo "---------------------------------------"
+echo "PBS: Job identifier is $PBS_JOBID"
+echo "PBS: Job name is $PBS_JOBNAME"
+
+cd /home/jwestaway/pk_pipeline/ZB_100/outputs/vcf_consensus/filtering_tests/Vivax/specific_parameters
+
+wc -l * > variant_counts_for_specific_param_Vivax.tsv

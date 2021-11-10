@@ -4956,10 +4956,1160 @@ ORIGINAL %>%
 ```
 
 
+### Get counts for applying filters to consensus variants from the tools
+
+Above we apply the filters to the 'raw' variant calls from the two variant calling tools. 
+Here we select only the consensus variants from the tool-specific VCF, and pass these through the two filters. 
+The first script selects the 'consensus variants' from the tool-specific outputs, and the second script applies the filters, outputing tsv files that can be interogated.
+
+Versions: 4.2.2 (GATK), 1.8.0_131-b1 (Java), 2.21.9 (picard) & 1.13 (bcftools)
+File: consensus_variants_from_tools.pbs
+
+```{R,eval=F}
+#!/bin/bash
+#PBS -N Consensus_from_tools
+#PBS -j oe
+#PBS -m ae
+#PBS -l nodes=1
+#PBS -l ncpus=30
+#PBS -l mem=300gb
+#PBS -l pmem=300gb
+#PBS -l file=200gb
+#PBS -l walltime=8:00:00
+#PBS -M jacob.westaway@menzies.edu.au
+
+echo "---------------------------------------"
+echo "PBS: Job identifier is $PBS_JOBID"
+echo "PBS: Job name is $PBS_JOBNAME"
+
+echo "---------------------------------------"
+echo "Define paths and set variables"
+export PATH=$PATH:/home/jwestaway/pk_pipeline/tools/bcftools-1.13/
+GATK="/home/jwestaway/pk_pipeline/ZB_100/outputs/vcf_consensus/GATK/"
+bcftools="/home/jwestaway/pk_pipeline/ZB_100/outputs/vcf_consensus/samtools/"
+cd /home/jwestaway/pk_pipeline/ZB_100/outputs/vcf_consensus/variants_only_test/
+
+
+echo "---------------------------------------"
+echo "GATK"
+echo "---------------------------------------"
+
+
+echo "---------------------------------------"
+echo "Use vcf_variant_names to filter the original merged vcf for variants called by both tools"
+
+echo "---------------------------------------"
+echo "Create a seperate file that contains all the header information for the vcf"
+zcat $GATK/Genotyped.vcf.gz | head -n 85 > $GATK/vcf_head.vcf 
+
+echo "---------------------------------------"
+echo "Change default language to ASCII - fewer characters than UTF8"
+LC_ALL=C
+
+echo "---------------------------------------"
+echo "Filter for variants from the original vcf that are called by both callers by using grep to match patterns created above" 
+bcftools view $GATK/Genotyped.vcf.gz | fgrep -f grep_patterns.txt - > $GATK/Genotyped_filtered.vcf.gz
+
+echo "---------------------------------------"
+echo "Concatenate the vcf header in the variants called by both callers"
+cat $GATK/vcf_head.vcf $GATK/Genotyped_filtered.vcf.gz > $GATK/GATK_consensus.vcf
+
+echo "---------------------------------------"
+echo "Clean up GATK"
+rm $GATK/Genotyped_filtered.vcf.gz
+rm $GATK/vcf_head.vcf 
+
+
+echo "---------------------------------------"
+echo "bcftools"
+echo "---------------------------------------"
+
+
+echo "---------------------------------------"
+echo "Use vcf_variant_names to filter the original merged vcf for variants called by both tools"
+
+echo "---------------------------------------"
+echo "Create a seperate file that contains all the header information for the vcf"
+zcat $bcftools/PK_samtools_variants_only_header.raw.vcf.gz | head -n 85 > $bcftools/vcf_head.vcf 
+
+echo "---------------------------------------"
+echo "Change default language to ASCII - fewer characters than UTF8"
+LC_ALL=C
+
+echo "---------------------------------------"
+echo "Filter for variants from the original vcf that are called by both callers by using grep to match patterns created above" 
+bcftools view $bcftools/PK_samtools_variants_only_header.raw.vcf.gz | fgrep -f grep_patterns.txt - > $bcftools/Genotyped_filtered.vcf.gz
+
+echo "---------------------------------------"
+echo "Concatenate the vcf header in the variants called by both callers"
+cat $bcftools/vcf_head.vcf $bcftools/Genotyped_filtered.vcf.gz > $bcftools/bcftools_consensus.vcf
+
+echo "---------------------------------------"
+echo "Clean up samtools"
+rm $bcftools/Genotyped_filtered.vcf.gz
+rm $bcftools/vcf_head.vcf 
+
+echo "---------------------------------------"
+echo "Finished "
+```
+
+Versions: 4.2.2 (GATK), 1.8.0_131-b1 (Java), 2.21.9 (picard) & 1.13 (bcftools)
+File: variant_counts_from_tools.pbs
+
+**NB**: applying the filters only creates a column with a PASS/FAIL annotation, and so the "fgrep 'PASS'" selects only those variants that pass the filter.
+
+```{R,eval=F}
+#!/bin/bash
+#PBS -N Counts_from_consesnus_tools
+#PBS -j oe
+#PBS -m ae
+#PBS -l nodes=1
+#PBS -l ncpus=21
+#PBS -l mem=100gb
+#PBS -l walltime=24:00:00
+#PBS -M jacob.westaway@menzies.edu.au
+
+echo "---------------------------------------"
+echo "PBS: Job identifier is $PBS_JOBID"
+echo "PBS: Job name is $PBS_JOBNAME"
+
+echo "---------------------------------------"
+echo "Define paths and change to working directory"
+INDEXTDIR="/home/jwestaway/pk_pipeline/ref_genomes/PKA1H1/fasta/strain_A1_H.1.Icor.fasta"
+OUTDIR="/home/jwestaway/pk_pipeline/ZB_100/outputs/vcf_consensus/filtering_tests"
+GATK="/home/jwestaway/pk_pipeline/ZB_100/outputs/vcf_consensus/GATK/"
+bcftools="/home/jwestaway/pk_pipeline/ZB_100/outputs/vcf_consensus/samtools/"
+
+mkdir $OUTDIR
+
+cd /home/jwestaway/pk_pipeline/ZB_100/outputs/vcf_consensus
+
+echo "---------------------------------------------------------------------------------------------------------------------"
+echo "SNPs and Indels from tool-specific conesnsus VCF files"
+echo "---------------------------------------------------------------------------------------------------------------------"
+
+
+echo "---------------------------------------"
+echo "GATK"
+
+
+echo "---------------------------------------"
+echo "SNPs"
+
+/usr/local/jdk1.8.0_131/bin/java -Djava.iodir=$PBS_JOBFS -Xms3200m -Xmx3600m -jar /home/jwestaway/pk_pipeline/tools/gatk-4.2.2.0/gatk-package-4.2.2.0-local.jar \
+    SelectVariants \
+    -R $INDEXTDIR \
+    -V $GATK/GATK_consensus.vcf \
+    --select-type-to-include SNP \
+    -O $OUTDIR/GVCFall_SNPs_GATK.vcf
+
+echo "---------------------------------------"
+echo "Indels"
+
+/usr/local/jdk1.8.0_131/bin/java -Djava.iodir=$PBS_JOBFS -Xms3200m -Xmx3600m -jar /home/jwestaway/pk_pipeline/tools/gatk-4.2.2.0/gatk-package-4.2.2.0-local.jar \
+    SelectVariants \
+    -R $INDEXTDIR \
+    -V $GATK/GATK_consensus.vcf \
+    --select-type-to-include INDEL \
+    -O $OUTDIR/GVCFall_INDELs_GATK.vcf
+
+
+echo "---------------------------------------"
+echo "samtools/bcftools"
+
+
+echo "---------------------------------------"
+echo "SNPs"
+
+/usr/local/jdk1.8.0_131/bin/java -Djava.iodir=$PBS_JOBFS -Xms3200m -Xmx3600m -jar /home/jwestaway/pk_pipeline/tools/gatk-4.2.2.0/gatk-package-4.2.2.0-local.jar \
+    SelectVariants \
+    -R $INDEXTDIR \
+    -V $bcftools/bcftools_consensus.vcf \
+    --select-type-to-include SNP \
+    -O $OUTDIR/GVCFall_SNPs_bcftools.vcf
+
+echo "---------------------------------------"
+echo "Indels"
+
+/usr/local/jdk1.8.0_131/bin/java -Djava.iodir=$PBS_JOBFS -Xms3200m -Xmx3600m -jar /home/jwestaway/pk_pipeline/tools/gatk-4.2.2.0/gatk-package-4.2.2.0-local.jar \
+    SelectVariants \
+    -R $INDEXTDIR \
+    -V $bcftools/bcftools_consensus.vcf \
+    --select-type-to-include INDEL \
+    -O $OUTDIR/GVCFall_INDELs_bcftools.vcf
+
+
+
+echo "---------------------------------------------------------------------------------------------------------------------"
+echo "FILTERING"
+echo "---------------------------------------------------------------------------------------------------------------------"
+
+
+
+echo "------------------------------------------------------------------------------"
+echo "GATK CONSENUS"
+echo "------------------------------------------------------------------------------"
+
+
+
+echo "---------------------------------------"
+echo "GATK_BP"
+
+echo 'filter snps'
+/usr/local/jdk1.8.0_131/bin/java -Djava.iodir=$PBS_JOBFS -Xms3200m -Xmx3600m -jar /home/jwestaway/pk_pipeline/tools/gatk-4.2.2.0/gatk-package-4.2.2.0-local.jar \
+    VariantFiltration \
+    -V $OUTDIR/GVCFall_SNPs_GATK.vcf \
+    -filter "QD < 2.0" --filter-name "QD2" \
+    -filter "QUAL < 30.0" --filter-name "QUAL30" \
+    -filter "SOR > 3.0" --filter-name "SOR3" \
+    -filter "FS > 60.0" --filter-name "FS60" \
+    -filter "MQ < 40.0" --filter-name "MQ40" \
+    -filter "MQRankSum < -12.5" --filter-name "MQRankSum-12.5" \
+    -filter "ReadPosRankSum < -8.0" --filter-name "ReadPosRankSum-8" \
+    -O $OUTDIR/snps_filtered_GATK.vcf
+
+echo "---------------------------------------"
+echo 'filter indels'
+/usr/local/jdk1.8.0_131/bin/java -Djava.iodir=$PBS_JOBFS -Xms3200m -Xmx3600m -jar /home/jwestaway/pk_pipeline/tools/gatk-4.2.2.0/gatk-package-4.2.2.0-local.jar \
+    VariantFiltration \
+    -V $OUTDIR/GVCFall_INDELs_GATK.vcf \
+    -filter "QD < 2.0" --filter-name "QD2" \
+    -filter "QUAL < 30.0" --filter-name "QUAL30" \
+    -filter "FS > 200.0" --filter-name "FS200" \
+    -filter "ReadPosRankSum < -20.0" --filter-name "ReadPosRankSum-20" \
+    -O $OUTDIR/indels_filtered_GATK.vcf
+
+echo "---------------------------------------"
+echo "Exectute bcftools to select variants"
+bcftools query -f '%CHROM %POS %ID %REF %ALT %FILTER [\t%SAMPLE DP=%DP GQ=%GQ MQ=%MQ PL=%PL]\n' $OUTDIR/snps_filtered_GATK.vcf | fgrep 'PASS' > $OUTDIR/SNPs_GATK_GATK_BP.tsv
+bcftools query -f '%CHROM %POS %ID %REF %ALT %FILTER [\t%SAMPLE DP=%DP GQ=%GQ MQ=%MQ PL=%PL]\n' $OUTDIR/indels_filtered_GATK.vcf | fgrep 'PASS' > $OUTDIR/indels_GATK_GATK_BP.tsv
+
+
+
+echo "---------------------------------------"
+echo "VIVAX"
+
+echo "---------------------------------------"
+echo 'filter snps'
+/usr/local/jdk1.8.0_131/bin/java -Djava.iodir=$PBS_JOBFS -Xms3200m -Xmx3600m -jar /home/jwestaway/pk_pipeline/tools/gatk-4.2.2.0/gatk-package-4.2.2.0-local.jar \
+    VariantFiltration \
+    -V $OUTDIR/GVCFall_SNPs_GATK.vcf \
+    -filter "QD < 12.43" --filter-name "QD2" \
+    -filter "FS > 14.63418" --filter-name "FS60" \
+    -filter "MQ < 51.6" --filter-name "MQ40" \
+    -O $OUTDIR/snps_filtered_GATK.vcf
+
+echo "---------------------------------------"
+echo 'filter indels'
+/usr/local/jdk1.8.0_131/bin/java -Djava.iodir=$PBS_JOBFS -Xms3200m -Xmx3600m -jar /home/jwestaway/pk_pipeline/tools/gatk-4.2.2.0/gatk-package-4.2.2.0-local.jar \
+    VariantFiltration \
+    -V $OUTDIR/GVCFall_INDELs_GATK.vcf \
+    -filter "QD < 12.43" --filter-name "QD2" \
+    -filter "FS > 14.63418" --filter-name "FS60" \
+    -filter "MQ < 51.6" --filter-name "MQ40" \
+    -O $OUTDIR/indels_filtered_GATK.vcf
+
+
+echo "---------------------------------------"
+echo "Exectute bcftools to select variants"
+bcftools query -f '%CHROM %POS %ID %REF %ALT %FILTER [\t%SAMPLE DP=%DP GQ=%GQ MQ=%MQ PL=%PL]\n' $OUTDIR/snps_filtered_GATK.vcf | fgrep 'PASS' > $OUTDIR/SNPs_GATK_VIVAX.tsv
+bcftools query -f '%CHROM %POS %ID %REF %ALT %FILTER [\t%SAMPLE DP=%DP GQ=%GQ MQ=%MQ PL=%PL]\n' $OUTDIR/indels_filtered_GATK.vcf | fgrep 'PASS' > $OUTDIR/indels_GATK_VIVAX.tsv
+
+
+
+echo "------------------------------------------------------------------------------"
+echo "BCFTOOLS CONSENUS"
+echo "------------------------------------------------------------------------------"
+
+
+
+echo "---------------------------------------"
+echo "GATK_BP"
+
+echo "---------------------------------------"
+echo 'filter snps'
+/usr/local/jdk1.8.0_131/bin/java -Djava.iodir=$PBS_JOBFS -Xms3200m -Xmx3600m -jar /home/jwestaway/pk_pipeline/tools/gatk-4.2.2.0/gatk-package-4.2.2.0-local.jar \
+    VariantFiltration \
+    -V $OUTDIR/GVCFall_SNPs_bcftools.vcf \
+    -filter "QD < 2.0" --filter-name "QD2" \
+    -filter "QUAL < 30.0" --filter-name "QUAL30" \
+    -filter "SOR > 3.0" --filter-name "SOR3" \
+    -filter "FS > 60.0" --filter-name "FS60" \
+    -filter "MQ < 40.0" --filter-name "MQ40" \
+    -filter "MQRankSum < -12.5" --filter-name "MQRankSum-12.5" \
+    -filter "ReadPosRankSum < -8.0" --filter-name "ReadPosRankSum-8" \
+    -O $OUTDIR/snps_filtered_bcftools.vcf
+
+echo "---------------------------------------"
+echo 'filter indels'
+/usr/local/jdk1.8.0_131/bin/java -Djava.iodir=$PBS_JOBFS -Xms3200m -Xmx3600m -jar /home/jwestaway/pk_pipeline/tools/gatk-4.2.2.0/gatk-package-4.2.2.0-local.jar \
+    VariantFiltration \
+    -V $OUTDIR/GVCFall_INDELs_bcftools.vcf \
+    -filter "QD < 2.0" --filter-name "QD2" \
+    -filter "QUAL < 30.0" --filter-name "QUAL30" \
+    -filter "FS > 200.0" --filter-name "FS200" \
+    -filter "ReadPosRankSum < -20.0" --filter-name "ReadPosRankSum-20" \
+    -O $OUTDIR/indels_filtered_bcftools.vcf
+
+echo "---------------------------------------"
+echo "Exectute bcftools to select variants"
+bcftools query -f '%CHROM %POS %ID %REF %ALT %FILTER [\t%SAMPLE DP=%DP GQ=%GQ MQ=%MQ PL=%PL]\n' $OUTDIR/snps_filtered_bcftools.vcf | fgrep 'PASS' > $OUTDIR/SNPs_bcftools_GATK_BP.tsv
+bcftools query -f '%CHROM %POS %ID %REF %ALT %FILTER [\t%SAMPLE DP=%DP GQ=%GQ MQ=%MQ PL=%PL]\n' $OUTDIR/indels_filtered_bcftools.vcf | fgrep 'PASS' > $OUTDIR/indels_bcftools_GATK_BP.tsv
+
+
+
+
+echo "---------------------------------------"
+echo "VIVAX"
+
+echo "---------------------------------------"
+echo 'filter snps'
+/usr/local/jdk1.8.0_131/bin/java -Djava.iodir=$PBS_JOBFS -Xms3200m -Xmx3600m -jar /home/jwestaway/pk_pipeline/tools/gatk-4.2.2.0/gatk-package-4.2.2.0-local.jar \
+    VariantFiltration \
+    -V $OUTDIR/GVCFall_SNPs_bcftools.vcf \
+    -filter "QD < 12.43" --filter-name "QD2" \
+    -filter "FS > 14.63418" --filter-name "FS60" \
+    -filter "MQ < 51.6" --filter-name "MQ40" \
+    -O $OUTDIR/snps_filtered_bcftools.vcf
+
+echo "---------------------------------------"
+echo 'filter indels'
+/usr/local/jdk1.8.0_131/bin/java -Djava.iodir=$PBS_JOBFS -Xms3200m -Xmx3600m -jar /home/jwestaway/pk_pipeline/tools/gatk-4.2.2.0/gatk-package-4.2.2.0-local.jar \
+    VariantFiltration \
+    -V $OUTDIR/GVCFall_INDELs_bcftools.vcf\
+    -filter "QD < 12.43" --filter-name "QD2" \
+    -filter "FS > 14.63418" --filter-name "FS60" \
+    -filter "MQ < 51.6" --filter-name "MQ40" \
+    -O $OUTDIR/indels_filtered_bcftools.vcf
+
+echo "---------------------------------------"
+echo "Exectute bcftools to select variants"
+bcftools query -f '%CHROM %POS %ID %REF %ALT %FILTER [\t%SAMPLE DP=%DP GQ=%GQ MQ=%MQ PL=%PL]\n' $OUTDIR/snps_filtered_bcftools.vcf | fgrep 'PASS' > $OUTDIR/SNPs_bcftools_VIVAX.tsv
+bcftools query -f '%CHROM %POS %ID %REF %ALT %FILTER [\t%SAMPLE DP=%DP GQ=%GQ MQ=%MQ PL=%PL]\n' $OUTDIR/indels_filtered_bcftools.vcf | fgrep 'PASS' > $OUTDIR/indels_bcftools_VIVAX.tsv
+
+
+echo "------------------------------------------------------------------------------"
+echo "Clean up"
+echo "------------------------------------------------------------------------------"
+
+cd $OUTDIR
+rm snps_filtered_bcftools.vcf
+rm indels_filtered_bcftools.vcf
+rm snps_filtered_GATK.vcf
+rm indels_filtered_GATK.vcf
+
+echo "---------------------------------------"
+echo "Finsihed"
+```
+
+
+
 ### Single parameter filters 
 
 Versions: 4.2.2 (GATK), 1.8.0_131-b1 (Java), 2.21.9 (picard)
-File: snps_and_indels.pbs
+
+#### GATK_BP
+
+File: GATK_BP/variant_filtering_single_param.pbs
+
+```{R,eval}
+#!/bin/bash
+#PBS -N Filter_specific_param_GATK_BP
+#PBS -j oe
+#PBS -m ae
+#PBS -l nodes=1
+#PBS -l ncpus=21
+#PBS -l mem=100gb
+#PBS -l walltime=48:00:00
+#PBS -M jacob.westaway@menzies.edu.au
+
+echo "---------------------------------------"
+echo "PBS: Job identifier is $PBS_JOBID"
+echo "PBS: Job name is $PBS_JOBNAME"
+
+echo "---------------------------------------"
+echo "---------------------------------------"
+echo 'Change to working directory and set env variables'
+OUTDIR="/home/jwestaway/pk_pipeline/ZB_100/outputs/vcf_consensus/filtering_tests/GATK_BP/specific_parameters"
+PICARD="/usr/local/miniconda3/pkgs/picard-2.21.9-0/share/picard-2.21.9-0/picard.jar"
+INDEXTDIR="/home/jwestaway/pk_pipeline/ref_genomes/PKA1H1/fasta/strain_A1_H.1.Icor.fasta"
+mkdir $OUTDIR
+cd /home/jwestaway/pk_pipeline/ZB_100/outputs/vcf_consensus
+
+
+echo "------------------------------------------------------------------------------------------------------------------------------------------------------------"
+echo 'SNPs'
+echo "------------------------------------------------------------------------------------------------------------------------------------------------------------"
+
+echo "------------------------------------------------------------------------------"
+echo 'QD'
+echo "------------------------------------------------------------------------------"
+
+/usr/local/jdk1.8.0_131/bin/java -Djava.iodir=$PBS_JOBFS -Xms3200m -Xmx3600m -jar /home/jwestaway/pk_pipeline/tools/gatk-4.2.2.0/gatk-package-4.2.2.0-local.jar \
+    VariantFiltration \
+    -V variants_only_test/GVCFall_SNPs.vcf \
+    -filter "QD < 2.0" --filter-name "QD2" \
+    -O $OUTDIR/snps_filtered.vcf
+
+bcftools query -f '%CHROM %POS %ID %REF %ALT %FILTER [\t%SAMPLE DP=%DP GQ=%GQ MQ=%MQ PL=%PL]\n' $OUTDIR/snps_filtered.vcf | fgrep 'PASS' > $OUTDIR/SNPs_consensus_QD.tsv
+
+echo "---------------------------------------"
+echo "Filter applied to pre-merged tool-specific data"
+
+
+echo "---------------------------------------"
+echo 'GATK'
+
+/usr/local/jdk1.8.0_131/bin/java -Djava.iodir=$PBS_JOBFS -Xms3200m -Xmx3600m -jar /home/jwestaway/pk_pipeline/tools/gatk-4.2.2.0/gatk-package-4.2.2.0-local.jar \
+    VariantFiltration \
+    -V GATK/GVCFall_SNPs_GATK.vcf \
+    -filter "QD < 2.0" --filter-name "QD2" \
+    -O $OUTDIR/snps_filtered_GATK.vcf
+
+bcftools query -f '%CHROM %POS %ID %REF %ALT %FILTER [\t%SAMPLE DP=%DP GQ=%GQ MQ=%MQ PL=%PL]\n' $OUTDIR/snps_filtered_GATK.vcf | fgrep 'PASS' > $OUTDIR/SNPs_GATK_QD.tsv
+
+echo "---------------------------------------"
+echo 'samtools'
+
+/usr/local/jdk1.8.0_131/bin/java -Djava.iodir=$PBS_JOBFS -Xms3200m -Xmx3600m -jar /home/jwestaway/pk_pipeline/tools/gatk-4.2.2.0/gatk-package-4.2.2.0-local.jar \
+    VariantFiltration \
+    -V samtools/GVCFall_SNPs_bcftools.vcf \
+    -filter "QD < 12.43" --filter-name "QD2" \
+    -O $OUTDIR/snps_filtered_bcftools.vcf
+
+bcftools query -f '%CHROM %POS %ID %REF %ALT %FILTER [\t%SAMPLE DP=%DP GQ=%GQ MQ=%MQ PL=%PL]\n' $OUTDIR/snps_filtered_bcftools.vcf | fgrep 'PASS' > $OUTDIR/SNPs_bcftools_QD.tsv
+
+echo "------------------------------------------------------------------------------"
+echo 'QUAL'
+echo "------------------------------------------------------------------------------"
+
+/usr/local/jdk1.8.0_131/bin/java -Djava.iodir=$PBS_JOBFS -Xms3200m -Xmx3600m -jar /home/jwestaway/pk_pipeline/tools/gatk-4.2.2.0/gatk-package-4.2.2.0-local.jar \
+    VariantFiltration \
+    -V variants_only_test/GVCFall_SNPs.vcf \
+    -filter "QUAL < 30.0" --filter-name "QUAL30" \
+    -O $OUTDIR/snps_filtered.vcf
+
+bcftools query -f '%CHROM %POS %ID %REF %ALT %FILTER [\t%SAMPLE DP=%DP GQ=%GQ MQ=%MQ PL=%PL]\n' $OUTDIR/snps_filtered.vcf | fgrep 'PASS' > $OUTDIR/SNPs_consensus_QUAL.tsv
+
+echo "---------------------------------------"
+echo "Filter applied to pre-merged tool-specific data"
+
+
+echo "---------------------------------------"
+echo 'GATK'
+
+/usr/local/jdk1.8.0_131/bin/java -Djava.iodir=$PBS_JOBFS -Xms3200m -Xmx3600m -jar /home/jwestaway/pk_pipeline/tools/gatk-4.2.2.0/gatk-package-4.2.2.0-local.jar \
+    VariantFiltration \
+    -V GATK/GVCFall_SNPs_GATK.vcf \
+    -filter "QUAL < 30.0" --filter-name "QUAL30" \
+    -O $OUTDIR/snps_filtered_GATK.vcf
+
+bcftools query -f '%CHROM %POS %ID %REF %ALT %FILTER [\t%SAMPLE DP=%DP GQ=%GQ MQ=%MQ PL=%PL]\n' $OUTDIR/snps_filtered_GATK.vcf | fgrep 'PASS' > $OUTDIR/SNPs_GATK_QUAL.tsv
+
+echo "---------------------------------------"
+echo 'samtools'
+
+/usr/local/jdk1.8.0_131/bin/java -Djava.iodir=$PBS_JOBFS -Xms3200m -Xmx3600m -jar /home/jwestaway/pk_pipeline/tools/gatk-4.2.2.0/gatk-package-4.2.2.0-local.jar \
+    VariantFiltration \
+    -V samtools/GVCFall_SNPs_bcftools.vcf \
+    -filter "QUAL < 30.0" --filter-name "QUAL30" \
+    -O $OUTDIR/snps_filtered_bcftools.vcf
+
+bcftools query -f '%CHROM %POS %ID %REF %ALT %FILTER [\t%SAMPLE DP=%DP GQ=%GQ MQ=%MQ PL=%PL]\n' $OUTDIR/snps_filtered_bcftools.vcf | fgrep 'PASS' > $OUTDIR/SNPs_bcftools_QUAL.tsv
+
+echo "------------------------------------------------------------------------------"
+echo 'SQR'
+echo "------------------------------------------------------------------------------"
+
+/usr/local/jdk1.8.0_131/bin/java -Djava.iodir=$PBS_JOBFS -Xms3200m -Xmx3600m -jar /home/jwestaway/pk_pipeline/tools/gatk-4.2.2.0/gatk-package-4.2.2.0-local.jar \
+    VariantFiltration \
+    -V variants_only_test/GVCFall_SNPs.vcf \
+    -filter "SOR > 3.0" --filter-name "SOR3" \
+    -O $OUTDIR/snps_filtered.vcf
+
+bcftools query -f '%CHROM %POS %ID %REF %ALT %FILTER [\t%SAMPLE DP=%DP GQ=%GQ MQ=%MQ PL=%PL]\n' $OUTDIR/snps_filtered.vcf | fgrep 'PASS' > $OUTDIR/SNPs_consensus_SQR.tsv
+
+echo "---------------------------------------"
+echo "Filter applied to pre-merged tool-specific data"
+
+
+echo "---------------------------------------"
+echo 'GATK'
+
+/usr/local/jdk1.8.0_131/bin/java -Djava.iodir=$PBS_JOBFS -Xms3200m -Xmx3600m -jar /home/jwestaway/pk_pipeline/tools/gatk-4.2.2.0/gatk-package-4.2.2.0-local.jar \
+    VariantFiltration \
+    -V GATK/GVCFall_SNPs_GATK.vcf \
+    -filter "SOR > 3.0" --filter-name "SOR3" \
+    -O $OUTDIR/snps_filtered_GATK.vcf
+
+bcftools query -f '%CHROM %POS %ID %REF %ALT %FILTER [\t%SAMPLE DP=%DP GQ=%GQ MQ=%MQ PL=%PL]\n' $OUTDIR/snps_filtered_GATK.vcf | fgrep 'PASS' > $OUTDIR/SNPs_GATK_SQR.tsv
+
+echo "---------------------------------------"
+echo 'samtools'
+
+/usr/local/jdk1.8.0_131/bin/java -Djava.iodir=$PBS_JOBFS -Xms3200m -Xmx3600m -jar /home/jwestaway/pk_pipeline/tools/gatk-4.2.2.0/gatk-package-4.2.2.0-local.jar \
+    VariantFiltration \
+    -V samtools/GVCFall_SNPs_bcftools.vcf \
+    -filter "SOR > 3.0" --filter-name "SOR3" \
+    -O $OUTDIR/snps_filtered_bcftools.vcf
+
+bcftools query -f '%CHROM %POS %ID %REF %ALT %FILTER [\t%SAMPLE DP=%DP GQ=%GQ MQ=%MQ PL=%PL]\n' $OUTDIR/snps_filtered_bcftools.vcf | fgrep 'PASS' > $OUTDIR/SNPs_bcftools_SQR.tsv
+
+echo "------------------------------------------------------------------------------"
+echo 'FS'
+echo "------------------------------------------------------------------------------"
+
+/usr/local/jdk1.8.0_131/bin/java -Djava.iodir=$PBS_JOBFS -Xms3200m -Xmx3600m -jar /home/jwestaway/pk_pipeline/tools/gatk-4.2.2.0/gatk-package-4.2.2.0-local.jar \
+    VariantFiltration \
+    -V variants_only_test/GVCFall_SNPs.vcf \
+    -filter "FS > 60.0" --filter-name "FS60" \
+    -O $OUTDIR/snps_filtered.vcf
+
+bcftools query -f '%CHROM %POS %ID %REF %ALT %FILTER [\t%SAMPLE DP=%DP GQ=%GQ MQ=%MQ PL=%PL]\n' $OUTDIR/snps_filtered.vcf | fgrep 'PASS' > $OUTDIR/SNPs_consensus_FS.tsv
+
+echo "---------------------------------------"
+echo "Filter applied to pre-merged tool-specific data"
+
+
+echo "---------------------------------------"
+echo 'GATK'
+
+/usr/local/jdk1.8.0_131/bin/java -Djava.iodir=$PBS_JOBFS -Xms3200m -Xmx3600m -jar /home/jwestaway/pk_pipeline/tools/gatk-4.2.2.0/gatk-package-4.2.2.0-local.jar \
+    VariantFiltration \
+    -V GATK/GVCFall_SNPs_GATK.vcf \
+    -filter "FS > 60.0" --filter-name "FS60" \
+    -O $OUTDIR/snps_filtered_GATK.vcf
+
+bcftools query -f '%CHROM %POS %ID %REF %ALT %FILTER [\t%SAMPLE DP=%DP GQ=%GQ MQ=%MQ PL=%PL]\n' $OUTDIR/snps_filtered_GATK.vcf | fgrep 'PASS' > $OUTDIR/SNPs_GATK_FS.tsv
+
+echo "---------------------------------------"
+echo 'samtools'
+
+/usr/local/jdk1.8.0_131/bin/java -Djava.iodir=$PBS_JOBFS -Xms3200m -Xmx3600m -jar /home/jwestaway/pk_pipeline/tools/gatk-4.2.2.0/gatk-package-4.2.2.0-local.jar \
+    VariantFiltration \
+    -V samtools/GVCFall_SNPs_bcftools.vcf \
+    -filter "FS > 60.0" --filter-name "FS60" \
+    -O $OUTDIR/snps_filtered_bcftools.vcf
+
+bcftools query -f '%CHROM %POS %ID %REF %ALT %FILTER [\t%SAMPLE DP=%DP GQ=%GQ MQ=%MQ PL=%PL]\n' $OUTDIR/snps_filtered_bcftools.vcf | fgrep 'PASS' > $OUTDIR/SNPs_bcftools_FS.tsv
+
+echo "------------------------------------------------------------------------------"
+echo 'MQ'
+echo "------------------------------------------------------------------------------"
+
+/usr/local/jdk1.8.0_131/bin/java -Djava.iodir=$PBS_JOBFS -Xms3200m -Xmx3600m -jar /home/jwestaway/pk_pipeline/tools/gatk-4.2.2.0/gatk-package-4.2.2.0-local.jar \
+    VariantFiltration \
+    -V variants_only_test/GVCFall_SNPs.vcf \
+    -filter "MQ < 40.0" --filter-name "MQ40" \
+    -O $OUTDIR/snps_filtered.vcf
+
+bcftools query -f '%CHROM %POS %ID %REF %ALT %FILTER [\t%SAMPLE DP=%DP GQ=%GQ MQ=%MQ PL=%PL]\n' $OUTDIR/snps_filtered.vcf | fgrep 'PASS' > $OUTDIR/SNPs_consensus_MQ.tsv
+
+echo "---------------------------------------"
+echo "Filter applied to pre-merged tool-specific data"
+
+
+echo "---------------------------------------"
+echo 'GATK'
+
+/usr/local/jdk1.8.0_131/bin/java -Djava.iodir=$PBS_JOBFS -Xms3200m -Xmx3600m -jar /home/jwestaway/pk_pipeline/tools/gatk-4.2.2.0/gatk-package-4.2.2.0-local.jar \
+    VariantFiltration \
+    -V GATK/GVCFall_SNPs_GATK.vcf \
+    -filter "MQ < 40.0" --filter-name "MQ40" \
+    -O $OUTDIR/snps_filtered_GATK.vcf
+
+bcftools query -f '%CHROM %POS %ID %REF %ALT %FILTER [\t%SAMPLE DP=%DP GQ=%GQ MQ=%MQ PL=%PL]\n' $OUTDIR/snps_filtered_GATK.vcf | fgrep 'PASS' > $OUTDIR/SNPs_GATK_MQ.tsv
+
+echo "---------------------------------------"
+echo 'samtools'
+
+/usr/local/jdk1.8.0_131/bin/java -Djava.iodir=$PBS_JOBFS -Xms3200m -Xmx3600m -jar /home/jwestaway/pk_pipeline/tools/gatk-4.2.2.0/gatk-package-4.2.2.0-local.jar \
+    VariantFiltration \
+    -V samtools/GVCFall_SNPs_bcftools.vcf \
+    -filter "MQ < 40.0" --filter-name "MQ40" \
+    -O $OUTDIR/snps_filtered_bcftools.vcf
+
+bcftools query -f '%CHROM %POS %ID %REF %ALT %FILTER [\t%SAMPLE DP=%DP GQ=%GQ MQ=%MQ PL=%PL]\n' $OUTDIR/snps_filtered_bcftools.vcf | fgrep 'PASS' > $OUTDIR/SNPs_bcftools_MQ.tsv
+
+echo "------------------------------------------------------------------------------"
+echo 'MQRankSum'
+echo "------------------------------------------------------------------------------"
+
+/usr/local/jdk1.8.0_131/bin/java -Djava.iodir=$PBS_JOBFS -Xms3200m -Xmx3600m -jar /home/jwestaway/pk_pipeline/tools/gatk-4.2.2.0/gatk-package-4.2.2.0-local.jar \
+    VariantFiltration \
+    -V variants_only_test/GVCFall_SNPs.vcf \
+    -filter "MQRankSum < -12.5" --filter-name "MQRankSum-12.5" \
+    -O $OUTDIR/snps_filtered.vcf
+
+bcftools query -f '%CHROM %POS %ID %REF %ALT %FILTER [\t%SAMPLE DP=%DP GQ=%GQ MQ=%MQ PL=%PL]\n' $OUTDIR/snps_filtered.vcf | fgrep 'PASS' > $OUTDIR/SNPs_consensus_MQRankSum.tsv
+
+echo "---------------------------------------"
+echo "Filter applied to pre-merged tool-specific data"
+
+
+echo "---------------------------------------"
+echo 'GATK'
+
+/usr/local/jdk1.8.0_131/bin/java -Djava.iodir=$PBS_JOBFS -Xms3200m -Xmx3600m -jar /home/jwestaway/pk_pipeline/tools/gatk-4.2.2.0/gatk-package-4.2.2.0-local.jar \
+    VariantFiltration \
+    -V GATK/GVCFall_SNPs_GATK.vcf \
+    -filter "MQRankSum < -12.5" --filter-name "MQRankSum-12.5" \
+    -O $OUTDIR/snps_filtered_GATK.vcf
+
+bcftools query -f '%CHROM %POS %ID %REF %ALT %FILTER [\t%SAMPLE DP=%DP GQ=%GQ MQ=%MQ PL=%PL]\n' $OUTDIR/snps_filtered_GATK.vcf | fgrep 'PASS' > $OUTDIR/SNPs_GATK_MQRankSum.tsv
+
+echo "---------------------------------------"
+echo 'samtools'
+
+/usr/local/jdk1.8.0_131/bin/java -Djava.iodir=$PBS_JOBFS -Xms3200m -Xmx3600m -jar /home/jwestaway/pk_pipeline/tools/gatk-4.2.2.0/gatk-package-4.2.2.0-local.jar \
+    VariantFiltration \
+    -V samtools/GVCFall_SNPs_bcftools.vcf \
+    -filter "MQRankSum < -12.5" --filter-name "MQRankSum-12.5" \
+    -O $OUTDIR/snps_filtered_bcftools.vcf
+
+bcftools query -f '%CHROM %POS %ID %REF %ALT %FILTER [\t%SAMPLE DP=%DP GQ=%GQ MQ=%MQ PL=%PL]\n' $OUTDIR/snps_filtered_bcftools.vcf | fgrep 'PASS' > $OUTDIR/SNPs_bcftools_MQRankSum.tsv
+
+echo "------------------------------------------------------------------------------"
+echo 'ReadPosRankSum'
+echo "------------------------------------------------------------------------------"
+
+/usr/local/jdk1.8.0_131/bin/java -Djava.iodir=$PBS_JOBFS -Xms3200m -Xmx3600m -jar /home/jwestaway/pk_pipeline/tools/gatk-4.2.2.0/gatk-package-4.2.2.0-local.jar \
+    VariantFiltration \
+    -V variants_only_test/GVCFall_SNPs.vcf \
+    -filter "ReadPosRankSum < -8.0" --filter-name "ReadPosRankSum-8" \
+    -O $OUTDIR/snps_filtered.vcf
+
+bcftools query -f '%CHROM %POS %ID %REF %ALT %FILTER [\t%SAMPLE DP=%DP GQ=%GQ MQ=%MQ PL=%PL]\n' $OUTDIR/snps_filtered.vcf | fgrep 'PASS' > $OUTDIR/SNPs_consensus_ReadPosRankSum.tsv
+
+echo "---------------------------------------"
+echo "Filter applied to pre-merged tool-specific data"
+
+
+echo "---------------------------------------"
+echo 'GATK'
+
+/usr/local/jdk1.8.0_131/bin/java -Djava.iodir=$PBS_JOBFS -Xms3200m -Xmx3600m -jar /home/jwestaway/pk_pipeline/tools/gatk-4.2.2.0/gatk-package-4.2.2.0-local.jar \
+    VariantFiltration \
+    -V GATK/GVCFall_SNPs_GATK.vcf \
+    -filter "ReadPosRankSum < -8.0" --filter-name "ReadPosRankSum-8" \
+    -O $OUTDIR/snps_filtered_GATK.vcf
+
+bcftools query -f '%CHROM %POS %ID %REF %ALT %FILTER [\t%SAMPLE DP=%DP GQ=%GQ MQ=%MQ PL=%PL]\n' $OUTDIR/snps_filtered_GATK.vcf | fgrep 'PASS' > $OUTDIR/SNPs_GATK_ReadPosRankSum.tsv
+
+echo "---------------------------------------"
+echo 'samtools'
+
+/usr/local/jdk1.8.0_131/bin/java -Djava.iodir=$PBS_JOBFS -Xms3200m -Xmx3600m -jar /home/jwestaway/pk_pipeline/tools/gatk-4.2.2.0/gatk-package-4.2.2.0-local.jar \
+    VariantFiltration \
+    -V samtools/GVCFall_SNPs_bcftools.vcf \
+    -filter "ReadPosRankSum < -8.0" --filter-name "ReadPosRankSum-8" \
+    -O $OUTDIR/snps_filtered_bcftools.vcf
+
+bcftools query -f '%CHROM %POS %ID %REF %ALT %FILTER [\t%SAMPLE DP=%DP GQ=%GQ MQ=%MQ PL=%PL]\n' $OUTDIR/snps_filtered_bcftools.vcf | fgrep 'PASS' > $OUTDIR/SNPs_bcftools_ReadPosRankSum.tsv
+
+
+
+echo "------------------------------------------------------------------------------------------------------------------------------------------------------------"
+echo 'INDELS'
+echo "------------------------------------------------------------------------------------------------------------------------------------------------------------"
+
+echo "------------------------------------------------------------------------------"
+echo 'QD'
+echo "------------------------------------------------------------------------------"
+/usr/local/jdk1.8.0_131/bin/java -Djava.iodir=$PBS_JOBFS -Xms3200m -Xmx3600m -jar /home/jwestaway/pk_pipeline/tools/gatk-4.2.2.0/gatk-package-4.2.2.0-local.jar \
+    VariantFiltration \
+    -V variants_only_test/GVCFall_INDELs.vcf \
+    -filter "QD < 2.0" --filter-name "QD2" \
+    -O $OUTDIR/indels_filtered.vcf
+
+bcftools query -f '%CHROM %POS %ID %REF %ALT %FILTER [\t%SAMPLE DP=%DP GQ=%GQ MQ=%MQ PL=%PL]\n' $OUTDIR/indels_filtered.vcf | fgrep 'PASS' > $OUTDIR/indels_consensus_QD.tsv
+
+
+echo "---------------------------------------"
+echo "Filter applied to pre-merged tool-specific data"
+
+
+echo "---------------------------------------"
+echo 'GATK'
+
+/usr/local/jdk1.8.0_131/bin/java -Djava.iodir=$PBS_JOBFS -Xms3200m -Xmx3600m -jar /home/jwestaway/pk_pipeline/tools/gatk-4.2.2.0/gatk-package-4.2.2.0-local.jar \
+    VariantFiltration \
+    -V GATK/GVCFall_INDELs_GATK.vcf \
+    -filter "QD < 2.0" --filter-name "QD2" \
+    -O $OUTDIR/indels_filtered_GATK.vcf
+
+bcftools query -f '%CHROM %POS %ID %REF %ALT %FILTER [\t%SAMPLE DP=%DP GQ=%GQ MQ=%MQ PL=%PL]\n' $OUTDIR/indels_filtered_GATK.vcf | fgrep 'PASS' > $OUTDIR/indels_GATK_QD.tsv
+
+
+echo "---------------------------------------"
+echo 'samtools'
+
+/usr/local/jdk1.8.0_131/bin/java -Djava.iodir=$PBS_JOBFS -Xms3200m -Xmx3600m -jar /home/jwestaway/pk_pipeline/tools/gatk-4.2.2.0/gatk-package-4.2.2.0-local.jar \
+    VariantFiltration \
+    -V samtools/GVCFall_INDELs_bcftools.vcf \
+    -filter "QD < 2.0" --filter-name "QD2" \
+    -O $OUTDIR/indels_filtered_bcftools.vcf
+
+bcftools query -f '%CHROM %POS %ID %REF %ALT %FILTER [\t%SAMPLE DP=%DP GQ=%GQ MQ=%MQ PL=%PL]\n' $OUTDIR/indels_filtered_bcftools.vcf | fgrep 'PASS' > $OUTDIR/indels_bcftools_QD.tsv
+
+echo "------------------------------------------------------------------------------"
+echo 'QUAL'
+echo "------------------------------------------------------------------------------"
+/usr/local/jdk1.8.0_131/bin/java -Djava.iodir=$PBS_JOBFS -Xms3200m -Xmx3600m -jar /home/jwestaway/pk_pipeline/tools/gatk-4.2.2.0/gatk-package-4.2.2.0-local.jar \
+    VariantFiltration \
+    -V variants_only_test/GVCFall_INDELs.vcf \
+    -filter "QUAL < 30.0" --filter-name "QUAL30" \
+    -O $OUTDIR/indels_filtered.vcf
+
+bcftools query -f '%CHROM %POS %ID %REF %ALT %FILTER [\t%SAMPLE DP=%DP GQ=%GQ MQ=%MQ PL=%PL]\n' $OUTDIR/indels_filtered.vcf | fgrep 'PASS' > $OUTDIR/indels_consensus_QUAL.tsv
+
+
+echo "---------------------------------------"
+echo "Filter applied to pre-merged tool-specific data"
+
+
+echo "---------------------------------------"
+echo 'GATK'
+
+/usr/local/jdk1.8.0_131/bin/java -Djava.iodir=$PBS_JOBFS -Xms3200m -Xmx3600m -jar /home/jwestaway/pk_pipeline/tools/gatk-4.2.2.0/gatk-package-4.2.2.0-local.jar \
+    VariantFiltration \
+    -V GATK/GVCFall_INDELs_GATK.vcf \
+    -filter "QUAL < 30.0" --filter-name "QUAL30" \
+    -O $OUTDIR/indels_filtered_GATK.vcf
+
+bcftools query -f '%CHROM %POS %ID %REF %ALT %FILTER [\t%SAMPLE DP=%DP GQ=%GQ MQ=%MQ PL=%PL]\n' $OUTDIR/indels_filtered_GATK.vcf | fgrep 'PASS' > $OUTDIR/indels_GATK_QUAL.tsv
+
+
+echo "---------------------------------------"
+echo 'samtools'
+
+/usr/local/jdk1.8.0_131/bin/java -Djava.iodir=$PBS_JOBFS -Xms3200m -Xmx3600m -jar /home/jwestaway/pk_pipeline/tools/gatk-4.2.2.0/gatk-package-4.2.2.0-local.jar \
+    VariantFiltration \
+    -V samtools/GVCFall_INDELs_bcftools.vcf \
+    -filter "QUAL < 30.0" --filter-name "QUAL30" \
+    -O $OUTDIR/indels_filtered_bcftools.vcf
+
+bcftools query -f '%CHROM %POS %ID %REF %ALT %FILTER [\t%SAMPLE DP=%DP GQ=%GQ MQ=%MQ PL=%PL]\n' $OUTDIR/indels_filtered_bcftools.vcf | fgrep 'PASS' > $OUTDIR/indels_bcftools_QUAL.tsv
+
+echo "------------------------------------------------------------------------------"
+echo 'FS'
+echo "------------------------------------------------------------------------------"
+/usr/local/jdk1.8.0_131/bin/java -Djava.iodir=$PBS_JOBFS -Xms3200m -Xmx3600m -jar /home/jwestaway/pk_pipeline/tools/gatk-4.2.2.0/gatk-package-4.2.2.0-local.jar \
+    VariantFiltration \
+    -V variants_only_test/GVCFall_INDELs.vcf \
+    -filter "FS > 200.0" --filter-name "FS200" \
+    -O $OUTDIR/indels_filtered.vcf
+
+bcftools query -f '%CHROM %POS %ID %REF %ALT %FILTER [\t%SAMPLE DP=%DP GQ=%GQ MQ=%MQ PL=%PL]\n' $OUTDIR/indels_filtered.vcf | fgrep 'PASS' > $OUTDIR/indels_consensus_FS.tsv
+
+
+echo "---------------------------------------"
+echo "Filter applied to pre-merged tool-specific data"
+
+
+echo "---------------------------------------"
+echo 'GATK'
+
+/usr/local/jdk1.8.0_131/bin/java -Djava.iodir=$PBS_JOBFS -Xms3200m -Xmx3600m -jar /home/jwestaway/pk_pipeline/tools/gatk-4.2.2.0/gatk-package-4.2.2.0-local.jar \
+    VariantFiltration \
+    -V GATK/GVCFall_INDELs_GATK.vcf \
+    -filter "FS > 200.0" --filter-name "FS200" \
+    -O $OUTDIR/indels_filtered_GATK.vcf
+
+bcftools query -f '%CHROM %POS %ID %REF %ALT %FILTER [\t%SAMPLE DP=%DP GQ=%GQ MQ=%MQ PL=%PL]\n' $OUTDIR/indels_filtered_GATK.vcf | fgrep 'PASS' > $OUTDIR/indels_GATK_FS.tsv
+
+
+echo "---------------------------------------"
+echo 'samtools'
+
+/usr/local/jdk1.8.0_131/bin/java -Djava.iodir=$PBS_JOBFS -Xms3200m -Xmx3600m -jar /home/jwestaway/pk_pipeline/tools/gatk-4.2.2.0/gatk-package-4.2.2.0-local.jar \
+    VariantFiltration \
+    -V samtools/GVCFall_INDELs_bcftools.vcf \
+    -filter "FS > 200.0" --filter-name "FS200" \
+    -O $OUTDIR/indels_filtered_bcftools.vcf
+
+bcftools query -f '%CHROM %POS %ID %REF %ALT %FILTER [\t%SAMPLE DP=%DP GQ=%GQ MQ=%MQ PL=%PL]\n' $OUTDIR/indels_filtered_bcftools.vcf | fgrep 'PASS' > $OUTDIR/indels_bcftools_FS.tsv
+
+echo "------------------------------------------------------------------------------"
+echo 'ReadPosRankSum'
+echo "------------------------------------------------------------------------------"
+/usr/local/jdk1.8.0_131/bin/java -Djava.iodir=$PBS_JOBFS -Xms3200m -Xmx3600m -jar /home/jwestaway/pk_pipeline/tools/gatk-4.2.2.0/gatk-package-4.2.2.0-local.jar \
+    VariantFiltration \
+    -V variants_only_test/GVCFall_INDELs.vcf \
+    -filter "ReadPosRankSum < -20.0" --filter-name "ReadPosRankSum-20" \
+    -O $OUTDIR/indels_filtered.vcf
+
+bcftools query -f '%CHROM %POS %ID %REF %ALT %FILTER [\t%SAMPLE DP=%DP GQ=%GQ MQ=%MQ PL=%PL]\n' $OUTDIR/indels_filtered.vcf | fgrep 'PASS' > $OUTDIR/indels_consensus_ReadPosRankSum.tsv
+
+
+echo "---------------------------------------"
+echo "Filter applied to pre-merged tool-specific data"
+
+
+echo "---------------------------------------"
+echo 'GATK'
+
+/usr/local/jdk1.8.0_131/bin/java -Djava.iodir=$PBS_JOBFS -Xms3200m -Xmx3600m -jar /home/jwestaway/pk_pipeline/tools/gatk-4.2.2.0/gatk-package-4.2.2.0-local.jar \
+    VariantFiltration \
+    -V GATK/GVCFall_INDELs_GATK.vcf \
+    -filter "ReadPosRankSum < -20.0" --filter-name "ReadPosRankSum-20" \
+    -O $OUTDIR/indels_filtered_GATK.vcf
+
+bcftools query -f '%CHROM %POS %ID %REF %ALT %FILTER [\t%SAMPLE DP=%DP GQ=%GQ MQ=%MQ PL=%PL]\n' $OUTDIR/indels_filtered_GATK.vcf | fgrep 'PASS' > $OUTDIR/indels_GATK_ReadPosRankSum.tsv
+
+
+echo "---------------------------------------"
+echo 'samtools'
+
+/usr/local/jdk1.8.0_131/bin/java -Djava.iodir=$PBS_JOBFS -Xms3200m -Xmx3600m -jar /home/jwestaway/pk_pipeline/tools/gatk-4.2.2.0/gatk-package-4.2.2.0-local.jar \
+    VariantFiltration \
+    -V samtools/GVCFall_INDELs_bcftools.vcf \
+    -filter "ReadPosRankSum < -20.0" --filter-name "ReadPosRankSum-20" \
+    -O $OUTDIR/indels_filtered_bcftools.vcf
+
+bcftools query -f '%CHROM %POS %ID %REF %ALT %FILTER [\t%SAMPLE DP=%DP GQ=%GQ MQ=%MQ PL=%PL]\n' $OUTDIR/indels_filtered_bcftools.vcf | fgrep 'PASS' > $OUTDIR/indels_bcftools_ReadPosRankSum.tsv
+
+
+echo "------------------------------------------------------------------------------------------------------------------------------------------------------------"
+echo 'CLEAN UP'
+echo "------------------------------------------------------------------------------------------------------------------------------------------------------------"
+rm $OUTDIR/*filtered*
+
+
+echo "---------------------------------------"
+echo 'Finished'
+```
+
+#### Vivax
+
+File: Vivax/variant_filtering_single_param.pbs
+
+```{R,eval}
+#!/bin/bash
+#PBS -N Filter_specific_param_Vivax
+#PBS -j oe
+#PBS -m ae
+#PBS -l nodes=1
+#PBS -l ncpus=21
+#PBS -l mem=100gb
+#PBS -l walltime=48:00:00
+#PBS -M jacob.westaway@menzies.edu.au
+
+echo "---------------------------------------"
+echo "PBS: Job identifier is $PBS_JOBID"
+echo "PBS: Job name is $PBS_JOBNAME"
+
+echo "---------------------------------------"
+echo "---------------------------------------"
+echo 'Change to working directory and set env variables'
+OUTDIR="/home/jwestaway/pk_pipeline/ZB_100/outputs/vcf_consensus/filtering_tests/Vivax/specific_parameters"
+PICARD="/usr/local/miniconda3/pkgs/picard-2.21.9-0/share/picard-2.21.9-0/picard.jar"
+INDEXTDIR="/home/jwestaway/pk_pipeline/ref_genomes/PKA1H1/fasta/strain_A1_H.1.Icor.fasta"
+mkdir $OUTDIR
+cd /home/jwestaway/pk_pipeline/ZB_100/outputs/vcf_consensus
+
+
+echo "------------------------------------------------------------------------------------------------------------------------------------------------------------"
+echo 'SNPs'
+echo "------------------------------------------------------------------------------------------------------------------------------------------------------------"
+
+echo "------------------------------------------------------------------------------"
+echo 'QD'
+echo "------------------------------------------------------------------------------"
+
+/usr/local/jdk1.8.0_131/bin/java -Djava.iodir=$PBS_JOBFS -Xms3200m -Xmx3600m -jar /home/jwestaway/pk_pipeline/tools/gatk-4.2.2.0/gatk-package-4.2.2.0-local.jar \
+    VariantFiltration \
+    -V variants_only_test/GVCFall_SNPs.vcf \
+    -filter "QD < 12.43" --filter-name "QD2" \
+    -O $OUTDIR/snps_filtered.vcf
+
+bcftools query -f '%CHROM %POS %ID %REF %ALT %FILTER [\t%SAMPLE DP=%DP GQ=%GQ MQ=%MQ PL=%PL]\n' $OUTDIR/snps_filtered.vcf | fgrep 'PASS' > $OUTDIR/SNPs_consensus_QD.tsv
+
+echo "---------------------------------------"
+echo "Filter applied to pre-merged tool-specific data"
+
+
+echo "---------------------------------------"
+echo 'GATK'
+
+/usr/local/jdk1.8.0_131/bin/java -Djava.iodir=$PBS_JOBFS -Xms3200m -Xmx3600m -jar /home/jwestaway/pk_pipeline/tools/gatk-4.2.2.0/gatk-package-4.2.2.0-local.jar \
+    VariantFiltration \
+    -V GATK/GVCFall_SNPs_GATK.vcf \
+    -filter "QD < 12.43" --filter-name "QD2" \
+    -O $OUTDIR/snps_filtered_GATK.vcf
+
+bcftools query -f '%CHROM %POS %ID %REF %ALT %FILTER [\t%SAMPLE DP=%DP GQ=%GQ MQ=%MQ PL=%PL]\n' $OUTDIR/snps_filtered_GATK.vcf | fgrep 'PASS' > $OUTDIR/SNPs_GATK_QD.tsv
+
+echo "---------------------------------------"
+echo 'samtools'
+
+/usr/local/jdk1.8.0_131/bin/java -Djava.iodir=$PBS_JOBFS -Xms3200m -Xmx3600m -jar /home/jwestaway/pk_pipeline/tools/gatk-4.2.2.0/gatk-package-4.2.2.0-local.jar \
+    VariantFiltration \
+    -V samtools/GVCFall_SNPs_bcftools.vcf \
+    -filter "QD < 12.43" --filter-name "QD2" \
+    -O $OUTDIR/snps_filtered_bcftools.vcf
+
+bcftools query -f '%CHROM %POS %ID %REF %ALT %FILTER [\t%SAMPLE DP=%DP GQ=%GQ MQ=%MQ PL=%PL]\n' $OUTDIR/snps_filtered_bcftools.vcf | fgrep 'PASS' > $OUTDIR/SNPs_bcftools_QD.tsv
+
+echo "------------------------------------------------------------------------------"
+echo 'FS'
+echo "------------------------------------------------------------------------------"
+
+/usr/local/jdk1.8.0_131/bin/java -Djava.iodir=$PBS_JOBFS -Xms3200m -Xmx3600m -jar /home/jwestaway/pk_pipeline/tools/gatk-4.2.2.0/gatk-package-4.2.2.0-local.jar \
+    VariantFiltration \
+    -V variants_only_test/GVCFall_SNPs.vcf \
+    -filter "FS > 14.63418" --filter-name "FS60" \
+    -O $OUTDIR/snps_filtered.vcf
+
+bcftools query -f '%CHROM %POS %ID %REF %ALT %FILTER [\t%SAMPLE DP=%DP GQ=%GQ MQ=%MQ PL=%PL]\n' $OUTDIR/snps_filtered.vcf | fgrep 'PASS' > $OUTDIR/SNPs_consensus_FS.tsv
+
+echo "---------------------------------------"
+echo "Filter applied to pre-merged tool-specific data"
+
+
+echo "---------------------------------------"
+echo 'GATK'
+
+/usr/local/jdk1.8.0_131/bin/java -Djava.iodir=$PBS_JOBFS -Xms3200m -Xmx3600m -jar /home/jwestaway/pk_pipeline/tools/gatk-4.2.2.0/gatk-package-4.2.2.0-local.jar \
+    VariantFiltration \
+    -V GATK/GVCFall_SNPs_GATK.vcf \
+    -filter "FS > 14.63418" --filter-name "FS60" \
+    -O $OUTDIR/snps_filtered_GATK.vcf
+
+bcftools query -f '%CHROM %POS %ID %REF %ALT %FILTER [\t%SAMPLE DP=%DP GQ=%GQ MQ=%MQ PL=%PL]\n' $OUTDIR/snps_filtered_GATK.vcf | fgrep 'PASS' > $OUTDIR/SNPs_GATK_FS.tsv
+
+echo "---------------------------------------"
+echo 'samtools'
+
+/usr/local/jdk1.8.0_131/bin/java -Djava.iodir=$PBS_JOBFS -Xms3200m -Xmx3600m -jar /home/jwestaway/pk_pipeline/tools/gatk-4.2.2.0/gatk-package-4.2.2.0-local.jar \
+    VariantFiltration \
+    -V samtools/GVCFall_SNPs_bcftools.vcf \
+    -filter "FS > 14.63418" --filter-name "FS60" \
+    -O $OUTDIR/snps_filtered_bcftools.vcf
+
+bcftools query -f '%CHROM %POS %ID %REF %ALT %FILTER [\t%SAMPLE DP=%DP GQ=%GQ MQ=%MQ PL=%PL]\n' $OUTDIR/snps_filtered_bcftools.vcf | fgrep 'PASS' > $OUTDIR/SNPs_bcftools_FS.tsv
+
+echo "------------------------------------------------------------------------------"
+echo 'MQ'
+echo "------------------------------------------------------------------------------"
+
+/usr/local/jdk1.8.0_131/bin/java -Djava.iodir=$PBS_JOBFS -Xms3200m -Xmx3600m -jar /home/jwestaway/pk_pipeline/tools/gatk-4.2.2.0/gatk-package-4.2.2.0-local.jar \
+    VariantFiltration \
+    -V variants_only_test/GVCFall_SNPs.vcf \
+    -filter "MQ < 51.6" --filter-name "MQ40" \
+    -O $OUTDIR/snps_filtered.vcf
+
+bcftools query -f '%CHROM %POS %ID %REF %ALT %FILTER [\t%SAMPLE DP=%DP GQ=%GQ MQ=%MQ PL=%PL]\n' $OUTDIR/snps_filtered.vcf | fgrep 'PASS' > $OUTDIR/SNPs_consensus_MQ.tsv
+
+echo "---------------------------------------"
+echo "Filter applied to pre-merged tool-specific data"
+
+
+echo "---------------------------------------"
+echo 'GATK'
+
+/usr/local/jdk1.8.0_131/bin/java -Djava.iodir=$PBS_JOBFS -Xms3200m -Xmx3600m -jar /home/jwestaway/pk_pipeline/tools/gatk-4.2.2.0/gatk-package-4.2.2.0-local.jar \
+    VariantFiltration \
+    -V GATK/GVCFall_SNPs_GATK.vcf \
+    -filter "MQ < 51.6" --filter-name "MQ40" \
+    -O $OUTDIR/snps_filtered_GATK.vcf
+
+bcftools query -f '%CHROM %POS %ID %REF %ALT %FILTER [\t%SAMPLE DP=%DP GQ=%GQ MQ=%MQ PL=%PL]\n' $OUTDIR/snps_filtered_GATK.vcf | fgrep 'PASS' > $OUTDIR/SNPs_GATK_MQ.tsv
+
+echo "---------------------------------------"
+echo 'samtools'
+
+/usr/local/jdk1.8.0_131/bin/java -Djava.iodir=$PBS_JOBFS -Xms3200m -Xmx3600m -jar /home/jwestaway/pk_pipeline/tools/gatk-4.2.2.0/gatk-package-4.2.2.0-local.jar \
+    VariantFiltration \
+    -V samtools/GVCFall_SNPs_bcftools.vcf \
+    -filter "MQ < 51.6" --filter-name "MQ40" \
+    -O $OUTDIR/snps_filtered_bcftools.vcf
+
+bcftools query -f '%CHROM %POS %ID %REF %ALT %FILTER [\t%SAMPLE DP=%DP GQ=%GQ MQ=%MQ PL=%PL]\n' $OUTDIR/snps_filtered_bcftools.vcf | fgrep 'PASS' > $OUTDIR/SNPs_bcftools_MQ.tsv
+
+echo "------------------------------------------------------------------------------------------------------------------------------------------------------------"
+echo 'INDELS'
+echo "------------------------------------------------------------------------------------------------------------------------------------------------------------"
+
+echo "------------------------------------------------------------------------------"
+echo 'QD'
+echo "------------------------------------------------------------------------------"
+/usr/local/jdk1.8.0_131/bin/java -Djava.iodir=$PBS_JOBFS -Xms3200m -Xmx3600m -jar /home/jwestaway/pk_pipeline/tools/gatk-4.2.2.0/gatk-package-4.2.2.0-local.jar \
+    VariantFiltration \
+    -V variants_only_test/GVCFall_INDELs.vcf \
+    -filter "QD < 12.43" --filter-name "QD2" \
+    -O $OUTDIR/indels_filtered.vcf
+
+bcftools query -f '%CHROM %POS %ID %REF %ALT %FILTER [\t%SAMPLE DP=%DP GQ=%GQ MQ=%MQ PL=%PL]\n' $OUTDIR/indels_filtered.vcf | fgrep 'PASS' > $OUTDIR/indels_consensus_QD.tsv
+
+
+echo "---------------------------------------"
+echo "Filter applied to pre-merged tool-specific data"
+
+
+echo "---------------------------------------"
+echo 'GATK'
+
+/usr/local/jdk1.8.0_131/bin/java -Djava.iodir=$PBS_JOBFS -Xms3200m -Xmx3600m -jar /home/jwestaway/pk_pipeline/tools/gatk-4.2.2.0/gatk-package-4.2.2.0-local.jar \
+    VariantFiltration \
+    -V GATK/GVCFall_INDELs_GATK.vcf \
+    -filter "QD < 12.43" --filter-name "QD2" \
+    -O $OUTDIR/indels_filtered_GATK.vcf
+
+bcftools query -f '%CHROM %POS %ID %REF %ALT %FILTER [\t%SAMPLE DP=%DP GQ=%GQ MQ=%MQ PL=%PL]\n' $OUTDIR/indels_filtered_GATK.vcf | fgrep 'PASS' > $OUTDIR/indels_GATK_QD.tsv
+
+
+echo "---------------------------------------"
+echo 'samtools'
+
+/usr/local/jdk1.8.0_131/bin/java -Djava.iodir=$PBS_JOBFS -Xms3200m -Xmx3600m -jar /home/jwestaway/pk_pipeline/tools/gatk-4.2.2.0/gatk-package-4.2.2.0-local.jar \
+    VariantFiltration \
+    -V samtools/GVCFall_INDELs_bcftools.vcf \
+    -filter "QD < 12.43" --filter-name "QD2" \
+    -O $OUTDIR/indels_filtered_bcftools.vcf
+
+bcftools query -f '%CHROM %POS %ID %REF %ALT %FILTER [\t%SAMPLE DP=%DP GQ=%GQ MQ=%MQ PL=%PL]\n' $OUTDIR/indels_filtered_bcftools.vcf | fgrep 'PASS' > $OUTDIR/indels_bcftools_QD.tsv
+
+
+echo "------------------------------------------------------------------------------"
+echo 'FS'
+echo "------------------------------------------------------------------------------"
+/usr/local/jdk1.8.0_131/bin/java -Djava.iodir=$PBS_JOBFS -Xms3200m -Xmx3600m -jar /home/jwestaway/pk_pipeline/tools/gatk-4.2.2.0/gatk-package-4.2.2.0-local.jar \
+    VariantFiltration \
+    -V variants_only_test/GVCFall_INDELs.vcf \
+    -filter "FS > 14.63418" --filter-name "FS60" \
+    -O $OUTDIR/indels_filtered.vcf
+
+bcftools query -f '%CHROM %POS %ID %REF %ALT %FILTER [\t%SAMPLE DP=%DP GQ=%GQ MQ=%MQ PL=%PL]\n' $OUTDIR/indels_filtered.vcf | fgrep 'PASS' > $OUTDIR/indels_consensus_FS.tsv
+
+
+echo "---------------------------------------"
+echo "Filter applied to pre-merged tool-specific data"
+
+
+echo "---------------------------------------"
+echo 'GATK'
+
+/usr/local/jdk1.8.0_131/bin/java -Djava.iodir=$PBS_JOBFS -Xms3200m -Xmx3600m -jar /home/jwestaway/pk_pipeline/tools/gatk-4.2.2.0/gatk-package-4.2.2.0-local.jar \
+    VariantFiltration \
+    -V GATK/GVCFall_INDELs_GATK.vcf \
+    -filter "FS > 14.63418" --filter-name "FS60" \
+    -O $OUTDIR/indels_filtered_GATK.vcf
+
+bcftools query -f '%CHROM %POS %ID %REF %ALT %FILTER [\t%SAMPLE DP=%DP GQ=%GQ MQ=%MQ PL=%PL]\n' $OUTDIR/indels_filtered_GATK.vcf | fgrep 'PASS' > $OUTDIR/indels_GATK_FS.tsv
+
+
+echo "---------------------------------------"
+echo 'samtools'
+
+/usr/local/jdk1.8.0_131/bin/java -Djava.iodir=$PBS_JOBFS -Xms3200m -Xmx3600m -jar /home/jwestaway/pk_pipeline/tools/gatk-4.2.2.0/gatk-package-4.2.2.0-local.jar \
+    VariantFiltration \
+    -V samtools/GVCFall_INDELs_bcftools.vcf \
+    -filter "FS > 14.63418" --filter-name "FS60" \
+    -O $OUTDIR/indels_filtered_bcftools.vcf
+
+bcftools query -f '%CHROM %POS %ID %REF %ALT %FILTER [\t%SAMPLE DP=%DP GQ=%GQ MQ=%MQ PL=%PL]\n' $OUTDIR/indels_filtered_bcftools.vcf | fgrep 'PASS' > $OUTDIR/indels_bcftools_FS.tsv
+
+echo 'MQ'
+echo "------------------------------------------------------------------------------"
+/usr/local/jdk1.8.0_131/bin/java -Djava.iodir=$PBS_JOBFS -Xms3200m -Xmx3600m -jar /home/jwestaway/pk_pipeline/tools/gatk-4.2.2.0/gatk-package-4.2.2.0-local.jar \
+    VariantFiltration \
+    -V variants_only_test/GVCFall_INDELs.vcf \
+    -filter "MQ < 51.6" --filter-name "MQ40" \
+    -O $OUTDIR/indels_filtered.vcf
+
+bcftools query -f '%CHROM %POS %ID %REF %ALT %FILTER [\t%SAMPLE DP=%DP GQ=%GQ MQ=%MQ PL=%PL]\n' $OUTDIR/indels_filtered.vcf | fgrep 'PASS' > $OUTDIR/indels_consensus_MQ.tsv
+
+
+echo "---------------------------------------"
+echo "Filter applied to pre-merged tool-specific data"
+
+
+echo "---------------------------------------"
+echo 'GATK'
+
+/usr/local/jdk1.8.0_131/bin/java -Djava.iodir=$PBS_JOBFS -Xms3200m -Xmx3600m -jar /home/jwestaway/pk_pipeline/tools/gatk-4.2.2.0/gatk-package-4.2.2.0-local.jar \
+    VariantFiltration \
+    -V GATK/GVCFall_INDELs_GATK.vcf \
+    -filter "MQ < 51.6" --filter-name "MQ40" \
+    -O $OUTDIR/indels_filtered_GATK.vcf
+
+bcftools query -f '%CHROM %POS %ID %REF %ALT %FILTER [\t%SAMPLE DP=%DP GQ=%GQ MQ=%MQ PL=%PL]\n' $OUTDIR/indels_filtered_GATK.vcf | fgrep 'PASS' > $OUTDIR/indels_GATK_MQ.tsv
+
+
+echo "---------------------------------------"
+echo 'samtools'
+
+/usr/local/jdk1.8.0_131/bin/java -Djava.iodir=$PBS_JOBFS -Xms3200m -Xmx3600m -jar /home/jwestaway/pk_pipeline/tools/gatk-4.2.2.0/gatk-package-4.2.2.0-local.jar \
+    VariantFiltration \
+    -V samtools/GVCFall_INDELs_bcftools.vcf \
+    -filter "MQ < 51.6" --filter-name "MQ40" \
+    -O $OUTDIR/indels_filtered_bcftools.vcf
+
+bcftools query -f '%CHROM %POS %ID %REF %ALT %FILTER [\t%SAMPLE DP=%DP GQ=%GQ MQ=%MQ PL=%PL]\n' $OUTDIR/indels_filtered_bcftools.vcf | fgrep 'PASS' > $OUTDIR/indels_bcftools_MQ.tsv
+
+
+echo "------------------------------------------------------------------------------------------------------------------------------------------------------------"
+echo 'CLEAN UP'
+echo "------------------------------------------------------------------------------------------------------------------------------------------------------------"
+rm $OUTDIR/*filtered*
+
+
+echo "---------------------------------------"
+echo 'Finished'
+```
+
+#### Get Variant Counts
+
+To get the counts for the different single parameter tests that can be wrangled into a summary in R Studio, we use:
+
+cd /home/jwestaway/pk_pipeline/ZB_100/outputs/vcf_consensus/filtering_tests/GATK_BP/specific_parameters
+wc -l * > variant_counts_for_specific_param_GATK_BP.tsv
+
+cd /home/jwestaway/pk_pipeline/ZB_100/outputs/vcf_consensus/filtering_tests/Vivax/specific_parameters
+wc -l * > variant_counts_for_specific_param_Vivax.tsv
+
+
+#### Get variant counts from consensus-only tool-sepcific VCF files
+
+The previous counts obtained for the pre-consensus vairant counts from bcftools and GATK may not provide much meaning, as we may only be interested in how the filters would effect the remaining variants in the PK consenus VCF.
+However, to obtain these we have to 'filter' the VCF outputs from the specific tools for the conesnus variants usng fgrep, and then apply the same filters we used above to these tool-specific consensus variants.
+
+Files to accomplish this are located in the directory pk_pipeline/ZB_100/scripts/14_Consensus_vcf/filtering_test/tool_spec_consensus. 
+Files:
+consensus_variats_from_tools.pbs
+variant_counts_from_consensus_tools.pbs
+filtering_single_param_GATK_BP.pbs
+filtering_single_param_vivax.pbs
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

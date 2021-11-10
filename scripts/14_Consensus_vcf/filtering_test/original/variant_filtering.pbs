@@ -51,14 +51,14 @@ echo "---------------------------------------"
 echo "SNPs"
 
 echo "---------------------------------------"
-echo "Exectute bcftools to select variants that pass a specific threshold: FMT/GQ>30 & FMT/DP>10"
+echo "Exectute bcftools to select variants"
 bcftools query -f '%CHROM %POS %ID %REF %ALT [\t%SAMPLE DP=%DP GQ=%GQ MQ=%MQ PL=%PL]\n' variants_only_test/GVCFall_SNPs.vcf > $OUTDIR/SNPs.tsv
 
 echo "---------------------------------------"
 echo "Indels"
 
 echo "---------------------------------------"
-echo "Exectute bcftools to select variants that pass a specific threshold: FMT/GQ>30 & FMT/DP>10"
+echo "Exectute bcftools to select variants"
 bcftools query -f '%CHROM %POS %ID %REF %ALT [\t%SAMPLE DP=%DP GQ=%GQ MQ=%MQ PL=%PL]\n' variants_only_test/GVCFall_INDELs.vcf > $OUTDIR/indels.tsv
 
 
