@@ -1,0 +1,500 @@
+---
+title: "sWGA_Comparison"
+author: "Jacob Westaway"
+date: "Last updated on `r Sys.Date()`"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_knit$set(root.dir = 'C:/Users/Jacob/Desktop/Menzies/Knowlesi/Pipeline/Pk_Pipeline/')
+library(tidyverse)
+library(janitor)
+```
+
+
+# About 
+
+This is a comparson of sWGA and non-sWGA samples, with sequencing conducted by Sanger. As sample data is not available for the non-sWGA data, I was unable to conduct a paired-comaprison. I instead of chosen the 10 largest samples (fastq file size) from the two groups.
+
+Key terms/abbreviations:
+
+ - ZB_LP: data from Singapore/Zbynek Bozdech with low parsitemia.
+ - ZB_redo: data from Singapore/Zbynek Bozdech (not truncated).
+ - Sanger_sWGA: sanger data for this sWGA comaprison. **This includes BOTH sWGA and non_sWGA.** Plots comparing these two groups have the groups annotated in the legend.
+ - Previous_Pk: data from a previous study provided by Ernest.
+ - Direct: aligning/mapping to Pk genome without removal of human contamination.
+ - Indirect: aligning/mapping to Pk after removal of human contamination.
+ 
+Metrics:
+
+ - Reads - number of reads from sequencing.
+ - Mapped reads - number of reads that are aligning to the reference genome.
+ - Depth - the average coverage for reads aligning to the genome.
+ 
+```{r,warning=F,message=F,include=F}
+# Create a function to read in the BBmap data
+
+bbmap_func <- function(file_path, grep_pattern, bbmap_data, alignment, genome){ 
+read_csv(file_path, col_names = c("Variable", "Value")) %>%
+  mutate(Variable = str_remove(Variable, "==> ")) %>% 
+  filter(!grepl(grep_pattern, Variable)) %>% # data specific
+  add_column(
+    (read_csv(file_path, col_names = c("Variable", "Value")) %>% 
+       mutate(Variable = str_remove(Variable, "==> ")) %>% 
+       filter(grepl(grep_pattern, Variable)) %>% # data specific
+       mutate(Variable = Variable) %>% 
+       rbind(.,.,.,.,.,.,.,.,.,.,.,.) %>% # represents the number of variables
+       arrange(Variable) %>% 
+       mutate_if(is.character, as.factor) %>% 
+       select(Variable) %>% 
+       rename("ID" = Variable))) %>% 
+  pivot_wider(names_from = Variable, values_from = Value) %>% 
+  add_column(Data = bbmap_data, Alignment = alignment, Genome = genome)  %>% 
+  as.tibble(.name_repair = "universal")
+}
+
+# define read depth function to get read depth per contig
+read_depth_data <- function(file_path, dataset, alignment){
+read_tsv(file_path, col_names = c("Contig", "Bases", "S01", "S02", "S03", "S04", "S05", "S06", "S07", "S08", "S09", "S10", 
+                                  "S11", "S12", "S13", "S14", "S15", "S16", "S17", "S18", "S19", "S20")) %>% 
+  select(!Bases) %>% 
+  filter(grepl("ordered", Contig)) %>% 
+  group_by(Contig) %>% 
+  summarise_all(mean) %>%
+  t() %>% 
+  as.data.frame() %>% 
+  row_to_names(1) %>% 
+  add_column(Data = dataset, Alignment = alignment) %>% 
+  rownames_to_column("Sample")
+}
+
+# define base_pairs function to change names and get percentage of bases that are NA
+base_pairs <- function(file_path, dataset, alignment){
+read_tsv(file_path, col_names = c("Contig", "Bases", "S01", "S02", "S03", "S04", "S05", "S06", "S07", "S08", "S09", "S10", 
+                                  "S11", "S12", "S13", "S14", "S15", "S16", "S17", "S18", "S19", "S20")) %>% 
+  select(!Bases) %>% 
+  filter(grepl("ordered", Contig)) %>% 
+  na_if(0) %>% 
+  group_by(Contig) %>% 
+  summarise_all(funs(sum(is.na(.))/length(.) * 100)) %>% 
+  t() %>% 
+  as.data.frame() %>% 
+  row_to_names(1) %>% 
+  add_column(Data = dataset, Alignment = alignment) %>% 
+  rownames_to_column("Sample") %>% 
+  rename("PKNH_01_NA_bases" = "ordered_PKNH_01_v2", "PKNH_02_NA_bases" ="ordered_PKNH_02_v2", 
+         "PKNH_03_NA_bases" = "ordered_PKNH_03_v2", "PKNH_04_NA_bases" = "ordered_PKNH_04_v2", 
+         "PKNH_05_NA_bases" = "ordered_PKNH_05_v2", "PKNH_06_NA_bases" = "ordered_PKNH_06_v2", 
+         "PKNH_07_NA_bases" = "ordered_PKNH_07_v2", "PKNH_08_NA_bases" = "ordered_PKNH_08_v2", 
+         "PKNH_09_NA_bases" = "ordered_PKNH_09_v2", "PKNH_10_NA_bases" = "ordered_PKNH_10_v2", 
+         "PKNH_11_NA_bases" = "ordered_PKNH_11_v2", "PKNH_12_NA_bases" = "ordered_PKNH_12_v2", 
+         "PKNH_13_NA_bases" = "ordered_PKNH_13_v2", "PKNH_14_NA_bases" = "ordered_PKNH_14_v2") %>% 
+  mutate_at(c(2:15), as.character) %>% 
+  mutate_at(c(2:15), as.numeric)
+}
+```
+
+```{r,warning=F,message=F,include=F}
+# Mapstats 
+BBMAP <- 
+# S_100 
+bbmap_func("data/bbmap_summary/S100_PKD_summary_mapstats.csv", "ERR", "S100", "Direct", "Pk") %>%  # Direct Pk
+  rbind(bbmap_func("data/bbmap_summary/S100_HGA_summary_mapstats.csv", "ERR", "S100", "Indirect", "Hg")) %>% # Indirect Hg
+  rbind(bbmap_func("data/bbmap_summary/S100_HGR_summary_mapstats.csv", "ERR", "S100", "Indirect", "Pk")) %>% # Indirect Pk
+  rbind(
+# SS
+(bbmap_func("data/bbmap_summary/SS_PKD_summary_mapstats.csv", "PKA", "SS", "Direct", "Pk") %>%  
+  rbind(bbmap_func("data/bbmap_summary/SS_HGA_summary_mapstats.csv", "PKA", "SS", "Indirect", "Hg")) %>% 
+  rbind(bbmap_func("data/bbmap_summary/SS_HGR_summary_mapstats.csv", "PKA", "SS", "Indirect", "Pk")) 
+)) %>%
+  rbind(
+# ZB
+(bbmap_func("data/bbmap_summary/ZB_PKD_summary_mapstats.csv", "PK_SB_DNA", "ZB", "Direct", "Pk") %>%  
+  rbind(bbmap_func("data/bbmap_summary/ZB_HGA_summary_mapstats.csv", "PK_SB_DNA", "ZB", "Indirect", "Hg")) %>% 
+  rbind(bbmap_func("data/bbmap_summary/ZB_HGR_summary_mapstats.csv", "PK_SB_DNA", "ZB", "Indirect", "Pk")) 
+)) %>% 
+  rbind(
+# Previous Pk data
+  bbmap_func("data/bbmap_summary/Previous_Pk_summary.csv", "ERR", "Previous_Pk", "Direct", "Pk")) %>%
+  rbind(
+# ZB redo
+(bbmap_func("data/bbmap_summary/bowtie2_HGA_summary.csv", "PK_SB_DNA", "ZB_bowtie", "Indirect", "Hg") %>%  
+  rbind(bbmap_func("data/bbmap_summary/bowtie2_HGR_summary.csv", "PK_SB_DNA", "ZB_bowtie", "Indirect", "Pk"))) %>% 
+  rbind(bbmap_func("data/bbmap_summary/ZB_redo_HGA_summary_mapstats.csv", "PK_SB_DNA", "ZB_redo", "Indirect", "Hg")) %>% 
+  rbind(bbmap_func("data/bbmap_summary/ZB_redo_HGR_summary_mapstats.csv", "PK_SB_DNA", "ZB_redo", "Indirect", "Pk")) %>% 
+  rbind(bbmap_func("data/bbmap_summary/ZB_redo_PKD_summary_mapstats.csv", "PK_SB_DNA", "ZB_redo", "Direct", "Pk"))
+  ) %>% 
+  rbind(bbmap_func("data/bbmap_summary/low_para_mapstats.csv", "PK_SB_DNA", "ZB_LP", "Direct", "Pk")) %>% 
+  rbind(bbmap_func("data/bbmap_summary/Sanger_amp_comp_summary.csv", "ERR", "Sanger_sWGA", "Direct", "Pk")
+    )
+```
+
+```{r,warning=F,message=F,include=F,eval=F}
+Summary_Data_sWGA <- Summary_Data %>% 
+  rbind(
+  read_depth_data("data/read_depth/SWGA_Comp.tsv", "Sanger_sWGA", "Direct") %>% # read in direct read depth data
+  mutate_if(is.factor, as.character) %>% 
+  mutate_at(grep("ordered", colnames(.)), as.numeric) %>% 
+  left_join(
+    (base_pairs("data/read_depth/SWGA_Comp.tsv", "Sanger_sWGA", "Direct") %>% # read in direct NA base pair data and join
+  mutate_if(is.factor, as.character) %>% 
+  mutate_at(grep("ordered", colnames(.)), as.numeric) %>% 
+  select(-Data, - Alignment))
+  ) %>% 
+  slice(1:8) %>% 
+  rbind(
+read_depth_data("data/read_depth/SWGA_Comp.tsv", "Sanger_sWGA", "Direct") %>% # read in direct read depth data
+  mutate_if(is.factor, as.character) %>% 
+  mutate_at(grep("ordered", colnames(.)), as.numeric) %>% 
+  left_join(
+    (base_pairs("data/read_depth/SWGA_Comp.tsv", "Sanger_sWGA", "Direct") %>% # read in direct NA base pair data and join
+  mutate_if(is.factor, as.character) %>% 
+  mutate_at(grep("ordered", colnames(.)), as.numeric) %>% 
+  select(-Data, - Alignment)) 
+  ) %>% 
+  slice(1:8)
+  ) %>% 
+  add_column(Join = 1:nrow(.)) %>% # add column for joining with mapstats data
+  left_join( # join read depth and base NA data with map stat data via a new column called join
+    (BBMAP %>% 
+      filter(Genome != "Hg" & Data == "Sanger_sWGA" & Alignment == "Direct") %>%  
+      mutate(ID = str_replace(ID,".mapstats", "")) %>% 
+      add_column(Join = 1:nrow(.))
+     ), by = "Join") %>% 
+  select(-Data.y, -Alignment.y, -Join) %>% 
+  rename("Data" = "Data.x", "Alignment" = "Alignment.x") %>%  
+  relocate(ID, Data, Alignment)
+)
+
+
+sWGA_summary <- read_depth_data("data/read_depth/sWGA_Comp.tsv", "Sanger_sWGA", "Direct") %>% # read in direct read depth data
+  mutate_if(is.factor, as.character) %>% 
+  mutate_at(grep("ordered", colnames(.)), as.numeric) %>% 
+  left_join(
+    (base_pairs("data/read_depth/sWGA_Comp.tsv", "Sanger_sWGA", "Direct") %>% # read in direct NA base pair data and join
+  mutate_if(is.factor, as.character) %>% 
+  mutate_at(grep("ordered", colnames(.)), as.numeric) %>% 
+  select(-Data, -Alignment))
+  )  %>% 
+  add_column(Join = 1:nrow(.)) %>% # add column for joining with mapstats data
+  left_join( # join read depth and base NA data with map stat data via a new column called join
+    BBMAP %>% 
+      filter(Data == "Sanger_sWGA") %>%  
+      mutate(ID = str_replace(ID,".mapstats", "")) %>% 
+      add_column(Join = 1:nrow(.))
+     , by = "Join") %>% 
+  select(-Data.y, -Alignment.y, -Join) %>% 
+  rename("Data" = "Data.x", "Alignment" = "Alignment.x") %>%  
+  relocate(ID, Data, Alignment) %>% 
+  mutate(Amplified = ifelse(grepl("463", ID), "Yes", "No"))
+
+write_csv(sWGA_summary, 'data/sWGA_summary.csv')
+```
+
+
+```{r,warning=F,message=F,include=F}
+sWGA_summary <- read_csv('data/sWGA_summary.csv') 
+Summary_Data <- read_csv('data/Summary_Data.csv') 
+ZB_metadata <- read_csv('data/ZB_metadata.csv')
+```
+
+# Comparison of the number reads mapping to Pk across all datasets and for different alignments
+
+```{r,warning=F,message=F,echo=F}
+BBMAP %>% 
+  filter(Genome == "Pk") %>% 
+  filter(Data == "ZB_redo" | Data == "ZB_LP" | Data == "Sanger_sWGA" | Data == "Previous_Pk") %>% 
+  rbind(BBMAP %>% 
+          filter(Data == "ZB_bowtie" & Genome =="Pk") %>% # wranlge the bowtie2 data so that it doesn't share names with other data - 'stacks' othersise
+          select(-ID) %>% 
+          add_column(ID = 1:13) %>% 
+          mutate(ID = as.character(ID)) %>% 
+          mutate(ID = as.factor(ID))) %>% 
+  ggplot() + 
+  geom_col(aes(x = ID, y = Mapped.reads/10000000, colour = Data)) +
+  theme(axis.text.x = element_blank(), axis.ticks = element_blank()) +
+  labs(x = "Samples", y = "Mapped reads (M)") +
+  facet_wrap(~Alignment) 
+```
+
+
+# Plot comparing mapped reads for Sanger_sWGA, amplified vs not amplified
+
+```{r,warning=F,message=F,echo=F}
+BBMAP %>% 
+  filter(Data == "Sanger_sWGA") %>% 
+  mutate(Amplified = ifelse(grepl("463", ID), "Yes", "No")) %>%  # to add type (amplified vs not amplified)
+  ggplot() + 
+  geom_col(aes(x = ID, y = Mapped.reads/10000000, colour = Amplified)) +
+  theme(axis.text.x = element_text(angle=90, vjust=.5, hjust=1), axis.ticks = element_blank()) +
+  labs(x = "Samples", y = "Mapped reads (M)")
+```
+
+
+# Read depth and percentage of bases WITHOUT coverage
+
+```{r,warning=F,message=F,echo=F}
+gridExtra::grid.arrange(
+sWGA_summary %>% 
+  select(-Amplified) %>% 
+  rbind(Summary_Data) %>% 
+  filter(Data == "ZB_redo" | Data == "Previous_Pk" |  Data == "Sanger_sWGA") %>% 
+  filter(Alignment == "Direct") %>% 
+  group_by(Data, Alignment) %>% 
+  summarise_all(mean) %>% 
+  select(1:16) %>%  
+  select(-3, -4) %>% 
+  pivot_longer(cols = !c(Data, Alignment), names_to = "Contig", values_to = "Depth") %>% 
+  ggplot() +
+  geom_point(mapping = aes(x = Contig, y = Depth, colour = Data)) +
+  theme(axis.text.x = element_blank(), axis.ticks = element_blank()) ,
+
+sWGA_summary %>% 
+  select(-Amplified) %>% 
+  rbind(Summary_Data) %>% 
+  filter(Data == "ZB_redo" | Data == "Previous_Pk" |  Data == "Sanger_sWGA") %>% 
+  filter(Alignment == "Direct") %>% 
+  group_by(Data, Alignment) %>% 
+  summarise_all(mean) %>% 
+  select(1:2, 19:32) %>% 
+  pivot_longer(cols = !c(Data, Alignment), names_to = "Contig", values_to = "Bases") %>% 
+  ggplot() +
+  geom_point(mapping = aes(x = Contig, y = Bases, colour = Data)) +
+  theme(axis.text.x = element_blank(), axis.ticks = element_blank()) +
+  ylab("% of NA bases")
+)
+```
+
+
+# Read depth and percentage of bases WITHOUT coverage - comparing sWGA
+
+```{r,warning=F,message=F,echo=F}
+gridExtra::grid.arrange(
+sWGA_summary %>% 
+  mutate(Data = ifelse(Amplified == "Yes", "Sanger_sWGA", "Sanger_NO_sWGA")) %>% 
+  select(-Amplified) %>% 
+  rbind(Summary_Data) %>% 
+  filter(Data == "ZB_redo" | Data == "Previous_Pk" |  Data == "Sanger_NO_sWGA" | Data == "Sanger_sWGA") %>% 
+  filter(Alignment == "Direct") %>% 
+  group_by(Data, Alignment) %>% 
+  summarise_all(mean) %>% 
+  select(1:16) %>%  
+  select(-3, -4) %>% 
+  pivot_longer(cols = !c(Data, Alignment), names_to = "Contig", values_to = "Depth") %>% 
+  ggplot() +
+  geom_point(mapping = aes(x = Contig, y = Depth, colour = Data)) +
+  theme(axis.text.x = element_blank(), axis.ticks = element_blank()) ,
+
+sWGA_summary %>% 
+  mutate(Data = ifelse(Amplified == "Yes", "Sanger_sWGA", "Sanger_NO_sWGA")) %>% 
+  select(-Amplified) %>% 
+  rbind(Summary_Data) %>% 
+  filter(Data == "ZB_redo" | Data == "Previous_Pk" |  Data == "Sanger_NO_sWGA" | Data == "Sanger_sWGA") %>% 
+  filter(Alignment == "Direct") %>% 
+  group_by(Data, Alignment) %>% 
+  summarise_all(mean) %>% 
+  select(1:2, 19:32) %>% 
+  pivot_longer(cols = !c(Data, Alignment), names_to = "Contig", values_to = "Bases") %>% 
+  ggplot() +
+  geom_point(mapping = aes(x = Contig, y = Bases, colour = Data)) +
+  theme(axis.text.x = element_blank(), axis.ticks = element_blank()) +
+  ylab("% of NA bases")
+
+)
+```
+
+
+# Read depth and percentage of bases WITHOUT coverage - comparing sWGA for Sanger data only
+
+```{r,warning=F,message=F,echo=F}
+gridExtra::grid.arrange(
+sWGA_summary %>% 
+  mutate(Data = ifelse(Amplified == "Yes", "Sanger_sWGA", "Sanger_NO_sWGA")) %>% 
+  select(-Amplified) %>% 
+  rbind(Summary_Data) %>% 
+  filter(Data == "Sanger_NO_sWGA" | Data == "Sanger_sWGA") %>% 
+  filter(Alignment == "Direct") %>% 
+  group_by(Data, Alignment) %>% 
+  summarise_all(mean) %>% 
+  select(1:16) %>%  
+  select(-3, -4) %>% 
+  pivot_longer(cols = !c(Data, Alignment), names_to = "Contig", values_to = "Depth") %>% 
+  ggplot() +
+  geom_point(mapping = aes(x = Contig, y = Depth, colour = Data)) +
+  theme(axis.text.x = element_blank(), axis.ticks = element_blank()) ,
+
+sWGA_summary %>% 
+  mutate(Data = ifelse(Amplified == "Yes", "Sanger_sWGA", "Sanger_NO_sWGA")) %>% 
+  select(-Amplified) %>% 
+  rbind(Summary_Data) %>% 
+  filter(Data == "Sanger_NO_sWGA" | Data == "Sanger_sWGA") %>% 
+  filter(Alignment == "Direct") %>% 
+  group_by(Data, Alignment) %>% 
+  summarise_all(mean) %>% 
+  select(1:2, 19:32) %>% 
+  pivot_longer(cols = !c(Data, Alignment), names_to = "Contig", values_to = "Bases") %>% 
+  ggplot() +
+  geom_point(mapping = aes(x = Contig, y = Bases, colour = Data)) +
+  theme(axis.text.x = element_blank(), axis.ticks = element_blank()) +
+  ylab("% of NA bases")
+
+)
+```
+
+
+# IGV 
+
+![Compariing the distribution of reads across the genome for sWGA (red) and non-sWGA (blue).](C:/Users/Jacob/Desktop/Menzies/Knowlesi/Pipeline/Pk_Pipeline/data/IGV/igv_panel_swga_comp.png)
+
+![Compariing the distribution of reads across the genome for sWGA (red) and non-sWGA (blue) - samples with greatest mapped reads.](C:/Users/Jacob/Desktop/Menzies/Knowlesi/Pipeline/Pk_Pipeline/data/IGV/igv_panel_swga_comp_greatest_mapped_reads.png)
+
+![Example of a poor quality region - not completely missing.](C:/Users/Jacob/Desktop/Menzies/Knowlesi/Pipeline/Pk_Pipeline/data/IGV/igv_panel_swga_comp_example_poor_quality_region.png)
+
+# Relationship between parasitemia and read depth in sWGA samples
+
+ - don't have sample data for non-sWGA.
+ 
+```{r,warning=F,message=F,echo=F}
+sWGA_summary %>% 
+  filter(Amplified == "Yes") %>% 
+  left_join(
+    read_csv("data/metadata/ENA_with_parasitemia.csv") %>% 
+      select(ERR, Parasitemia) %>% 
+      rename(ID = ERR) %>% 
+      mutate(ID = as.character(ID))
+    , by = "ID"
+  ) %>% 
+  select(1:18, 47) %>%  
+  pivot_longer(cols = !c(ID, Data, Alignment, Sample, Parasitemia), names_to = "Contig", values_to = "Depth") %>% 
+  group_by(ID) %>% 
+  summarise_at(vars(Parasitemia, Depth), mean) %>% 
+  ggplot(mapping = aes(x = Parasitemia/1000, y = Depth)) +
+  geom_point() +
+  geom_smooth(method = "lm", se = T) +
+  ylab("Depth") +
+  xlab("Parasitemia (K)") +
+  ggpubr::stat_regline_equation(label.y = 100, aes(label = ..rr.label..)) 
+```
+
+# Relationship between parasitemia and read depth within each contig for sWGA samples
+
+ - don't have sample data for non-sWGA.
+
+```{r,warning=F,message=F,echo=F}
+sWGA_summary %>% 
+  filter(Amplified == "Yes") %>% 
+  left_join(
+    read_csv("data/metadata/ENA_with_parasitemia.csv") %>% 
+      select(ERR, Parasitemia) %>% 
+      rename(ID = ERR) %>% 
+      mutate(ID = as.character(ID))
+    , by = "ID"
+  ) %>% 
+  select(1:18, 47) %>%  
+  pivot_longer(cols = !c(ID, Data, Alignment, Sample, Parasitemia), names_to = "Contig", values_to = "Depth") %>% 
+  ggplot(mapping = aes(x = Parasitemia/1000, y = Depth)) +
+  geom_point() +
+  geom_smooth(method = "lm", se = T) +
+  facet_wrap(~Contig) +
+  ylab("Depth") +
+  xlab("Parasitemia (K)") +
+  ggpubr::stat_regline_equation(label.y = 80, label.x = 1, aes(label = ..rr.label..))
+```
+
+# Summary of the mapping statisitcs across samples, ordered by parasitemia
+
+```{r,warning=F,message=F,echo=F}
+sWGA_summary %>% 
+  left_join(
+    read_csv("data/metadata/ENA_with_parasitemia.csv") %>% 
+      select(ERR, Parasitemia) %>% 
+      rename(ID = ERR) %>% 
+      mutate(ID = as.character(ID))
+    , by = "ID"
+  ) %>%  
+  select(1, 5:18, 33, 34, 38, 40, 44, 47) %>% 
+  pivot_longer(cols = !c(ID, Reads, Mapped.reads, Percent.mapped, Average.coverage, Percent.of.reference.bases.covered, Parasitemia), names_to = "Contig", values_to = "Depth") %>% 
+  select(-Contig) %>% 
+  group_by(ID) %>% 
+  summarise_all(mean) %>% 
+  left_join(
+    sWGA_summary %>% 
+  select(1, 19:32) %>% 
+  pivot_longer(cols = !ID, names_to = "Contig", values_to = "Percent_NA") %>% 
+  select(-Contig) %>% 
+  group_by(ID) %>% 
+  summarise_all(mean) 
+  ) %>% 
+  relocate(ID, Reads, Mapped.reads, Percent.mapped, Depth, Parasitemia, Average.coverage, 
+    Percent.of.reference.bases.covered, Percent_NA) %>% 
+  rename("Coverage.bbmap" = Average.coverage, "Percent.covered.bbmap" = Percent.of.reference.bases.covered,
+         "Percent.not.covered.samtools" = Percent_NA, "Parasitemia" = Parasitemia) %>% 
+  select(ID, Reads, Mapped.reads, Percent.mapped, Depth, Parasitemia) %>% 
+  arrange(Parasitemia) %>% 
+  knitr::kable()
+```
+
+# Comparing summaries of mapping statisitcs between ZB and Sanger's low parasitemia samples (from the random subsets used)
+
+```{r,warning=F,message=F,echo=F}
+ZB_metadata %>% 
+  select(1, 5:18, 33, 34, 38, 40, 44, 47) %>% 
+  pivot_longer(cols = !c(ID, Reads, Mapped.reads, Percent.mapped, Average.coverage, Percent.of.reference.bases.covered,
+    parasitemia), names_to = "Contig", values_to = "Depth") %>% 
+  select(-Contig) %>% 
+  group_by(ID) %>% 
+  summarise_all(mean) %>% 
+  left_join(
+    ZB_metadata %>% 
+  select(1, 19:32) %>% 
+  pivot_longer(cols = !ID, names_to = "Contig", values_to = "Percent_NA") %>% 
+  select(-Contig) %>% 
+  group_by(ID) %>% 
+  summarise_all(mean)
+  ) %>% 
+  mutate(Parasite.burden = ifelse(parasitemia < 5000, "Low", "High")) %>% 
+  relocate(ID, Reads, Mapped.reads, Percent.mapped, Depth, parasitemia, Parasite.burden, Average.coverage, 
+    Percent.of.reference.bases.covered, Percent_NA) %>% 
+  rename("Coverage.bbmap" = Average.coverage, "Percent.covered.bbmap" = Percent.of.reference.bases.covered,
+         "Percent.not.covered.samtools" = Percent_NA, "Parasitemia" = parasitemia) %>% 
+  mutate(ID = str_remove(ID, "PK_SB_DNA_")) %>%
+  select(ID, Reads, Mapped.reads, Percent.mapped, Depth, Parasitemia) %>% 
+  arrange(Parasitemia) %>% 
+  filter(Parasitemia < 1200) %>% 
+  add_column(Data = "ZB_data") %>% 
+  rbind(
+    sWGA_summary %>% 
+  left_join(
+    read_csv("data/metadata/ENA_with_parasitemia.csv") %>% 
+      select(ERR, Parasitemia) %>% 
+      rename(ID = ERR) %>% 
+      mutate(ID = as.character(ID))
+    , by = "ID"
+  ) %>%  
+  select(1, 5:18, 33, 34, 38, 40, 44, 47) %>% 
+  pivot_longer(cols = !c(ID, Reads, Mapped.reads, Percent.mapped, Average.coverage, Percent.of.reference.bases.covered, Parasitemia), names_to = "Contig", values_to = "Depth") %>% 
+  select(-Contig) %>% 
+  group_by(ID) %>% 
+  summarise_all(mean) %>% 
+  left_join(
+    sWGA_summary %>% 
+  select(1, 19:32) %>% 
+  pivot_longer(cols = !ID, names_to = "Contig", values_to = "Percent_NA") %>% 
+  select(-Contig) %>% 
+  group_by(ID) %>% 
+  summarise_all(mean) 
+  ) %>% 
+  relocate(ID, Reads, Mapped.reads, Percent.mapped, Depth, Parasitemia, Average.coverage, 
+    Percent.of.reference.bases.covered, Percent_NA) %>% 
+  rename("Coverage.bbmap" = Average.coverage, "Percent.covered.bbmap" = Percent.of.reference.bases.covered,
+         "Percent.not.covered.samtools" = Percent_NA, "Parasitemia" = Parasitemia) %>% 
+  select(ID, Reads, Mapped.reads, Percent.mapped, Depth, Parasitemia) %>% 
+  arrange(Parasitemia) %>% 
+    filter(Parasitemia < 1200) %>% 
+  add_column(Data = "Sanger_sWGA")
+  ) %>% 
+  knitr::kable()
+```
+
+

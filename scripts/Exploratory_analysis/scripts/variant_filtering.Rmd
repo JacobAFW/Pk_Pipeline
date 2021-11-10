@@ -1,0 +1,410 @@
+---
+title: "Variant Filtering"
+author: "Jacob Westaway"
+date: "Last updated on `r Sys.Date()`"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_knit$set(root.dir = 'C:/Users/Jacob/Desktop/Menzies/Knowlesi/Pipeline/Pk_Pipeline/')
+library(tidyverse)
+library(knitr)
+library(gridExtra)
+```
+
+# About 
+
+This report summarises and compares two variant filtering approaches.
+
+## GATK BP
+
+SNPs:
+
+  - "QD < 2.0" 
+  - "QUAL < 30.0" 
+  - "SOR > 3.0" 
+  - "FS > 60.0" 
+  - "MQ < 40.0" 
+  
+Indels:
+
+  - "QD < 2.0" 
+  - "QUAL < 30.0" 
+  - "FS > 200.0" 
+  - "ReadPosRankSum < -20.0" 
+
+## Vivax 
+
+The vivax paper used VQSR for variant filtering, but this was based on SNPs from a previous high quality dataset, and their own high qulity indels. The filtering for the indels were based on the parameters below, which come from what was used for SNPs in PvGv version 1. Thus, I have applied this fitler to both variant types.
+
+Indels and SNPs:
+
+  - filter "QD < 12.43" --filter-name "QD2" 
+  - filter "FS > 14.63418" --filter-name "FS60" 
+  - filter "MQ < 51.6" --filter-name "MQ40" 
+  
+Along with GATK BP, there is also ORIGINAL, which simply refers to the original VCF file, that has had no filters applied to it.
+
+## VCF Annotations:
+
+  - **QD** - variant Confidence/Quality by Depth. Essentially confidence that the variant is true with adjustments for coverage (<2 is terrible).
+  - **QUAL** - quality score associated with allelle infeernce (culumultive, and so not really helpful).
+  - **FS** - Phred-scaled p-value using Fisher's exact test to detect strand bias (FS close to 0 represents little to no bias)
+  - **SOR** - strand odds ratio - alternative to **FS** that ranges from 0 to 9 (>3 shows bias and should be removed).
+  - **MQ** - root mean square of mapping qualities of all reads at a given stie (> 60 is good, with < 40/50 to be removed).
+  - ReadPosRankSum - *not sure...*
+  
+# Distribution of variant annotation scores 
+
+
+```{r,warning=F,message=F,echo=F, fig.cap="Density plots representing the scores in the ORGINAL VCF, with lines representing some of the GATK BP defined thresholds."}
+##################################################################################################
+
+# Plotting variant counts
+
+variant_plots <- function(snp_filepath, indel_filepath){
+VCF <- read.csv(snp_filepath, header = T, na.strings=c("","NA"), sep = "\t") %>% 
+  add_column(Variant = "SNPs") %>% 
+  select(-c(SOR, X)) %>% 
+  rbind(
+    read.csv(indel_filepath, header = T, na.strings=c("","NA"), sep = "\t") %>% 
+      add_column(Variant = "Indels") %>% 
+      select(-c(SOR, X))
+  )
+
+DP <- ggplot(VCF, aes(x=DP, fill=Variant)) + 
+  geom_density(alpha=0.3) + 
+  geom_vline(xintercept=c(10,6200)) +
+  coord_cartesian(xlim = c(0,10000))
+
+QD <- ggplot(VCF, aes(x=QD, fill=Variant)) + 
+  geom_density(alpha=.3) +
+  geom_vline(xintercept=2, size=0.7)
+
+FS <- ggplot(VCF, aes(x=FS, fill=Variant)) + 
+  geom_density(alpha=.3) +
+  geom_vline(xintercept=c(60, 200), size=0.7, colour = c('#A9E2E4','#F4CCCA')) + 
+  coord_cartesian(ylim = c(0,0.1)) +
+  coord_cartesian(xlim = c(0, 100))
+
+MQ <- ggplot(VCF, aes(x=MQ, fill=Variant)) + 
+  geom_density(alpha=.3) +
+  geom_vline(xintercept=40, size=0.7) 
+
+MQRankSum <- ggplot(VCF, aes(x=MQRankSum, fill=Variant)) + 
+  geom_density(alpha=.3) +
+  geom_vline(xintercept=-20, size=0.7) +
+  coord_cartesian(xlim = c(-10,10))
+
+ReadPosRankSum <- ggplot(VCF, aes(x=ReadPosRankSum, fill=Variant)) + 
+  geom_density(alpha=.3) +
+  geom_vline(xintercept=c(-10,10,-20,20), size=1, colour = c('#A9E2E4','#A9E2E4','#F4CCCA','#F4CCCA')) + 
+  coord_cartesian(xlim = c(-30, 30)) 
+
+grid.arrange(QD, DP, FS, MQ, MQRankSum, ReadPosRankSum)
+}
+
+variant_plots("data/filtering_tests/original/GVCFall_SNPs.table", "data/filtering_tests/original/GVCFall_INDELs.table")
+```
+
+# Variant count summary tables
+
+## Comparing the original consensus to the GATK best practice and Vivax-paper approaches.
+
+```{r,warning=F,message=F,echo=F}
+read_tsv("data/filtering_tests/Summary/Filtering_SUmmary.tsv") %>% 
+  select(1:7) %>% 
+  mutate(Filtered = 1440785 - (SNP + Indel)) %>%
+  kable()
+```
+
+## Comparing the individual parameters from the previously mentioned filtering approaches for the consensus VCF and the tool-specific VCFs. 
+
+**NB.** The tool specific VCFs contain **ALL** variants, not just those from the consensus.
+
+```{r,warning=F,message=F,echo=F}
+Filter_summary <- read_tsv("data/filtering_tests/Summary/Filtering_SUmmary.tsv") %>% 
+  select(1:4,8:ncol(.)) %>%
+  rbind(
+    read_tsv("data/filtering_tests/Summary/variant_counts_for_specific_param_Vivax.tsv", col_names = F) %>%
+      separate(X1, sep =" ", c("Counts", "Variable")) %>% 
+      mutate(Variable = str_remove(Variable, ".tsv")) %>%  
+      separate(Variable, sep = "_", c("Variant", "Data", "Annotation")) %>% 
+      add_column(Filter = "Vivax") %>% 
+      unite(Filter, Filter, Annotation, sep = "_") %>%  
+      unite(Variant, Data, Variant, sep = "_") %>%  
+      filter(Variant != "NA_total") %>% 
+      mutate_at(2:3, as.factor) %>% 
+      mutate(Counts = as.numeric(Counts)) %>%  
+      pivot_wider(names_from = Variant, values_from = Counts) %>% 
+      rename("SNP" = consensus_SNPs, "Indel" = consensus_indels, 
+         "bcftools_Indel" = bcftools_indels, "GATK_Indel" = GATK_indels,
+         "bcftools_SNP" = bcftools_SNPs, "GATK_SNP" = GATK_SNPs) %>% 
+      mutate(Total = Indel + SNP) %>% 
+      relocate(Filter, Total, SNP, Indel)) %>%  
+  rbind(
+    read_tsv("data/filtering_tests/Summary/variant_counts_for_specific_param_GATK_BP.tsv", col_names = F) %>%
+      separate(X1, sep =" ", c("Counts", "Variable")) %>% 
+      mutate(Variable = str_remove(Variable, ".tsv")) %>%  
+      separate(Variable, sep = "_", c("Variant", "Data", "Annotation")) %>% 
+      add_column(Filter = "GATK_BP") %>% 
+      unite(Filter, Filter, Annotation, sep = "_") %>%  
+      unite(Variant, Data, Variant, sep = "_") %>%  
+      filter(Variant != "NA_total") %>% 
+      mutate_at(2:3, as.factor) %>% 
+      mutate(Counts = as.numeric(Counts)) %>%  
+      pivot_wider(names_from = Variant, values_from = Counts) %>% 
+      rename("SNP" = consensus_SNPs, "Indel" = consensus_indels, 
+         "bcftools_Indel" = bcftools_indels, "GATK_Indel" = GATK_indels,
+         "bcftools_SNP" = bcftools_SNPs, "GATK_SNP" = GATK_SNPs) %>% 
+      mutate(Total = Indel + SNP) %>% 
+      relocate(Filter, Total, SNP, Indel)
+  ) %>% 
+  mutate(Filter = as.factor(Filter)) 
+
+Filter_summary <- Filter_summary %>% 
+  add_column(Parameters = c("Combination", "Combination", "Combination", "FS > 14.63418 & 14.63418",
+                            "MQ < 51.6 & 51.6", "QD < 12.43 & 12.43", "FS > 60.0 & 200.0", "QD < 2.0 & 2.0",
+                            "QUAL < 30.0 & 30.0", "ReadPosRankSum < -8.0 & -20.0", "MQRankSum < -12.5", 
+                            "MQ < 40.0", "SOR > 3.0")) %>%
+  relocate(Filter, Parameters) %>% 
+  mutate(Filter = str_remove(Filter, "_.*")) %>% 
+  mutate(Filter = str_replace(Filter, "Vivax", "VIVAX"),
+         Filter = str_replace(Filter, "GATK", "GATK_BP"),
+         Total = if_else(is.na(Total), SNP + 7515, Total)) 
+
+Filter_summary %>%
+  mutate(Filter = str_remove(Filter, "_BP"),
+         Filter = str_remove(Filter, "INAL")) %>% 
+  rename(G_SNP = GATK_SNP, G_Indel = GATK_Indel,
+         B_SNP = bcftools_SNP, B_Indel = bcftools_Indel) %>%  
+  mutate(Indel = ifelse(is.na(Indel), 7515, Indel),
+         G_Indel = ifelse(is.na(G_Indel), 383735, G_Indel),
+         B_Indel = ifelse(is.na(B_Indel), 158841, B_Indel)) %>%
+  relocate(Filter, Parameters, Total) %>% 
+  kable()
+```
+
+## Comparing the individual parameters from the previously mentioned filtering approaches for the consensus VCF and the tool-specific VCFs. 
+
+**NB.** Updated version, showing the effect of the filtering parameters on **ONLY** the consensus variants called by the two tools.
+
+### GATK variant caller
+
+```{r,warning=F,message=F,echo=F}
+Filter_summary_consensus_tools <- read_tsv("data/filtering_tests/consensus/variant_counts_tool_spec_consensus.tsv", col_names = F) %>%  
+  separate(X1, sep =" ", c("Counts", "Variable")) %>%
+  mutate(Variable = str_remove(Variable, ".tsv")) %>%  
+  separate(Variable, sep = "_", c("Variant", "Data", "Filter")) %>% 
+  na.omit() %>%
+  unite(Variant, Data, Variant, sep = "_") %>%  
+  mutate_at(2:3, as.factor) %>% 
+  mutate(Counts = as.numeric(Counts)) %>% 
+  pivot_wider(names_from = Variant, values_from = Counts) %>% 
+  rename("bcftools_Indel" = bcftools_indels, "GATK_Indel" = GATK_indels,
+         "bcftools_SNP" = bcftools_SNPs, "GATK_SNP" = GATK_SNPs) %>% 
+  mutate(bcftools_total = bcftools_Indel + bcftools_SNP, 
+         GATK_total = GATK_Indel + GATK_SNP) %>% 
+  relocate(Filter, GATK_total, bcftools_total) %>% 
+  rbind(
+    read_tsv("data/filtering_tests/consensus/variant_counts_spec_param_consensus-tools_Vivax.tsv", col_names = F) %>%
+      separate(X1, sep =" ", c("Counts", "Variable")) %>%
+      mutate(Variable = str_remove(Variable, ".tsv")) %>%  
+      separate(Variable, sep = "_", c("Variant", "Data", "Annotation")) %>% 
+      na.omit() %>% 
+      add_column(Filter = "Vivax") %>%  
+      unite(Filter, Filter, Annotation, sep = "_") %>%  
+      unite(Variant, Data, Variant, sep = "_") %>%  
+      mutate_at(2:3, as.factor) %>% 
+      mutate(Counts = as.numeric(Counts)) %>% 
+      pivot_wider(names_from = Variant, values_from = Counts) %>% 
+      rename("bcftools_Indel" = bcftools_indels, "GATK_Indel" = GATK_indels,
+         "bcftools_SNP" = bcftools_SNPs, "GATK_SNP" = GATK_SNPs) %>% 
+      mutate(bcftools_total = bcftools_Indel + bcftools_SNP, 
+             GATK_total = GATK_Indel + GATK_SNP) %>% 
+      relocate(Filter, GATK_total, bcftools_total)  
+  ) %>% 
+  rbind(
+    read_tsv("data/filtering_tests/consensus/variant_counts_spec_param_consensus-tools_GATK_BP.tsv", col_names = F) %>%
+      separate(X1, sep =" ", c("Counts", "Variable")) %>%
+      mutate(Variable = str_remove(Variable, ".tsv")) %>%  
+      separate(Variable, sep = "_", c("Variant", "Data", "Annotation")) %>% 
+      na.omit() %>% 
+      add_column(Filter = "GATK_BP") %>%  
+      unite(Filter, Filter, Annotation, sep = "_") %>%  
+      unite(Variant, Data, Variant, sep = "_") %>%  
+      mutate_at(2:3, as.factor) %>% 
+      mutate(Counts = as.numeric(Counts)) %>% 
+      pivot_wider(names_from = Variant, values_from = Counts) %>% 
+      rename("bcftools_Indel" = bcftools_indels, "GATK_Indel" = GATK_indels,
+             "bcftools_SNP" = bcftools_SNPs, "GATK_SNP" = GATK_SNPs) %>% 
+      mutate(bcftools_total = bcftools_Indel + bcftools_SNP, 
+             GATK_total = GATK_Indel + GATK_SNP) %>% 
+      relocate(Filter, GATK_total, bcftools_total)
+  ) %>% 
+  add_column(Parameters = c("Combination", "Combination", "Combination", "FS > 14.63418 & 14.63418",
+                            "MQ < 51.6 & 51.6", "QD < 12.43 & 12.43", "FS > 60.0 & 200.0", "QD < 2.0 & 2.0",
+                            "QUAL < 30.0 & 30.0", "ReadPosRankSum < -8.0 & -20.0", "MQRankSum < -12.5", "MQ < 40.0",
+                            "SOR > 3.0")) %>%
+  relocate(Filter, Parameters) %>% 
+  mutate(Filter = str_remove(Filter, "_.*")) %>% 
+  mutate(Filter = str_replace(Filter, "Vivax", "VIVAX"),
+         Filter = str_replace(Filter, "GATK", "GATK_BP"),
+         Filter = str_replace(Filter, "original", "ORIGINAL")) %>% 
+  left_join(
+    Filter_summary %>% 
+      select(1:5)
+    ) %>% 
+  relocate(Filter, Parameters, Total, SNP, Indel, 
+           GATK_total, GATK_SNP, GATK_Indel,
+           bcftools_total, bcftools_SNP, bcftools_Indel) %>% 
+  mutate(Total = if_else(is.na(Total), SNP + 7515, Total),
+         GATK_total = if_else(is.na(GATK_total), SNP + 7217, GATK_total),
+         bcftools_total = if_else(is.na(bcftools_total), SNP + 	6971, bcftools_total)) %>% 
+  mutate(Filter = str_remove(Filter, "_BP")) 
+
+Filter_summary_consensus_tools %>% 
+  select(1:5,6:8) %>% 
+  rename(G_total = GATK_total,
+         G_SNP = GATK_SNP,
+         G_Indel = GATK_Indel) %>% 
+  mutate(Indel = ifelse(is.na(Indel), 7515, Indel),
+         G_Indel = ifelse(is.na(Indel), 7217, Indel)) %>%
+  mutate(Filtered = 1440785 - Total,
+         G_Filtered = 1406272	- G_total) %>%
+  relocate(Filter, Parameters, Total, Filtered, SNP, Indel,
+           G_total, G_Filtered, G_SNP, G_Indel) %>% 
+  kable()
+```
+
+
+### Vivax variant caller
+
+```{r,warning=F,message=F,echo=F}
+Filter_summary_consensus_tools %>% 
+  select(1:5,9:11) %>% 
+  rename(b_total = bcftools_total,
+         b_SNP = bcftools_SNP,
+         b_Indel = bcftools_Indel) %>% 
+  mutate(Indel = ifelse(is.na(Indel), 7515, Indel),
+         b_Indel = ifelse(is.na(Indel), 6971, Indel)) %>%
+  mutate(Filtered = 1440785 - Total,
+         b_Filtered = 1406280	- b_total) %>%
+  relocate(Filter, Parameters, Total, Filtered, SNP, Indel,
+           b_total, b_Filtered, b_SNP, b_Indel) %>% 
+  kable()
+```
+
+### Comparing the two variant callers (consensus variants only)
+
+```{r,warning=F,message=F,echo=F}
+Filter_summary_consensus_tools %>% 
+  select(-c(3:5)) %>% 
+  rename(b_total = bcftools_total,
+         b_SNP = bcftools_SNP,
+         b_Indel = bcftools_Indel) %>% 
+  rename(G_total = GATK_total,
+         G_SNP = GATK_SNP,
+         G_Indel = GATK_Indel) %>% 
+  mutate(G_Indel = ifelse(is.na(G_Indel), 7217, G_Indel),
+         b_Indel = ifelse(is.na(b_Indel), 6971, b_Indel),
+         b_Filtered = 1406280	- b_total,
+         G_Filtered = 1406272	- G_total) %>% 
+  select(Filter, Parameters, G_total, b_total, G_Filtered, b_Filtered) %>% 
+  relocate(Filter, Parameters, G_total, b_total, G_Filtered, b_Filtered) %>% 
+  kable() 
+```
+
+
+# How do the filters effect the "dendrogram" of variants
+
+i.e. the consensus and those variants unique to each tool. The 'Data' levels refer to those variants that are unique to the specific tools.
+
+```{r,warning=F,message=F,echo=F}
+Unique_variants <- read_tsv("data/filtering_tests/Summary/Filtering_SUmmary.tsv") %>% 
+  select(1:7) %>% 
+  mutate(Filtered = 1440785 - (SNP + Indel)) %>% 
+  select(1:2, 8) %>% 
+  mutate(Filter = str_replace(Filter, "original", "ORIGINAL")) %>% 
+  mutate_if(is.character, as.factor) %>% 
+  cbind(
+    read_tsv("data/filtering_tests/unique/unique_variants.tsv", col_names = F) %>%  
+      separate(X1, sep =" ", c("Counts", "Variable")) %>%
+      mutate(Variable = str_remove(Variable, ".tsv")) %>%  
+      separate(Variable, sep = "_", c("Variant", "Data", "Filter")) %>% 
+      na.omit() %>%
+      unite(Variant, Data, Variant, sep = "_") %>%  
+      mutate_at(2:3, as.factor) %>% 
+      mutate(Counts = as.numeric(Counts)) %>% 
+      pivot_wider(names_from = Variant, values_from = Counts) %>% 
+      rename("bcftools_Indel" = bcftools_indels, "GATK_Indel" = GATK_indels,
+         "bcftools_SNP" = bcftools_SNPs, "GATK_SNP" = GATK_SNPs) %>% 
+      mutate(bcftools_total = bcftools_Indel + bcftools_SNP, 
+         GATK_total = GATK_Indel + GATK_SNP) %>% 
+      relocate(Filter, GATK_total, bcftools_total) %>% 
+      arrange(desc(GATK_total)) %>% 
+      select(1:3) %>% 
+      mutate(GATK_filtered = 473596 - GATK_total,
+         bcftools_filtered = 799015 - bcftools_total)) %>% 
+  select(-4) %>% 
+  mutate(percent_filtered = Filtered/Total * 100,
+         percent_filtered_GATK = GATK_filtered/Total * 100,
+         percent_filtered_bcftools = bcftools_filtered/Total * 100) 
+  
+
+Unique_variants %>% 
+  select(1:2,4:5) %>% 
+  pivot_longer(!Filter, names_to = "Data", values_to = "Variants") %>% 
+  cbind(
+    Unique_variants %>% 
+      select(3,6:7) %>% 
+      pivot_longer(1:3, names_to = "Data", values_to = "Filtered")
+  ) %>% 
+  cbind(
+    Unique_variants %>% 
+      select(8:10) %>% 
+      pivot_longer(1:3, names_to = "Data", values_to = "Percent_Filtered") 
+  ) %>% 
+  select(1:3,5,7) %>% 
+  mutate(Data = str_remove(Data, "_total"),
+         Data = str_replace(Data, "Total", "Consensus")) %>% 
+  relocate(Data, Filter) %>% 
+  kable()
+```
+
+![Dendorgrams with the initial counts.](C:/Users/Jacob/Desktop/Menzies/Knowlesi/Pipeline/Pk_Pipeline/figure/variant_filtering_dendrograms_original.png)
+
+![Dendorgram comparing of the percent of variants filtered out by the GATK Best Practices approach.](C:/Users/Jacob/Desktop/Menzies/Knowlesi/Pipeline/Pk_Pipeline/figure/variant_filtering_dendrograms_GATK_BP.png)
+
+![Dendorgram comparing of the percent of variants filtered out by the *Vivax* approach.](C:/Users/Jacob/Desktop/Menzies/Knowlesi/Pipeline/Pk_Pipeline/figure/variant_filtering_dendrograms_VIVAX.png)
+
+\newpage 
+
+## Conclusions:
+
+  - Vivax filter has the greatest impact.
+  - Within Vivax, QD has the greatest impact, but not by much.
+  - The two filter combinations effect the tool-specific consesnus variants differently. 
+    - GATK BP has a greater impact on the bcftools called variant.
+    - Vivax has a greater impact on the GATK called variants.
+  - The filters have a greater effect on the variants that are unique to each tool, suggesting the consensus are higher quality.
+  - The limited difference between the effect on the consesnus VCF and GATK VCF suggests that GATK is calling more accurate variants, when assuming that the consenus is indeed a "truth" set.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
