@@ -18,14 +18,13 @@ echo 'Change to working directory and set env variables'
 OUTDIR="/home/jwestaway/pk_pipeline/ZB_100/outputs/vcf_consensus/filtering_tests/Vivax"
 PICARD="/usr/local/miniconda3/pkgs/picard-2.21.9-0/share/picard-2.21.9-0/picard.jar"
 INDEXTDIR="/home/jwestaway/pk_pipeline/ref_genomes/PKA1H1/fasta/strain_A1_H.1.Icor.fasta"
-mkdir $OUTDIR
 cd /home/jwestaway/pk_pipeline/ZB_100/outputs/vcf_consensus
 
 echo "---------------------------------------"
 echo 'filter snps'
 /usr/local/jdk1.8.0_131/bin/java -Djava.iodir=$PBS_JOBFS -Xms3200m -Xmx3600m -jar /home/jwestaway/pk_pipeline/tools/gatk-4.2.2.0/gatk-package-4.2.2.0-local.jar \
     VariantFiltration \
-    -V variants_only_test/GVCFall_SNPs.vcf \
+    -V GVCFall_SNPs.vcf \
     -filter "QD < 12.43" --filter-name "QD2" \
     -filter "FS > 14.63418" --filter-name "FS60" \
     -filter "MQ < 51.6" --filter-name "MQ40" \
@@ -36,7 +35,7 @@ echo "---------------------------------------"
 echo 'filter indels'
 /usr/local/jdk1.8.0_131/bin/java -Djava.iodir=$PBS_JOBFS -Xms3200m -Xmx3600m -jar /home/jwestaway/pk_pipeline/tools/gatk-4.2.2.0/gatk-package-4.2.2.0-local.jar \
     VariantFiltration \
-    -V variants_only_test/GVCFall_INDELs.vcf \
+    -V GVCFall_INDELs.vcf \
     -filter "QD < 12.43" --filter-name "QD2" \
     -filter "FS > 14.63418" --filter-name "FS60" \
     -filter "MQ < 51.6" --filter-name "MQ40" \

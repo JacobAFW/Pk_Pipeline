@@ -18,7 +18,7 @@ echo "---------------------------------------"
 echo "Define paths to bcftools and miniconda, load the R module, change to working directory and create an output directory"
 export PATH=$PATH:/home/jwestaway/pk_pipeline/tools/bcftools-1.13/
 module load software/R_3.6.2
-cd /home/jwestaway/pk_pipeline/ZB_100/outputs/vcf_consensus/variants_only_test/
+cd /home/jwestaway/pk_pipeline/ZB_100/outputs/vcf_consensus/
 
 echo "---------------------------------------"
 echo "Exectute bcftools to select variants that pass a specific threshold"
@@ -41,7 +41,7 @@ zcat merged_variants_only.vcf.gz | head -n 85 > vcf_head.vcf
 
 echo "---------------------------------------"
 echo "Remove the column names from the variant names document to create a list of grep patterns"
-tail -n +2 vcf_variant_names2.tsv > grep_patterns.txt 
+tail -n +2 vcf_variant_names.tsv > grep_patterns.txt 
 
 echo "---------------------------------------"
 echo "Change default language to ASCII - fewer characters than UTF8"

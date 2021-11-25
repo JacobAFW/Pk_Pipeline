@@ -1,0 +1,25 @@
+#!/bin/bash
+#PBS -N Wrangle_plot_homozygosity
+#PBS -j oe
+#PBS -m ae
+#PBS -l nodes=1
+#PBS -l ncpus=21
+#PBS -l mem=100gb
+#PBS -l walltime=24:00:00
+#PBS -M jacob.westaway@menzies.edu.au
+
+echo "---------------------------------------"
+echo "PBS: Job identifier is $PBS_JOBID"
+echo "PBS: Job name is $PBS_JOBNAME"
+
+echo "---------------------------------------"
+echo "Define paths to bcftools and miniconda, load the R module, change to working directory and create an output directory"
+module load software/R_3.6.2
+source /usr/local/miniconda3/etc/profile.d/conda.sh
+conda activate R_3.6.2
+cd /home/jwestaway/pk_pipeline/ZB_100/outputs/vcf_consensus/filtering_tests/Vivax
+Rscript /home/jwestaway/pk_pipeline/ZB_100/scripts/14_Consensus_vcf/filtering_test/Vivax/Plot_homozygosity.R
+conda deactivate
+
+echo "---------------------------------------"
+echo "Finished"

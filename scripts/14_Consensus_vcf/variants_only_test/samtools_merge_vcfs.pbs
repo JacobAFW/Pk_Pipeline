@@ -22,7 +22,7 @@ cd /home/jwestaway/pk_pipeline/ZB_100/outputs/vcf_consensus/
 
 echo "---------------------------------------"
 echo 'Execute bcftools merge'
-bcftools merge --threads 15 --force-samples -o variants_only_test/merged_variants_only.vcf.gz GATK/Genotyped.vcf.gz samtools/PK_samtools_variants_only_header.raw.vcf.gz
+bcftools merge --threads 15 --force-samples -o merged_variants_only.vcf.gz GATK/Genotyped.vcf.gz samtools/PK_samtools_variants_only_header.raw.vcf.gz
 
 echo "---------------------------------------"
 echo 'Finished' 

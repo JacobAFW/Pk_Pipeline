@@ -3553,7 +3553,7 @@ After running HaplotypeCaller, we need to move all these files to the same locat
 #### CombineGVCFs and GenotypeCaller
 
 Versions: 1.8.0_131 (Java), 2.21.9 (picard), 3.2.2 (GATK)
-File: Template.pbs
+File: joint_genotype.pbs
 
 Arguments:
  - G - annotations
@@ -3675,7 +3675,7 @@ echo "---------------------------------------"
 echo "Finsihed!"
 ```
 
-### Merge consensus variants
+### Merge variants from the two variant callers
 
 Versions: 1.13 (bcftools)
 File: samtools_merge_vcfs.pbs (in /variants_only_test)
@@ -3708,7 +3708,7 @@ cd /home/jwestaway/pk_pipeline/ZB_100/outputs/vcf_consensus/
 
 echo "---------------------------------------"
 echo 'Execute bcftools merge'
-bcftools merge --threads 15 --force-samples -o variants_only_test/merged_variants_only.vcf.gz GATK/Genotyped.vcf.gz samtools/PK_samtools_variants_only_header.raw.vcf.gz
+bcftools merge --threads 15 --force-samples -o merged_variants_only.vcf.gz GATK/Genotyped.vcf.gz samtools/PK_samtools_variants_only_header.raw.vcf.gz
 
 echo "---------------------------------------"
 echo 'Finished' 
@@ -3753,7 +3753,7 @@ echo "---------------------------------------"
 echo "Define paths to bcftools and miniconda, load the R module, change to working directory and create an output directory"
 export PATH=$PATH:/home/jwestaway/pk_pipeline/tools/bcftools-1.13/
 module load software/R_3.6.2
-cd /home/jwestaway/pk_pipeline/ZB_100/outputs/vcf_consensus/variants_only_test/
+cd /home/jwestaway/pk_pipeline/ZB_100/outputs/vcf_consensus/
 
 echo "---------------------------------------"
 echo "Exectute bcftools to select variants that pass a specific threshold"
@@ -3776,7 +3776,7 @@ zcat merged_variants_only.vcf.gz | head -n 85 > vcf_head.vcf
 
 echo "---------------------------------------"
 echo "Remove the column names from the variant names document to create a list of grep patterns"
-tail -n +2 vcf_variant_names2.tsv > grep_patterns.txt 
+tail -n +2 vcf_variant_names.tsv > grep_patterns.txt 
 
 echo "---------------------------------------"
 echo "Change default language to ASCII - fewer characters than UTF8"
@@ -3835,7 +3835,7 @@ In addition, we need to apply filtering to our truth set to produce the most "re
 
 ## Create VCFs for SNPs/Indels only from the PK Consensus
 
-Required for variant-specific filtering & bam-preprocessing later on.
+Required for variant-specific filtering.
 
 Versions: 
 File: snps_and_indels.pbs
@@ -3858,7 +3858,7 @@ echo "PBS: Job name is $PBS_JOBNAME"
 echo "---------------------------------------"
 echo "Define paths and change to working directory"
 INDEXTDIR="/home/jwestaway/pk_pipeline/ref_genomes/PKA1H1/fasta/strain_A1_H.1.Icor.fasta"
-cd /home/jwestaway/pk_pipeline/ZB_100/outputs/vcf_consensus/variants_only_test/
+cd /home/jwestaway/pk_pipeline/ZB_100/outputs/vcf_consensus/
 
 echo "---------------------------------------"
 echo "SNPs"
@@ -4007,7 +4007,7 @@ echo 'Make diagnostic tables for Variants Scores - snps'
 /usr/local/jdk1.8.0_131/bin/java -Djava.iodir=$PBS_JOBFS -Xms3200m -Xmx3600m -jar /home/jwestaway/pk_pipeline/tools/gatk-4.2.2.0/gatk-package-4.2.2.0-local.jar \
     VariantsToTable \
     -R $INDEXTDIR \
-    -V variats_only_test/GVCFall_SNPs.vcf \
+    -V GVCFall_SNPs.vcf \
     -F CHROM -F POS -F QUAL -F QD -F DP -F MQ -F GQ -F MQRankSum -F FS -F ReadPosRankSum -F SOR \
     -O $OUTDIR/GVCFall_SNPs.table
 
@@ -4018,7 +4018,7 @@ echo 'Make diagnostic tables for Variants Scores - indels'
 /usr/local/jdk1.8.0_131/bin/java -Djava.iodir=$PBS_JOBFS -Xms3200m -Xmx3600m -jar /home/jwestaway/pk_pipeline/tools/gatk-4.2.2.0/gatk-package-4.2.2.0-local.jar \
     VariantsToTable \
     -R $INDEXTDIR \
-    -V variats_only_test/GVCFall_INDELs.vcf \
+    -V GVCFall_INDELs.vcf \
     -F CHROM -F POS -F QUAL -F QD -F DP -F MQ -F GQ -F MQRankSum -F FS -F ReadPosRankSum -F SOR \
     -O $OUTDIR/GVCFall_INDELs.table
 
@@ -4385,14 +4385,13 @@ echo 'Change to working directory and set env variables'
 OUTDIR="/home/jwestaway/pk_pipeline/ZB_100/outputs/vcf_consensus/filtering_tests/Vivax"
 PICARD="/usr/local/miniconda3/pkgs/picard-2.21.9-0/share/picard-2.21.9-0/picard.jar"
 INDEXTDIR="/home/jwestaway/pk_pipeline/ref_genomes/PKA1H1/fasta/strain_A1_H.1.Icor.fasta"
-mkdir $OUTDIR
 cd /home/jwestaway/pk_pipeline/ZB_100/outputs/vcf_consensus
 
 echo "---------------------------------------"
 echo 'filter snps'
 /usr/local/jdk1.8.0_131/bin/java -Djava.iodir=$PBS_JOBFS -Xms3200m -Xmx3600m -jar /home/jwestaway/pk_pipeline/tools/gatk-4.2.2.0/gatk-package-4.2.2.0-local.jar \
     VariantFiltration \
-    -V variants_only_test/GVCFall_SNPs.vcf \
+    -V GVCFall_SNPs.vcf \
     -filter "QD < 12.43" --filter-name "QD2" \
     -filter "FS > 14.63418" --filter-name "FS60" \
     -filter "MQ < 51.6" --filter-name "MQ40" \
@@ -4403,7 +4402,7 @@ echo "---------------------------------------"
 echo 'filter indels'
 /usr/local/jdk1.8.0_131/bin/java -Djava.iodir=$PBS_JOBFS -Xms3200m -Xmx3600m -jar /home/jwestaway/pk_pipeline/tools/gatk-4.2.2.0/gatk-package-4.2.2.0-local.jar \
     VariantFiltration \
-    -V variants_only_test/GVCFall_INDELs.vcf \
+    -V GVCFall_INDELs.vcf \
     -filter "QD < 12.43" --filter-name "QD2" \
     -filter "FS > 14.63418" --filter-name "FS60" \
     -filter "MQ < 51.6" --filter-name "MQ40" \
@@ -4451,13 +4450,20 @@ echo "Exectute bcftools to select variants that pass a specific threshold: FMT/G
 bcftools query -f '%CHROM %POS %ID %REF %ALT %FILTER [\t%SAMPLE DP=%DP GQ=%GQ MQ=%MQ PL=%PL]\n' $OUTDIR/indels_filtered.vcf | fgrep 'PASS' > $OUTDIR/indels.tsv
 
 
+
+
+
+
 echo "---------------------------------------"
 echo "Filter applied to pre-merged tool-specific data"
 echo "---------------------------------------"
 
 
+
+
 echo "---------------------------------------"
 echo 'GATK'
+
 
 echo "---------------------------------------"
 echo 'filter snps'
@@ -4570,7 +4576,6 @@ bcftools query -f '%CHROM %POS %ID %REF %ALT %FILTER [\t%SAMPLE DP=%DP GQ=%GQ MQ
 
 echo "---------------------------------------"
 echo 'Finished'
-
 ```
 
 ### Creating a summary
@@ -6389,10 +6394,220 @@ cd /home/jwestaway/pk_pipeline/ZB_100/outputs/vcf_consensus/filtering_tests/uniq
 wc -l * > unique_variants.tsv
 
 
+### Adjusting the values in the Vivax filter
+
+Although it appears that the vivax filters were the most appropriate of the two conbinations tested, the values were are based on a Vivax dataset.
+So next we looked at the distribution of scores for the annotations used in the Vivax filter to come up with some values that are specific to Pk.
+We tried several values and combinations. The script below represents the combination we thought was best.
+
+Versions: 4.2.2 (GATK), 1.8.0_131-b1 (Java), 2.21.9 (picard) & 1.13 (bcftools).
+
+File: variant_filtering_adjusted.pbs
+
+```{R,eval=F}
+#!/bin/bash
+#PBS -N Filter_variants
+#PBS -j oe
+#PBS -m ae
+#PBS -l nodes=1
+#PBS -l ncpus=16
+#PBS -l mem=50gb
+#PBS -l walltime=24:00:00
+#PBS -M jacob.westaway@menzies.edu.au
+
+echo "---------------------------------------"
+echo "PBS: Job identifier is $PBS_JOBID"
+echo "PBS: Job name is $PBS_JOBNAME"
+
+echo "---------------------------------------"
+echo "---------------------------------------"
+echo 'Change to working directory and set env variables'
+OUTDIR="/home/jwestaway/pk_pipeline/ZB_100/outputs/vcf_consensus/filtering_tests/Vivax/adjusted"
+PICARD="/usr/local/miniconda3/pkgs/picard-2.21.9-0/share/picard-2.21.9-0/picard.jar"
+INDEXTDIR="/home/jwestaway/pk_pipeline/ref_genomes/PKA1H1/fasta/strain_A1_H.1.Icor.fasta"
+
+cd /home/jwestaway/pk_pipeline/ZB_100/outputs/vcf_consensus
+
+echo "------------------------------------------------------------------------------------------------------------------------------------------------------------"
+echo 'QD'
+echo "------------------------------------------------------------------------------------------------------------------------------------------------------------"
+
+echo "---------------------------------------"
+echo 'FILTER'
+echo "---------------------------------------"
+
+/usr/local/jdk1.8.0_131/bin/java -Djava.iodir=$PBS_JOBFS -Xms3200m -Xmx3600m -jar /home/jwestaway/pk_pipeline/tools/gatk-4.2.2.0/gatk-package-4.2.2.0-local.jar \
+    VariantFiltration \
+    -V GVCFall_SNPs.vcf \
+    -filter "QD < 20.0" --filter-name "QD2" \
+    -filter "FS > 14.63418" --filter-name "FS60" \
+    -filter "MQ < 51.6" --filter-name "MQ40" \
+    -O $OUTDIR/QD_snps_filtered.vcf
+
+/usr/local/jdk1.8.0_131/bin/java -Djava.iodir=$PBS_JOBFS -Xms3200m -Xmx3600m -jar /home/jwestaway/pk_pipeline/tools/gatk-4.2.2.0/gatk-package-4.2.2.0-local.jar \
+    VariantFiltration \
+    -V GVCFall_INDELs.vcf \
+    -filter "QD < 20.0" --filter-name "QD2" \
+    -filter "FS > 14.63418" --filter-name "FS60" \
+    -filter "MQ < 51.6" --filter-name "MQ40" \
+    -O $OUTDIR/QD_indels_filtered.vcf
+
+echo "---------------------------------------"
+echo 'Query data for download/comparison'
+echo "---------------------------------------"
+
+bcftools query -f '%CHROM %POS %ID %REF %ALT %FILTER [\t%SAMPLE DP=%DP GQ=%GQ MQ=%MQ PL=%PL]\n' $OUTDIR/QD_snps_filtered.vcf | fgrep 'PASS' > $OUTDIR/QD_SNPs.tsv
+bcftools query -f '%CHROM %POS %ID %REF %ALT %FILTER [\t%SAMPLE DP=%DP GQ=%GQ MQ=%MQ PL=%PL]\n' $OUTDIR/QD_indels_filtered.vcf | fgrep 'PASS' > $OUTDIR/QD_indels.tsv
 
 
+echo "------------------------------------------------------------------------------------------------------------------------------------------------------------"
+echo 'FS'
+echo "------------------------------------------------------------------------------------------------------------------------------------------------------------"
+
+echo "---------------------------------------"
+echo 'FILTER'
+echo "---------------------------------------"
+
+/usr/local/jdk1.8.0_131/bin/java -Djava.iodir=$PBS_JOBFS -Xms3200m -Xmx3600m -jar /home/jwestaway/pk_pipeline/tools/gatk-4.2.2.0/gatk-package-4.2.2.0-local.jar \
+    VariantFiltration \
+    -V GVCFall_SNPs.vcf \
+    -filter "QD < 12.43" --filter-name "QD2" \
+    -filter "FS > 2.0" --filter-name "FS60" \
+    -filter "MQ < 51.6" --filter-name "MQ40" \
+    -O $OUTDIR/FS_snps_filtered.vcf
+
+/usr/local/jdk1.8.0_131/bin/java -Djava.iodir=$PBS_JOBFS -Xms3200m -Xmx3600m -jar /home/jwestaway/pk_pipeline/tools/gatk-4.2.2.0/gatk-package-4.2.2.0-local.jar \
+    VariantFiltration \
+    -V GVCFall_INDELs.vcf \
+    -filter "QD < 12.43" --filter-name "QD2" \
+    -filter "FS > 2.0" --filter-name "FS60" \
+    -filter "MQ < 51.6" --filter-name "MQ40" \
+    -O $OUTDIR/FS_indels_filtered.vcf
+
+echo "---------------------------------------"
+echo 'Query data for download/comparison'
+echo "---------------------------------------"
+
+bcftools query -f '%CHROM %POS %ID %REF %ALT %FILTER [\t%SAMPLE DP=%DP GQ=%GQ MQ=%MQ PL=%PL]\n' $OUTDIR/FS_snps_filtered.vcf | fgrep 'PASS' > $OUTDIR/FS_SNPs.tsv
+bcftools query -f '%CHROM %POS %ID %REF %ALT %FILTER [\t%SAMPLE DP=%DP GQ=%GQ MQ=%MQ PL=%PL]\n' $OUTDIR/FS_indels_filtered.vcf | fgrep 'PASS' > $OUTDIR/FS_indels.tsv
+
+echo "------------------------------------------------------------------------------------------------------------------------------------------------------------"
+echo 'MQ'
+echo "------------------------------------------------------------------------------------------------------------------------------------------------------------"
+
+echo "---------------------------------------"
+echo 'FILTER'
+echo "---------------------------------------"
+
+/usr/local/jdk1.8.0_131/bin/java -Djava.iodir=$PBS_JOBFS -Xms3200m -Xmx3600m -jar /home/jwestaway/pk_pipeline/tools/gatk-4.2.2.0/gatk-package-4.2.2.0-local.jar \
+    VariantFiltration \
+    -V GVCFall_SNPs.vcf \
+    -filter "QD < 12.43" --filter-name "QD2" \
+    -filter "FS > 14.63418" --filter-name "FS60" \
+    -filter "MQ < 59.0" --filter-name "MQ40" \
+    -O $OUTDIR/MQ_snps_filtered.vcf
+
+/usr/local/jdk1.8.0_131/bin/java -Djava.iodir=$PBS_JOBFS -Xms3200m -Xmx3600m -jar /home/jwestaway/pk_pipeline/tools/gatk-4.2.2.0/gatk-package-4.2.2.0-local.jar \
+    VariantFiltration \
+    -V GVCFall_INDELs.vcf \
+    -filter "QD < 12.43" --filter-name "QD2" \
+    -filter "FS > 14.63418" --filter-name "FS60" \
+    -filter "MQ < 59.0" --filter-name "MQ40" \
+    -O $OUTDIR/MQ_indels_filtered.vcf
+
+echo "---------------------------------------"
+echo 'Query data for download/comparison'
+echo "---------------------------------------"
+
+bcftools query -f '%CHROM %POS %ID %REF %ALT %FILTER [\t%SAMPLE DP=%DP GQ=%GQ MQ=%MQ PL=%PL]\n' $OUTDIR/MQ_snps_filtered.vcf | fgrep 'PASS' > $OUTDIR/MQ_SNPs.tsv
+bcftools query -f '%CHROM %POS %ID %REF %ALT %FILTER [\t%SAMPLE DP=%DP GQ=%GQ MQ=%MQ PL=%PL]\n' $OUTDIR/MQ_indels_filtered.vcf | fgrep 'PASS' > $OUTDIR/MQ_indels.tsv
+
+echo "------------------------------------------------------------------------------------------------------------------------------------------------------------"
+echo 'ALL'
+echo "------------------------------------------------------------------------------------------------------------------------------------------------------------"
+
+echo "---------------------------------------"
+echo 'FILTER'
+echo "---------------------------------------"
+
+/usr/local/jdk1.8.0_131/bin/java -Djava.iodir=$PBS_JOBFS -Xms3200m -Xmx3600m -jar /home/jwestaway/pk_pipeline/tools/gatk-4.2.2.0/gatk-package-4.2.2.0-local.jar \
+    VariantFiltration \
+    -V GVCFall_SNPs.vcf \
+    -filter "QD < 20.0" --filter-name "QD2" \
+    -filter "FS > 2.0" --filter-name "FS60" \
+    -filter "MQ < 59.0" --filter-name "MQ40" \
+    -O $OUTDIR/ALL_snps_filtered.vcf
+
+/usr/local/jdk1.8.0_131/bin/java -Djava.iodir=$PBS_JOBFS -Xms3200m -Xmx3600m -jar /home/jwestaway/pk_pipeline/tools/gatk-4.2.2.0/gatk-package-4.2.2.0-local.jar \
+    VariantFiltration \
+    -V GVCFall_INDELs.vcf \
+    -filter "QD < 20.0" --filter-name "QD2" \
+    -filter "FS > 2.0" --filter-name "FS60" \
+    -filter "MQ < 59.0" --filter-name "MQ40" \
+    -O $OUTDIR/ALL_indels_filtered.vcf
+
+echo "---------------------------------------"
+echo 'Query data for download/comparison'
+echo "---------------------------------------"
+
+bcftools query -f '%CHROM %POS %ID %REF %ALT %FILTER [\t%SAMPLE DP=%DP GQ=%GQ MQ=%MQ PL=%PL]\n' $OUTDIR/ALL_snps_filtered.vcf | fgrep 'PASS' > $OUTDIR/ALL_SNPs.tsv
+bcftools query -f '%CHROM %POS %ID %REF %ALT %FILTER [\t%SAMPLE DP=%DP GQ=%GQ MQ=%MQ PL=%PL]\n' $OUTDIR/ALL_indels_filtered.vcf | fgrep 'PASS' > $OUTDIR/ALL_indels.tsv
+
+echo "------------------------------------------------------------------------------------------------------------------------------------------------------------"
+echo 'ORIGINAL'
+echo "------------------------------------------------------------------------------------------------------------------------------------------------------------"
+
+echo "---------------------------------------"
+echo 'FILTER'
+echo "---------------------------------------"
+
+/usr/local/jdk1.8.0_131/bin/java -Djava.iodir=$PBS_JOBFS -Xms3200m -Xmx3600m -jar /home/jwestaway/pk_pipeline/tools/gatk-4.2.2.0/gatk-package-4.2.2.0-local.jar \
+    VariantFiltration \
+    -V GVCFall_SNPs.vcf \
+    -filter "QD < 12.43" --filter-name "QD2" \
+    -filter "FS > 14.63418" --filter-name "FS60" \
+    -filter "MQ < 51.6" --filter-name "MQ40" \
+    -O $OUTDIR/Vivax_snps_filtered.vcf
+
+/usr/local/jdk1.8.0_131/bin/java -Djava.iodir=$PBS_JOBFS -Xms3200m -Xmx3600m -jar /home/jwestaway/pk_pipeline/tools/gatk-4.2.2.0/gatk-package-4.2.2.0-local.jar \
+    VariantFiltration \
+    -V GVCFall_INDELs.vcf \
+    -filter "QD < 12.43" --filter-name "QD2" \
+    -filter "FS > 14.63418" --filter-name "FS60" \
+    -filter "MQ < 51.6" --filter-name "MQ40" \
+    -O $OUTDIR/Vivax_indels_filtered.vcf
+
+echo "---------------------------------------"
+echo 'Query data for download/comparison'
+echo "---------------------------------------"
+
+bcftools query -f '%CHROM %POS %ID %REF %ALT %FILTER [\t%SAMPLE DP=%DP GQ=%GQ MQ=%MQ PL=%PL]\n' $OUTDIR/Vivax_snps_filtered.vcf | fgrep 'PASS' > $OUTDIR/Vivax_SNPs.tsv
+bcftools query -f '%CHROM %POS %ID %REF %ALT %FILTER [\t%SAMPLE DP=%DP GQ=%GQ MQ=%MQ PL=%PL]\n' $OUTDIR/Vivax_indels_filtered.vcf | fgrep 'PASS' > $OUTDIR/Vivax_indels.tsv
+
+echo "---------------------------------------------------------------------------------------------------------------------"
+echo 'Tidy up'
+echo "---------------------------------------------------------------------------------------------------------------------"
+cd $OUTDIR
+wc -l *tsv > adjusted_filters_4.tsv
+rm *filtered*
+
+echo "---------------------------------------"
+echo 'Finished'
+
+```
 
 
+# Variant annotation
+
+Your GFF or GTF file must be sorted in chromosomal order. VEP does not use header lines so it is safe to remove them.
+Hence, grep and tabix.
+
+esnemnble = version 104
+
+need to download cache http://asia.ensembl.org/info/docs/tools/vep/script/vep_cache.html#gff 
+cd $HOME/.vep
+curl -O http://ftp.ebi.ac.uk/ensemblgenomes/pub/protists/current/variation/vep/plasmodium_knowlesi_vep_51_ASM635v1.tar.gz
+tar xzf plasmodium_knowlesi_vep_51_ASM635v1.tar.gz 
 
 
 
