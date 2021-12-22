@@ -6596,6 +6596,134 @@ echo 'Finished'
 
 ```
 
+# Creating final variant truth set VCF
+
+**To be used for bam preprocessing etc.**
+
+Here we create a VCF that only contains those variants that make it passed the desired filtering parameters.
+
+Versions: 4.2.2 (GATK), 1.8.0_131-b1 (Java), 2.21.9 (picard) & 1.13 (bcftools).
+
+File: truth_set_VCF.pbs
+
+```{R,eval=F}
+#!/bin/bash
+#PBS -N Truth_Set
+#PBS -j oe
+#PBS -m ae
+#PBS -l nodes=1
+#PBS -l ncpus=16
+#PBS -l mem=50gb
+#PBS -l walltime=24:00:00
+#PBS -M jacob.westaway@menzies.edu.au
+
+echo "---------------------------------------"
+echo "PBS: Job identifier is $PBS_JOBID"
+echo "PBS: Job name is $PBS_JOBNAME"
+
+echo "---------------------------------------"
+echo "---------------------------------------"
+echo 'Change to working directory and set env variables'
+export PATH=$PATH:/home/jwestaway/pk_pipeline/tools/bcftools-1.13/
+OUTDIR="/home/jwestaway/pk_pipeline/ref_genomes/variants"
+PICARD="/usr/local/miniconda3/pkgs/picard-2.21.9-0/share/picard-2.21.9-0/picard.jar"
+INDEXTDIR="/home/jwestaway/pk_pipeline/ref_genomes/PKA1H1/fasta/strain_A1_H.1.Icor.fasta"
+
+cd /home/jwestaway/pk_pipeline/ZB_100/outputs/vcf_consensus
+
+echo "---------------------------------------"
+echo 'FILTER'
+echo "---------------------------------------"
+
+/usr/local/jdk1.8.0_131/bin/java -Djava.iodir=$PBS_JOBFS -Xms3200m -Xmx3600m -jar /home/jwestaway/pk_pipeline/tools/gatk-4.2.2.0/gatk-package-4.2.2.0-local.jar \
+    VariantFiltration \
+    -V PK_consensus.vcf \
+    -filter "QD < 20.0" --filter-name "QD2" \
+    -filter "FS > 2.0" --filter-name "FS60" \
+    -filter "MQ < 59.0" --filter-name "MQ40" \
+    -O $OUTDIR/PK_consensus_FILTERED.vcf
+
+/usr/local/jdk1.8.0_131/bin/java -Djava.iodir=$PBS_JOBFS -Xms3200m -Xmx3600m -jar /home/jwestaway/pk_pipeline/tools/gatk-4.2.2.0/gatk-package-4.2.2.0-local.jar \
+    VariantFiltration \
+    -V GVCFall_SNPs.vcf \
+    -filter "QD < 20.0" --filter-name "QD2" \
+    -filter "FS > 2.0" --filter-name "FS60" \
+    -filter "MQ < 59.0" --filter-name "MQ40" \
+    -O $OUTDIR/FILTERED_SNPs.vcf
+
+/usr/local/jdk1.8.0_131/bin/java -Djava.iodir=$PBS_JOBFS -Xms3200m -Xmx3600m -jar /home/jwestaway/pk_pipeline/tools/gatk-4.2.2.0/gatk-package-4.2.2.0-local.jar \
+    VariantFiltration \
+    -V GVCFall_INDELs.vcf \
+    -filter "QD < 20.0" --filter-name "QD2" \
+    -filter "FS > 2.0" --filter-name "FS60" \
+    -filter "MQ < 59.0" --filter-name "MQ40" \
+    -O $OUTDIR/FILTERED_INDELs.vcf
+
+echo "---------------------------------------"
+echo 'Wrangle VCF files to get PASS variants'
+echo "---------------------------------------"
+cd $OUTDIR
+
+bcftools view FILTERED_SNPs.vcf | head -n 85 > FILTERED_SNPs_head.vcf 
+bcftools view FILTERED_INDELs.vcf | head -n 85 > FILTERED_INDELs_head.vcf 
+bcftools view PK_consensus_FILTERED.vcf | head -n 85 > FILTERED_consensus_head.vcf 
+
+bcftools view FILTERED_SNPs.vcf | fgrep 'PASS' - > FILTERED_SNPs_variants.vcf 
+bcftools view FILTERED_INDELs.vcf | fgrep 'PASS' - > FILTERED_INDELs_variants.vcf 
+bcftools view PK_consensus_FILTERED.vcf | fgrep 'PASS' - > FILTERED_consensus_variants.vcf
+
+cat FILTERED_SNPs_head.vcf FILTERED_SNPs_variants.vcf > TRUE_SNPs.vcf
+cat FILTERED_INDELs_head.vcf FILTERED_INDELs_variants.vcf > TRUE_INDELs.vcf
+cat FILTERED_consensus_head.vcf FILTERED_consensus_variants.vcf > TRUE_consensus.vcf
+
+echo "---------------------------------------"
+echo 'CLEAN UP'
+echo "---------------------------------------"
+rm *head*
+rm *variants*
+
+echo "---------------------------------------"
+echo 'Finished'
+
+```
+
+## Steps to create final truth set
+
+	• Bam pre-processing
+		○ /home/jwestaway/pk_pipeline/ZB_100/scripts/14_Consensus_vcf/bam_preprocessing.pbs
+	• Variant calling
+		○ GATK
+			§ Haplotype caller
+				□ /home/jwestaway/pk_pipeline/ZB_100/scripts/14_Consensus_vcf/GATK/high_parasitemia/Template.pbs
+				□ /home/jwestaway/pk_pipeline/ZB_100/scripts/14_Consensus_vcf/GATK/low_parasitemia/Template.pbs
+				□ /home/jwestaway/pk_pipeline/ZB_100/scripts/14_Consensus_vcf/GATK/previous_Pk_data/Template.pbs
+			§ Interactive - GVCFs to the same location
+				□ `mkdir /home/jwestaway/pk_pipeline/ZB_100/outputs/vcf_consensus/GATK/GVCFs`
+				□ `mv /home/jwestaway/pk_pipeline/ZB_100/outputs/vcf_consensus/GATK/*/*.haplotypecaller.g.vcf.gz /home/jwestaway/pk_pipeline/ZB_100/outputs/vcf_consensus/GATK/GVCFs`
+				□ `mv /home/jwestaway/pk_pipeline/ZB_100/outputs/vcf_consensus/GATK/*/*.haplotypecaller.g.vcf.gz.tbi /home/jwestaway/pk_pipeline/ZB_100/outputs/vcf_consensus/GATK/GVCFs`
+			§ Combine GVCFs and Genotype caller
+				□ /home/jwestaway/pk_pipeline/ZB_100/scripts/14_Consensus_vcf/GATK/joint_genotype.pbs
+		○ Bcftools 
+			§ Interactive 
+				□ 'mkdir cd /home/jwestaway/pk_pipeline/ZB_100/outputs/vcf_consensus/GATK/bams'
+				□ 'mv /home/jwestaway/pk_pipeline/ZB_100/outputs/vcf_consensus/GATK/*/*.dupmarked.reheader.bam /home/jwestaway/pk_pipeline/ZB_100/outputs/vcf_consensus/GATK/bams'
+				□ '''ls /home/jwestaway/pk_pipeline/ZB_100/outputs/vcf_consensus/GATK/bams/*.dupmarked.reheader.bam \
+				   | tr '\n' '\0' | xargs -0 -n 1 basename \
+				   > input_bam_files.list'''
+			§ Mpileup and call
+				□ /home/jwestaway/pk_pipeline/ZB_100/scripts/14_Consensus_vcf/variants_only_test/bcftools_variants_only.pbs
+	• Merge variants 
+		○ /home/jwestaway/pk_pipeline/ZB_100/scripts/14_Consensus_vcf/variants_only_test/samtools_merge_vcfs.pbs
+	• Create consensus VCF
+		○ /home/jwestaway/pk_pipeline/ZB_100/scripts/14_Consensus_vcf/variants_only_test/Consensus_variants.pbs
+			§ Nested in above script - /home/jwestaway/pk_pipeline/ZB_100/scripts/14_Consensus_vcf/vcf_wrangle_2.R 
+	• Filter consensus VCF
+		○ Create VCFs for SNPs and Indels from consensus VCF
+			§ /home/jwestaway/pk_pipeline/ZB_100/scripts/14_Consensus_vcf/filtering_test/snps_and_indels.pbs
+	• Create final truth set
+		○ Filter with vivax annotations and adjusted parameters, and then use fgrep to select only those variants that pass the filter - this is our conservative set of variants that can be used for bam pre processing etc.
+/home/jwestaway/pk_pipeline/ref_genomes/variants/truth_set_VCF.pbs
+
 
 # Variant annotation
 
@@ -6604,7 +6732,7 @@ Hence, grep and tabix.
 
 esnemnble = version 104
 
-need to download cache http://asia.ensembl.org/info/docs/tools/vep/script/vep_cache.html#gff 
+need to download cache??????? http://asia.ensembl.org/info/docs/tools/vep/script/vep_cache.html#gff 
 cd $HOME/.vep
 curl -O http://ftp.ebi.ac.uk/ensemblgenomes/pub/protists/current/variation/vep/plasmodium_knowlesi_vep_51_ASM635v1.tar.gz
 tar xzf plasmodium_knowlesi_vep_51_ASM635v1.tar.gz 
@@ -6715,6 +6843,15 @@ Total number of sites/bases:
 Indels: (135537 / 24301727) * (1 - (33.42 / 78)) = 0.0032 
 SNPs: (1536861 / 24301727) * (1 - (46.05 / 78)) = 0.0259 
 Indels and SNPs : ((135537 + 1536861) / 24301727) * (1 - ((33.42 + 46.05) / 78)) = -0.0013 
+
+## MAYBE
+GATK threw an error in relation to a number being a string, "R", and so this needed to be amended.
+mv TRUE_INDELs.vcf TRUE_INDELs_original.vcf
+cat TRUE_INDELs_original.vcf | sed 's/AD,Number=R/AD,Number=1/' > TRUE_INDELs.vcf
+mv TRUE_SNPs.vcf TRUE_SNPs_original.vcf
+cat TRUE_SNPs_original.vcf | sed 's/AD,Number=R/AD,Number=1/' > TRUE_SNPs.vcf
+mv TRUE_consensus.vcf TRUE_consensus_original.vcf
+cat TRUE_consensus_original.vcf | sed 's/AD,Number=R/AD,Number=1/' > TRUE_consensus.vcf
 
 ```{R,eval=F}
 #!/bin/bash

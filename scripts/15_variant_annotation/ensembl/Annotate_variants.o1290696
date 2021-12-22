@@ -1,0 +1,20 @@
+---------------------------------------
+PBS: Job identifier is 1290696.cheetah
+PBS: Job name is Annotate_variants
+---------------------------------------
+---------------------------------------
+Change to working directory and set env variables
+---------------------------------------------------------------------------------------------------------------------
+Sort, Zip and Index GFF
+---------------------------------------------------------------------------------------------------------------------
+Change to working directoy
+---------------------------------------------------------------------------------------------------------------------
+SNPs
+[E::fai_build3_core] Failed to open the file /home/jwestaway/pk_pipeline/ref_genomes/PKA1H1/fasta/
+/var/spool/torque/mom_priv/jobs/1290696.cheetah.SC: line 37: 56676 Segmentation fault      (core dumped) vep -i snps_filtered.vcf --gff $GFF/strain_A1_H.1.Icor.gff3.gz --fasta $FASTA -o $OUTDIR/SNP_variant_annotation.txt
+---------------------------------------------------------------------------------------------------------------------
+INDELs
+[E::fai_build3_core] Failed to open the file /home/jwestaway/pk_pipeline/ref_genomes/PKA1H1/fasta/
+/var/spool/torque/mom_priv/jobs/1290696.cheetah.SC: line 41: 56683 Segmentation fault      (core dumped) vep -i indels_filtered.vcf --gff $GFF/strain_A1_H.1.Icor.gff3.gz --fasta $FASTA -o $OUTDIR/Indel_variant_annotation.txt
+---------------------------------------
+FINISHED

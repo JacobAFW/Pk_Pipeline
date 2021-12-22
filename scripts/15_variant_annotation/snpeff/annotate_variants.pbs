@@ -1,0 +1,44 @@
+#!/bin/bash
+#PBS -N Annotate_variants
+#PBS -j oe
+#PBS -m ae
+#PBS -l nodes=1
+#PBS -l ncpus=16
+#PBS -l mem=50gb
+#PBS -l walltime=24:00:00
+#PBS -M jacob.westaway@menzies.edu.au
+
+echo "---------------------------------------"
+echo "PBS: Job identifier is $PBS_JOBID"
+echo "PBS: Job name is $PBS_JOBNAME"
+
+echo "---------------------------------------"
+echo "---------------------------------------"
+echo 'Change to working directory and set env variables'
+module load perl/5.26.0
+export PATH=$PATH:/home/jwestaway/pk_pipeline/tools/ensembl-vep-release-104
+OUTDIR="/home/jwestaway/pk_pipeline/ZB_100/outputs/vcf_consensus/variant_annotation"
+GFF="/home/jwestaway/pk_pipeline/ref_genomes/PKA1H1/gff/"
+FASTA="/home/jwestaway/pk_pipeline/ref_genomes/PKA1H1/fasta/strain_A1_H.1.Icor.fasta"
+
+echo "---------------------------------------------------------------------------------------------------------------------"
+echo "Sort, Zip and Index GFF"
+cd $GFF
+
+grep -v "#" strain_A1_H.1.Icor.gff3 | sort -k1,1 -k4,4n -k5,5n -t$'\t' | bgzip -c > strain_A1_H.1.Icor.gff3.gz
+tabix -p gff strain_A1_H.1.Icor.gff3.gz
+
+echo "---------------------------------------------------------------------------------------------------------------------"
+echo "Change to working directoy"
+cd /home/jwestaway/pk_pipeline/ZB_100/outputs/vcf_consensus/filtering_tests/Vivax/
+
+echo "---------------------------------------------------------------------------------------------------------------------"
+echo "SNPs"
+vep -i snps_filtered.vcf --gff $GFF/strain_A1_H.1.Icor.gff3.gz --fasta $FASTA -o $OUTDIR/SNP_variant_annotation.txt 
+
+echo "---------------------------------------------------------------------------------------------------------------------"
+echo "INDELs"
+vep -i indels_filtered.vcf --gff $GFF/strain_A1_H.1.Icor.gff3.gz --fasta $FASTA -o $OUTDIR/Indel_variant_annotation.txt 
+
+echo "---------------------------------------"
+echo "FINISHED"
