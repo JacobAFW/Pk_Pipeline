@@ -6727,15 +6727,8 @@ echo 'Finished'
 
 # Variant annotation
 
-Your GFF or GTF file must be sorted in chromosomal order. VEP does not use header lines so it is safe to remove them.
-Hence, grep and tabix.
 
-esnemnble = version 104
-
-need to download cache??????? http://asia.ensembl.org/info/docs/tools/vep/script/vep_cache.html#gff 
-cd $HOME/.vep
-curl -O http://ftp.ebi.ac.uk/ensemblgenomes/pub/protists/current/variation/vep/plasmodium_knowlesi_vep_51_ASM635v1.tar.gz
-tar xzf plasmodium_knowlesi_vep_51_ASM635v1.tar.gz 
+http://pcingola.github.io/SnpEff/se_buildingreg/
 
 
 
