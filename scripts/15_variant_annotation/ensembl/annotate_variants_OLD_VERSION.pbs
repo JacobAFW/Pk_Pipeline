@@ -21,7 +21,37 @@ OUTDIR="/home/jwestaway/pk_pipeline/ZB_100/outputs/vcf_consensus/variant_annotat
 GFF="/home/jwestaway/pk_pipeline/ref_genomes/PKA1H1/gff/updated_version"
 FASTA="/home/jwestaway/pk_pipeline/ref_genomes/PKA1H1/fasta/strain_A1_H.1.Icor.fasta"
 
-mkdir $OUTDIR
+echo "---------------------------------------------------------------------------------------------------------------------"
+echo "Sort, Zip and Index GFF"
+cd $GFF
+
+grep -v "#" strain_A1_H.1.Icor.gff3 | sort -k1,1 -k4,4n -k5,5n -t$'\t' | bgzip -c > strain_A1_H.1.Icor.gff3.gz
+tabix -p gff strain_A1_H.1.Icor.gff3.gz
+
+echo "---------------------------------------------------------------------------------------------------------------------"
+echo "Change to working directoy"
+cd /home/jwestaway/pk_pipeline/ZB_100/outputs/vcf_consensus/filtering_tests/Vivax/
+
+echo "---------------------------------------------------------------------------------------------------------------------"
+echo "SNPs"
+vep -i snps_filtered.vcf --gff $GFF/strain_A1_H.1.Icor.gff3.gz --fasta $FASTA -o $OUTDIR/SNP_variant_annotation.txt 
+
+echo "---------------------------------------------------------------------------------------------------------------------"
+echo "INDELs"
+vep -i indels_filtered.vcf --gff $GFF/strain_A1_H.1.Icor.gff3.gz --fasta $FASTA -o $OUTDIR/Indel_variant_annotation.txt 
+
+echo "---------------------------------------"
+echo "FINISHED"
+
+
+
+
+
+
+
+
+echo "---------------------------------------"
+echo "TEST"
 
 echo "---------------------------------------------------------------------------------------------------------------------"
 echo "Sort, Zip and Index GFF"
@@ -44,7 +74,7 @@ grep -v "#" PlasmoDB-55_PknowlesiA1H1.gff |\
     sed -e 's/LT727661/ordered_PKNH_14_v2/g' |\
     sed -e 's/LT727662/PKNH_MIT_v2/g' |\
     sed -e 's/LT727663/new_API_strain_A1_H.1/g' |\
-    sed -e 's/protein_coding_gene/gene/g' | sort -k1,1 -k4,4n -k5,5n -t$'\t' | bgzip -c > PlasmoDB-55_PknowlesiA1H1.gff.gz
+    sort -k1,1 -k4,4n -k5,5n -t$'\t' | sed -e 's/protein_coding_gene/gene/g' | bgzip -c > PlasmoDB-55_PknowlesiA1H1.gff.gz
 
 tabix -p gff PlasmoDB-55_PknowlesiA1H1.gff.gz
 
@@ -54,11 +84,11 @@ cd /home/jwestaway/pk_pipeline/ZB_100/outputs/vcf_consensus/filtering_tests/Viva
 
 echo "---------------------------------------------------------------------------------------------------------------------"
 echo "SNPs"
-vep -i snps_filtered.vcf --gff $GFF/PlasmoDB-55_PknowlesiA1H1.gff.gz --fasta $FASTA -o $OUTDIR/SNP_variant_annotation.txt --force_overwrite --everything
+vep -i snps_filtered.vcf --gff $GFF/PlasmoDB-55_PknowlesiA1H1.gff.gz --fasta $FASTA -o $OUTDIR/SNP_variant_annotation.txt 
 
 echo "---------------------------------------------------------------------------------------------------------------------"
 echo "INDELs"
-vep -i indels_filtered.vcf --gff $GFF/PlasmoDB-55_PknowlesiA1H1.gff.gz --fasta $FASTA -o $OUTDIR/Indel_variant_annotation.txt --force_overwrite --everything
+vep -i indels_filtered.vcf --gff $GFF/PlasmoDB-55_PknowlesiA1H1.gff.gz --fasta $FASTA -o $OUTDIR/Indel_variant_annotation.txt 
 
 echo "---------------------------------------"
 echo "FINISHED"

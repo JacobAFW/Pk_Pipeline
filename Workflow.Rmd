@@ -2587,6 +2587,8 @@ The first step is downloading samples from NCBI.
 
 Link to sample list: https://static-content.springer.com/esm/art%3A10.1038%2Fs41598-019-46398-z/MediaObjects/41598_2019_46398_MOESM1_ESM.pdf
 
+Samples: ERR985372, ERR985373, ERR985385, ERR985386
+
 ## Download and convert previous data files to paired fastq files
 > wget https://sra-downloadb.be-md.ncbi.nlm.nih.gov/sos3/sra-pub-run-21/ERR2762860/ERR2762860.1
 > /usr/local/sratoolkit.2.8.2-1-centos_linux64/bin/fastq-dump -F --split-files ERR2762860.1
@@ -3182,11 +3184,14 @@ The mapstats and read depth data was then read into R for analyis.
 # First need to create a consensus VCF
 
 A VCF with known variants is needed for bam preprocessing (indel realignment and base recalibration). 
-As a consensus VCF has not be built, we must build our own. Here we use a combination of previously studies samples of known high quality, and our own high quality samples to build a consensus VCF.
-This follows a similar workflow to the standard calling of variants, where we mark duplicates, and then skip realignment and recalibration, going straight to haplotype calling. 
+As a consensus VCF has not be built, we must build our own. Here we use a combination of previously studies samples of known high quality (just below), and our own high quality samples to build a consensus VCF.
+This follows a similar workflow to the standard calling of variants, where we mark duplicates, but we then skip realignment and recalibration, going straight to haplotype calling. 
 We then combine the resulting VCF files to come up with a consensus.
 
 ## Process previously studied high quality samples
+
+Samples: ERR274221, ERR274222, ERR274224, ERR274225, SRR2221468, SRR2222335, SRR2225467, SRR2225571, SRR2225573, SRR3135172
+From https://www.pnas.org/content/112/42/13027.full & https://static-content.springer.com/esm/art%3A10.1038%2Fs41598-019-46398-z/MediaObjects/41598_2019_46398_MOESM1_ESM.pdf
 
 File = 01_QC.pbs 
 Version(s) = 0.10.1 (FastQC) & 0.1.9 (MultiQC)
@@ -6727,9 +6732,85 @@ echo 'Finished'
 
 # Variant annotation
 
+Here we annotate the truth set of variants using ensembl.
+We first needed to modify our GFF file:
+  • Change the contig names to match the reference genome and VCF files.
+  • Substitute protein_coding_gene for gene
+  • Sort and modfiy the structure to suit ensembl requirements.
 
-http://pcingola.github.io/SnpEff/se_buildingreg/
+Versions: 5.26 (perl) & 104 (ensembl).
 
+File: /home/jwestaway/pk_pipeline/ZB_100/scripts/15_variant_annotation/ensembl/annotate_variants.pbs
+
+
+```{R,eval=F}
+#!/bin/bash
+#PBS -N Annotate_variants
+#PBS -j oe
+#PBS -m ae
+#PBS -l nodes=1
+#PBS -l ncpus=16
+#PBS -l mem=50gb
+#PBS -l walltime=12:00:00
+#PBS -M jacob.westaway@menzies.edu.au
+
+echo "---------------------------------------"
+echo "PBS: Job identifier is $PBS_JOBID"
+echo "PBS: Job name is $PBS_JOBNAME"
+
+echo "---------------------------------------"
+echo "---------------------------------------"
+echo 'Change to working directory and set env variables'
+module load perl/5.26.0
+export PATH=$PATH:/home/jwestaway/pk_pipeline/tools/ensembl-vep-release-104
+OUTDIR="/home/jwestaway/pk_pipeline/ZB_100/outputs/vcf_consensus/variant_annotation"
+GFF="/home/jwestaway/pk_pipeline/ref_genomes/PKA1H1/gff/updated_version"
+FASTA="/home/jwestaway/pk_pipeline/ref_genomes/PKA1H1/fasta/strain_A1_H.1.Icor.fasta"
+
+mkdir $OUTDIR
+
+echo "---------------------------------------------------------------------------------------------------------------------"
+echo "Sort, Zip and Index GFF"
+cd $GFF
+
+grep -v "#" PlasmoDB-55_PknowlesiA1H1.gff |\
+    sed -e 's/LT727648/ordered_PKNH_01_v2/g' |\
+    sed -e 's/LT727649/ordered_PKNH_02_v2/g' |\
+    sed -e 's/LT727650/ordered_PKNH_03_v2/g' |\
+    sed -e 's/LT727651/ordered_PKNH_04_v2/g' |\
+    sed -e 's/LT727652/ordered_PKNH_05_v2/g' |\
+    sed -e 's/LT727653/ordered_PKNH_06_v2/g' |\
+    sed -e 's/LT727654/ordered_PKNH_07_v2/g' |\
+    sed -e 's/LT727655/ordered_PKNH_08_v2/g' |\
+    sed -e 's/LT727656/ordered_PKNH_09_v2/g' |\
+    sed -e 's/LT727657/ordered_PKNH_10_v2/g' |\
+    sed -e 's/LT727658/ordered_PKNH_11_v2/g' |\
+    sed -e 's/LT727659/ordered_PKNH_12_v2/g' |\
+    sed -e 's/LT727660/ordered_PKNH_13_v2/g' |\
+    sed -e 's/LT727661/ordered_PKNH_14_v2/g' |\
+    sed -e 's/LT727662/PKNH_MIT_v2/g' |\
+    sed -e 's/LT727663/new_API_strain_A1_H.1/g' |\
+    sed -e 's/protein_coding_gene/gene/g' | sort -k1,1 -k4,4n -k5,5n -t$'\t' | bgzip -c > PlasmoDB-55_PknowlesiA1H1.gff.gz
+
+tabix -p gff PlasmoDB-55_PknowlesiA1H1.gff.gz
+
+echo "---------------------------------------------------------------------------------------------------------------------"
+echo "Change to working directoy"
+cd /home/jwestaway/pk_pipeline/ZB_100/outputs/vcf_consensus/filtering_tests/Vivax/
+
+echo "---------------------------------------------------------------------------------------------------------------------"
+echo "SNPs"
+vep -i snps_filtered.vcf --gff $GFF/PlasmoDB-55_PknowlesiA1H1.gff.gz --fasta $FASTA -o $OUTDIR/SNP_variant_annotation.txt 
+
+echo "---------------------------------------------------------------------------------------------------------------------"
+echo "INDELs"
+vep -i indels_filtered.vcf --gff $GFF/PlasmoDB-55_PknowlesiA1H1.gff.gz --fasta $FASTA -o $OUTDIR/Indel_variant_annotation.txt 
+
+echo "---------------------------------------"
+echo "FINISHED"
+
+
+```
 
 
 
