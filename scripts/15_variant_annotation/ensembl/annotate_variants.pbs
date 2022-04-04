@@ -63,3 +63,4 @@ vep -i indels_filtered.vcf --gff $GFF/PlasmoDB-55_PknowlesiA1H1.gff.gz --fasta $
 echo "---------------------------------------"
 echo "FINISHED"
 
+ordered_PKNH_01_v2  41143
