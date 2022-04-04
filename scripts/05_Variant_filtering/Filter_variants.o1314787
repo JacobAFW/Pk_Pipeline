@@ -1,0 +1,228 @@
+---------------------------------------
+PBS: Job identifier is 1314787.cheetah
+PBS: Job name is Filter_variants
+---------------------------------------
+Define paths and change to working directory
+---------------------------------------
+SELECT VARIANT TYPES
+---------------------------------------
+---------------------------------------
+SNPs
+09:11:37.401 INFO  NativeLibraryLoader - Loading libgkl_compression.so from jar:file:/home/jwestaway/pk_pipeline/tools/gatk-4.2.2.0/gatk-package-4.2.2.0-local.jar!/com/intel/gkl/native/libgkl_compression.so
+09:11:37.467 WARN  NativeLibraryLoader - Unable to load libgkl_compression.so from native/libgkl_compression.so (/tmp/libgkl_compression4691516446330070761.so: /lib64/libc.so.6: version `GLIBC_2.14' not found (required by /tmp/libgkl_compression4691516446330070761.so))
+09:11:37.496 INFO  NativeLibraryLoader - Loading libgkl_compression.so from jar:file:/home/jwestaway/pk_pipeline/tools/gatk-4.2.2.0/gatk-package-4.2.2.0-local.jar!/com/intel/gkl/native/libgkl_compression.so
+09:11:37.516 WARN  NativeLibraryLoader - Unable to load libgkl_compression.so from native/libgkl_compression.so (/tmp/libgkl_compression6460252198045153720.so: /lib64/libc.so.6: version `GLIBC_2.14' not found (required by /tmp/libgkl_compression6460252198045153720.so))
+Feb 15, 2022 9:11:37 AM shaded.cloud_nio.com.google.auth.oauth2.ComputeEngineCredentials runningOnComputeEngine
+INFO: Failed to detect whether we are running on Google Compute Engine.
+09:11:37.993 INFO  SelectVariants - ------------------------------------------------------------
+09:11:38.006 INFO  SelectVariants - The Genome Analysis Toolkit (GATK) v4.2.2.0
+09:11:38.006 INFO  SelectVariants - For support and documentation go to https://software.broadinstitute.org/gatk/
+09:11:38.009 INFO  SelectVariants - Executing as jwestaway@cheetah06 on Linux v2.6.32-754.14.2.el6.x86_64 amd64
+09:11:38.009 INFO  SelectVariants - Java runtime: Java HotSpot(TM) 64-Bit Server VM v1.8.0_131-b11
+09:11:38.009 INFO  SelectVariants - Start Date/Time: 15 February 2022 9:11:37 AM
+09:11:38.009 INFO  SelectVariants - ------------------------------------------------------------
+09:11:38.009 INFO  SelectVariants - ------------------------------------------------------------
+09:11:38.010 INFO  SelectVariants - HTSJDK Version: 2.24.1
+09:11:38.010 INFO  SelectVariants - Picard Version: 2.25.4
+09:11:38.011 INFO  SelectVariants - Built for Spark Version: 2.4.5
+09:11:38.011 INFO  SelectVariants - HTSJDK Defaults.COMPRESSION_LEVEL : 2
+09:11:38.011 INFO  SelectVariants - HTSJDK Defaults.USE_ASYNC_IO_READ_FOR_SAMTOOLS : false
+09:11:38.011 INFO  SelectVariants - HTSJDK Defaults.USE_ASYNC_IO_WRITE_FOR_SAMTOOLS : true
+09:11:38.012 INFO  SelectVariants - HTSJDK Defaults.USE_ASYNC_IO_WRITE_FOR_TRIBBLE : false
+09:11:38.012 INFO  SelectVariants - Deflater: JdkDeflater
+09:11:38.012 INFO  SelectVariants - Inflater: JdkInflater
+09:11:38.012 INFO  SelectVariants - GCS max retries/reopens: 20
+09:11:38.012 INFO  SelectVariants - Requester pays: disabled
+09:11:38.012 INFO  SelectVariants - Initializing engine
+09:11:39.156 INFO  FeatureManager - Using codec VCFCodec to read file file:///home/jwestaway/pk_pipeline/Initial_Pk_subset/outputs/variant_calling/consensus/Initial_Pk_dataset_consensus.vcf
+09:11:39.242 INFO  SelectVariants - Done initializing engine
+09:11:39.382 INFO  SelectVariants - Shutting down engine
+[15 February 2022 9:11:39 AM] org.broadinstitute.hellbender.tools.walkers.variantutils.SelectVariants done. Elapsed time: 0.03 minutes.
+Runtime.totalMemory()=3243769856
+htsjdk.samtools.util.RuntimeIOException: File not found: /home/jwestaway/pk_pipeline/Initial_Pk_subset/outputs/variant_calling/filtered/GVCFall_SNPs.vcf
+	at htsjdk.variant.variantcontext.writer.VariantContextWriterBuilder.build(VariantContextWriterBuilder.java:451)
+	at htsjdk.variant.variantcontext.writer.VariantContextWriterBuilder.build(VariantContextWriterBuilder.java:415)
+	at org.broadinstitute.hellbender.utils.variant.GATKVariantContextUtils.createVCFWriter(GATKVariantContextUtils.java:123)
+	at org.broadinstitute.hellbender.engine.GATKTool.createVCFWriter(GATKTool.java:923)
+	at org.broadinstitute.hellbender.tools.walkers.variantutils.SelectVariants.onTraversalStart(SelectVariants.java:544)
+	at org.broadinstitute.hellbender.engine.GATKTool.doWork(GATKTool.java:1083)
+	at org.broadinstitute.hellbender.cmdline.CommandLineProgram.runTool(CommandLineProgram.java:140)
+	at org.broadinstitute.hellbender.cmdline.CommandLineProgram.instanceMainPostParseArgs(CommandLineProgram.java:192)
+	at org.broadinstitute.hellbender.cmdline.CommandLineProgram.instanceMain(CommandLineProgram.java:211)
+	at org.broadinstitute.hellbender.Main.runCommandLineProgram(Main.java:160)
+	at org.broadinstitute.hellbender.Main.mainEntry(Main.java:203)
+	at org.broadinstitute.hellbender.Main.main(Main.java:289)
+Caused by: java.nio.file.NoSuchFileException: /home/jwestaway/pk_pipeline/Initial_Pk_subset/outputs/variant_calling/filtered/GVCFall_SNPs.vcf
+	at sun.nio.fs.UnixException.translateToIOException(UnixException.java:86)
+	at sun.nio.fs.UnixException.rethrowAsIOException(UnixException.java:102)
+	at sun.nio.fs.UnixException.rethrowAsIOException(UnixException.java:107)
+	at sun.nio.fs.UnixFileSystemProvider.newByteChannel(UnixFileSystemProvider.java:214)
+	at java.nio.file.spi.FileSystemProvider.newOutputStream(FileSystemProvider.java:434)
+	at java.nio.file.Files.newOutputStream(Files.java:216)
+	at htsjdk.variant.variantcontext.writer.VariantContextWriterBuilder.build(VariantContextWriterBuilder.java:447)
+	... 11 more
+---------------------------------------
+Indels
+09:11:46.835 INFO  NativeLibraryLoader - Loading libgkl_compression.so from jar:file:/home/jwestaway/pk_pipeline/tools/gatk-4.2.2.0/gatk-package-4.2.2.0-local.jar!/com/intel/gkl/native/libgkl_compression.so
+09:11:46.909 WARN  NativeLibraryLoader - Unable to load libgkl_compression.so from native/libgkl_compression.so (/tmp/libgkl_compression2086556053904817999.so: /lib64/libc.so.6: version `GLIBC_2.14' not found (required by /tmp/libgkl_compression2086556053904817999.so))
+09:11:46.926 INFO  NativeLibraryLoader - Loading libgkl_compression.so from jar:file:/home/jwestaway/pk_pipeline/tools/gatk-4.2.2.0/gatk-package-4.2.2.0-local.jar!/com/intel/gkl/native/libgkl_compression.so
+09:11:46.936 WARN  NativeLibraryLoader - Unable to load libgkl_compression.so from native/libgkl_compression.so (/tmp/libgkl_compression7053416737306063005.so: /lib64/libc.so.6: version `GLIBC_2.14' not found (required by /tmp/libgkl_compression7053416737306063005.so))
+Feb 15, 2022 9:11:47 AM shaded.cloud_nio.com.google.auth.oauth2.ComputeEngineCredentials runningOnComputeEngine
+INFO: Failed to detect whether we are running on Google Compute Engine.
+09:11:47.442 INFO  SelectVariants - ------------------------------------------------------------
+09:11:47.456 INFO  SelectVariants - The Genome Analysis Toolkit (GATK) v4.2.2.0
+09:11:47.456 INFO  SelectVariants - For support and documentation go to https://software.broadinstitute.org/gatk/
+09:11:47.459 INFO  SelectVariants - Executing as jwestaway@cheetah06 on Linux v2.6.32-754.14.2.el6.x86_64 amd64
+09:11:47.459 INFO  SelectVariants - Java runtime: Java HotSpot(TM) 64-Bit Server VM v1.8.0_131-b11
+09:11:47.459 INFO  SelectVariants - Start Date/Time: 15 February 2022 9:11:46 AM
+09:11:47.459 INFO  SelectVariants - ------------------------------------------------------------
+09:11:47.459 INFO  SelectVariants - ------------------------------------------------------------
+09:11:47.460 INFO  SelectVariants - HTSJDK Version: 2.24.1
+09:11:47.460 INFO  SelectVariants - Picard Version: 2.25.4
+09:11:47.461 INFO  SelectVariants - Built for Spark Version: 2.4.5
+09:11:47.461 INFO  SelectVariants - HTSJDK Defaults.COMPRESSION_LEVEL : 2
+09:11:47.461 INFO  SelectVariants - HTSJDK Defaults.USE_ASYNC_IO_READ_FOR_SAMTOOLS : false
+09:11:47.461 INFO  SelectVariants - HTSJDK Defaults.USE_ASYNC_IO_WRITE_FOR_SAMTOOLS : true
+09:11:47.461 INFO  SelectVariants - HTSJDK Defaults.USE_ASYNC_IO_WRITE_FOR_TRIBBLE : false
+09:11:47.462 INFO  SelectVariants - Deflater: JdkDeflater
+09:11:47.462 INFO  SelectVariants - Inflater: JdkInflater
+09:11:47.462 INFO  SelectVariants - GCS max retries/reopens: 20
+09:11:47.462 INFO  SelectVariants - Requester pays: disabled
+09:11:47.462 INFO  SelectVariants - Initializing engine
+09:11:48.588 INFO  FeatureManager - Using codec VCFCodec to read file file:///home/jwestaway/pk_pipeline/Initial_Pk_subset/outputs/variant_calling/consensus/Initial_Pk_dataset_consensus.vcf
+09:11:48.668 INFO  SelectVariants - Done initializing engine
+09:11:48.818 INFO  SelectVariants - Shutting down engine
+[15 February 2022 9:11:48 AM] org.broadinstitute.hellbender.tools.walkers.variantutils.SelectVariants done. Elapsed time: 0.03 minutes.
+Runtime.totalMemory()=3243769856
+htsjdk.samtools.util.RuntimeIOException: File not found: /home/jwestaway/pk_pipeline/Initial_Pk_subset/outputs/variant_calling/filtered/GVCFall_INDELs.vcf
+	at htsjdk.variant.variantcontext.writer.VariantContextWriterBuilder.build(VariantContextWriterBuilder.java:451)
+	at htsjdk.variant.variantcontext.writer.VariantContextWriterBuilder.build(VariantContextWriterBuilder.java:415)
+	at org.broadinstitute.hellbender.utils.variant.GATKVariantContextUtils.createVCFWriter(GATKVariantContextUtils.java:123)
+	at org.broadinstitute.hellbender.engine.GATKTool.createVCFWriter(GATKTool.java:923)
+	at org.broadinstitute.hellbender.tools.walkers.variantutils.SelectVariants.onTraversalStart(SelectVariants.java:544)
+	at org.broadinstitute.hellbender.engine.GATKTool.doWork(GATKTool.java:1083)
+	at org.broadinstitute.hellbender.cmdline.CommandLineProgram.runTool(CommandLineProgram.java:140)
+	at org.broadinstitute.hellbender.cmdline.CommandLineProgram.instanceMainPostParseArgs(CommandLineProgram.java:192)
+	at org.broadinstitute.hellbender.cmdline.CommandLineProgram.instanceMain(CommandLineProgram.java:211)
+	at org.broadinstitute.hellbender.Main.runCommandLineProgram(Main.java:160)
+	at org.broadinstitute.hellbender.Main.mainEntry(Main.java:203)
+	at org.broadinstitute.hellbender.Main.main(Main.java:289)
+Caused by: java.nio.file.NoSuchFileException: /home/jwestaway/pk_pipeline/Initial_Pk_subset/outputs/variant_calling/filtered/GVCFall_INDELs.vcf
+	at sun.nio.fs.UnixException.translateToIOException(UnixException.java:86)
+	at sun.nio.fs.UnixException.rethrowAsIOException(UnixException.java:102)
+	at sun.nio.fs.UnixException.rethrowAsIOException(UnixException.java:107)
+	at sun.nio.fs.UnixFileSystemProvider.newByteChannel(UnixFileSystemProvider.java:214)
+	at java.nio.file.spi.FileSystemProvider.newOutputStream(FileSystemProvider.java:434)
+	at java.nio.file.Files.newOutputStream(Files.java:216)
+	at htsjdk.variant.variantcontext.writer.VariantContextWriterBuilder.build(VariantContextWriterBuilder.java:447)
+	... 11 more
+---------------------------------------
+FILTER
+---------------------------------------
+09:11:56.133 INFO  NativeLibraryLoader - Loading libgkl_compression.so from jar:file:/home/jwestaway/pk_pipeline/tools/gatk-4.2.2.0/gatk-package-4.2.2.0-local.jar!/com/intel/gkl/native/libgkl_compression.so
+09:11:56.204 WARN  NativeLibraryLoader - Unable to load libgkl_compression.so from native/libgkl_compression.so (/tmp/libgkl_compression203452175085288671.so: /lib64/libc.so.6: version `GLIBC_2.14' not found (required by /tmp/libgkl_compression203452175085288671.so))
+09:11:56.220 INFO  NativeLibraryLoader - Loading libgkl_compression.so from jar:file:/home/jwestaway/pk_pipeline/tools/gatk-4.2.2.0/gatk-package-4.2.2.0-local.jar!/com/intel/gkl/native/libgkl_compression.so
+09:11:56.232 WARN  NativeLibraryLoader - Unable to load libgkl_compression.so from native/libgkl_compression.so (/tmp/libgkl_compression1373324610394208210.so: /lib64/libc.so.6: version `GLIBC_2.14' not found (required by /tmp/libgkl_compression1373324610394208210.so))
+Feb 15, 2022 9:11:56 AM shaded.cloud_nio.com.google.auth.oauth2.ComputeEngineCredentials runningOnComputeEngine
+INFO: Failed to detect whether we are running on Google Compute Engine.
+09:11:56.758 INFO  VariantFiltration - ------------------------------------------------------------
+09:11:56.759 INFO  VariantFiltration - The Genome Analysis Toolkit (GATK) v4.2.2.0
+09:11:56.760 INFO  VariantFiltration - For support and documentation go to https://software.broadinstitute.org/gatk/
+09:11:56.760 INFO  VariantFiltration - Executing as jwestaway@cheetah06 on Linux v2.6.32-754.14.2.el6.x86_64 amd64
+09:11:56.760 INFO  VariantFiltration - Java runtime: Java HotSpot(TM) 64-Bit Server VM v1.8.0_131-b11
+09:11:56.761 INFO  VariantFiltration - Start Date/Time: 15 February 2022 9:11:56 AM
+09:11:56.761 INFO  VariantFiltration - ------------------------------------------------------------
+09:11:56.761 INFO  VariantFiltration - ------------------------------------------------------------
+09:11:56.762 INFO  VariantFiltration - HTSJDK Version: 2.24.1
+09:11:56.762 INFO  VariantFiltration - Picard Version: 2.25.4
+09:11:56.762 INFO  VariantFiltration - Built for Spark Version: 2.4.5
+09:11:56.762 INFO  VariantFiltration - HTSJDK Defaults.COMPRESSION_LEVEL : 2
+09:11:56.762 INFO  VariantFiltration - HTSJDK Defaults.USE_ASYNC_IO_READ_FOR_SAMTOOLS : false
+09:11:56.762 INFO  VariantFiltration - HTSJDK Defaults.USE_ASYNC_IO_WRITE_FOR_SAMTOOLS : true
+09:11:56.763 INFO  VariantFiltration - HTSJDK Defaults.USE_ASYNC_IO_WRITE_FOR_TRIBBLE : false
+09:11:56.763 INFO  VariantFiltration - Deflater: JdkDeflater
+09:11:56.763 INFO  VariantFiltration - Inflater: JdkInflater
+09:11:56.764 INFO  VariantFiltration - GCS max retries/reopens: 20
+09:11:56.764 INFO  VariantFiltration - Requester pays: disabled
+09:11:56.764 INFO  VariantFiltration - Initializing engine
+09:11:57.826 INFO  VariantFiltration - Shutting down engine
+[15 February 2022 9:11:57 AM] org.broadinstitute.hellbender.tools.walkers.filters.VariantFiltration done. Elapsed time: 0.03 minutes.
+Runtime.totalMemory()=3243769856
+***********************************************************************
+
+A USER ERROR has occurred: Couldn't read file file:///home/jwestaway/pk_pipeline/Initial_Pk_subset/outputs/variant_calling/consensus/PK_consensus.vcf. Error was: It doesn't exist.
+
+***********************************************************************
+Set the system property GATK_STACKTRACE_ON_USER_EXCEPTION (--java-options '-DGATK_STACKTRACE_ON_USER_EXCEPTION=true') to print the stack trace.
+09:12:05.037 INFO  NativeLibraryLoader - Loading libgkl_compression.so from jar:file:/home/jwestaway/pk_pipeline/tools/gatk-4.2.2.0/gatk-package-4.2.2.0-local.jar!/com/intel/gkl/native/libgkl_compression.so
+09:12:05.118 WARN  NativeLibraryLoader - Unable to load libgkl_compression.so from native/libgkl_compression.so (/tmp/libgkl_compression7851585520715943250.so: /lib64/libc.so.6: version `GLIBC_2.14' not found (required by /tmp/libgkl_compression7851585520715943250.so))
+09:12:05.125 INFO  NativeLibraryLoader - Loading libgkl_compression.so from jar:file:/home/jwestaway/pk_pipeline/tools/gatk-4.2.2.0/gatk-package-4.2.2.0-local.jar!/com/intel/gkl/native/libgkl_compression.so
+09:12:05.148 WARN  NativeLibraryLoader - Unable to load libgkl_compression.so from native/libgkl_compression.so (/tmp/libgkl_compression7735539919865369554.so: /lib64/libc.so.6: version `GLIBC_2.14' not found (required by /tmp/libgkl_compression7735539919865369554.so))
+Feb 15, 2022 9:12:05 AM shaded.cloud_nio.com.google.auth.oauth2.ComputeEngineCredentials runningOnComputeEngine
+INFO: Failed to detect whether we are running on Google Compute Engine.
+09:12:05.658 INFO  VariantFiltration - ------------------------------------------------------------
+09:12:05.659 INFO  VariantFiltration - The Genome Analysis Toolkit (GATK) v4.2.2.0
+09:12:05.659 INFO  VariantFiltration - For support and documentation go to https://software.broadinstitute.org/gatk/
+09:12:05.660 INFO  VariantFiltration - Executing as jwestaway@cheetah06 on Linux v2.6.32-754.14.2.el6.x86_64 amd64
+09:12:05.660 INFO  VariantFiltration - Java runtime: Java HotSpot(TM) 64-Bit Server VM v1.8.0_131-b11
+09:12:05.660 INFO  VariantFiltration - Start Date/Time: 15 February 2022 9:12:04 AM
+09:12:05.661 INFO  VariantFiltration - ------------------------------------------------------------
+09:12:05.661 INFO  VariantFiltration - ------------------------------------------------------------
+09:12:05.662 INFO  VariantFiltration - HTSJDK Version: 2.24.1
+09:12:05.662 INFO  VariantFiltration - Picard Version: 2.25.4
+09:12:05.662 INFO  VariantFiltration - Built for Spark Version: 2.4.5
+09:12:05.662 INFO  VariantFiltration - HTSJDK Defaults.COMPRESSION_LEVEL : 2
+09:12:05.662 INFO  VariantFiltration - HTSJDK Defaults.USE_ASYNC_IO_READ_FOR_SAMTOOLS : false
+09:12:05.662 INFO  VariantFiltration - HTSJDK Defaults.USE_ASYNC_IO_WRITE_FOR_SAMTOOLS : true
+09:12:05.673 INFO  VariantFiltration - HTSJDK Defaults.USE_ASYNC_IO_WRITE_FOR_TRIBBLE : false
+09:12:05.674 INFO  VariantFiltration - Deflater: JdkDeflater
+09:12:05.674 INFO  VariantFiltration - Inflater: JdkInflater
+09:12:05.674 INFO  VariantFiltration - GCS max retries/reopens: 20
+09:12:05.674 INFO  VariantFiltration - Requester pays: disabled
+09:12:05.674 INFO  VariantFiltration - Initializing engine
+09:12:06.689 INFO  VariantFiltration - Shutting down engine
+[15 February 2022 9:12:06 AM] org.broadinstitute.hellbender.tools.walkers.filters.VariantFiltration done. Elapsed time: 0.03 minutes.
+Runtime.totalMemory()=3243769856
+***********************************************************************
+
+A USER ERROR has occurred: Couldn't read file file:///home/jwestaway/pk_pipeline/Initial_Pk_subset/outputs/variant_calling/filtered/GVCFall_SNPs.vcf. Error was: It doesn't exist.
+
+***********************************************************************
+Set the system property GATK_STACKTRACE_ON_USER_EXCEPTION (--java-options '-DGATK_STACKTRACE_ON_USER_EXCEPTION=true') to print the stack trace.
+09:12:13.953 INFO  NativeLibraryLoader - Loading libgkl_compression.so from jar:file:/home/jwestaway/pk_pipeline/tools/gatk-4.2.2.0/gatk-package-4.2.2.0-local.jar!/com/intel/gkl/native/libgkl_compression.so
+09:12:14.020 WARN  NativeLibraryLoader - Unable to load libgkl_compression.so from native/libgkl_compression.so (/tmp/libgkl_compression8230060884080252807.so: /lib64/libc.so.6: version `GLIBC_2.14' not found (required by /tmp/libgkl_compression8230060884080252807.so))
+09:12:14.030 INFO  NativeLibraryLoader - Loading libgkl_compression.so from jar:file:/home/jwestaway/pk_pipeline/tools/gatk-4.2.2.0/gatk-package-4.2.2.0-local.jar!/com/intel/gkl/native/libgkl_compression.so
+09:12:14.041 WARN  NativeLibraryLoader - Unable to load libgkl_compression.so from native/libgkl_compression.so (/tmp/libgkl_compression3875491646249110988.so: /lib64/libc.so.6: version `GLIBC_2.14' not found (required by /tmp/libgkl_compression3875491646249110988.so))
+Feb 15, 2022 9:12:14 AM shaded.cloud_nio.com.google.auth.oauth2.ComputeEngineCredentials runningOnComputeEngine
+INFO: Failed to detect whether we are running on Google Compute Engine.
+09:12:14.548 INFO  VariantFiltration - ------------------------------------------------------------
+09:12:14.558 INFO  VariantFiltration - The Genome Analysis Toolkit (GATK) v4.2.2.0
+09:12:14.558 INFO  VariantFiltration - For support and documentation go to https://software.broadinstitute.org/gatk/
+09:12:14.559 INFO  VariantFiltration - Executing as jwestaway@cheetah06 on Linux v2.6.32-754.14.2.el6.x86_64 amd64
+09:12:14.559 INFO  VariantFiltration - Java runtime: Java HotSpot(TM) 64-Bit Server VM v1.8.0_131-b11
+09:12:14.559 INFO  VariantFiltration - Start Date/Time: 15 February 2022 9:12:13 AM
+09:12:14.560 INFO  VariantFiltration - ------------------------------------------------------------
+09:12:14.560 INFO  VariantFiltration - ------------------------------------------------------------
+09:12:14.561 INFO  VariantFiltration - HTSJDK Version: 2.24.1
+09:12:14.561 INFO  VariantFiltration - Picard Version: 2.25.4
+09:12:14.561 INFO  VariantFiltration - Built for Spark Version: 2.4.5
+09:12:14.561 INFO  VariantFiltration - HTSJDK Defaults.COMPRESSION_LEVEL : 2
+09:12:14.561 INFO  VariantFiltration - HTSJDK Defaults.USE_ASYNC_IO_READ_FOR_SAMTOOLS : false
+09:12:14.561 INFO  VariantFiltration - HTSJDK Defaults.USE_ASYNC_IO_WRITE_FOR_SAMTOOLS : true
+09:12:14.562 INFO  VariantFiltration - HTSJDK Defaults.USE_ASYNC_IO_WRITE_FOR_TRIBBLE : false
+09:12:14.562 INFO  VariantFiltration - Deflater: JdkDeflater
+09:12:14.562 INFO  VariantFiltration - Inflater: JdkInflater
+09:12:14.562 INFO  VariantFiltration - GCS max retries/reopens: 20
+09:12:14.563 INFO  VariantFiltration - Requester pays: disabled
+09:12:14.563 INFO  VariantFiltration - Initializing engine
+09:12:15.599 INFO  VariantFiltration - Shutting down engine
+[15 February 2022 9:12:15 AM] org.broadinstitute.hellbender.tools.walkers.filters.VariantFiltration done. Elapsed time: 0.03 minutes.
+Runtime.totalMemory()=3243769856
+***********************************************************************
+
+A USER ERROR has occurred: Couldn't read file file:///home/jwestaway/pk_pipeline/Initial_Pk_subset/outputs/variant_calling/filtered/GVCFall_INDELs.vcf. Error was: It doesn't exist.
+
+***********************************************************************
+Set the system property GATK_STACKTRACE_ON_USER_EXCEPTION (--java-options '-DGATK_STACKTRACE_ON_USER_EXCEPTION=true') to print the stack trace.
+---------------------------------------
+Finsihed

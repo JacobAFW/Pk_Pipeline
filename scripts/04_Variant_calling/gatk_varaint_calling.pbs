@@ -1,0 +1,67 @@
+#!/bin/bash
+#PBS -N Variant_calling_gatk
+#PBS -j oe
+#PBS -m ae
+#PBS -l nodes=1
+#PBS -l ncpus=21
+#PBS -l mem=150gb
+#PBS -l walltime=96:00:00
+#PBS -M jacob.westaway@menzies.edu.au
+
+echo "---------------------------------------"
+echo "PBS: Job identifier is $PBS_JOBID"
+echo "PBS: Job name is $PBS_JOBNAME"
+
+echo "---------------------------------------"
+echo "Define paths"
+export PATH=$PATH:/usr/local/jdk1.8.0_131/bin
+export PATH=$PATH:/usr/local/jre1.8.0_111/bin
+export PATH=$PATH:/usr/local/GenomeAnalysisTK-3.2.2 
+export PATH=$PATH:/usr/local/miniconda3/envs/assembly/bin/
+
+
+echo "---------------------------------------"
+echo "---------------------------------------"
+echo 'Change to working directory and set env variables'
+PICARD="/usr/local/miniconda3/pkgs/picard-2.21.9-0/share/picard-2.21.9-0/picard.jar"
+INDEXTDIR="/home/jwestaway/pk_pipeline/ref_genomes/PKA1H1/fasta/strain_A1_H.1.Icor.fasta"
+OUTDIR="/home/jwestaway/pk_pipeline/Initial_Pk_subset/outputs/variant_calling/GATK"
+INDIR="/home/jwestaway/pk_pipeline/Initial_Pk_subset/outputs/variant_calling/GATK/haplotypecaller"
+INTERVALS="/home/jwestaway/pk_pipeline/ref_genomes/PKA1H1/strain_A1_H.1.Icor.fasta.bed"
+
+mkdir $OUTDIR
+
+cd $INDIR
+
+echo "---------------------------------------------------------------------------------------------------------------------"
+echo "Clean up VCF header"
+echo "---------------------------------------------------------------------------------------------------------------------"
+
+echo "---------------------------------------------------------------------------------------------------------------------"
+echo "GATK"
+echo "---------------------------------------------------------------------------------------------------------------------"
+
+echo "---------------------------------------------------------------------------------------------------------------------"
+echo "Combine GVCFs"
+
+/usr/local/jdk1.8.0_131/bin/java -Djava.iodir=$PBS_JOBFS -Xms3200m -Xmx3600m -jar /usr/local/GenomeAnalysisTK-3.2.2/GenomeAnalysisTK.jar \
+    -T CombineGVCFs \
+    -R $INDEXTDIR \
+    -V PK_SB_DNA_001_DKDL210002130-1a_HWHGKDSXY_L4.dupmarked.realigned.recal.g.vcf.gz -V PK_SB_DNA_002_DKDL210002131-1a_HWHGKDSXY_L4.dupmarked.realigned.recal.g.vcf.gz -V PK_SB_DNA_003_DKDL210002132-1a_HWHGKDSXY_L4.dupmarked.realigned.recal.g.vcf.gz -V PK_SB_DNA_004_DKDL210002133-1a_HWHGKDSXY_L4.dupmarked.realigned.recal.g.vcf.gz -V PK_SB_DNA_005_DKDL210002134-1a_HWHGKDSXY_L4.dupmarked.realigned.recal.g.vcf.gz -V PK_SB_DNA_006_DKDL210002135-1a_HWHGKDSXY_L4.dupmarked.realigned.recal.g.vcf.gz -V PK_SB_DNA_007_DKDL210002136-1a_HWHGKDSXY_L4.dupmarked.realigned.recal.g.vcf.gz -V PK_SB_DNA_008_DKDL210002137-1a_HWHGKDSXY_L4.dupmarked.realigned.recal.g.vcf.gz -V PK_SB_DNA_009_DKDL210002138-1a_HWHGKDSXY_L4.dupmarked.realigned.recal.g.vcf.gz -V PK_SB_DNA_010_DKDL210002139-1a_HWHGKDSXY_L4.dupmarked.realigned.recal.g.vcf.gz -V PK_SB_DNA_011_DKDL210002140-1a_HWHGKDSXY_L4.dupmarked.realigned.recal.g.vcf.gz -V PK_SB_DNA_012_DKDL210002141-1a_HWHGKDSXY_L4.dupmarked.realigned.recal.g.vcf.gz -V PK_SB_DNA_013_DKDL210002142-1a_HWHGKDSXY_L4.dupmarked.realigned.recal.g.vcf.gz -V PK_SB_DNA_014_DKDL210002143-1a_HWHGKDSXY_L4.dupmarked.realigned.recal.g.vcf.gz -V PK_SB_DNA_015_DKDL210002144-1a_HWHGKDSXY_L4.dupmarked.realigned.recal.g.vcf.gz -V PK_SB_DNA_016_DKDL210002145-1a_HWHGKDSXY_L4.dupmarked.realigned.recal.g.vcf.gz -V PK_SB_DNA_017_DKDL210002146-1a_HWHGKDSXY_L4.dupmarked.realigned.recal.g.vcf.gz -V PK_SB_DNA_018_DKDL210002147-1a_HWHGKDSXY_L4.dupmarked.realigned.recal.g.vcf.gz -V PK_SB_DNA_019_DKDL210002148-1a_HWHGKDSXY_L4.dupmarked.realigned.recal.g.vcf.gz -V PK_SB_DNA_020_DKDL210002149-1a_HWHGKDSXY_L4.dupmarked.realigned.recal.g.vcf.gz -V PK_SB_DNA_021_DKDL210002150-1a_HWHGKDSXY_L4.dupmarked.realigned.recal.g.vcf.gz -V PK_SB_DNA_022_DKDL210002151-1a_HWHGKDSXY_L4.dupmarked.realigned.recal.g.vcf.gz -V PK_SB_DNA_023_DKDL210002152-1a_HWHGKDSXY_L4.dupmarked.realigned.recal.g.vcf.gz -V PK_SB_DNA_024_DKDL210002153-1a_HWHGKDSXY_L4.dupmarked.realigned.recal.g.vcf.gz -V PK_SB_DNA_025_DKDL210002154-1a_HWHGKDSXY_L4.dupmarked.realigned.recal.g.vcf.gz -V PK_SB_DNA_026_DKDL210002155-1a_HWHGKDSXY_L4.dupmarked.realigned.recal.g.vcf.gz -V PK_SB_DNA_027_DKDL210002156-1a_HWHGKDSXY_L4.dupmarked.realigned.recal.g.vcf.gz -V PK_SB_DNA_028_DKDL210002157-1a_HWHGKDSXY_L4.dupmarked.realigned.recal.g.vcf.gz -V PK_SB_DNA_029_DKDL210002158-1a_HWHGKDSXY_L4.dupmarked.realigned.recal.g.vcf.gz -V PK_SB_DNA_030_DKDL210002159-1a_HWHGKDSXY_L4.dupmarked.realigned.recal.g.vcf.gz -V PK_SB_DNA_031_DKDL210002160-1a_HWHGKDSXY_L4.dupmarked.realigned.recal.g.vcf.gz -V PK_SB_DNA_032_DKDL210002161-1a_HWHGKDSXY_L4.dupmarked.realigned.recal.g.vcf.gz -V PK_SB_DNA_033_DKDL210002162-1a_HWHGKDSXY_L4.dupmarked.realigned.recal.g.vcf.gz -V PK_SB_DNA_034_DKDL210002163-1a_HWHGKDSXY_L4.dupmarked.realigned.recal.g.vcf.gz -V PK_SB_DNA_035_DKDL210002164-1a_HWHGKDSXY_L4.dupmarked.realigned.recal.g.vcf.gz -V PK_SB_DNA_036_DKDL210002165-1a_HWHGKDSXY_L4.dupmarked.realigned.recal.g.vcf.gz -V PK_SB_DNA_037_DKDL210002166-1a_HWHGKDSXY_L4.dupmarked.realigned.recal.g.vcf.gz -V PK_SB_DNA_038_DKDL210002167-1a_HWHGKDSXY_L4.dupmarked.realigned.recal.g.vcf.gz -V PK_SB_DNA_039_DKDL210002168-1a_HWHGKDSXY_L4.dupmarked.realigned.recal.g.vcf.gz -V PK_SB_DNA_040_DKDL210002169-1a_HWHGKDSXY_L4.dupmarked.realigned.recal.g.vcf.gz -V PK_SB_DNA_041_DKDL210002170-1a_HWHGKDSXY_L4.dupmarked.realigned.recal.g.vcf.gz -V PK_SB_DNA_042_DKDL210002171-1a_HWHGKDSXY_L4.dupmarked.realigned.recal.g.vcf.gz -V PK_SB_DNA_043_DKDL210002172-1a_HWHGKDSXY_L4.dupmarked.realigned.recal.g.vcf.gz -V PK_SB_DNA_044_DKDL210002173-1a_HWHGKDSXY_L4.dupmarked.realigned.recal.g.vcf.gz -V PK_SB_DNA_045_DKDL210002174-1a_HWHGKDSXY_L4.dupmarked.realigned.recal.g.vcf.gz -V PK_SB_DNA_046_DKDL210002175-1a_HWHGKDSXY_L4.dupmarked.realigned.recal.g.vcf.gz -V PK_SB_DNA_047_DKDL210002176-1a_HWHGKDSXY_L4.dupmarked.realigned.recal.g.vcf.gz -V PK_SB_DNA_048_DKDL210002177-1a_HWHGKDSXY_L4.dupmarked.realigned.recal.g.vcf.gz -V PK_SB_DNA_049_DKDL210002178-1a_HWHGKDSXY_L4.dupmarked.realigned.recal.g.vcf.gz -V PK_SB_DNA_050_DKDL210002179-1a_HWHGKDSXY_L4.dupmarked.realigned.recal.g.vcf.gz -V PK_SB_DNA_051_DKDL210002180-1a_HWHGKDSXY_L4.dupmarked.realigned.recal.g.vcf.gz -V PK_SB_DNA_052_DKDL210002181-1a_HWHGKDSXY_L4.dupmarked.realigned.recal.g.vcf.gz -V PK_SB_DNA_053_DKDL210002182-1a_HWHGKDSXY_L4.dupmarked.realigned.recal.g.vcf.gz -V PK_SB_DNA_054_DKDL210002183-1a_HWHGKDSXY_L4.dupmarked.realigned.recal.g.vcf.gz -V PK_SB_DNA_055_DKDL210002184-1a_HWHGKDSXY_L4.dupmarked.realigned.recal.g.vcf.gz -V PK_SB_DNA_056_DKDL210002185-1a_HWHGKDSXY_L4.dupmarked.realigned.recal.g.vcf.gz -V PK_SB_DNA_057_DKDL210002186-1a_HWHGKDSXY_L4.dupmarked.realigned.recal.g.vcf.gz -V PK_SB_DNA_058_DKDL210002187-1a_HWHGKDSXY_L4.dupmarked.realigned.recal.g.vcf.gz -V PK_SB_DNA_059_DKDL210002188-1a_HWHGKDSXY_L4.dupmarked.realigned.recal.g.vcf.gz -V PK_SB_DNA_060_DKDL210002189-1a_HWHGKDSXY_L4.dupmarked.realigned.recal.g.vcf.gz -V PK_SB_DNA_061_DKDL210002190-1a_HWHGKDSXY_L4.dupmarked.realigned.recal.g.vcf.gz -V PK_SB_DNA_062_DKDL210002191-1a_HWHGKDSXY_L4.dupmarked.realigned.recal.g.vcf.gz -V PK_SB_DNA_063_DKDL210002192-1a_HWHGKDSXY_L4.dupmarked.realigned.recal.g.vcf.gz -V PK_SB_DNA_064_DKDL210002193-1a_HWHGKDSXY_L4.dupmarked.realigned.recal.g.vcf.gz -V PK_SB_DNA_065_DKDL210002194-1a_HWHGKDSXY_L4.dupmarked.realigned.recal.g.vcf.gz -V PK_SB_DNA_066_DKDL210002195-1a_HWHGKDSXY_L4.dupmarked.realigned.recal.g.vcf.gz -V PK_SB_DNA_067_DKDL210002196-1a_HWHGKDSXY_L4.dupmarked.realigned.recal.g.vcf.gz -V PK_SB_DNA_068_DKDL210002197-1a_HWHGKDSXY_L4.dupmarked.realigned.recal.g.vcf.gz -V PK_SB_DNA_069_DKDL210002198-1a_HWHGKDSXY_L4.dupmarked.realigned.recal.g.vcf.gz -V PK_SB_DNA_070_DKDL210002199-1a_HWHGKDSXY_L4.dupmarked.realigned.recal.g.vcf.gz -V PK_SB_DNA_071_DKDL210002200-1a_HWHGKDSXY_L4.dupmarked.realigned.recal.g.vcf.gz -V PK_SB_DNA_072_DKDL210002201-1a_HWHGKDSXY_L4.dupmarked.realigned.recal.g.vcf.gz -V PK_SB_DNA_073_DKDL210002202-1a_HWHGKDSXY_L4.dupmarked.realigned.recal.g.vcf.gz -V PK_SB_DNA_074_DKDL210002203-1a_HWHGKDSXY_L4.dupmarked.realigned.recal.g.vcf.gz -V PK_SB_DNA_075_DKDL210002204-1a_HWHGKDSXY_L4.dupmarked.realigned.recal.g.vcf.gz -V PK_SB_DNA_076_DKDL210002205-1a_HWHGKDSXY_L4.dupmarked.realigned.recal.g.vcf.gz -V PK_SB_DNA_077_DKDL210002206-1a_HWHGKDSXY_L4.dupmarked.realigned.recal.g.vcf.gz -V PK_SB_DNA_078_DKDL210002207-1a_HWHGKDSXY_L4.dupmarked.realigned.recal.g.vcf.gz -V PK_SB_DNA_079_DKDL210002208-1a_HWHGKDSXY_L4.dupmarked.realigned.recal.g.vcf.gz -V PK_SB_DNA_080_DKDL210002209-1a_HWHGKDSXY_L4.dupmarked.realigned.recal.g.vcf.gz -V PK_SB_DNA_081_DKDL210002210-1a_HWHGKDSXY_L4.dupmarked.realigned.recal.g.vcf.gz -V PK_SB_DNA_082_DKDL210002211-1a_HWHGKDSXY_L4.dupmarked.realigned.recal.g.vcf.gz -V PK_SB_DNA_083_DKDL210002212-1a_HWHGKDSXY_L4.dupmarked.realigned.recal.g.vcf.gz -V PK_SB_DNA_084_DKDL210002213-1a_HWHGKDSXY_L4.dupmarked.realigned.recal.g.vcf.gz -V PK_SB_DNA_085_DKDL210002214-1a_HWHGKDSXY_L4.dupmarked.realigned.recal.g.vcf.gz -V PK_SB_DNA_086_DKDL210002215-1a_HWHGKDSXY_L4.dupmarked.realigned.recal.g.vcf.gz -V PK_SB_DNA_087_DKDL210002216-1a_HWHGKDSXY_L4.dupmarked.realigned.recal.g.vcf.gz -V PK_SB_DNA_088_DKDL210002217-1a_HWHGKDSXY_L4.dupmarked.realigned.recal.g.vcf.gz -V PK_SB_DNA_089_DKDL210002218-1a_HWHGKDSXY_L4.dupmarked.realigned.recal.g.vcf.gz -V PK_SB_DNA_090_DKDL210002219-1a_HWHGKDSXY_L4.dupmarked.realigned.recal.g.vcf.gz -V PK_SB_DNA_091_DKDL210002220-1a_HWHGKDSXY_L4.dupmarked.realigned.recal.g.vcf.gz -V PK_SB_DNA_092_DKDL210002221-1a_HWHGKDSXY_L4.dupmarked.realigned.recal.g.vcf.gz -V PK_SB_DNA_094_DKDL210002223-1a_HWHGKDSXY_L4.dupmarked.realigned.recal.g.vcf.gz \
+    -o $OUTDIR/GATK_combined.g.vcf.gz
+
+echo "---------------------------------------------------------------------------------------------------------------------"
+echo "Genotype GVCFs"
+
+cd $OUTDIR
+
+/usr/local/jdk1.8.0_131/bin/java -Djava.iodir=$PBS_JOBFS -Xms3200m -Xmx3600m -jar /usr/local/GenomeAnalysisTK-3.2.2/GenomeAnalysisTK.jar \
+    -T GenotypeGVCFs \
+    -nt 20 \
+    -R $INDEXTDIR \
+    -L $INTERVALS \
+    -V GATK_combined.g.vcf.gz \
+    -o GATK_genotyped.vcf.gz
+
+echo "---------------------------------------"
+echo "Finished "

@@ -1,0 +1,992 @@
+---------------------------------------
+PBS: Job identifier is 1314729.cheetah
+PBS: Job name is Variant_calling
+---------------------------------------
+Define paths
+---------------------------------------
+---------------------------------------
+Change to working directory and set env variables
+mkdir: cannot create directory `/home/jwestaway/pk_pipeline/Initial_Pk_subset/outputs/variant_calling/GATK/haplotypecaller': File exists
+---------------------------------------------------------------------------------------------------------------------
+GATK
+---------------------------------------------------------------------------------------------------------------------
+INFO  20:12:45,440 HelpFormatter - -------------------------------------------------------------------------------- 
+INFO  20:12:45,454 HelpFormatter - The Genome Analysis Toolkit (GATK) v3.2-2-gec30cee, Compiled 2014/07/17 15:22:03 
+INFO  20:12:45,454 HelpFormatter - Copyright (c) 2010 The Broad Institute 
+INFO  20:12:45,455 HelpFormatter - For support and documentation go to http://www.broadinstitute.org/gatk 
+INFO  20:12:45,460 HelpFormatter - Program Args: -T HaplotypeCaller -ERC GVCF --minPruning 3 --maxNumHaplotypesInPopulation 200 --max_alternate_alleles 3 --variant_index_type LINEAR --variant_index_parameter 128000 -contamination 0.0 -G Standard -R /home/jwestaway/pk_pipeline/ref_genomes/PKA1H1/fasta/strain_A1_H.1.Icor.fasta -I /home/jwestaway/pk_pipeline/Initial_Pk_subset/outputs/variant_calling/final_bams/PK_SB_DNA_074_DKDL210002203-1a_HWHGKDSXY_L4.dupmarked.realigned.recal.bam -o /home/jwestaway/pk_pipeline/Initial_Pk_subset/outputs/variant_calling/GATK/haplotypecaller/PK_SB_DNA_074_DKDL210002203-1a_HWHGKDSXY_L4.dupmarked.realigned.recal.g.vcf.gz 
+INFO  20:12:45,477 HelpFormatter - Executing as jwestaway@cheetah02 on Linux 2.6.32-754.29.2.el6.x86_64 amd64; Java HotSpot(TM) 64-Bit Server VM 1.8.0_131-b11. 
+INFO  20:12:45,478 HelpFormatter - Date/Time: 2022/02/09 20:12:45 
+INFO  20:12:45,478 HelpFormatter - -------------------------------------------------------------------------------- 
+INFO  20:12:45,478 HelpFormatter - -------------------------------------------------------------------------------- 
+WARN  20:12:45,486 GATKVCFUtils - Creating Tabix index for /home/jwestaway/pk_pipeline/Initial_Pk_subset/outputs/variant_calling/GATK/haplotypecaller/PK_SB_DNA_074_DKDL210002203-1a_HWHGKDSXY_L4.dupmarked.realigned.recal.g.vcf.gz, ignoring user-specified index type and parameter 
+INFO  20:12:46,541 GenomeAnalysisEngine - Strictness is SILENT 
+INFO  20:12:46,699 GenomeAnalysisEngine - Downsampling Settings: Method: BY_SAMPLE, Target Coverage: 250 
+INFO  20:12:46,707 SAMDataSource$SAMReaders - Initializing SAMRecords in serial 
+INFO  20:12:46,768 SAMDataSource$SAMReaders - Done initializing BAM readers: total time 0.06 
+INFO  20:12:46,801 HCMappingQualityFilter - Filtering out reads with MAPQ < 20 
+INFO  20:12:47,005 GenomeAnalysisEngine - Preparing for traversal over 1 BAM files 
+INFO  20:12:47,066 GenomeAnalysisEngine - Done preparing for traversal 
+INFO  20:12:47,067 ProgressMeter - [INITIALIZATION COMPLETE; STARTING PROCESSING] 
+INFO  20:12:47,067 ProgressMeter -                 |      processed |    time |         per 1M |           |   total | remaining 
+INFO  20:12:47,068 ProgressMeter -        Location | active regions | elapsed | active regions | completed | runtime |   runtime 
+INFO  20:12:47,070 HaplotypeCaller - Standard Emitting and Calling confidence set to 0.0 for reference-model confidence output 
+INFO  20:12:47,070 HaplotypeCaller - All sites annotated with PLs forced to true for reference-model confidence output 
+INFO  20:12:47,258 HaplotypeCaller - Using global mismapping rate of 45 => -4.5 in log10 likelihood units 
+Using AVX accelerated implementation of PairHMM
+INFO  20:12:49,424 VectorLoglessPairHMM - libVectorLoglessPairHMM unpacked successfully from GATK jar file 
+INFO  20:12:49,424 VectorLoglessPairHMM - Using vectorized implementation of PairHMM 
+INFO  20:13:17,108 ProgressMeter - ordered_PKNH_01_v2:32059              0.0    30.0 s           49.7 w        0.1%     6.3 h       6.3 h 
+INFO  20:13:47,109 ProgressMeter - ordered_PKNH_01_v2:63651              0.0    60.0 s           99.3 w        0.3%     6.4 h       6.4 h 
+INFO  20:14:17,110 ProgressMeter - ordered_PKNH_01_v2:79855              0.0    90.0 s          148.9 w        0.3%     7.6 h       7.6 h 
+INFO  20:14:47,111 ProgressMeter - ordered_PKNH_01_v2:109663              0.0   120.0 s          198.5 w        0.5%     7.4 h       7.4 h 
+INFO  20:15:17,112 ProgressMeter - ordered_PKNH_01_v2:134354              0.0     2.5 m          248.1 w        0.6%     7.5 h       7.5 h 
+INFO  20:15:57,113 ProgressMeter - ordered_PKNH_01_v2:174086              0.0     3.2 m          314.2 w        0.7%     7.4 h       7.3 h 
+INFO  20:16:27,113 ProgressMeter - ordered_PKNH_01_v2:197015              0.0     3.7 m          363.8 w        0.8%     7.5 h       7.5 h 
+INFO  20:16:57,114 ProgressMeter - ordered_PKNH_01_v2:218767              0.0     4.2 m          413.4 w        0.9%     7.7 h       7.7 h 
+INFO  20:17:27,115 ProgressMeter - ordered_PKNH_01_v2:247002              0.0     4.7 m          463.0 w        1.0%     7.7 h       7.6 h 
+INFO  20:17:57,116 ProgressMeter - ordered_PKNH_01_v2:276556              0.0     5.2 m          512.6 w        1.1%     7.6 h       7.5 h 
+INFO  20:18:37,116 ProgressMeter - ordered_PKNH_01_v2:296451              0.0     5.8 m          578.8 w        1.2%     8.0 h       7.9 h 
+INFO  20:19:07,117 ProgressMeter - ordered_PKNH_01_v2:317041              0.0     6.3 m          628.4 w        1.3%     8.1 h       8.0 h 
+INFO  20:19:37,118 ProgressMeter - ordered_PKNH_01_v2:336630              0.0     6.8 m          678.0 w        1.4%     8.2 h       8.1 h 
+INFO  20:20:07,119 ProgressMeter - ordered_PKNH_01_v2:356467              0.0     7.3 m          727.6 w        1.5%     8.3 h       8.2 h 
+WARN  20:20:22,890 ExactAFCalc - this tool is currently set to genotype at most 3 alternate alleles in a given context, but the context at ordered_PKNH_01_v2:368926 has 5 alternate alleles so only the top alleles will be used; see the --max_alternate_alleles argument 
+WARN  20:20:27,965 ExactAFCalc - this tool is currently set to genotype at most 3 alternate alleles in a given context, but the context at ordered_PKNH_01_v2:371359 has 5 alternate alleles so only the top alleles will be used; see the --max_alternate_alleles argument 
+INFO  20:20:47,119 ProgressMeter - ordered_PKNH_01_v2:387428              0.0     8.0 m          793.7 w        1.6%     8.4 h       8.2 h 
+INFO  20:21:17,120 ProgressMeter - ordered_PKNH_01_v2:401801              0.0     8.5 m          843.3 w        1.7%     8.6 h       8.4 h 
+INFO  20:21:47,121 ProgressMeter - ordered_PKNH_01_v2:421410              0.0     9.0 m          892.9 w        1.7%     8.7 h       8.5 h 
+INFO  20:22:17,122 ProgressMeter - ordered_PKNH_01_v2:435086              0.0     9.5 m          942.6 w        1.8%     8.9 h       8.7 h 
+INFO  20:22:47,129 ProgressMeter - ordered_PKNH_01_v2:453237              0.0    10.0 m          992.2 w        1.9%     8.9 h       8.8 h 
+INFO  20:23:17,130 ProgressMeter - ordered_PKNH_01_v2:479692              0.0    10.5 m         1041.8 w        2.0%     8.9 h       8.7 h 
+INFO  20:23:57,131 ProgressMeter - ordered_PKNH_01_v2:494167              0.0    11.2 m         1107.9 w        2.0%     9.2 h       9.0 h 
+INFO  20:24:27,131 ProgressMeter - ordered_PKNH_01_v2:507514              0.0    11.7 m         1157.5 w        2.1%     9.3 h       9.1 h 
+INFO  20:24:57,132 ProgressMeter - ordered_PKNH_01_v2:518301              0.0    12.2 m         1207.1 w        2.1%     9.5 h       9.3 h 
+INFO  20:25:27,133 ProgressMeter - ordered_PKNH_01_v2:535798              0.0    12.7 m         1256.7 w        2.2%     9.6 h       9.4 h 
+INFO  20:26:07,134 ProgressMeter - ordered_PKNH_01_v2:562466              0.0    13.3 m         1322.9 w        2.3%     9.6 h       9.4 h 
+INFO  20:26:47,135 ProgressMeter - ordered_PKNH_01_v2:570297              0.0    14.0 m         1389.0 w        2.3%    10.0 h       9.7 h 
+INFO  20:27:17,135 ProgressMeter - ordered_PKNH_01_v2:590414              0.0    14.5 m         1438.6 w        2.4%    10.0 h       9.7 h 
+INFO  20:27:47,136 ProgressMeter - ordered_PKNH_01_v2:624667              0.0    15.0 m         1488.2 w        2.6%     9.7 h       9.5 h 
+INFO  20:28:17,137 ProgressMeter - ordered_PKNH_01_v2:679320              0.0    15.5 m         1537.8 w        2.8%     9.2 h       9.0 h 
+INFO  20:28:57,138 ProgressMeter - ordered_PKNH_01_v2:703341              0.0    16.2 m         1604.0 w        2.9%     9.3 h       9.0 h 
+INFO  20:29:27,138 ProgressMeter - ordered_PKNH_01_v2:713918              0.0    16.7 m         1653.6 w        2.9%     9.5 h       9.2 h 
+INFO  20:29:57,139 ProgressMeter - ordered_PKNH_01_v2:728288              0.0    17.2 m         1703.2 w        3.0%     9.6 h       9.3 h 
+INFO  20:30:27,140 ProgressMeter - ordered_PKNH_01_v2:747295              0.0    17.7 m         1752.8 w        3.1%     9.6 h       9.3 h 
+INFO  20:31:07,141 ProgressMeter - ordered_PKNH_01_v2:777445              0.0    18.3 m         1818.9 w        3.2%     9.6 h       9.3 h 
+INFO  20:31:47,141 ProgressMeter - ordered_PKNH_01_v2:800843              0.0    19.0 m         1885.0 w        3.3%     9.6 h       9.3 h 
+WARN  20:31:50,700 ExactAFCalc - this tool is currently set to genotype at most 3 alternate alleles in a given context, but the context at ordered_PKNH_01_v2:803510 has 5 alternate alleles so only the top alleles will be used; see the --max_alternate_alleles argument 
+INFO  20:32:17,142 ProgressMeter - ordered_PKNH_01_v2:830971              0.0    19.5 m         1934.6 w        3.4%     9.5 h       9.2 h 
+INFO  20:32:47,143 ProgressMeter - ordered_PKNH_01_v2:861823              0.0    20.0 m         1984.3 w        3.5%     9.4 h       9.1 h 
+INFO  20:33:17,150 ProgressMeter - ordered_PKNH_02_v2:1045         892570.0    20.5 m           23.0 m        3.7%     9.3 h       9.0 h 
+INFO  20:33:57,151 ProgressMeter - ordered_PKNH_02_v2:63152         892570.0    21.2 m           23.7 m        3.9%     9.0 h       8.6 h 
+WARN  20:34:02,570 ExactAFCalc - this tool is currently set to genotype at most 3 alternate alleles in a given context, but the context at ordered_PKNH_02_v2:74612 has 5 alternate alleles so only the top alleles will be used; see the --max_alternate_alleles argument 
+INFO  20:34:37,152 ProgressMeter - ordered_PKNH_02_v2:133113         892570.0    21.8 m           24.5 m        4.2%     8.6 h       8.3 h 
+INFO  20:35:07,152 ProgressMeter - ordered_PKNH_02_v2:149157         892570.0    22.3 m           25.0 m        4.3%     8.7 h       8.3 h 
+INFO  20:35:37,153 ProgressMeter - ordered_PKNH_02_v2:166779         892570.0    22.8 m           25.6 m        4.4%     8.7 h       8.4 h 
+INFO  20:36:07,154 ProgressMeter - ordered_PKNH_02_v2:183096         892570.0    23.3 m           26.1 m        4.4%     8.8 h       8.4 h 
+INFO  20:36:47,155 ProgressMeter - ordered_PKNH_02_v2:206076         892570.0    24.0 m           26.9 m        4.5%     8.9 h       8.5 h 
+INFO  20:37:17,155 ProgressMeter - ordered_PKNH_02_v2:233104         892570.0    24.5 m           27.5 m        4.6%     8.8 h       8.4 h 
+WARN  20:37:34,661 ExactAFCalc - this tool is currently set to genotype at most 3 alternate alleles in a given context, but the context at ordered_PKNH_02_v2:239976 has 6 alternate alleles so only the top alleles will be used; see the --max_alternate_alleles argument 
+INFO  20:37:47,156 ProgressMeter - ordered_PKNH_02_v2:248061         892570.0    25.0 m           28.0 m        4.7%     8.9 h       8.5 h 
+INFO  20:38:17,157 ProgressMeter - ordered_PKNH_02_v2:264505         892570.0    25.5 m           28.6 m        4.8%     8.9 h       8.5 h 
+INFO  20:38:57,158 ProgressMeter - ordered_PKNH_02_v2:287495         892570.0    26.2 m           29.3 m        4.9%     9.0 h       8.6 h 
+INFO  20:39:27,158 ProgressMeter - ordered_PKNH_02_v2:307120         892570.0    26.7 m           29.9 m        4.9%     9.0 h       8.6 h 
+INFO  20:39:57,159 ProgressMeter - ordered_PKNH_02_v2:327185         892570.0    27.2 m           30.4 m        5.0%     9.0 h       8.6 h 
+WARN  20:40:14,992 ExactAFCalc - this tool is currently set to genotype at most 3 alternate alleles in a given context, but the context at ordered_PKNH_02_v2:341499 has 5 alternate alleles so only the top alleles will be used; see the --max_alternate_alleles argument 
+INFO  20:40:27,160 ProgressMeter - ordered_PKNH_02_v2:380224         892570.0    27.7 m           31.0 m        5.2%     8.8 h       8.3 h 
+INFO  20:41:07,161 ProgressMeter - ordered_PKNH_02_v2:402389         892570.0    28.3 m           31.7 m        5.3%     8.9 h       8.4 h 
+INFO  20:41:37,161 ProgressMeter - ordered_PKNH_02_v2:419906         892570.0    28.8 m           32.3 m        5.4%     8.9 h       8.4 h 
+INFO  20:42:07,162 ProgressMeter - ordered_PKNH_02_v2:432827         892570.0    29.3 m           32.9 m        5.4%     9.0 h       8.5 h 
+INFO  20:42:37,170 ProgressMeter - ordered_PKNH_02_v2:455917         892570.0    29.8 m           33.4 m        5.5%     9.0 h       8.5 h 
+INFO  20:43:17,170 ProgressMeter - ordered_PKNH_02_v2:476314         892570.0    30.5 m           34.2 m        5.6%     9.0 h       8.5 h 
+INFO  20:43:47,171 ProgressMeter - ordered_PKNH_02_v2:497042         892570.0    31.0 m           34.7 m        5.7%     9.0 h       8.5 h 
+INFO  20:44:17,172 ProgressMeter - ordered_PKNH_02_v2:508902         892570.0    31.5 m           35.3 m        5.8%     9.1 h       8.6 h 
+INFO  20:44:47,173 ProgressMeter - ordered_PKNH_02_v2:537780         892570.0    32.0 m           35.9 m        5.9%     9.1 h       8.5 h 
+WARN  20:45:04,752 ExactAFCalc - this tool is currently set to genotype at most 3 alternate alleles in a given context, but the context at ordered_PKNH_02_v2:552776 has 5 alternate alleles so only the top alleles will be used; see the --max_alternate_alleles argument 
+INFO  20:45:27,173 ProgressMeter - ordered_PKNH_02_v2:574240         892570.0    32.7 m           36.6 m        6.0%     9.0 h       8.5 h 
+INFO  20:45:57,174 ProgressMeter - ordered_PKNH_02_v2:599219         892570.0    33.2 m           37.2 m        6.1%     9.0 h       8.5 h 
+WARN  20:46:13,018 ExactAFCalc - this tool is currently set to genotype at most 3 alternate alleles in a given context, but the context at ordered_PKNH_02_v2:617464 has 5 alternate alleles so only the top alleles will be used; see the --max_alternate_alleles argument 
+INFO  20:46:27,175 ProgressMeter - ordered_PKNH_02_v2:629895         892570.0    33.7 m           37.7 m        6.3%     9.0 h       8.4 h 
+INFO  20:46:57,176 ProgressMeter - ordered_PKNH_02_v2:686965         892570.0    34.2 m           38.3 m        6.5%     8.8 h       8.2 h 
+INFO  20:47:37,177 ProgressMeter - ordered_PKNH_02_v2:741142         892570.0    34.8 m           39.0 m        6.7%     8.6 h       8.1 h 
+INFO  20:48:17,178 ProgressMeter - ordered_PKNH_03_v2:28663        1680216.0    35.5 m           21.1 m        7.0%     8.4 h       7.8 h 
+INFO  20:48:47,178 ProgressMeter - ordered_PKNH_03_v2:75573        1680216.0    36.0 m           21.4 m        7.2%     8.3 h       7.7 h 
+INFO  20:49:17,179 ProgressMeter - ordered_PKNH_03_v2:104674        1680216.0    36.5 m           21.7 m        7.3%     8.3 h       7.7 h 
+INFO  20:49:47,180 ProgressMeter - ordered_PKNH_03_v2:118052        1680216.0    37.0 m           22.0 m        7.4%     8.3 h       7.7 h 
+INFO  20:50:27,181 ProgressMeter - ordered_PKNH_03_v2:146262        1680216.0    37.7 m           22.4 m        7.5%     8.4 h       7.7 h 
+INFO  20:50:57,181 ProgressMeter - ordered_PKNH_03_v2:154209        1680216.0    38.2 m           22.7 m        7.5%     8.4 h       7.8 h 
+WARN  20:51:06,887 ExactAFCalc - this tool is currently set to genotype at most 3 alternate alleles in a given context, but the context at ordered_PKNH_03_v2:163607 has 5 alternate alleles so only the top alleles will be used; see the --max_alternate_alleles argument 
+INFO  20:51:27,182 ProgressMeter - ordered_PKNH_03_v2:172805        1680216.0    38.7 m           23.0 m        7.6%     8.5 h       7.8 h 
+INFO  20:51:57,183 ProgressMeter - ordered_PKNH_03_v2:190959        1680216.0    39.2 m           23.3 m        7.7%     8.5 h       7.8 h 
+INFO  20:52:27,184 ProgressMeter - ordered_PKNH_03_v2:209158        1680216.0    39.7 m           23.6 m        7.8%     8.5 h       7.8 h 
+INFO  20:52:57,185 ProgressMeter - ordered_PKNH_03_v2:235320        1680216.0    40.2 m           23.9 m        7.9%     8.5 h       7.8 h 
+INFO  20:53:37,185 ProgressMeter - ordered_PKNH_03_v2:253510        1680216.0    40.8 m           24.3 m        8.0%     8.6 h       7.9 h 
+INFO  20:54:07,186 ProgressMeter - ordered_PKNH_03_v2:280411        1680216.0    41.3 m           24.6 m        8.1%     8.5 h       7.9 h 
+INFO  20:54:37,192 ProgressMeter - ordered_PKNH_03_v2:292505        1680216.0    41.8 m           24.9 m        8.1%     8.6 h       7.9 h 
+INFO  20:55:07,192 ProgressMeter - ordered_PKNH_03_v2:313858        1680216.0    42.3 m           25.2 m        8.2%     8.6 h       7.9 h 
+INFO  20:55:37,193 ProgressMeter - ordered_PKNH_03_v2:340930        1680216.0    42.8 m           25.5 m        8.3%     8.6 h       7.9 h 
+INFO  20:56:07,194 ProgressMeter - ordered_PKNH_03_v2:361742        1680216.0    43.3 m           25.8 m        8.4%     8.6 h       7.9 h 
+WARN  20:56:23,193 ExactAFCalc - this tool is currently set to genotype at most 3 alternate alleles in a given context, but the context at ordered_PKNH_03_v2:366771 has 5 alternate alleles so only the top alleles will be used; see the --max_alternate_alleles argument 
+INFO  20:56:47,195 ProgressMeter - ordered_PKNH_03_v2:389505        1680216.0    44.0 m           26.2 m        8.5%     8.6 h       7.9 h 
+INFO  20:57:27,195 ProgressMeter - ordered_PKNH_03_v2:408802        1680216.0    44.7 m           26.6 m        8.6%     8.7 h       7.9 h 
+INFO  20:57:57,196 ProgressMeter - ordered_PKNH_03_v2:430293        1680216.0    45.2 m           26.9 m        8.7%     8.7 h       7.9 h 
+INFO  20:58:27,197 ProgressMeter - ordered_PKNH_03_v2:444835        1680216.0    45.7 m           27.2 m        8.7%     8.7 h       7.9 h 
+INFO  20:59:07,198 ProgressMeter - ordered_PKNH_03_v2:476373        1680216.0    46.3 m           27.6 m        8.9%     8.7 h       7.9 h 
+INFO  20:59:37,198 ProgressMeter - ordered_PKNH_03_v2:493479        1680216.0    46.8 m           27.9 m        8.9%     8.7 h       8.0 h 
+INFO  21:00:07,199 ProgressMeter - ordered_PKNH_03_v2:524357        1680216.0    47.3 m           28.2 m        9.1%     8.7 h       7.9 h 
+INFO  21:00:37,200 ProgressMeter - ordered_PKNH_03_v2:548254        1680216.0    47.8 m           28.5 m        9.2%     8.7 h       7.9 h 
+INFO  21:01:17,200 ProgressMeter - ordered_PKNH_03_v2:568390        1680216.0    48.5 m           28.9 m        9.2%     8.7 h       7.9 h 
+INFO  21:01:47,201 ProgressMeter - ordered_PKNH_03_v2:589399        1680216.0    49.0 m           29.2 m        9.3%     8.8 h       7.9 h 
+INFO  21:02:17,210 ProgressMeter - ordered_PKNH_03_v2:631995        1680216.0    49.5 m           29.5 m        9.5%     8.7 h       7.9 h 
+WARN  21:02:28,057 ExactAFCalc - this tool is currently set to genotype at most 3 alternate alleles in a given context, but the context at ordered_PKNH_03_v2:631741 has 6 alternate alleles so only the top alleles will be used; see the --max_alternate_alleles argument 
+WARN  21:02:56,386 ExactAFCalc - this tool is currently set to genotype at most 3 alternate alleles in a given context, but the context at ordered_PKNH_03_v2:644693 has 6 alternate alleles so only the top alleles will be used; see the --max_alternate_alleles argument 
+INFO  21:02:57,211 ProgressMeter - ordered_PKNH_03_v2:644971        1680216.0    50.2 m           29.9 m        9.6%     8.7 h       7.9 h 
+INFO  21:03:27,211 ProgressMeter - ordered_PKNH_03_v2:683711        1680216.0    50.7 m           30.2 m        9.7%     8.7 h       7.8 h 
+INFO  21:03:57,212 ProgressMeter - ordered_PKNH_03_v2:734903        1680216.0    51.2 m           30.5 m        9.9%     8.6 h       7.7 h 
+INFO  21:04:37,213 ProgressMeter - ordered_PKNH_03_v2:765890        1680216.0    51.8 m           30.9 m       10.1%     8.6 h       7.7 h 
+INFO  21:05:17,213 ProgressMeter - ordered_PKNH_03_v2:791438        1680216.0    52.5 m           31.2 m       10.2%     8.6 h       7.7 h 
+INFO  21:05:47,214 ProgressMeter - ordered_PKNH_03_v2:804471        1680216.0    53.0 m           31.5 m       10.2%     8.6 h       7.8 h 
+INFO  21:06:17,215 ProgressMeter - ordered_PKNH_03_v2:824353        1680216.0    53.5 m           31.8 m       10.3%     8.7 h       7.8 h 
+INFO  21:06:57,216 ProgressMeter - ordered_PKNH_03_v2:836686        1680216.0    54.2 m           32.2 m       10.3%     8.7 h       7.8 h 
+INFO  21:07:27,216 ProgressMeter - ordered_PKNH_03_v2:858891        1680216.0    54.7 m           32.5 m       10.4%     8.7 h       7.8 h 
+INFO  21:07:57,226 ProgressMeter - ordered_PKNH_03_v2:880571        1680216.0    55.2 m           32.8 m       10.5%     8.7 h       7.8 h 
+INFO  21:08:27,227 ProgressMeter - ordered_PKNH_03_v2:895242        1680216.0    55.7 m           33.1 m       10.6%     8.8 h       7.8 h 
+INFO  21:08:57,228 ProgressMeter - ordered_PKNH_03_v2:912634        1680216.0    56.2 m           33.4 m       10.7%     8.8 h       7.8 h 
+WARN  21:09:08,802 ExactAFCalc - this tool is currently set to genotype at most 3 alternate alleles in a given context, but the context at ordered_PKNH_03_v2:919877 has 5 alternate alleles so only the top alleles will be used; see the --max_alternate_alleles argument 
+INFO  21:09:37,228 ProgressMeter - ordered_PKNH_03_v2:927006        1680216.0    56.8 m           33.8 m       10.7%     8.8 h       7.9 h 
+INFO  21:10:07,229 ProgressMeter - ordered_PKNH_03_v2:941712        1680216.0    57.3 m           34.1 m       10.8%     8.9 h       7.9 h 
+INFO  21:10:37,230 ProgressMeter - ordered_PKNH_03_v2:974773        1680216.0    57.8 m           34.4 m       10.9%     8.8 h       7.9 h 
+INFO  21:11:17,230 ProgressMeter - ordered_PKNH_03_v2:1011206        1680216.0    58.5 m           34.8 m       11.1%     8.8 h       7.8 h 
+WARN  21:11:19,990 ExactAFCalc - this tool is currently set to genotype at most 3 alternate alleles in a given context, but the context at ordered_PKNH_03_v2:1026377 has 5 alternate alleles so only the top alleles will be used; see the --max_alternate_alleles argument 
+WARN  21:11:20,000 ExactAFCalc - this tool is currently set to genotype at most 3 alternate alleles in a given context, but the context at ordered_PKNH_03_v2:1026380 has 5 alternate alleles so only the top alleles will be used; see the --max_alternate_alleles argument 
+INFO  21:11:47,239 ProgressMeter - ordered_PKNH_04_v2:29640        2730786.0    59.0 m           21.6 m       11.4%     8.7 h       7.7 h 
+INFO  21:12:17,239 ProgressMeter - ordered_PKNH_04_v2:88181        2730786.0    59.5 m           21.8 m       11.6%     8.6 h       7.6 h 
+INFO  21:12:47,240 ProgressMeter - ordered_PKNH_04_v2:114197        2730786.0    60.0 m           22.0 m       11.7%     8.5 h       7.5 h 
+WARN  21:13:04,529 ExactAFCalc - this tool is currently set to genotype at most 3 alternate alleles in a given context, but the context at ordered_PKNH_04_v2:123060 has 5 alternate alleles so only the top alleles will be used; see the --max_alternate_alleles argument 
+INFO  21:13:17,241 ProgressMeter - ordered_PKNH_04_v2:135640        2730786.0    60.5 m           22.2 m       11.8%     8.6 h       7.5 h 
+INFO  21:13:57,241 ProgressMeter - ordered_PKNH_04_v2:157365        2730786.0    61.2 m           22.4 m       11.9%     8.6 h       7.6 h 
+INFO  21:14:27,242 ProgressMeter - ordered_PKNH_04_v2:179280        2730786.0    61.7 m           22.6 m       12.0%     8.6 h       7.6 h 
+INFO  21:14:57,243 ProgressMeter - ordered_PKNH_04_v2:195114        2730786.0    62.2 m           22.8 m       12.0%     8.6 h       7.6 h 
+INFO  21:15:37,243 ProgressMeter - ordered_PKNH_04_v2:232669        2730786.0    62.8 m           23.0 m       12.2%     8.6 h       7.5 h 
+WARN  21:15:52,722 ExactAFCalc - this tool is currently set to genotype at most 3 alternate alleles in a given context, but the context at ordered_PKNH_04_v2:238852 has 5 alternate alleles so only the top alleles will be used; see the --max_alternate_alleles argument 
+INFO  21:16:07,244 ProgressMeter - ordered_PKNH_04_v2:248554        2730786.0    63.3 m           23.2 m       12.3%     8.6 h       7.6 h 
+INFO  21:16:37,245 ProgressMeter - ordered_PKNH_04_v2:281110        2730786.0    63.8 m           23.4 m       12.4%     8.6 h       7.5 h 
+INFO  21:17:07,292 ProgressMeter - ordered_PKNH_04_v2:335911        2730786.0    64.3 m           23.6 m       12.6%     8.5 h       7.4 h 
+INFO  21:17:37,292 ProgressMeter - ordered_PKNH_04_v2:346005        2730786.0    64.8 m           23.7 m       12.7%     8.5 h       7.5 h 
+INFO  21:18:07,293 ProgressMeter - ordered_PKNH_04_v2:368698        2730786.0    65.3 m           23.9 m       12.7%     8.5 h       7.5 h 
+INFO  21:18:47,294 ProgressMeter - ordered_PKNH_04_v2:386898        2730786.0    66.0 m           24.2 m       12.8%     8.6 h       7.5 h 
+INFO  21:19:17,294 ProgressMeter - ordered_PKNH_04_v2:409935        2730786.0    66.5 m           24.4 m       12.9%     8.6 h       7.5 h 
+INFO  21:19:47,296 ProgressMeter - ordered_PKNH_04_v2:423013        2730786.0    67.0 m           24.5 m       13.0%     8.6 h       7.5 h 
+INFO  21:20:17,297 ProgressMeter - ordered_PKNH_04_v2:471071        2730786.0    67.5 m           24.7 m       13.2%     8.5 h       7.4 h 
+WARN  21:20:31,772 ExactAFCalc - this tool is currently set to genotype at most 3 alternate alleles in a given context, but the context at ordered_PKNH_04_v2:480455 has 5 alternate alleles so only the top alleles will be used; see the --max_alternate_alleles argument 
+INFO  21:20:57,297 ProgressMeter - ordered_PKNH_04_v2:508310        2730786.0    68.2 m           25.0 m       13.3%     8.5 h       7.4 h 
+INFO  21:21:27,298 ProgressMeter - ordered_PKNH_04_v2:533993        2730786.0    68.7 m           25.1 m       13.4%     8.5 h       7.4 h 
+WARN  21:21:34,875 ExactAFCalc - this tool is currently set to genotype at most 3 alternate alleles in a given context, but the context at ordered_PKNH_04_v2:542194 has 8 alternate alleles so only the top alleles will be used; see the --max_alternate_alleles argument 
+WARN  21:21:37,274 ExactAFCalc - this tool is currently set to genotype at most 3 alternate alleles in a given context, but the context at ordered_PKNH_04_v2:545286 has 5 alternate alleles so only the top alleles will be used; see the --max_alternate_alleles argument 
+INFO  21:21:57,299 ProgressMeter - ordered_PKNH_04_v2:561017        2730786.0    69.2 m           25.3 m       13.5%     8.5 h       7.4 h 
+INFO  21:22:37,300 ProgressMeter - ordered_PKNH_04_v2:577672        2730786.0    69.8 m           25.6 m       13.6%     8.6 h       7.4 h 
+INFO  21:23:07,300 ProgressMeter - ordered_PKNH_04_v2:588510        2730786.0    70.3 m           25.8 m       13.6%     8.6 h       7.4 h 
+INFO  21:23:37,301 ProgressMeter - ordered_PKNH_04_v2:593555        2730786.0    70.8 m           25.9 m       13.7%     8.6 h       7.5 h 
+INFO  21:24:17,302 ProgressMeter - ordered_PKNH_04_v2:613109        2730786.0    71.5 m           26.2 m       13.7%     8.7 h       7.5 h 
+INFO  21:24:47,302 ProgressMeter - ordered_PKNH_04_v2:636418        2730786.0    72.0 m           26.4 m       13.8%     8.7 h       7.5 h 
+INFO  21:25:17,303 ProgressMeter - ordered_PKNH_04_v2:646470        2730786.0    72.5 m           26.6 m       13.9%     8.7 h       7.5 h 
+INFO  21:25:57,304 ProgressMeter - ordered_PKNH_04_v2:672235        2730786.0    73.2 m           26.8 m       14.0%     8.7 h       7.5 h 
+INFO  21:26:27,304 ProgressMeter - ordered_PKNH_04_v2:686355        2730786.0    73.7 m           27.0 m       14.1%     8.7 h       7.5 h 
+INFO  21:26:57,305 ProgressMeter - ordered_PKNH_04_v2:713709        2730786.0    74.2 m           27.2 m       14.2%     8.7 h       7.5 h 
+INFO  21:27:37,306 ProgressMeter - ordered_PKNH_04_v2:748891        2730786.0    74.8 m           27.4 m       14.3%     8.7 h       7.5 h 
+INFO  21:28:07,306 ProgressMeter - ordered_PKNH_04_v2:780949        2730786.0    75.3 m           27.6 m       14.4%     8.7 h       7.4 h 
+INFO  21:28:37,307 ProgressMeter - ordered_PKNH_04_v2:809375        2730786.0    75.8 m           27.8 m       14.6%     8.7 h       7.4 h 
+INFO  21:29:17,308 ProgressMeter - ordered_PKNH_04_v2:836580        2730786.0    76.5 m           28.0 m       14.7%     8.7 h       7.4 h 
+INFO  21:29:47,308 ProgressMeter - ordered_PKNH_04_v2:844125        2730786.0    77.0 m           28.2 m       14.7%     8.7 h       7.4 h 
+INFO  21:30:17,309 ProgressMeter - ordered_PKNH_04_v2:865785        2730786.0    77.5 m           28.4 m       14.8%     8.7 h       7.4 h 
+INFO  21:30:47,316 ProgressMeter - ordered_PKNH_04_v2:873959        2730786.0    78.0 m           28.6 m       14.8%     8.8 h       7.5 h 
+INFO  21:31:27,317 ProgressMeter - ordered_PKNH_04_v2:891012        2730786.0    78.7 m           28.8 m       14.9%     8.8 h       7.5 h 
+INFO  21:31:57,317 ProgressMeter - ordered_PKNH_04_v2:912178        2730786.0    79.2 m           29.0 m       15.0%     8.8 h       7.5 h 
+INFO  21:32:27,318 ProgressMeter - ordered_PKNH_04_v2:928151        2730786.0    79.7 m           29.2 m       15.0%     8.8 h       7.5 h 
+INFO  21:33:07,319 ProgressMeter - ordered_PKNH_04_v2:957615        2730786.0    80.3 m           29.4 m       15.2%     8.8 h       7.5 h 
+WARN  21:33:15,797 ExactAFCalc - this tool is currently set to genotype at most 3 alternate alleles in a given context, but the context at ordered_PKNH_04_v2:961009 has 5 alternate alleles so only the top alleles will be used; see the --max_alternate_alleles argument 
+INFO  21:33:47,319 ProgressMeter - ordered_PKNH_04_v2:1000332        2730786.0    81.0 m           29.7 m       15.3%     8.8 h       7.4 h 
+INFO  21:34:17,320 ProgressMeter - ordered_PKNH_04_v2:1027160        2730786.0    81.5 m           29.8 m       15.5%     8.8 h       7.4 h 
+INFO  21:34:47,321 ProgressMeter - ordered_PKNH_04_v2:1041703        2730786.0    82.0 m           30.0 m       15.5%     8.8 h       7.4 h 
+INFO  21:35:27,321 ProgressMeter - ordered_PKNH_04_v2:1075961        2730786.0    82.7 m           30.3 m       15.7%     8.8 h       7.4 h 
+INFO  21:35:57,322 ProgressMeter - ordered_PKNH_04_v2:1090601        2730786.0    83.2 m           30.5 m       15.7%     8.8 h       7.4 h 
+INFO  21:36:27,323 ProgressMeter - ordered_PKNH_04_v2:1110696        2730786.0    83.7 m           30.6 m       15.8%     8.8 h       7.4 h 
+WARN  21:36:33,828 ExactAFCalc - this tool is currently set to genotype at most 3 alternate alleles in a given context, but the context at ordered_PKNH_04_v2:1111029 has 5 alternate alleles so only the top alleles will be used; see the --max_alternate_alleles argument 
+INFO  21:37:07,323 ProgressMeter - ordered_PKNH_05_v2:53213        3862810.0    84.3 m           21.8 m       16.1%     8.7 h       7.3 h 
+INFO  21:37:37,324 ProgressMeter - ordered_PKNH_05_v2:68943        3862810.0    84.8 m           22.0 m       16.2%     8.7 h       7.3 h 
+INFO  21:38:07,325 ProgressMeter - ordered_PKNH_05_v2:84053        3862810.0    85.3 m           22.1 m       16.2%     8.8 h       7.3 h 
+INFO  21:38:47,325 ProgressMeter - ordered_PKNH_05_v2:116376        3862810.0    86.0 m           22.3 m       16.4%     8.8 h       7.3 h 
+INFO  21:39:17,326 ProgressMeter - ordered_PKNH_05_v2:122454        3862810.0    86.5 m           22.4 m       16.4%     8.8 h       7.4 h 
+INFO  21:39:47,327 ProgressMeter - ordered_PKNH_05_v2:153595        3862810.0    87.0 m           22.5 m       16.5%     8.8 h       7.3 h 
+INFO  21:40:27,327 ProgressMeter - ordered_PKNH_05_v2:157345        3862810.0    87.7 m           22.7 m       16.5%     8.8 h       7.4 h 
+INFO  21:40:57,334 ProgressMeter - ordered_PKNH_05_v2:169775        3862810.0    88.2 m           22.8 m       16.6%     8.9 h       7.4 h 
+INFO  21:41:27,335 ProgressMeter - ordered_PKNH_05_v2:195996        3862810.0    88.7 m           23.0 m       16.7%     8.9 h       7.4 h 
+INFO  21:42:07,335 ProgressMeter - ordered_PKNH_05_v2:217780        3862810.0    89.3 m           23.1 m       16.8%     8.9 h       7.4 h 
+INFO  21:42:37,336 ProgressMeter - ordered_PKNH_05_v2:263726        3862810.0    89.8 m           23.3 m       17.0%     8.8 h       7.3 h 
+INFO  21:43:07,337 ProgressMeter - ordered_PKNH_05_v2:290094        3862810.0    90.3 m           23.4 m       17.1%     8.8 h       7.3 h 
+INFO  21:43:47,363 ProgressMeter - ordered_PKNH_05_v2:317318        3862810.0    91.0 m           23.6 m       17.2%     8.8 h       7.3 h 
+WARN  21:44:04,821 ExactAFCalc - this tool is currently set to genotype at most 3 alternate alleles in a given context, but the context at ordered_PKNH_05_v2:364703 has 5 alternate alleles so only the top alleles will be used; see the --max_alternate_alleles argument 
+INFO  21:44:17,364 ProgressMeter - ordered_PKNH_05_v2:391888        3862810.0    91.5 m           23.7 m       17.5%     8.7 h       7.2 h 
+INFO  21:44:57,364 ProgressMeter - ordered_PKNH_05_v2:432901        3862810.0    92.2 m           23.9 m       17.7%     8.7 h       7.2 h 
+INFO  21:45:27,365 ProgressMeter - ordered_PKNH_05_v2:454712        3862810.0    92.7 m           24.0 m       17.8%     8.7 h       7.2 h 
+INFO  21:45:57,366 ProgressMeter - ordered_PKNH_05_v2:471325        3862810.0    93.2 m           24.1 m       17.8%     8.7 h       7.2 h 
+INFO  21:46:37,366 ProgressMeter - ordered_PKNH_05_v2:491282        3862810.0    93.8 m           24.3 m       17.9%     8.7 h       7.2 h 
+INFO  21:47:07,367 ProgressMeter - ordered_PKNH_05_v2:500358        3862810.0    94.3 m           24.4 m       17.9%     8.8 h       7.2 h 
+INFO  21:47:37,368 ProgressMeter - ordered_PKNH_05_v2:532530        3862810.0    94.8 m           24.6 m       18.1%     8.7 h       7.2 h 
+WARN  21:47:40,975 ExactAFCalc - this tool is currently set to genotype at most 3 alternate alleles in a given context, but the context at ordered_PKNH_05_v2:532256 has 5 alternate alleles so only the top alleles will be used; see the --max_alternate_alleles argument 
+INFO  21:48:17,368 ProgressMeter - ordered_PKNH_05_v2:558823        3862810.0    95.5 m           24.7 m       18.2%     8.8 h       7.2 h 
+INFO  21:48:47,369 ProgressMeter - ordered_PKNH_05_v2:574484        3862810.0    96.0 m           24.9 m       18.2%     8.8 h       7.2 h 
+INFO  21:49:17,370 ProgressMeter - ordered_PKNH_05_v2:597251        3862810.0    96.5 m           25.0 m       18.3%     8.8 h       7.2 h 
+INFO  21:49:57,370 ProgressMeter - ordered_PKNH_05_v2:619977        3862810.0    97.2 m           25.2 m       18.4%     8.8 h       7.2 h 
+INFO  21:50:27,371 ProgressMeter - ordered_PKNH_05_v2:633560        3862810.0    97.7 m           25.3 m       18.5%     8.8 h       7.2 h 
+INFO  21:50:57,379 ProgressMeter - ordered_PKNH_05_v2:646207        3862810.0    98.2 m           25.4 m       18.5%     8.8 h       7.2 h 
+INFO  21:51:27,380 ProgressMeter - ordered_PKNH_05_v2:664937        3862810.0    98.7 m           25.5 m       18.6%     8.8 h       7.2 h 
+INFO  21:52:07,381 ProgressMeter - ordered_PKNH_05_v2:693699        3862810.0    99.3 m           25.7 m       18.7%     8.8 h       7.2 h 
+INFO  21:52:47,381 ProgressMeter - ordered_PKNH_05_v2:720313        3862810.0   100.0 m           25.9 m       18.8%     8.8 h       7.2 h 
+INFO  21:53:17,382 ProgressMeter - ordered_PKNH_05_v2:741652        3862810.0   100.5 m           26.0 m       18.9%     8.8 h       7.2 h 
+INFO  21:53:47,408 ProgressMeter - ordered_PKNH_06_v2:4607        4645255.0   101.0 m           21.7 m       19.1%     8.8 h       7.1 h 
+INFO  21:54:17,409 ProgressMeter - ordered_PKNH_06_v2:37597        4645255.0   101.5 m           21.9 m       19.3%     8.8 h       7.1 h 
+INFO  21:54:57,409 ProgressMeter - ordered_PKNH_06_v2:58063        4645255.0   102.2 m           22.0 m       19.3%     8.8 h       7.1 h 
+INFO  21:55:27,410 ProgressMeter - ordered_PKNH_06_v2:79101        4645255.0   102.7 m           22.1 m       19.4%     8.8 h       7.1 h 
+INFO  21:56:07,411 ProgressMeter - ordered_PKNH_06_v2:100955        4645255.0   103.3 m           22.2 m       19.5%     8.8 h       7.1 h 
+INFO  21:56:47,411 ProgressMeter - ordered_PKNH_06_v2:127906        4645255.0   104.0 m           22.4 m       19.6%     8.8 h       7.1 h 
+INFO  21:57:17,412 ProgressMeter - ordered_PKNH_06_v2:138158        4645255.0   104.5 m           22.5 m       19.7%     8.9 h       7.1 h 
+INFO  21:57:47,413 ProgressMeter - ordered_PKNH_06_v2:158073        4645255.0   105.0 m           22.6 m       19.8%     8.9 h       7.1 h 
+INFO  21:58:27,413 ProgressMeter - ordered_PKNH_06_v2:172059        4645255.0   105.7 m           22.7 m       19.8%     8.9 h       7.1 h 
+INFO  21:58:57,414 ProgressMeter - ordered_PKNH_06_v2:187281        4645255.0   106.2 m           22.9 m       19.9%     8.9 h       7.1 h 
+INFO  21:59:27,415 ProgressMeter - ordered_PKNH_06_v2:199156        4645255.0   106.7 m           23.0 m       19.9%     8.9 h       7.1 h 
+INFO  22:00:07,415 ProgressMeter - ordered_PKNH_06_v2:226786        4645255.0   107.3 m           23.1 m       20.0%     8.9 h       7.1 h 
+INFO  22:00:37,416 ProgressMeter - ordered_PKNH_06_v2:252631        4645255.0   107.8 m           23.2 m       20.1%     8.9 h       7.1 h 
+INFO  22:01:07,417 ProgressMeter - ordered_PKNH_06_v2:268119        4645255.0   108.3 m           23.3 m       20.2%     8.9 h       7.1 h 
+INFO  22:01:47,417 ProgressMeter - ordered_PKNH_06_v2:330589        4645255.0   109.0 m           23.5 m       20.5%     8.9 h       7.1 h 
+INFO  22:02:17,428 ProgressMeter - ordered_PKNH_06_v2:357255        4645255.0   109.5 m           23.6 m       20.6%     8.9 h       7.0 h 
+INFO  22:02:57,429 ProgressMeter - ordered_PKNH_06_v2:383704        4645255.0   110.2 m           23.7 m       20.7%     8.9 h       7.0 h 
+INFO  22:03:27,429 ProgressMeter - ordered_PKNH_06_v2:397441        4645255.0   110.7 m           23.8 m       20.7%     8.9 h       7.1 h 
+INFO  22:03:57,430 ProgressMeter - ordered_PKNH_06_v2:421910        4645255.0   111.2 m           23.9 m       20.8%     8.9 h       7.0 h 
+INFO  22:04:37,431 ProgressMeter - ordered_PKNH_06_v2:453934        4645255.0   111.8 m           24.1 m       21.0%     8.9 h       7.0 h 
+INFO  22:05:07,462 ProgressMeter - ordered_PKNH_06_v2:464674        4645255.0   112.3 m           24.2 m       21.0%     8.9 h       7.0 h 
+INFO  22:05:37,463 ProgressMeter - ordered_PKNH_06_v2:476425        4645255.0   112.8 m           24.3 m       21.1%     8.9 h       7.0 h 
+INFO  22:06:07,464 ProgressMeter - ordered_PKNH_06_v2:494275        4645255.0   113.3 m           24.4 m       21.1%     8.9 h       7.0 h 
+INFO  22:06:47,465 ProgressMeter - ordered_PKNH_06_v2:520889        4645255.0   114.0 m           24.5 m       21.2%     8.9 h       7.0 h 
+INFO  22:07:17,465 ProgressMeter - ordered_PKNH_06_v2:530011        4645255.0   114.5 m           24.7 m       21.3%     9.0 h       7.1 h 
+INFO  22:07:47,466 ProgressMeter - ordered_PKNH_06_v2:555342        4645255.0   115.0 m           24.8 m       21.4%     9.0 h       7.0 h 
+INFO  22:08:17,467 ProgressMeter - ordered_PKNH_06_v2:565153        4645255.0   115.5 m           24.9 m       21.4%     9.0 h       7.1 h 
+INFO  22:08:57,467 ProgressMeter - ordered_PKNH_06_v2:601372        4645255.0   116.2 m           25.0 m       21.6%     9.0 h       7.0 h 
+WARN  22:09:21,709 ExactAFCalc - this tool is currently set to genotype at most 3 alternate alleles in a given context, but the context at ordered_PKNH_06_v2:629803 has 5 alternate alleles so only the top alleles will be used; see the --max_alternate_alleles argument 
+INFO  22:09:27,468 ProgressMeter - ordered_PKNH_06_v2:633895        4645255.0   116.7 m           25.1 m       21.7%     9.0 h       7.0 h 
+INFO  22:09:57,469 ProgressMeter - ordered_PKNH_06_v2:669550        4645255.0   117.2 m           25.2 m       21.9%     8.9 h       7.0 h 
+INFO  22:10:37,469 ProgressMeter - ordered_PKNH_06_v2:700306        4645255.0   117.8 m           25.4 m       22.0%     8.9 h       7.0 h 
+INFO  22:11:07,470 ProgressMeter - ordered_PKNH_06_v2:715803        4645255.0   118.3 m           25.5 m       22.0%     8.9 h       7.0 h 
+INFO  22:11:37,471 ProgressMeter - ordered_PKNH_06_v2:750722        4645255.0   118.8 m           25.6 m       22.2%     8.9 h       6.9 h 
+INFO  22:12:17,471 ProgressMeter - ordered_PKNH_06_v2:786240        4645255.0   119.5 m           25.7 m       22.3%     8.9 h       6.9 h 
+INFO  22:12:47,472 ProgressMeter - ordered_PKNH_06_v2:806947        4645255.0   120.0 m           25.8 m       22.4%     8.9 h       6.9 h 
+INFO  22:13:17,473 ProgressMeter - ordered_PKNH_06_v2:825834        4645255.0     2.0 h           25.9 m       22.5%     8.9 h       6.9 h 
+INFO  22:13:57,473 ProgressMeter - ordered_PKNH_06_v2:858025        4645255.0     2.0 h           26.1 m       22.6%     8.9 h       6.9 h 
+INFO  22:14:27,474 ProgressMeter - ordered_PKNH_06_v2:879684        4645255.0     2.0 h           26.2 m       22.7%     8.9 h       6.9 h 
+INFO  22:14:57,475 ProgressMeter - ordered_PKNH_06_v2:908321        4645255.0     2.0 h           26.3 m       22.8%     8.9 h       6.9 h 
+INFO  22:15:37,495 ProgressMeter - ordered_PKNH_06_v2:932030        4645255.0     2.0 h           26.4 m       22.9%     8.9 h       6.9 h 
+INFO  22:16:07,496 ProgressMeter - ordered_PKNH_06_v2:961834        4645255.0     2.1 h           26.6 m       23.1%     8.9 h       6.9 h 
+INFO  22:16:47,497 ProgressMeter - ordered_PKNH_06_v2:1005699        4645255.0     2.1 h           26.7 m       23.2%     8.9 h       6.8 h 
+INFO  22:17:27,497 ProgressMeter - ordered_PKNH_07_v2:3424        5725911.0     2.1 h           21.8 m       23.6%     8.8 h       6.7 h 
+INFO  22:17:57,498 ProgressMeter - ordered_PKNH_07_v2:61512        5725911.0     2.1 h           21.9 m       23.8%     8.8 h       6.7 h 
+INFO  22:18:27,499 ProgressMeter - ordered_PKNH_07_v2:107658        5725911.0     2.1 h           21.9 m       24.0%     8.7 h       6.6 h 
+INFO  22:19:07,499 ProgressMeter - ordered_PKNH_07_v2:139489        5725911.0     2.1 h           22.1 m       24.1%     8.7 h       6.6 h 
+INFO  22:19:37,500 ProgressMeter - ordered_PKNH_07_v2:184601        5725911.0     2.1 h           22.2 m       24.3%     8.7 h       6.6 h 
+INFO  22:20:07,504 ProgressMeter - ordered_PKNH_07_v2:215334        5725911.0     2.1 h           22.2 m       24.4%     8.7 h       6.6 h 
+INFO  22:20:47,505 ProgressMeter - ordered_PKNH_07_v2:246217        5725911.0     2.1 h           22.4 m       24.6%     8.7 h       6.6 h 
+INFO  22:21:27,505 ProgressMeter - ordered_PKNH_07_v2:269542        5725911.0     2.1 h           22.5 m       24.7%     8.7 h       6.6 h 
+INFO  22:21:57,506 ProgressMeter - ordered_PKNH_07_v2:276948        5725911.0     2.2 h           22.6 m       24.7%     8.7 h       6.6 h 
+INFO  22:22:37,507 ProgressMeter - ordered_PKNH_07_v2:310067        5725911.0     2.2 h           22.7 m       24.8%     8.7 h       6.6 h 
+INFO  22:23:17,507 ProgressMeter - ordered_PKNH_07_v2:343058        5725911.0     2.2 h           22.8 m       25.0%     8.7 h       6.5 h 
+INFO  22:23:47,508 ProgressMeter - ordered_PKNH_07_v2:365957        5725911.0     2.2 h           22.9 m       25.0%     8.7 h       6.5 h 
+INFO  22:24:17,515 ProgressMeter - ordered_PKNH_07_v2:382430        5725911.0     2.2 h           23.0 m       25.1%     8.7 h       6.5 h 
+INFO  22:24:47,516 ProgressMeter - ordered_PKNH_07_v2:409304        5725911.0     2.2 h           23.1 m       25.2%     8.7 h       6.5 h 
+INFO  22:25:27,516 ProgressMeter - ordered_PKNH_07_v2:444270        5725911.0     2.2 h           23.2 m       25.4%     8.7 h       6.5 h 
+INFO  22:25:57,517 ProgressMeter - ordered_PKNH_07_v2:469138        5725911.0     2.2 h           23.3 m       25.5%     8.7 h       6.5 h 
+INFO  22:26:27,518 ProgressMeter - ordered_PKNH_07_v2:492737        5725911.0     2.2 h           23.3 m       25.6%     8.7 h       6.5 h 
+INFO  22:27:07,518 ProgressMeter - ordered_PKNH_07_v2:524501        5725911.0     2.2 h           23.5 m       25.7%     8.7 h       6.5 h 
+INFO  22:27:37,519 ProgressMeter - ordered_PKNH_07_v2:544622        5725911.0     2.2 h           23.5 m       25.8%     8.7 h       6.5 h 
+WARN  22:27:38,118 ExactAFCalc - this tool is currently set to genotype at most 3 alternate alleles in a given context, but the context at ordered_PKNH_07_v2:544571 has 5 alternate alleles so only the top alleles will be used; see the --max_alternate_alleles argument 
+INFO  22:28:07,520 ProgressMeter - ordered_PKNH_07_v2:572342        5725911.0     2.3 h           23.6 m       25.9%     8.7 h       6.5 h 
+INFO  22:28:47,520 ProgressMeter - ordered_PKNH_07_v2:593581        5725911.0     2.3 h           23.8 m       26.0%     8.7 h       6.5 h 
+INFO  22:29:17,521 ProgressMeter - ordered_PKNH_07_v2:627478        5725911.0     2.3 h           23.8 m       26.1%     8.7 h       6.4 h 
+INFO  22:29:57,522 ProgressMeter - ordered_PKNH_07_v2:661447        5725911.0     2.3 h           24.0 m       26.3%     8.7 h       6.4 h 
+INFO  22:30:37,522 ProgressMeter - ordered_PKNH_07_v2:681091        5725911.0     2.3 h           24.1 m       26.3%     8.7 h       6.4 h 
+INFO  22:31:07,523 ProgressMeter - ordered_PKNH_07_v2:694609        5725911.0     2.3 h           24.2 m       26.4%     8.7 h       6.4 h 
+INFO  22:31:37,524 ProgressMeter - ordered_PKNH_07_v2:713595        5725911.0     2.3 h           24.2 m       26.5%     8.7 h       6.4 h 
+INFO  22:32:17,524 ProgressMeter - ordered_PKNH_07_v2:733637        5725911.0     2.3 h           24.4 m       26.6%     8.8 h       6.4 h 
+INFO  22:32:47,525 ProgressMeter - ordered_PKNH_07_v2:762402        5725911.0     2.3 h           24.5 m       26.7%     8.7 h       6.4 h 
+INFO  22:33:27,526 ProgressMeter - ordered_PKNH_07_v2:791576        5725911.0     2.3 h           24.6 m       26.8%     8.7 h       6.4 h 
+INFO  22:34:07,526 ProgressMeter - ordered_PKNH_07_v2:831513        5725911.0     2.4 h           24.7 m       27.0%     8.7 h       6.4 h 
+INFO  22:34:37,527 ProgressMeter - ordered_PKNH_07_v2:845728        5725911.0     2.4 h           24.8 m       27.0%     8.7 h       6.4 h 
+INFO  22:35:07,530 ProgressMeter - ordered_PKNH_07_v2:870356        5725911.0     2.4 h           24.9 m       27.1%     8.7 h       6.4 h 
+INFO  22:35:47,531 ProgressMeter - ordered_PKNH_07_v2:905103        5725911.0     2.4 h           25.0 m       27.3%     8.7 h       6.4 h 
+INFO  22:36:17,531 ProgressMeter - ordered_PKNH_07_v2:924510        5725911.0     2.4 h           25.1 m       27.3%     8.7 h       6.4 h 
+INFO  22:36:47,532 ProgressMeter - ordered_PKNH_07_v2:939458        5725911.0     2.4 h           25.2 m       27.4%     8.8 h       6.4 h 
+INFO  22:37:27,532 ProgressMeter - ordered_PKNH_07_v2:964307        5725911.0     2.4 h           25.3 m       27.5%     8.8 h       6.4 h 
+INFO  22:37:57,533 ProgressMeter - ordered_PKNH_07_v2:980334        5725911.0     2.4 h           25.4 m       27.6%     8.8 h       6.4 h 
+INFO  22:38:27,568 ProgressMeter - ordered_PKNH_07_v2:1000273        5725911.0     2.4 h           25.4 m       27.7%     8.8 h       6.4 h 
+INFO  22:38:57,569 ProgressMeter - ordered_PKNH_07_v2:1025799        5725911.0     2.4 h           25.5 m       27.8%     8.8 h       6.3 h 
+INFO  22:39:37,569 ProgressMeter - ordered_PKNH_07_v2:1050845        5725911.0     2.4 h           25.6 m       27.9%     8.8 h       6.3 h 
+WARN  22:39:49,414 ExactAFCalc - this tool is currently set to genotype at most 3 alternate alleles in a given context, but the context at ordered_PKNH_07_v2:1060903 has 7 alternate alleles so only the top alleles will be used; see the --max_alternate_alleles argument 
+INFO  22:40:07,570 ProgressMeter - ordered_PKNH_07_v2:1091747        5725911.0     2.5 h           25.7 m       28.0%     8.8 h       6.3 h 
+INFO  22:40:47,571 ProgressMeter - ordered_PKNH_07_v2:1105815        5725911.0     2.5 h           25.8 m       28.1%     8.8 h       6.3 h 
+INFO  22:41:27,571 ProgressMeter - ordered_PKNH_07_v2:1123897        5725911.0     2.5 h           26.0 m       28.2%     8.8 h       6.3 h 
+INFO  22:41:57,572 ProgressMeter - ordered_PKNH_07_v2:1138744        5725911.0     2.5 h           26.1 m       28.2%     8.8 h       6.3 h 
+INFO  22:42:37,573 ProgressMeter - ordered_PKNH_07_v2:1157406        5725911.0     2.5 h           26.2 m       28.3%     8.8 h       6.3 h 
+INFO  22:43:07,573 ProgressMeter - ordered_PKNH_07_v2:1184376        5725911.0     2.5 h           26.3 m       28.4%     8.8 h       6.3 h 
+WARN  22:43:28,642 ExactAFCalc - this tool is currently set to genotype at most 3 alternate alleles in a given context, but the context at ordered_PKNH_07_v2:1210329 has 5 alternate alleles so only the top alleles will be used; see the --max_alternate_alleles argument 
+INFO  22:43:37,574 ProgressMeter - ordered_PKNH_07_v2:1233275        5725911.0     2.5 h           26.3 m       28.6%     8.8 h       6.3 h 
+INFO  22:44:17,575 ProgressMeter - ordered_PKNH_07_v2:1263790        5725911.0     2.5 h           26.5 m       28.7%     8.8 h       6.3 h 
+INFO  22:44:47,575 ProgressMeter - ordered_PKNH_07_v2:1270757        5725911.0     2.5 h           26.5 m       28.8%     8.8 h       6.3 h 
+INFO  22:45:17,584 ProgressMeter - ordered_PKNH_07_v2:1309389        5725911.0     2.5 h           26.6 m       28.9%     8.8 h       6.2 h 
+INFO  22:45:47,585 ProgressMeter - ordered_PKNH_07_v2:1332096        5725911.0     2.6 h           26.7 m       29.0%     8.8 h       6.2 h 
+INFO  22:46:27,585 ProgressMeter - ordered_PKNH_07_v2:1363462        5725911.0     2.6 h           26.8 m       29.1%     8.8 h       6.2 h 
+INFO  22:46:57,586 ProgressMeter - ordered_PKNH_07_v2:1373929        5725911.0     2.6 h           26.9 m       29.2%     8.8 h       6.2 h 
+INFO  22:47:37,587 ProgressMeter - ordered_PKNH_07_v2:1392171        5725911.0     2.6 h           27.0 m       29.3%     8.8 h       6.2 h 
+INFO  22:48:07,587 ProgressMeter - ordered_PKNH_07_v2:1399672        5725911.0     2.6 h           27.1 m       29.3%     8.8 h       6.2 h 
+INFO  22:48:37,588 ProgressMeter - ordered_PKNH_07_v2:1410880        5725911.0     2.6 h           27.2 m       29.3%     8.9 h       6.3 h 
+INFO  22:49:17,588 ProgressMeter - ordered_PKNH_07_v2:1430276        5725911.0     2.6 h           27.3 m       29.4%     8.9 h       6.3 h 
+INFO  22:49:47,589 ProgressMeter - ordered_PKNH_07_v2:1446513        5725911.0     2.6 h           27.4 m       29.5%     8.9 h       6.3 h 
+INFO  22:50:17,590 ProgressMeter - ordered_PKNH_07_v2:1463680        5725911.0     2.6 h           27.5 m       29.6%     8.9 h       6.3 h 
+INFO  22:50:57,590 ProgressMeter - ordered_PKNH_07_v2:1477164        5725911.0     2.6 h           27.6 m       29.6%     8.9 h       6.3 h 
+INFO  22:51:27,591 ProgressMeter - ordered_PKNH_07_v2:1510243        5725911.0     2.6 h           27.7 m       29.8%     8.9 h       6.2 h 
+INFO  22:52:07,591 ProgressMeter - ordered_PKNH_08_v2:36647        7247987.0     2.7 h           22.0 m       30.0%     8.9 h       6.2 h 
+INFO  22:52:37,592 ProgressMeter - ordered_PKNH_08_v2:86070        7247987.0     2.7 h           22.1 m       30.2%     8.8 h       6.2 h 
+INFO  22:53:17,593 ProgressMeter - ordered_PKNH_08_v2:134253        7247987.0     2.7 h           22.1 m       30.4%     8.8 h       6.1 h 
+INFO  22:53:57,593 ProgressMeter - ordered_PKNH_08_v2:168712        7247987.0     2.7 h           22.2 m       30.5%     8.8 h       6.1 h 
+INFO  22:54:27,594 ProgressMeter - ordered_PKNH_08_v2:191486        7247987.0     2.7 h           22.3 m       30.6%     8.8 h       6.1 h 
+INFO  22:55:07,595 ProgressMeter - ordered_PKNH_08_v2:219339        7247987.0     2.7 h           22.4 m       30.7%     8.8 h       6.1 h 
+INFO  22:55:47,595 ProgressMeter - ordered_PKNH_08_v2:244866        7247987.0     2.7 h           22.5 m       30.8%     8.8 h       6.1 h 
+INFO  22:56:17,596 ProgressMeter - ordered_PKNH_08_v2:262142        7247987.0     2.7 h           22.6 m       30.9%     8.8 h       6.1 h 
+INFO  22:56:47,603 ProgressMeter - ordered_PKNH_08_v2:276519        7247987.0     2.7 h           22.6 m       30.9%     8.8 h       6.1 h 
+INFO  22:57:27,603 ProgressMeter - ordered_PKNH_08_v2:321640        7247987.0     2.7 h           22.7 m       31.1%     8.8 h       6.1 h 
+INFO  22:57:57,604 ProgressMeter - ordered_PKNH_08_v2:346999        7247987.0     2.8 h           22.8 m       31.2%     8.8 h       6.1 h 
+INFO  22:58:37,604 ProgressMeter - ordered_PKNH_08_v2:406286        7247987.0     2.8 h           22.9 m       31.5%     8.8 h       6.0 h 
+INFO  22:59:07,605 ProgressMeter - ordered_PKNH_08_v2:424519        7247987.0     2.8 h           23.0 m       31.5%     8.8 h       6.0 h 
+INFO  22:59:37,606 ProgressMeter - ordered_PKNH_08_v2:450212        7247987.0     2.8 h           23.0 m       31.7%     8.8 h       6.0 h 
+INFO  23:00:17,606 ProgressMeter - ordered_PKNH_08_v2:487953        7247987.0     2.8 h           23.1 m       31.8%     8.8 h       6.0 h 
+INFO  23:00:47,607 ProgressMeter - ordered_PKNH_08_v2:519952        7247987.0     2.8 h           23.2 m       31.9%     8.8 h       6.0 h 
+WARN  23:01:19,324 ExactAFCalc - this tool is currently set to genotype at most 3 alternate alleles in a given context, but the context at ordered_PKNH_08_v2:551977 has 5 alternate alleles so only the top alleles will be used; see the --max_alternate_alleles argument 
+INFO  23:01:27,608 ProgressMeter - ordered_PKNH_08_v2:565307        7247987.0     2.8 h           23.3 m       32.1%     8.8 h       5.9 h 
+INFO  23:02:07,608 ProgressMeter - ordered_PKNH_08_v2:609160        7247987.0     2.8 h           23.4 m       32.3%     8.7 h       5.9 h 
+INFO  23:02:37,609 ProgressMeter - ordered_PKNH_08_v2:650026        7247987.0     2.8 h           23.4 m       32.5%     8.7 h       5.9 h 
+INFO  23:03:17,609 ProgressMeter - ordered_PKNH_08_v2:667363        7247987.0     2.8 h           23.5 m       32.5%     8.7 h       5.9 h 
+WARN  23:03:25,410 ExactAFCalc - this tool is currently set to genotype at most 3 alternate alleles in a given context, but the context at ordered_PKNH_08_v2:675234 has 5 alternate alleles so only the top alleles will be used; see the --max_alternate_alleles argument 
+INFO  23:03:47,610 ProgressMeter - ordered_PKNH_08_v2:688597        7247987.0     2.9 h           23.6 m       32.6%     8.7 h       5.9 h 
+INFO  23:04:17,611 ProgressMeter - ordered_PKNH_08_v2:715888        7247987.0     2.9 h           23.7 m       32.7%     8.7 h       5.9 h 
+INFO  23:04:57,611 ProgressMeter - ordered_PKNH_08_v2:732783        7247987.0     2.9 h           23.8 m       32.8%     8.7 h       5.9 h 
+INFO  23:05:27,612 ProgressMeter - ordered_PKNH_08_v2:749709        7247987.0     2.9 h           23.8 m       32.9%     8.8 h       5.9 h 
+INFO  23:06:07,612 ProgressMeter - ordered_PKNH_08_v2:785284        7247987.0     2.9 h           23.9 m       33.0%     8.7 h       5.9 h 
+INFO  23:06:37,613 ProgressMeter - ordered_PKNH_08_v2:812366        7247987.0     2.9 h           24.0 m       33.1%     8.7 h       5.8 h 
+INFO  23:07:07,620 ProgressMeter - ordered_PKNH_08_v2:847139        7247987.0     2.9 h           24.1 m       33.3%     8.7 h       5.8 h 
+WARN  23:07:08,596 ExactAFCalc - this tool is currently set to genotype at most 3 alternate alleles in a given context, but the context at ordered_PKNH_08_v2:847176 has 5 alternate alleles so only the top alleles will be used; see the --max_alternate_alleles argument 
+INFO  23:07:47,620 ProgressMeter - ordered_PKNH_08_v2:877090        7247987.0     2.9 h           24.1 m       33.4%     8.7 h       5.8 h 
+INFO  23:08:17,621 ProgressMeter - ordered_PKNH_08_v2:898641        7247987.0     2.9 h           24.2 m       33.5%     8.7 h       5.8 h 
+INFO  23:08:57,622 ProgressMeter - ordered_PKNH_08_v2:918632        7247987.0     2.9 h           24.3 m       33.6%     8.7 h       5.8 h 
+INFO  23:09:27,622 ProgressMeter - ordered_PKNH_08_v2:928210        7247987.0     2.9 h           24.4 m       33.6%     8.8 h       5.8 h 
+INFO  23:09:57,623 ProgressMeter - ordered_PKNH_08_v2:948607        7247987.0     3.0 h           24.4 m       33.7%     8.8 h       5.8 h 
+INFO  23:10:37,623 ProgressMeter - ordered_PKNH_08_v2:963473        7247987.0     3.0 h           24.5 m       33.8%     8.8 h       5.8 h 
+INFO  23:11:07,624 ProgressMeter - ordered_PKNH_08_v2:982911        7247987.0     3.0 h           24.6 m       33.8%     8.8 h       5.8 h 
+INFO  23:11:47,625 ProgressMeter - ordered_PKNH_08_v2:1020870        7247987.0     3.0 h           24.7 m       34.0%     8.8 h       5.8 h 
+WARN  23:11:50,084 ExactAFCalc - this tool is currently set to genotype at most 3 alternate alleles in a given context, but the context at ordered_PKNH_08_v2:1020563 has 5 alternate alleles so only the top alleles will be used; see the --max_alternate_alleles argument 
+INFO  23:12:27,625 ProgressMeter - ordered_PKNH_08_v2:1046905        7247987.0     3.0 h           24.8 m       34.1%     8.8 h       5.8 h 
+INFO  23:12:57,626 ProgressMeter - ordered_PKNH_08_v2:1053531        7247987.0     3.0 h           24.9 m       34.1%     8.8 h       5.8 h 
+INFO  23:13:37,626 ProgressMeter - ordered_PKNH_08_v2:1077239        7247987.0     3.0 h           25.0 m       34.2%     8.8 h       5.8 h 
+WARN  23:13:59,242 ExactAFCalc - this tool is currently set to genotype at most 3 alternate alleles in a given context, but the context at ordered_PKNH_08_v2:1095312 has 6 alternate alleles so only the top alleles will be used; see the --max_alternate_alleles argument 
+INFO  23:14:07,627 ProgressMeter - ordered_PKNH_08_v2:1103553        7247987.0     3.0 h           25.0 m       34.3%     8.8 h       5.8 h 
+INFO  23:14:47,628 ProgressMeter - ordered_PKNH_08_v2:1125436        7247987.0     3.0 h           25.1 m       34.4%     8.8 h       5.8 h 
+INFO  23:15:27,628 ProgressMeter - ordered_PKNH_08_v2:1139086        7247987.0     3.0 h           25.2 m       34.5%     8.8 h       5.8 h 
+INFO  23:15:57,629 ProgressMeter - ordered_PKNH_08_v2:1158471        7247987.0     3.1 h           25.3 m       34.6%     8.8 h       5.8 h 
+INFO  23:16:37,630 ProgressMeter - ordered_PKNH_08_v2:1176867        7247987.0     3.1 h           25.4 m       34.6%     8.8 h       5.8 h 
+INFO  23:17:17,630 ProgressMeter - ordered_PKNH_08_v2:1205032        7247987.0     3.1 h           25.5 m       34.8%     8.8 h       5.8 h 
+INFO  23:17:47,631 ProgressMeter - ordered_PKNH_08_v2:1234213        7247987.0     3.1 h           25.5 m       34.9%     8.8 h       5.8 h 
+INFO  23:18:27,632 ProgressMeter - ordered_PKNH_08_v2:1261166        7247987.0     3.1 h           25.6 m       35.0%     8.8 h       5.7 h 
+INFO  23:19:07,632 ProgressMeter - ordered_PKNH_08_v2:1309995        7247987.0     3.1 h           25.7 m       35.2%     8.8 h       5.7 h 
+INFO  23:19:37,633 ProgressMeter - ordered_PKNH_08_v2:1327120        7247987.0     3.1 h           25.8 m       35.3%     8.8 h       5.7 h 
+WARN  23:20:07,112 ExactAFCalc - this tool is currently set to genotype at most 3 alternate alleles in a given context, but the context at ordered_PKNH_08_v2:1352916 has 5 alternate alleles so only the top alleles will be used; see the --max_alternate_alleles argument 
+INFO  23:20:17,634 ProgressMeter - ordered_PKNH_08_v2:1358381        7247987.0     3.1 h           25.9 m       35.4%     8.8 h       5.7 h 
+INFO  23:20:47,634 ProgressMeter - ordered_PKNH_08_v2:1401192        7247987.0     3.1 h           25.9 m       35.6%     8.8 h       5.7 h 
+INFO  23:21:17,635 ProgressMeter - ordered_PKNH_08_v2:1428659        7247987.0     3.1 h           26.0 m       35.7%     8.8 h       5.7 h 
+INFO  23:21:57,636 ProgressMeter - ordered_PKNH_08_v2:1468044        7247987.0     3.2 h           26.1 m       35.8%     8.8 h       5.6 h 
+INFO  23:22:27,636 ProgressMeter - ordered_PKNH_08_v2:1485012        7247987.0     3.2 h           26.2 m       35.9%     8.8 h       5.6 h 
+INFO  23:22:57,637 ProgressMeter - ordered_PKNH_08_v2:1495167        7247987.0     3.2 h           26.2 m       35.9%     8.8 h       5.6 h 
+INFO  23:23:37,637 ProgressMeter - ordered_PKNH_08_v2:1515987        7247987.0     3.2 h           26.3 m       36.0%     8.8 h       5.6 h 
+INFO  23:24:07,638 ProgressMeter - ordered_PKNH_08_v2:1537618        7247987.0     3.2 h           26.4 m       36.1%     8.8 h       5.6 h 
+INFO  23:24:47,638 ProgressMeter - ordered_PKNH_08_v2:1549274        7247987.0     3.2 h           26.5 m       36.2%     8.8 h       5.6 h 
+INFO  23:25:17,639 ProgressMeter - ordered_PKNH_08_v2:1563160        7247987.0     3.2 h           26.6 m       36.2%     8.9 h       5.6 h 
+INFO  23:25:57,640 ProgressMeter - ordered_PKNH_08_v2:1586225        7247987.0     3.2 h           26.7 m       36.3%     8.9 h       5.6 h 
+INFO  23:26:37,640 ProgressMeter - ordered_PKNH_08_v2:1608687        7247987.0     3.2 h           26.7 m       36.4%     8.9 h       5.6 h 
+INFO  23:27:07,641 ProgressMeter - ordered_PKNH_08_v2:1627898        7247987.0     3.2 h           26.8 m       36.5%     8.9 h       5.6 h 
+INFO  23:27:47,641 ProgressMeter - ordered_PKNH_08_v2:1652782        7247987.0     3.3 h           26.9 m       36.6%     8.9 h       5.6 h 
+INFO  23:28:17,648 ProgressMeter - ordered_PKNH_08_v2:1676323        7247987.0     3.3 h           27.0 m       36.7%     8.9 h       5.6 h 
+INFO  23:28:47,649 ProgressMeter - ordered_PKNH_08_v2:1688940        7247987.0     3.3 h           27.0 m       36.7%     8.9 h       5.6 h 
+INFO  23:29:27,650 ProgressMeter - ordered_PKNH_08_v2:1754371        7247987.0     3.3 h           27.1 m       37.0%     8.9 h       5.6 h 
+INFO  23:29:57,650 ProgressMeter - ordered_PKNH_08_v2:1776816        7247987.0     3.3 h           27.2 m       37.1%     8.9 h       5.6 h 
+INFO  23:30:27,651 ProgressMeter - ordered_PKNH_08_v2:1806075        7247987.0     3.3 h           27.3 m       37.2%     8.8 h       5.6 h 
+INFO  23:31:07,651 ProgressMeter - ordered_PKNH_08_v2:1828897        7247987.0     3.3 h           27.4 m       37.3%     8.9 h       5.6 h 
+WARN  23:31:23,870 ExactAFCalc - this tool is currently set to genotype at most 3 alternate alleles in a given context, but the context at ordered_PKNH_08_v2:1837298 has 5 alternate alleles so only the top alleles will be used; see the --max_alternate_alleles argument 
+INFO  23:31:37,652 ProgressMeter - ordered_PKNH_08_v2:1845964        7247987.0     3.3 h           27.4 m       37.4%     8.9 h       5.5 h 
+INFO  23:32:17,652 ProgressMeter - ordered_PKNH_08_v2:1901938        7247987.0     3.3 h           27.5 m       37.6%     8.8 h       5.5 h 
+INFO  23:32:47,653 ProgressMeter - ordered_PKNH_09_v2:85190        9172442.0     3.3 h           21.8 m       38.1%     8.8 h       5.4 h 
+INFO  23:33:27,654 ProgressMeter - ordered_PKNH_09_v2:136620        9172442.0     3.3 h           21.9 m       38.3%     8.7 h       5.4 h 
+INFO  23:33:57,654 ProgressMeter - ordered_PKNH_09_v2:158438        9172442.0     3.4 h           21.9 m       38.4%     8.7 h       5.4 h 
+INFO  23:34:27,655 ProgressMeter - ordered_PKNH_09_v2:178732        9172442.0     3.4 h           22.0 m       38.4%     8.7 h       5.4 h 
+INFO  23:35:07,655 ProgressMeter - ordered_PKNH_09_v2:204749        9172442.0     3.4 h           22.1 m       38.6%     8.7 h       5.4 h 
+INFO  23:35:37,656 ProgressMeter - ordered_PKNH_09_v2:224885        9172442.0     3.4 h           22.1 m       38.6%     8.7 h       5.4 h 
+INFO  23:36:17,656 ProgressMeter - ordered_PKNH_09_v2:248534        9172442.0     3.4 h           22.2 m       38.7%     8.8 h       5.4 h 
+INFO  23:36:47,662 ProgressMeter - ordered_PKNH_09_v2:290925        9172442.0     3.4 h           22.2 m       38.9%     8.7 h       5.3 h 
+INFO  23:37:17,663 ProgressMeter - ordered_PKNH_09_v2:307234        9172442.0     3.4 h           22.3 m       39.0%     8.7 h       5.3 h 
+INFO  23:37:57,664 ProgressMeter - ordered_PKNH_09_v2:336574        9172442.0     3.4 h           22.4 m       39.1%     8.7 h       5.3 h 
+INFO  23:38:27,664 ProgressMeter - ordered_PKNH_09_v2:395163        9172442.0     3.4 h           22.4 m       39.3%     8.7 h       5.3 h 
+INFO  23:38:57,671 ProgressMeter - ordered_PKNH_09_v2:421201        9172442.0     3.4 h           22.5 m       39.4%     8.7 h       5.3 h 
+WARN  23:39:06,542 ExactAFCalc - this tool is currently set to genotype at most 3 alternate alleles in a given context, but the context at ordered_PKNH_09_v2:422707 has 5 alternate alleles so only the top alleles will be used; see the --max_alternate_alleles argument 
+WARN  23:39:28,027 ExactAFCalc - this tool is currently set to genotype at most 3 alternate alleles in a given context, but the context at ordered_PKNH_09_v2:441562 has 5 alternate alleles so only the top alleles will be used; see the --max_alternate_alleles argument 
+INFO  23:39:37,672 ProgressMeter - ordered_PKNH_09_v2:446115        9172442.0     3.4 h           22.6 m       39.5%     8.7 h       5.3 h 
+INFO  23:40:17,672 ProgressMeter - ordered_PKNH_09_v2:475298        9172442.0     3.5 h           22.6 m       39.7%     8.7 h       5.3 h 
+INFO  23:40:47,673 ProgressMeter - ordered_PKNH_09_v2:514121        9172442.0     3.5 h           22.7 m       39.8%     8.7 h       5.2 h 
+INFO  23:41:27,673 ProgressMeter - ordered_PKNH_09_v2:541041        9172442.0     3.5 h           22.8 m       39.9%     8.7 h       5.2 h 
+INFO  23:41:57,674 ProgressMeter - ordered_PKNH_09_v2:561425        9172442.0     3.5 h           22.8 m       40.0%     8.7 h       5.2 h 
+INFO  23:42:27,675 ProgressMeter - ordered_PKNH_09_v2:584884        9172442.0     3.5 h           22.9 m       40.1%     8.7 h       5.2 h 
+INFO  23:43:07,675 ProgressMeter - ordered_PKNH_09_v2:629255        9172442.0     3.5 h           22.9 m       40.3%     8.7 h       5.2 h 
+INFO  23:43:37,676 ProgressMeter - ordered_PKNH_09_v2:663754        9172442.0     3.5 h           23.0 m       40.4%     8.7 h       5.2 h 
+INFO  23:44:17,676 ProgressMeter - ordered_PKNH_09_v2:693409        9172442.0     3.5 h           23.1 m       40.6%     8.7 h       5.2 h 
+INFO  23:44:47,677 ProgressMeter - ordered_PKNH_09_v2:709496        9172442.0     3.5 h           23.1 m       40.6%     8.7 h       5.2 h 
+INFO  23:45:27,678 ProgressMeter - ordered_PKNH_09_v2:730415        9172442.0     3.5 h           23.2 m       40.7%     8.7 h       5.2 h 
+WARN  23:45:29,654 ExactAFCalc - this tool is currently set to genotype at most 3 alternate alleles in a given context, but the context at ordered_PKNH_09_v2:730595 has 5 alternate alleles so only the top alleles will be used; see the --max_alternate_alleles argument 
+INFO  23:45:57,680 ProgressMeter - ordered_PKNH_09_v2:750461        9172442.0     3.6 h           23.2 m       40.8%     8.7 h       5.2 h 
+INFO  23:46:27,681 ProgressMeter - ordered_PKNH_09_v2:775848        9172442.0     3.6 h           23.3 m       40.9%     8.7 h       5.1 h 
+INFO  23:47:07,681 ProgressMeter - ordered_PKNH_09_v2:808393        9172442.0     3.6 h           23.4 m       41.0%     8.7 h       5.1 h 
+INFO  23:47:37,682 ProgressMeter - ordered_PKNH_09_v2:825240        9172442.0     3.6 h           23.4 m       41.1%     8.7 h       5.1 h 
+INFO  23:48:17,682 ProgressMeter - ordered_PKNH_09_v2:853083        9172442.0     3.6 h           23.5 m       41.2%     8.7 h       5.1 h 
+INFO  23:48:47,689 ProgressMeter - ordered_PKNH_09_v2:902604        9172442.0     3.6 h           23.5 m       41.4%     8.7 h       5.1 h 
+INFO  23:49:17,690 ProgressMeter - ordered_PKNH_09_v2:923626        9172442.0     3.6 h           23.6 m       41.5%     8.7 h       5.1 h 
+INFO  23:49:57,690 ProgressMeter - ordered_PKNH_09_v2:958330        9172442.0     3.6 h           23.7 m       41.7%     8.7 h       5.1 h 
+WARN  23:50:15,616 ExactAFCalc - this tool is currently set to genotype at most 3 alternate alleles in a given context, but the context at ordered_PKNH_09_v2:970884 has 5 alternate alleles so only the top alleles will be used; see the --max_alternate_alleles argument 
+INFO  23:50:27,691 ProgressMeter - ordered_PKNH_09_v2:977110        9172442.0     3.6 h           23.7 m       41.7%     8.7 h       5.1 h 
+INFO  23:51:07,691 ProgressMeter - ordered_PKNH_09_v2:1013877        9172442.0     3.6 h           23.8 m       41.9%     8.7 h       5.0 h 
+INFO  23:51:37,692 ProgressMeter - ordered_PKNH_09_v2:1029067        9172442.0     3.6 h           23.9 m       41.9%     8.7 h       5.0 h 
+INFO  23:52:07,693 ProgressMeter - ordered_PKNH_09_v2:1055252        9172442.0     3.7 h           23.9 m       42.1%     8.7 h       5.0 h 
+INFO  23:52:47,693 ProgressMeter - ordered_PKNH_09_v2:1086713        9172442.0     3.7 h           24.0 m       42.2%     8.7 h       5.0 h 
+INFO  23:53:17,694 ProgressMeter - ordered_PKNH_09_v2:1113500        9172442.0     3.7 h           24.0 m       42.3%     8.7 h       5.0 h 
+INFO  23:53:57,694 ProgressMeter - ordered_PKNH_09_v2:1143528        9172442.0     3.7 h           24.1 m       42.4%     8.7 h       5.0 h 
+INFO  23:54:27,695 ProgressMeter - ordered_PKNH_09_v2:1160403        9172442.0     3.7 h           24.2 m       42.5%     8.7 h       5.0 h 
+INFO  23:55:07,696 ProgressMeter - ordered_PKNH_09_v2:1188049        9172442.0     3.7 h           24.2 m       42.6%     8.7 h       5.0 h 
+INFO  23:55:47,696 ProgressMeter - ordered_PKNH_09_v2:1214332        9172442.0     3.7 h           24.3 m       42.7%     8.7 h       5.0 h 
+INFO  23:56:17,697 ProgressMeter - ordered_PKNH_09_v2:1229423        9172442.0     3.7 h           24.4 m       42.8%     8.7 h       5.0 h 
+INFO  23:56:57,697 ProgressMeter - ordered_PKNH_09_v2:1258557        9172442.0     3.7 h           24.4 m       42.9%     8.7 h       5.0 h 
+INFO  23:57:27,698 ProgressMeter - ordered_PKNH_09_v2:1284035        9172442.0     3.7 h           24.5 m       43.0%     8.7 h       5.0 h 
+INFO  23:58:07,699 ProgressMeter - ordered_PKNH_09_v2:1316594        9172442.0     3.8 h           24.6 m       43.1%     8.7 h       5.0 h 
+INFO  23:58:47,699 ProgressMeter - ordered_PKNH_09_v2:1344643        9172442.0     3.8 h           24.6 m       43.2%     8.7 h       4.9 h 
+INFO  23:59:17,700 ProgressMeter - ordered_PKNH_09_v2:1360511        9172442.0     3.8 h           24.7 m       43.3%     8.7 h       4.9 h 
+INFO  23:59:47,708 ProgressMeter - ordered_PKNH_09_v2:1388371        9172442.0     3.8 h           24.7 m       43.4%     8.7 h       4.9 h 
+INFO  00:00:17,709 ProgressMeter - ordered_PKNH_09_v2:1404511        9172442.0     3.8 h           24.8 m       43.5%     8.7 h       4.9 h 
+INFO  00:00:57,710 ProgressMeter - ordered_PKNH_09_v2:1460357        9172442.0     3.8 h           24.9 m       43.7%     8.7 h       4.9 h 
+INFO  00:01:37,710 ProgressMeter - ordered_PKNH_09_v2:1497407        9172442.0     3.8 h           24.9 m       43.9%     8.7 h       4.9 h 
+INFO  00:02:07,711 ProgressMeter - ordered_PKNH_09_v2:1517506        9172442.0     3.8 h           25.0 m       44.0%     8.7 h       4.9 h 
+INFO  00:02:47,711 ProgressMeter - ordered_PKNH_09_v2:1537462        9172442.0     3.8 h           25.1 m       44.0%     8.7 h       4.9 h 
+INFO  00:03:17,712 ProgressMeter - ordered_PKNH_09_v2:1564360        9172442.0     3.8 h           25.1 m       44.1%     8.7 h       4.9 h 
+INFO  00:03:57,713 ProgressMeter - ordered_PKNH_09_v2:1595709        9172442.0     3.9 h           25.2 m       44.3%     8.7 h       4.8 h 
+INFO  00:04:27,713 ProgressMeter - ordered_PKNH_09_v2:1622440        9172442.0     3.9 h           25.3 m       44.4%     8.7 h       4.8 h 
+INFO  00:04:57,714 ProgressMeter - ordered_PKNH_09_v2:1661315        9172442.0     3.9 h           25.3 m       44.5%     8.7 h       4.8 h 
+INFO  00:05:37,714 ProgressMeter - ordered_PKNH_09_v2:1712004        9172442.0     3.9 h           25.4 m       44.8%     8.7 h       4.8 h 
+INFO  00:06:07,715 ProgressMeter - ordered_PKNH_09_v2:1745397        9172442.0     3.9 h           25.4 m       44.9%     8.7 h       4.8 h 
+INFO  00:06:47,715 ProgressMeter - ordered_PKNH_09_v2:1773301        9172442.0     3.9 h           25.5 m       45.0%     8.7 h       4.8 h 
+INFO  00:07:17,716 ProgressMeter - ordered_PKNH_09_v2:1792360        9172442.0     3.9 h           25.6 m       45.1%     8.7 h       4.8 h 
+INFO  00:07:47,717 ProgressMeter - ordered_PKNH_09_v2:1819623        9172442.0     3.9 h           25.6 m       45.2%     8.7 h       4.7 h 
+INFO  00:08:27,717 ProgressMeter - ordered_PKNH_09_v2:1863762        9172442.0     3.9 h           25.7 m       45.4%     8.7 h       4.7 h 
+INFO  00:08:57,718 ProgressMeter - ordered_PKNH_09_v2:1886536        9172442.0     3.9 h           25.7 m       45.5%     8.7 h       4.7 h 
+INFO  00:09:37,718 ProgressMeter - ordered_PKNH_09_v2:1934492        9172442.0     3.9 h           25.8 m       45.7%     8.6 h       4.7 h 
+INFO  00:10:07,719 ProgressMeter - ordered_PKNH_09_v2:1953961        9172442.0     4.0 h           25.9 m       45.7%     8.6 h       4.7 h 
+INFO  00:10:47,720 ProgressMeter - ordered_PKNH_09_v2:1997233        9172442.0     4.0 h           25.9 m       45.9%     8.6 h       4.7 h 
+INFO  00:11:17,729 ProgressMeter - ordered_PKNH_09_v2:2023301        9172442.0     4.0 h           26.0 m       46.0%     8.6 h       4.7 h 
+INFO  00:11:47,730 ProgressMeter - ordered_PKNH_09_v2:2062338        9172442.0     4.0 h           26.1 m       46.2%     8.6 h       4.6 h 
+INFO  00:12:27,731 ProgressMeter - ordered_PKNH_09_v2:2147770        9172442.0     4.0 h           26.1 m       46.5%     8.6 h       4.6 h 
+INFO  00:13:07,731 ProgressMeter - ordered_PKNH_10_v2:2810      1.1367931E7     4.0 h           21.1 m       46.8%     8.6 h       4.6 h 
+INFO  00:13:37,732 ProgressMeter - ordered_PKNH_10_v2:21946      1.1367931E7     4.0 h           21.2 m       46.8%     8.6 h       4.6 h 
+INFO  00:14:17,732 ProgressMeter - ordered_PKNH_10_v2:93557      1.1367931E7     4.0 h           21.2 m       47.1%     8.5 h       4.5 h 
+INFO  00:14:47,733 ProgressMeter - ordered_PKNH_10_v2:138923      1.1367931E7     4.0 h           21.3 m       47.3%     8.5 h       4.5 h 
+INFO  00:15:27,733 ProgressMeter - ordered_PKNH_10_v2:192597      1.1367931E7     4.0 h           21.3 m       47.5%     8.5 h       4.5 h 
+INFO  00:15:57,734 ProgressMeter - ordered_PKNH_10_v2:242888      1.1367931E7     4.1 h           21.4 m       47.7%     8.5 h       4.4 h 
+INFO  00:16:27,735 ProgressMeter - ordered_PKNH_10_v2:281179      1.1367931E7     4.1 h           21.4 m       47.9%     8.5 h       4.4 h 
+INFO  00:17:07,735 ProgressMeter - ordered_PKNH_10_v2:329163      1.1367931E7     4.1 h           21.5 m       48.1%     8.5 h       4.4 h 
+INFO  00:17:37,736 ProgressMeter - ordered_PKNH_10_v2:355269      1.1367931E7     4.1 h           21.5 m       48.2%     8.5 h       4.4 h 
+INFO  00:18:17,736 ProgressMeter - ordered_PKNH_10_v2:395112      1.1367931E7     4.1 h           21.6 m       48.4%     8.5 h       4.4 h 
+INFO  00:18:47,737 ProgressMeter - ordered_PKNH_10_v2:424533      1.1367931E7     4.1 h           21.6 m       48.5%     8.5 h       4.4 h 
+INFO  00:19:27,738 ProgressMeter - ordered_PKNH_10_v2:472254      1.1367931E7     4.1 h           21.7 m       48.7%     8.4 h       4.3 h 
+INFO  00:20:07,738 ProgressMeter - ordered_PKNH_10_v2:513246      1.1367931E7     4.1 h           21.8 m       48.9%     8.4 h       4.3 h 
+INFO  00:20:37,739 ProgressMeter - ordered_PKNH_10_v2:529259      1.1367931E7     4.1 h           21.8 m       48.9%     8.4 h       4.3 h 
+INFO  00:21:17,739 ProgressMeter - ordered_PKNH_10_v2:565670      1.1367931E7     4.1 h           21.9 m       49.1%     8.4 h       4.3 h 
+INFO  00:21:47,740 ProgressMeter - ordered_PKNH_10_v2:580660      1.1367931E7     4.2 h           21.9 m       49.1%     8.4 h       4.3 h 
+INFO  00:22:27,741 ProgressMeter - ordered_PKNH_10_v2:606895      1.1367931E7     4.2 h           22.0 m       49.2%     8.5 h       4.3 h 
+INFO  00:22:57,747 ProgressMeter - ordered_PKNH_10_v2:631878      1.1367931E7     4.2 h           22.0 m       49.3%     8.5 h       4.3 h 
+INFO  00:23:27,748 ProgressMeter - ordered_PKNH_10_v2:674822      1.1367931E7     4.2 h           22.1 m       49.5%     8.4 h       4.3 h 
+INFO  00:24:07,748 ProgressMeter - ordered_PKNH_10_v2:692886      1.1367931E7     4.2 h           22.1 m       49.6%     8.4 h       4.3 h 
+WARN  00:24:35,479 ExactAFCalc - this tool is currently set to genotype at most 3 alternate alleles in a given context, but the context at ordered_PKNH_10_v2:712454 has 5 alternate alleles so only the top alleles will be used; see the --max_alternate_alleles argument 
+INFO  00:24:37,749 ProgressMeter - ordered_PKNH_10_v2:714162      1.1367931E7     4.2 h           22.2 m       49.7%     8.4 h       4.3 h 
+WARN  00:24:39,389 ExactAFCalc - this tool is currently set to genotype at most 3 alternate alleles in a given context, but the context at ordered_PKNH_10_v2:714516 has 5 alternate alleles so only the top alleles will be used; see the --max_alternate_alleles argument 
+INFO  00:25:07,750 ProgressMeter - ordered_PKNH_10_v2:741115      1.1367931E7     4.2 h           22.2 m       49.8%     8.4 h       4.2 h 
+INFO  00:25:47,750 ProgressMeter - ordered_PKNH_10_v2:764384      1.1367931E7     4.2 h           22.3 m       49.9%     8.5 h       4.2 h 
+INFO  00:26:17,751 ProgressMeter - ordered_PKNH_10_v2:783396      1.1367931E7     4.2 h           22.3 m       50.0%     8.5 h       4.2 h 
+INFO  00:26:57,751 ProgressMeter - ordered_PKNH_10_v2:819655      1.1367931E7     4.2 h           22.4 m       50.1%     8.5 h       4.2 h 
+INFO  00:27:27,752 ProgressMeter - ordered_PKNH_10_v2:836032      1.1367931E7     4.2 h           22.4 m       50.2%     8.5 h       4.2 h 
+INFO  00:28:07,753 ProgressMeter - ordered_PKNH_10_v2:856710      1.1367931E7     4.3 h           22.5 m       50.3%     8.5 h       4.2 h 
+INFO  00:28:37,753 ProgressMeter - ordered_PKNH_10_v2:881109      1.1367931E7     4.3 h           22.5 m       50.4%     8.5 h       4.2 h 
+INFO  00:29:07,754 ProgressMeter - ordered_PKNH_10_v2:900466      1.1367931E7     4.3 h           22.5 m       50.4%     8.5 h       4.2 h 
+INFO  00:29:47,754 ProgressMeter - ordered_PKNH_10_v2:922701      1.1367931E7     4.3 h           22.6 m       50.5%     8.5 h       4.2 h 
+INFO  00:30:17,755 ProgressMeter - ordered_PKNH_10_v2:941644      1.1367931E7     4.3 h           22.7 m       50.6%     8.5 h       4.2 h 
+INFO  00:30:57,755 ProgressMeter - ordered_PKNH_10_v2:966473      1.1367931E7     4.3 h           22.7 m       50.7%     8.5 h       4.2 h 
+WARN  00:30:58,128 ExactAFCalc - this tool is currently set to genotype at most 3 alternate alleles in a given context, but the context at ordered_PKNH_10_v2:966144 has 5 alternate alleles so only the top alleles will be used; see the --max_alternate_alleles argument 
+WARN  00:30:58,178 ExactAFCalc - this tool is currently set to genotype at most 3 alternate alleles in a given context, but the context at ordered_PKNH_10_v2:966203 has 5 alternate alleles so only the top alleles will be used; see the --max_alternate_alleles argument 
+INFO  00:31:27,756 ProgressMeter - ordered_PKNH_10_v2:991575      1.1367931E7     4.3 h           22.8 m       50.8%     8.5 h       4.2 h 
+INFO  00:31:57,757 ProgressMeter - ordered_PKNH_10_v2:1002992      1.1367931E7     4.3 h           22.8 m       50.9%     8.5 h       4.2 h 
+INFO  00:32:37,757 ProgressMeter - ordered_PKNH_10_v2:1038499      1.1367931E7     4.3 h           22.9 m       51.0%     8.5 h       4.2 h 
+INFO  00:33:07,821 ProgressMeter - ordered_PKNH_10_v2:1079732      1.1367931E7     4.3 h           22.9 m       51.2%     8.5 h       4.1 h 
+WARN  00:33:42,504 ExactAFCalc - this tool is currently set to genotype at most 3 alternate alleles in a given context, but the context at ordered_PKNH_10_v2:1095984 has 6 alternate alleles so only the top alleles will be used; see the --max_alternate_alleles argument 
+INFO  00:33:47,821 ProgressMeter - ordered_PKNH_10_v2:1097674      1.1367931E7     4.4 h           23.0 m       51.3%     8.5 h       4.1 h 
+INFO  00:34:17,822 ProgressMeter - ordered_PKNH_10_v2:1117031      1.1367931E7     4.4 h           23.0 m       51.3%     8.5 h       4.1 h 
+INFO  00:34:57,822 ProgressMeter - ordered_PKNH_10_v2:1133685      1.1367931E7     4.4 h           23.1 m       51.4%     8.5 h       4.1 h 
+INFO  00:35:27,823 ProgressMeter - ordered_PKNH_10_v2:1146844      1.1367931E7     4.4 h           23.1 m       51.5%     8.5 h       4.1 h 
+INFO  00:36:07,824 ProgressMeter - ordered_PKNH_10_v2:1167162      1.1367931E7     4.4 h           23.2 m       51.5%     8.5 h       4.1 h 
+INFO  00:36:47,824 ProgressMeter - ordered_PKNH_10_v2:1180535      1.1367931E7     4.4 h           23.2 m       51.6%     8.5 h       4.1 h 
+INFO  00:37:17,825 ProgressMeter - ordered_PKNH_10_v2:1201627      1.1367931E7     4.4 h           23.3 m       51.7%     8.5 h       4.1 h 
+INFO  00:37:57,825 ProgressMeter - ordered_PKNH_10_v2:1224771      1.1367931E7     4.4 h           23.3 m       51.8%     8.5 h       4.1 h 
+INFO  00:38:27,826 ProgressMeter - ordered_PKNH_10_v2:1239721      1.1367931E7     4.4 h           23.4 m       51.8%     8.5 h       4.1 h 
+INFO  00:39:07,827 ProgressMeter - ordered_PKNH_10_v2:1268844      1.1367931E7     4.4 h           23.4 m       52.0%     8.5 h       4.1 h 
+INFO  00:39:47,827 ProgressMeter - ordered_PKNH_10_v2:1294891      1.1367931E7     4.5 h           23.5 m       52.1%     8.5 h       4.1 h 
+INFO  00:40:17,828 ProgressMeter - ordered_PKNH_10_v2:1309033      1.1367931E7     4.5 h           23.5 m       52.1%     8.6 h       4.1 h 
+WARN  00:40:36,767 ExactAFCalc - this tool is currently set to genotype at most 3 alternate alleles in a given context, but the context at ordered_PKNH_10_v2:1319719 has 5 alternate alleles so only the top alleles will be used; see the --max_alternate_alleles argument 
+INFO  00:40:57,828 ProgressMeter - ordered_PKNH_10_v2:1327713      1.1367931E7     4.5 h           23.6 m       52.2%     8.6 h       4.1 h 
+INFO  00:41:27,829 ProgressMeter - ordered_PKNH_10_v2:1360964      1.1367931E7     4.5 h           23.6 m       52.3%     8.6 h       4.1 h 
+INFO  00:42:07,829 ProgressMeter - ordered_PKNH_10_v2:1383701      1.1367931E7     4.5 h           23.7 m       52.4%     8.6 h       4.1 h 
+INFO  00:42:37,838 ProgressMeter - ordered_PKNH_10_v2:1403077      1.1367931E7     4.5 h           23.7 m       52.5%     8.6 h       4.1 h 
+INFO  00:43:07,839 ProgressMeter - ordered_PKNH_10_v2:1448622      1.1367931E7     4.5 h           23.8 m       52.7%     8.5 h       4.0 h 
+INFO  00:43:47,839 ProgressMeter - ordered_PKNH_10_v2:1506238      1.1367931E7     4.5 h           23.8 m       52.9%     8.5 h       4.0 h 
+INFO  00:44:17,840 ProgressMeter - ordered_PKNH_11_v2:21634      1.2884913E7     4.5 h           21.1 m       53.1%     8.5 h       4.0 h 
+INFO  00:44:57,840 ProgressMeter - ordered_PKNH_11_v2:88209      1.2884913E7     4.5 h           21.1 m       53.3%     8.5 h       4.0 h 
+INFO  00:45:27,841 ProgressMeter - ordered_PKNH_11_v2:111814      1.2884913E7     4.5 h           21.2 m       53.4%     8.5 h       4.0 h 
+INFO  00:46:07,842 ProgressMeter - ordered_PKNH_11_v2:139927      1.2884913E7     4.6 h           21.2 m       53.6%     8.5 h       4.0 h 
+INFO  00:46:37,842 ProgressMeter - ordered_PKNH_11_v2:163754      1.2884913E7     4.6 h           21.3 m       53.7%     8.5 h       3.9 h 
+WARN  00:47:03,760 ExactAFCalc - this tool is currently set to genotype at most 3 alternate alleles in a given context, but the context at ordered_PKNH_11_v2:169775 has 5 alternate alleles so only the top alleles will be used; see the --max_alternate_alleles argument 
+INFO  00:47:07,843 ProgressMeter - ordered_PKNH_11_v2:183703      1.2884913E7     4.6 h           21.3 m       53.7%     8.5 h       3.9 h 
+WARN  00:47:27,097 ExactAFCalc - this tool is currently set to genotype at most 3 alternate alleles in a given context, but the context at ordered_PKNH_11_v2:187041 has 5 alternate alleles so only the top alleles will be used; see the --max_alternate_alleles argument 
+INFO  00:47:47,843 ProgressMeter - ordered_PKNH_11_v2:203248      1.2884913E7     4.6 h           21.3 m       53.8%     8.5 h       3.9 h 
+INFO  00:48:17,844 ProgressMeter - ordered_PKNH_11_v2:219637      1.2884913E7     4.6 h           21.4 m       53.9%     8.5 h       3.9 h 
+INFO  00:48:57,844 ProgressMeter - ordered_PKNH_11_v2:253180      1.2884913E7     4.6 h           21.4 m       54.0%     8.5 h       3.9 h 
+INFO  00:49:27,845 ProgressMeter - ordered_PKNH_11_v2:298678      1.2884913E7     4.6 h           21.5 m       54.2%     8.5 h       3.9 h 
+INFO  00:50:07,846 ProgressMeter - ordered_PKNH_11_v2:336660      1.2884913E7     4.6 h           21.5 m       54.4%     8.5 h       3.9 h 
+INFO  00:50:47,846 ProgressMeter - ordered_PKNH_11_v2:370192      1.2884913E7     4.6 h           21.6 m       54.5%     8.5 h       3.9 h 
+INFO  00:51:17,847 ProgressMeter - ordered_PKNH_11_v2:386872      1.2884913E7     4.6 h           21.6 m       54.6%     8.5 h       3.9 h 
+INFO  00:51:57,847 ProgressMeter - ordered_PKNH_11_v2:426384      1.2884913E7     4.7 h           21.7 m       54.7%     8.5 h       3.8 h 
+INFO  00:52:27,848 ProgressMeter - ordered_PKNH_11_v2:451024      1.2884913E7     4.7 h           21.7 m       54.8%     8.5 h       3.8 h 
+WARN  00:52:47,016 ExactAFCalc - this tool is currently set to genotype at most 3 alternate alleles in a given context, but the context at ordered_PKNH_11_v2:477485 has 5 alternate alleles so only the top alleles will be used; see the --max_alternate_alleles argument 
+INFO  00:52:57,854 ProgressMeter - ordered_PKNH_11_v2:493582      1.2884913E7     4.7 h           21.7 m       55.0%     8.5 h       3.8 h 
+INFO  00:53:27,855 ProgressMeter - ordered_PKNH_11_v2:524331      1.2884913E7     4.7 h           21.8 m       55.1%     8.5 h       3.8 h 
+INFO  00:54:07,856 ProgressMeter - ordered_PKNH_11_v2:598766      1.2884913E7     4.7 h           21.8 m       55.4%     8.5 h       3.8 h 
+INFO  00:54:37,856 ProgressMeter - ordered_PKNH_11_v2:612098      1.2884913E7     4.7 h           21.9 m       55.5%     8.5 h       3.8 h 
+INFO  00:55:07,857 ProgressMeter - ordered_PKNH_11_v2:645598      1.2884913E7     4.7 h           21.9 m       55.6%     8.5 h       3.8 h 
+INFO  00:55:47,857 ProgressMeter - ordered_PKNH_11_v2:677723      1.2884913E7     4.7 h           22.0 m       55.8%     8.5 h       3.7 h 
+INFO  00:56:17,858 ProgressMeter - ordered_PKNH_11_v2:696714      1.2884913E7     4.7 h           22.0 m       55.8%     8.5 h       3.7 h 
+INFO  00:56:57,858 ProgressMeter - ordered_PKNH_11_v2:739808      1.2884913E7     4.7 h           22.1 m       56.0%     8.5 h       3.7 h 
+INFO  00:57:27,865 ProgressMeter - ordered_PKNH_11_v2:792281      1.2884913E7     4.7 h           22.1 m       56.2%     8.4 h       3.7 h 
+INFO  00:57:57,866 ProgressMeter - ordered_PKNH_11_v2:818211      1.2884913E7     4.8 h           22.1 m       56.3%     8.4 h       3.7 h 
+INFO  00:58:37,867 ProgressMeter - ordered_PKNH_11_v2:854429      1.2884913E7     4.8 h           22.2 m       56.5%     8.4 h       3.7 h 
+INFO  00:59:07,867 ProgressMeter - ordered_PKNH_11_v2:896403      1.2884913E7     4.8 h           22.2 m       56.7%     8.4 h       3.6 h 
+INFO  00:59:47,868 ProgressMeter - ordered_PKNH_11_v2:926814      1.2884913E7     4.8 h           22.3 m       56.8%     8.4 h       3.6 h 
+INFO  01:00:27,868 ProgressMeter - ordered_PKNH_11_v2:1011820      1.2884913E7     4.8 h           22.3 m       57.1%     8.4 h       3.6 h 
+INFO  01:00:57,869 ProgressMeter - ordered_PKNH_11_v2:1056719      1.2884913E7     4.8 h           22.4 m       57.3%     8.4 h       3.6 h 
+INFO  01:01:37,869 ProgressMeter - ordered_PKNH_11_v2:1104688      1.2884913E7     4.8 h           22.4 m       57.5%     8.4 h       3.6 h 
+INFO  01:02:07,870 ProgressMeter - ordered_PKNH_11_v2:1135866      1.2884913E7     4.8 h           22.5 m       57.7%     8.4 h       3.5 h 
+INFO  01:02:47,871 ProgressMeter - ordered_PKNH_11_v2:1178276      1.2884913E7     4.8 h           22.5 m       57.8%     8.4 h       3.5 h 
+INFO  01:03:17,871 ProgressMeter - ordered_PKNH_11_v2:1202190      1.2884913E7     4.8 h           22.5 m       57.9%     8.4 h       3.5 h 
+INFO  01:03:47,872 ProgressMeter - ordered_PKNH_11_v2:1235404      1.2884913E7     4.9 h           22.6 m       58.1%     8.4 h       3.5 h 
+INFO  01:04:17,881 ProgressMeter - ordered_PKNH_11_v2:1264849      1.2884913E7     4.9 h           22.6 m       58.2%     8.4 h       3.5 h 
+INFO  01:04:47,882 ProgressMeter - ordered_PKNH_11_v2:1282744      1.2884913E7     4.9 h           22.7 m       58.3%     8.4 h       3.5 h 
+INFO  01:05:27,883 ProgressMeter - ordered_PKNH_11_v2:1310152      1.2884913E7     4.9 h           22.7 m       58.4%     8.4 h       3.5 h 
+INFO  01:05:57,883 ProgressMeter - ordered_PKNH_11_v2:1325326      1.2884913E7     4.9 h           22.8 m       58.4%     8.4 h       3.5 h 
+INFO  01:06:27,884 ProgressMeter - ordered_PKNH_11_v2:1344182      1.2884913E7     4.9 h           22.8 m       58.5%     8.4 h       3.5 h 
+INFO  01:07:07,884 ProgressMeter - ordered_PKNH_11_v2:1383550      1.2884913E7     4.9 h           22.8 m       58.7%     8.4 h       3.5 h 
+INFO  01:07:37,885 ProgressMeter - ordered_PKNH_11_v2:1399970      1.2884913E7     4.9 h           22.9 m       58.7%     8.4 h       3.5 h 
+INFO  01:08:17,885 ProgressMeter - ordered_PKNH_11_v2:1439525      1.2884913E7     4.9 h           22.9 m       58.9%     8.4 h       3.4 h 
+INFO  01:08:47,886 ProgressMeter - ordered_PKNH_11_v2:1467631      1.2884913E7     4.9 h           23.0 m       59.0%     8.4 h       3.4 h 
+WARN  01:09:24,780 ExactAFCalc - this tool is currently set to genotype at most 3 alternate alleles in a given context, but the context at ordered_PKNH_11_v2:1497645 has 5 alternate alleles so only the top alleles will be used; see the --max_alternate_alleles argument 
+INFO  01:09:27,887 ProgressMeter - ordered_PKNH_11_v2:1499780      1.2884913E7     4.9 h           23.0 m       59.1%     8.4 h       3.4 h 
+WARN  01:09:48,783 ExactAFCalc - this tool is currently set to genotype at most 3 alternate alleles in a given context, but the context at ordered_PKNH_11_v2:1513471 has 7 alternate alleles so only the top alleles will be used; see the --max_alternate_alleles argument 
+INFO  01:10:07,887 ProgressMeter - ordered_PKNH_11_v2:1519044      1.2884913E7     5.0 h           23.1 m       59.2%     8.4 h       3.4 h 
+INFO  01:10:37,888 ProgressMeter - ordered_PKNH_11_v2:1537714      1.2884913E7     5.0 h           23.1 m       59.3%     8.4 h       3.4 h 
+INFO  01:11:17,888 ProgressMeter - ordered_PKNH_11_v2:1565966      1.2884913E7     5.0 h           23.2 m       59.4%     8.4 h       3.4 h 
+INFO  01:11:47,912 ProgressMeter - ordered_PKNH_11_v2:1582902      1.2884913E7     5.0 h           23.2 m       59.5%     8.4 h       3.4 h 
+INFO  01:12:17,913 ProgressMeter - ordered_PKNH_11_v2:1598782      1.2884913E7     5.0 h           23.2 m       59.6%     8.4 h       3.4 h 
+INFO  01:12:47,913 ProgressMeter - ordered_PKNH_11_v2:1626419      1.2884913E7     5.0 h           23.3 m       59.7%     8.4 h       3.4 h 
+INFO  01:13:17,914 ProgressMeter - ordered_PKNH_11_v2:1638463      1.2884913E7     5.0 h           23.3 m       59.7%     8.4 h       3.4 h 
+INFO  01:13:57,914 ProgressMeter - ordered_PKNH_11_v2:1658322      1.2884913E7     5.0 h           23.4 m       59.8%     8.4 h       3.4 h 
+INFO  01:14:27,915 ProgressMeter - ordered_PKNH_11_v2:1668122      1.2884913E7     5.0 h           23.4 m       59.8%     8.4 h       3.4 h 
+INFO  01:15:07,915 ProgressMeter - ordered_PKNH_11_v2:1683455      1.2884913E7     5.0 h           23.5 m       59.9%     8.4 h       3.4 h 
+INFO  01:15:37,916 ProgressMeter - ordered_PKNH_11_v2:1697543      1.2884913E7     5.0 h           23.5 m       60.0%     8.4 h       3.4 h 
+INFO  01:16:17,917 ProgressMeter - ordered_PKNH_11_v2:1727668      1.2884913E7     5.1 h           23.6 m       60.1%     8.4 h       3.4 h 
+INFO  01:16:57,917 ProgressMeter - ordered_PKNH_11_v2:1749959      1.2884913E7     5.1 h           23.6 m       60.2%     8.4 h       3.4 h 
+INFO  01:17:27,918 ProgressMeter - ordered_PKNH_11_v2:1772437      1.2884913E7     5.1 h           23.6 m       60.3%     8.4 h       3.3 h 
+INFO  01:18:07,918 ProgressMeter - ordered_PKNH_11_v2:1835045      1.2884913E7     5.1 h           23.7 m       60.5%     8.4 h       3.3 h 
+INFO  01:18:37,919 ProgressMeter - ordered_PKNH_11_v2:1860969      1.2884913E7     5.1 h           23.7 m       60.6%     8.4 h       3.3 h 
+INFO  01:19:17,920 ProgressMeter - ordered_PKNH_11_v2:1910216      1.2884913E7     5.1 h           23.8 m       60.8%     8.4 h       3.3 h 
+INFO  01:19:47,920 ProgressMeter - ordered_PKNH_11_v2:1924013      1.2884913E7     5.1 h           23.8 m       60.9%     8.4 h       3.3 h 
+INFO  01:20:27,921 ProgressMeter - ordered_PKNH_11_v2:1947157      1.2884913E7     5.1 h           23.9 m       61.0%     8.4 h       3.3 h 
+INFO  01:21:07,921 ProgressMeter - ordered_PKNH_11_v2:1977145      1.2884913E7     5.1 h           23.9 m       61.1%     8.4 h       3.3 h 
+INFO  01:21:37,922 ProgressMeter - ordered_PKNH_11_v2:1988070      1.2884913E7     5.1 h           24.0 m       61.2%     8.4 h       3.3 h 
+INFO  01:22:17,922 ProgressMeter - ordered_PKNH_11_v2:2009684      1.2884913E7     5.2 h           24.0 m       61.2%     8.4 h       3.3 h 
+INFO  01:22:47,923 ProgressMeter - ordered_PKNH_11_v2:2020134      1.2884913E7     5.2 h           24.1 m       61.3%     8.4 h       3.3 h 
+INFO  01:23:27,924 ProgressMeter - ordered_PKNH_11_v2:2041500      1.2884913E7     5.2 h           24.1 m       61.4%     8.4 h       3.3 h 
+INFO  01:23:57,924 ProgressMeter - ordered_PKNH_11_v2:2069776      1.2884913E7     5.2 h           24.2 m       61.5%     8.4 h       3.2 h 
+INFO  01:24:27,925 ProgressMeter - ordered_PKNH_11_v2:2088129      1.2884913E7     5.2 h           24.2 m       61.6%     8.4 h       3.2 h 
+INFO  01:25:07,925 ProgressMeter - ordered_PKNH_11_v2:2127722      1.2884913E7     5.2 h           24.2 m       61.7%     8.4 h       3.2 h 
+INFO  01:25:37,926 ProgressMeter - ordered_PKNH_11_v2:2158421      1.2884913E7     5.2 h           24.3 m       61.9%     8.4 h       3.2 h 
+INFO  01:26:07,934 ProgressMeter - ordered_PKNH_11_v2:2180943      1.2884913E7     5.2 h           24.3 m       61.9%     8.4 h       3.2 h 
+INFO  01:26:37,961 ProgressMeter - ordered_PKNH_11_v2:2185625      1.2884913E7     5.2 h           24.4 m       62.0%     8.4 h       3.2 h 
+INFO  01:27:07,961 ProgressMeter - ordered_PKNH_11_v2:2215417      1.2884913E7     5.2 h           24.4 m       62.1%     8.4 h       3.2 h 
+INFO  01:27:37,989 ProgressMeter - ordered_PKNH_11_v2:2240042      1.2884913E7     5.2 h           24.4 m       62.2%     8.4 h       3.2 h 
+INFO  01:28:07,990 ProgressMeter - ordered_PKNH_11_v2:2258226      1.2884913E7     5.3 h           24.5 m       62.3%     8.4 h       3.2 h 
+INFO  01:28:37,990 ProgressMeter - ordered_PKNH_11_v2:2279458      1.2884913E7     5.3 h           24.5 m       62.4%     8.4 h       3.2 h 
+WARN  01:28:47,361 ExactAFCalc - this tool is currently set to genotype at most 3 alternate alleles in a given context, but the context at ordered_PKNH_11_v2:2285065 has 9 alternate alleles so only the top alleles will be used; see the --max_alternate_alleles argument 
+INFO  01:29:07,991 ProgressMeter - ordered_PKNH_11_v2:2302656      1.2884913E7     5.3 h           24.6 m       62.4%     8.4 h       3.2 h 
+INFO  01:29:47,991 ProgressMeter - ordered_PKNH_12_v2:38332       1.525358E7     5.3 h           20.8 m       62.9%     8.4 h       3.1 h 
+INFO  01:30:17,992 ProgressMeter - ordered_PKNH_12_v2:81107       1.525358E7     5.3 h           20.8 m       63.1%     8.4 h       3.1 h 
+INFO  01:30:57,992 ProgressMeter - ordered_PKNH_12_v2:113102       1.525358E7     5.3 h           20.9 m       63.2%     8.4 h       3.1 h 
+INFO  01:31:27,993 ProgressMeter - ordered_PKNH_12_v2:132992       1.525358E7     5.3 h           20.9 m       63.3%     8.4 h       3.1 h 
+INFO  01:32:07,994 ProgressMeter - ordered_PKNH_12_v2:157012       1.525358E7     5.3 h           20.9 m       63.4%     8.4 h       3.1 h 
+INFO  01:32:37,994 ProgressMeter - ordered_PKNH_12_v2:175315       1.525358E7     5.3 h           21.0 m       63.4%     8.4 h       3.1 h 
+WARN  01:33:00,480 ExactAFCalc - this tool is currently set to genotype at most 3 alternate alleles in a given context, but the context at ordered_PKNH_12_v2:184533 has 5 alternate alleles so only the top alleles will be used; see the --max_alternate_alleles argument 
+INFO  01:33:07,995 ProgressMeter - ordered_PKNH_12_v2:186276       1.525358E7     5.3 h           21.0 m       63.5%     8.4 h       3.1 h 
+WARN  01:33:15,733 ExactAFCalc - this tool is currently set to genotype at most 3 alternate alleles in a given context, but the context at ordered_PKNH_12_v2:190751 has 5 alternate alleles so only the top alleles will be used; see the --max_alternate_alleles argument 
+WARN  01:33:27,695 ExactAFCalc - this tool is currently set to genotype at most 3 alternate alleles in a given context, but the context at ordered_PKNH_12_v2:198600 has 5 alternate alleles so only the top alleles will be used; see the --max_alternate_alleles argument 
+INFO  01:33:47,995 ProgressMeter - ordered_PKNH_12_v2:207639       1.525358E7     5.4 h           21.0 m       63.6%     8.4 h       3.1 h 
+INFO  01:34:17,996 ProgressMeter - ordered_PKNH_12_v2:222864       1.525358E7     5.4 h           21.1 m       63.6%     8.4 h       3.1 h 
+INFO  01:34:57,997 ProgressMeter - ordered_PKNH_12_v2:243900       1.525358E7     5.4 h           21.1 m       63.7%     8.4 h       3.1 h 
+INFO  01:35:37,997 ProgressMeter - ordered_PKNH_12_v2:270386       1.525358E7     5.4 h           21.2 m       63.8%     8.4 h       3.0 h 
+INFO  01:36:07,998 ProgressMeter - ordered_PKNH_12_v2:287135       1.525358E7     5.4 h           21.2 m       63.9%     8.4 h       3.0 h 
+INFO  01:36:47,998 ProgressMeter - ordered_PKNH_12_v2:308864       1.525358E7     5.4 h           21.2 m       64.0%     8.4 h       3.0 h 
+INFO  01:37:17,999 ProgressMeter - ordered_PKNH_12_v2:324673       1.525358E7     5.4 h           21.3 m       64.1%     8.4 h       3.0 h 
+INFO  01:37:57,999 ProgressMeter - ordered_PKNH_12_v2:347155       1.525358E7     5.4 h           21.3 m       64.1%     8.4 h       3.0 h 
+WARN  01:38:00,742 ExactAFCalc - this tool is currently set to genotype at most 3 alternate alleles in a given context, but the context at ordered_PKNH_12_v2:348572 has 5 alternate alleles so only the top alleles will be used; see the --max_alternate_alleles argument 
+INFO  01:38:28,000 ProgressMeter - ordered_PKNH_12_v2:357521       1.525358E7     5.4 h           21.4 m       64.2%     8.5 h       3.0 h 
+INFO  01:39:08,001 ProgressMeter - ordered_PKNH_12_v2:384637       1.525358E7     5.4 h           21.4 m       64.3%     8.5 h       3.0 h 
+INFO  01:39:38,001 ProgressMeter - ordered_PKNH_12_v2:405863       1.525358E7     5.4 h           21.4 m       64.4%     8.5 h       3.0 h 
+INFO  01:40:18,002 ProgressMeter - ordered_PKNH_12_v2:444456       1.525358E7     5.5 h           21.5 m       64.5%     8.5 h       3.0 h 
+INFO  01:40:58,002 ProgressMeter - ordered_PKNH_12_v2:484725       1.525358E7     5.5 h           21.5 m       64.7%     8.5 h       3.0 h 
+INFO  01:41:28,003 ProgressMeter - ordered_PKNH_12_v2:498449       1.525358E7     5.5 h           21.5 m       64.8%     8.5 h       3.0 h 
+INFO  01:42:08,003 ProgressMeter - ordered_PKNH_12_v2:535503       1.525358E7     5.5 h           21.6 m       64.9%     8.5 h       3.0 h 
+INFO  01:42:38,004 ProgressMeter - ordered_PKNH_12_v2:552865       1.525358E7     5.5 h           21.6 m       65.0%     8.5 h       3.0 h 
+INFO  01:43:18,005 ProgressMeter - ordered_PKNH_12_v2:587161       1.525358E7     5.5 h           21.7 m       65.1%     8.5 h       2.9 h 
+INFO  01:43:48,005 ProgressMeter - ordered_PKNH_12_v2:620440       1.525358E7     5.5 h           21.7 m       65.3%     8.5 h       2.9 h 
+INFO  01:44:18,006 ProgressMeter - ordered_PKNH_12_v2:645134       1.525358E7     5.5 h           21.7 m       65.4%     8.5 h       2.9 h 
+INFO  01:44:58,006 ProgressMeter - ordered_PKNH_12_v2:674865       1.525358E7     5.5 h           21.8 m       65.5%     8.5 h       2.9 h 
+INFO  01:45:28,007 ProgressMeter - ordered_PKNH_12_v2:708845       1.525358E7     5.5 h           21.8 m       65.6%     8.4 h       2.9 h 
+INFO  01:45:58,015 ProgressMeter - ordered_PKNH_12_v2:741302       1.525358E7     5.6 h           21.8 m       65.8%     8.4 h       2.9 h 
+INFO  01:46:28,015 ProgressMeter - ordered_PKNH_12_v2:767868       1.525358E7     5.6 h           21.9 m       65.9%     8.4 h       2.9 h 
+INFO  01:46:58,016 ProgressMeter - ordered_PKNH_12_v2:808932       1.525358E7     5.6 h           21.9 m       66.0%     8.4 h       2.9 h 
+INFO  01:47:38,016 ProgressMeter - ordered_PKNH_12_v2:846100       1.525358E7     5.6 h           22.0 m       66.2%     8.4 h       2.8 h 
+INFO  01:48:08,017 ProgressMeter - ordered_PKNH_12_v2:870033       1.525358E7     5.6 h           22.0 m       66.3%     8.4 h       2.8 h 
+INFO  01:48:48,017 ProgressMeter - ordered_PKNH_12_v2:937385       1.525358E7     5.6 h           22.0 m       66.6%     8.4 h       2.8 h 
+INFO  01:49:18,018 ProgressMeter - ordered_PKNH_12_v2:968220       1.525358E7     5.6 h           22.1 m       66.7%     8.4 h       2.8 h 
+INFO  01:49:58,018 ProgressMeter - ordered_PKNH_12_v2:1006243       1.525358E7     5.6 h           22.1 m       66.9%     8.4 h       2.8 h 
+WARN  01:50:26,477 ExactAFCalc - this tool is currently set to genotype at most 3 alternate alleles in a given context, but the context at ordered_PKNH_12_v2:1040007 has 5 alternate alleles so only the top alleles will be used; see the --max_alternate_alleles argument 
+INFO  01:50:28,019 ProgressMeter - ordered_PKNH_12_v2:1042415       1.525358E7     5.6 h           22.1 m       67.0%     8.4 h       2.8 h 
+INFO  01:51:08,020 ProgressMeter - ordered_PKNH_12_v2:1082955       1.525358E7     5.6 h           22.2 m       67.2%     8.4 h       2.8 h 
+INFO  01:51:48,020 ProgressMeter - ordered_PKNH_12_v2:1109826       1.525358E7     5.7 h           22.2 m       67.3%     8.4 h       2.7 h 
+WARN  01:51:55,633 ExactAFCalc - this tool is currently set to genotype at most 3 alternate alleles in a given context, but the context at ordered_PKNH_12_v2:1116220 has 5 alternate alleles so only the top alleles will be used; see the --max_alternate_alleles argument 
+WARN  01:51:55,656 ExactAFCalc - this tool is currently set to genotype at most 3 alternate alleles in a given context, but the context at ordered_PKNH_12_v2:1116225 has 6 alternate alleles so only the top alleles will be used; see the --max_alternate_alleles argument 
+INFO  01:52:18,021 ProgressMeter - ordered_PKNH_12_v2:1138439       1.525358E7     5.7 h           22.3 m       67.4%     8.4 h       2.7 h 
+INFO  01:52:58,021 ProgressMeter - ordered_PKNH_12_v2:1165008       1.525358E7     5.7 h           22.3 m       67.5%     8.4 h       2.7 h 
+WARN  01:52:58,502 ExactAFCalc - this tool is currently set to genotype at most 3 alternate alleles in a given context, but the context at ordered_PKNH_12_v2:1164689 has 5 alternate alleles so only the top alleles will be used; see the --max_alternate_alleles argument 
+INFO  01:53:28,022 ProgressMeter - ordered_PKNH_12_v2:1191043       1.525358E7     5.7 h           22.3 m       67.6%     8.4 h       2.7 h 
+INFO  01:54:08,022 ProgressMeter - ordered_PKNH_12_v2:1237074       1.525358E7     5.7 h           22.4 m       67.8%     8.4 h       2.7 h 
+INFO  01:54:38,023 ProgressMeter - ordered_PKNH_12_v2:1264573       1.525358E7     5.7 h           22.4 m       67.9%     8.4 h       2.7 h 
+INFO  01:55:08,031 ProgressMeter - ordered_PKNH_12_v2:1282706       1.525358E7     5.7 h           22.4 m       68.0%     8.4 h       2.7 h 
+INFO  01:55:48,031 ProgressMeter - ordered_PKNH_12_v2:1327524       1.525358E7     5.7 h           22.5 m       68.2%     8.4 h       2.7 h 
+INFO  01:56:18,032 ProgressMeter - ordered_PKNH_12_v2:1361680       1.525358E7     5.7 h           22.5 m       68.3%     8.4 h       2.7 h 
+INFO  01:56:58,032 ProgressMeter - ordered_PKNH_12_v2:1404364       1.525358E7     5.7 h           22.6 m       68.5%     8.4 h       2.6 h 
+INFO  01:57:28,033 ProgressMeter - ordered_PKNH_12_v2:1430163       1.525358E7     5.7 h           22.6 m       68.6%     8.4 h       2.6 h 
+INFO  01:58:08,034 ProgressMeter - ordered_PKNH_12_v2:1467786       1.525358E7     5.8 h           22.6 m       68.8%     8.4 h       2.6 h 
+WARN  01:58:17,675 ExactAFCalc - this tool is currently set to genotype at most 3 alternate alleles in a given context, but the context at ordered_PKNH_12_v2:1480458 has 5 alternate alleles so only the top alleles will be used; see the --max_alternate_alleles argument 
+INFO  01:58:38,034 ProgressMeter - ordered_PKNH_12_v2:1498013       1.525358E7     5.8 h           22.7 m       68.9%     8.4 h       2.6 h 
+INFO  01:59:18,035 ProgressMeter - ordered_PKNH_12_v2:1518505       1.525358E7     5.8 h           22.7 m       69.0%     8.4 h       2.6 h 
+INFO  01:59:58,035 ProgressMeter - ordered_PKNH_12_v2:1534986       1.525358E7     5.8 h           22.8 m       69.0%     8.4 h       2.6 h 
+INFO  02:00:28,036 ProgressMeter - ordered_PKNH_12_v2:1553157       1.525358E7     5.8 h           22.8 m       69.1%     8.4 h       2.6 h 
+INFO  02:01:08,036 ProgressMeter - ordered_PKNH_12_v2:1581216       1.525358E7     5.8 h           22.8 m       69.2%     8.4 h       2.6 h 
+WARN  02:01:33,474 ExactAFCalc - this tool is currently set to genotype at most 3 alternate alleles in a given context, but the context at ordered_PKNH_12_v2:1604190 has 7 alternate alleles so only the top alleles will be used; see the --max_alternate_alleles argument 
+INFO  02:01:38,037 ProgressMeter - ordered_PKNH_12_v2:1604789       1.525358E7     5.8 h           22.9 m       69.3%     8.4 h       2.6 h 
+INFO  02:02:18,037 ProgressMeter - ordered_PKNH_12_v2:1648929       1.525358E7     5.8 h           22.9 m       69.5%     8.4 h       2.6 h 
+INFO  02:02:48,038 ProgressMeter - ordered_PKNH_12_v2:1669096       1.525358E7     5.8 h           22.9 m       69.6%     8.4 h       2.6 h 
+INFO  02:03:28,039 ProgressMeter - ordered_PKNH_12_v2:1717427       1.525358E7     5.8 h           23.0 m       69.8%     8.4 h       2.5 h 
+INFO  02:03:58,039 ProgressMeter - ordered_PKNH_12_v2:1750031       1.525358E7     5.9 h           23.0 m       69.9%     8.4 h       2.5 h 
+INFO  02:04:38,040 ProgressMeter - ordered_PKNH_12_v2:1775336       1.525358E7     5.9 h           23.1 m       70.0%     8.4 h       2.5 h 
+INFO  02:05:18,040 ProgressMeter - ordered_PKNH_12_v2:1807387       1.525358E7     5.9 h           23.1 m       70.2%     8.4 h       2.5 h 
+INFO  02:05:48,051 ProgressMeter - ordered_PKNH_12_v2:1824294       1.525358E7     5.9 h           23.1 m       70.2%     8.4 h       2.5 h 
+INFO  02:06:28,051 ProgressMeter - ordered_PKNH_12_v2:1875474       1.525358E7     5.9 h           23.2 m       70.4%     8.4 h       2.5 h 
+INFO  02:06:58,052 ProgressMeter - ordered_PKNH_12_v2:1889016       1.525358E7     5.9 h           23.2 m       70.5%     8.4 h       2.5 h 
+INFO  02:07:38,053 ProgressMeter - ordered_PKNH_12_v2:1917236       1.525358E7     5.9 h           23.3 m       70.6%     8.4 h       2.5 h 
+INFO  02:08:18,053 ProgressMeter - ordered_PKNH_12_v2:1976559       1.525358E7     5.9 h           23.3 m       70.8%     8.4 h       2.4 h 
+INFO  02:08:48,054 ProgressMeter - ordered_PKNH_12_v2:1996847       1.525358E7     5.9 h           23.3 m       70.9%     8.4 h       2.4 h 
+INFO  02:09:28,054 ProgressMeter - ordered_PKNH_12_v2:2049693       1.525358E7     5.9 h           23.4 m       71.1%     8.4 h       2.4 h 
+INFO  02:09:58,055 ProgressMeter - ordered_PKNH_12_v2:2113816       1.525358E7     6.0 h           23.4 m       71.4%     8.3 h       2.4 h 
+WARN  02:10:10,285 ExactAFCalc - this tool is currently set to genotype at most 3 alternate alleles in a given context, but the context at ordered_PKNH_12_v2:2113897 has 7 alternate alleles so only the top alleles will be used; see the --max_alternate_alleles argument 
+WARN  02:10:10,360 ExactAFCalc - this tool is currently set to genotype at most 3 alternate alleles in a given context, but the context at ordered_PKNH_12_v2:2113901 has 5 alternate alleles so only the top alleles will be used; see the --max_alternate_alleles argument 
+WARN  02:10:10,504 ExactAFCalc - this tool is currently set to genotype at most 3 alternate alleles in a given context, but the context at ordered_PKNH_12_v2:2113915 has 5 alternate alleles so only the top alleles will be used; see the --max_alternate_alleles argument 
+WARN  02:10:10,811 ExactAFCalc - this tool is currently set to genotype at most 3 alternate alleles in a given context, but the context at ordered_PKNH_12_v2:2113941 has 6 alternate alleles so only the top alleles will be used; see the --max_alternate_alleles argument 
+INFO  02:10:38,055 ProgressMeter - ordered_PKNH_12_v2:2149422       1.525358E7     6.0 h           23.5 m       71.6%     8.3 h       2.4 h 
+INFO  02:11:08,056 ProgressMeter - ordered_PKNH_12_v2:2200992       1.525358E7     6.0 h           23.5 m       71.8%     8.3 h       2.3 h 
+INFO  02:11:48,057 ProgressMeter - ordered_PKNH_12_v2:2234497       1.525358E7     6.0 h           23.5 m       71.9%     8.3 h       2.3 h 
+INFO  02:12:18,057 ProgressMeter - ordered_PKNH_12_v2:2258229       1.525358E7     6.0 h           23.6 m       72.0%     8.3 h       2.3 h 
+INFO  02:12:48,058 ProgressMeter - ordered_PKNH_12_v2:2287765       1.525358E7     6.0 h           23.6 m       72.1%     8.3 h       2.3 h 
+INFO  02:13:28,058 ProgressMeter - ordered_PKNH_12_v2:2313112       1.525358E7     6.0 h           23.6 m       72.2%     8.3 h       2.3 h 
+INFO  02:13:58,059 ProgressMeter - ordered_PKNH_12_v2:2334108       1.525358E7     6.0 h           23.7 m       72.3%     8.3 h       2.3 h 
+INFO  02:14:38,059 ProgressMeter - ordered_PKNH_12_v2:2367246       1.525358E7     6.0 h           23.7 m       72.5%     8.3 h       2.3 h 
+INFO  02:15:08,067 ProgressMeter - ordered_PKNH_12_v2:2392834       1.525358E7     6.0 h           23.8 m       72.6%     8.3 h       2.3 h 
+INFO  02:15:48,067 ProgressMeter - ordered_PKNH_12_v2:2424593       1.525358E7     6.1 h           23.8 m       72.7%     8.3 h       2.3 h 
+INFO  02:16:18,068 ProgressMeter - ordered_PKNH_12_v2:2434207       1.525358E7     6.1 h           23.8 m       72.7%     8.3 h       2.3 h 
+WARN  02:16:24,928 ExactAFCalc - this tool is currently set to genotype at most 3 alternate alleles in a given context, but the context at ordered_PKNH_12_v2:2449691 has 5 alternate alleles so only the top alleles will be used; see the --max_alternate_alleles argument 
+INFO  02:16:58,068 ProgressMeter - ordered_PKNH_12_v2:2490075       1.525358E7     6.1 h           23.9 m       73.0%     8.3 h       2.2 h 
+INFO  02:17:28,069 ProgressMeter - ordered_PKNH_12_v2:2520799       1.525358E7     6.1 h           23.9 m       73.1%     8.3 h       2.2 h 
+INFO  02:18:08,070 ProgressMeter - ordered_PKNH_12_v2:2543877       1.525358E7     6.1 h           24.0 m       73.2%     8.3 h       2.2 h 
+INFO  02:18:38,070 ProgressMeter - ordered_PKNH_12_v2:2567337       1.525358E7     6.1 h           24.0 m       73.3%     8.3 h       2.2 h 
+INFO  02:19:08,071 ProgressMeter - ordered_PKNH_12_v2:2596465       1.525358E7     6.1 h           24.0 m       73.4%     8.3 h       2.2 h 
+INFO  02:19:48,071 ProgressMeter - ordered_PKNH_12_v2:2624607       1.525358E7     6.1 h           24.1 m       73.5%     8.3 h       2.2 h 
+INFO  02:20:18,072 ProgressMeter - ordered_PKNH_12_v2:2647928       1.525358E7     6.1 h           24.1 m       73.6%     8.3 h       2.2 h 
+INFO  02:20:58,072 ProgressMeter - ordered_PKNH_12_v2:2698489       1.525358E7     6.1 h           24.1 m       73.8%     8.3 h       2.2 h 
+INFO  02:21:28,073 ProgressMeter - ordered_PKNH_12_v2:2720477       1.525358E7     6.1 h           24.2 m       73.9%     8.3 h       2.2 h 
+INFO  02:22:08,073 ProgressMeter - ordered_PKNH_12_v2:2747405       1.525358E7     6.2 h           24.2 m       74.0%     8.3 h       2.2 h 
+INFO  02:22:38,074 ProgressMeter - ordered_PKNH_12_v2:2768910       1.525358E7     6.2 h           24.2 m       74.1%     8.3 h       2.2 h 
+INFO  02:23:18,075 ProgressMeter - ordered_PKNH_12_v2:2795277       1.525358E7     6.2 h           24.3 m       74.2%     8.3 h       2.1 h 
+INFO  02:23:48,075 ProgressMeter - ordered_PKNH_12_v2:2816565       1.525358E7     6.2 h           24.3 m       74.3%     8.3 h       2.1 h 
+INFO  02:24:28,076 ProgressMeter - ordered_PKNH_12_v2:2844074       1.525358E7     6.2 h           24.4 m       74.4%     8.3 h       2.1 h 
+WARN  02:24:40,717 ExactAFCalc - this tool is currently set to genotype at most 3 alternate alleles in a given context, but the context at ordered_PKNH_12_v2:2861140 has 5 alternate alleles so only the top alleles will be used; see the --max_alternate_alleles argument 
+INFO  02:25:08,076 ProgressMeter - ordered_PKNH_12_v2:2886358       1.525358E7     6.2 h           24.4 m       74.6%     8.3 h       2.1 h 
+INFO  02:25:38,083 ProgressMeter - ordered_PKNH_12_v2:2912036       1.525358E7     6.2 h           24.4 m       74.7%     8.3 h       2.1 h 
+INFO  02:26:18,083 ProgressMeter - ordered_PKNH_12_v2:2939976       1.525358E7     6.2 h           24.5 m       74.8%     8.3 h       2.1 h 
+INFO  02:26:48,084 ProgressMeter - ordered_PKNH_12_v2:2964344       1.525358E7     6.2 h           24.5 m       74.9%     8.3 h       2.1 h 
+INFO  02:27:28,085 ProgressMeter - ordered_PKNH_12_v2:2996035       1.525358E7     6.2 h           24.6 m       75.0%     8.3 h       2.1 h 
+WARN  02:27:56,337 ExactAFCalc - this tool is currently set to genotype at most 3 alternate alleles in a given context, but the context at ordered_PKNH_12_v2:3014914 has 5 alternate alleles so only the top alleles will be used; see the --max_alternate_alleles argument 
+INFO  02:28:08,085 ProgressMeter - ordered_PKNH_12_v2:3020861       1.525358E7     6.3 h           24.6 m       75.1%     8.3 h       2.1 h 
+INFO  02:28:38,086 ProgressMeter - ordered_PKNH_12_v2:3046227       1.525358E7     6.3 h           24.6 m       75.2%     8.3 h       2.1 h 
+WARN  02:28:58,073 ExactAFCalc - this tool is currently set to genotype at most 3 alternate alleles in a given context, but the context at ordered_PKNH_12_v2:3058749 has 5 alternate alleles so only the top alleles will be used; see the --max_alternate_alleles argument 
+WARN  02:29:06,152 ExactAFCalc - this tool is currently set to genotype at most 3 alternate alleles in a given context, but the context at ordered_PKNH_12_v2:3060761 has 5 alternate alleles so only the top alleles will be used; see the --max_alternate_alleles argument 
+WARN  02:29:06,262 ExactAFCalc - this tool is currently set to genotype at most 3 alternate alleles in a given context, but the context at ordered_PKNH_12_v2:3060762 has 6 alternate alleles so only the top alleles will be used; see the --max_alternate_alleles argument 
+INFO  02:29:18,086 ProgressMeter - ordered_PKNH_12_v2:3064140       1.525358E7     6.3 h           24.7 m       75.3%     8.3 h       2.1 h 
+INFO  02:29:48,087 ProgressMeter - ordered_PKNH_12_v2:3083474       1.525358E7     6.3 h           24.7 m       75.4%     8.3 h       2.1 h 
+INFO  02:30:28,087 ProgressMeter - ordered_PKNH_12_v2:3106126       1.525358E7     6.3 h           24.8 m       75.5%     8.3 h       2.0 h 
+INFO  02:30:58,088 ProgressMeter - ordered_PKNH_12_v2:3126298       1.525358E7     6.3 h           24.8 m       75.6%     8.3 h       2.0 h 
+INFO  02:31:38,089 ProgressMeter - ordered_PKNH_12_v2:3135692       1.525358E7     6.3 h           24.8 m       75.6%     8.4 h       2.0 h 
+INFO  02:32:08,089 ProgressMeter - ordered_PKNH_13_v2:84387      1.8415289E7     6.3 h           20.6 m       76.1%     8.3 h     119.4 m 
+INFO  02:32:48,090 ProgressMeter - ordered_PKNH_13_v2:146851      1.8415289E7     6.3 h           20.6 m       76.3%     8.3 h     117.9 m 
+INFO  02:33:28,090 ProgressMeter - ordered_PKNH_13_v2:173848      1.8415289E7     6.3 h           20.7 m       76.4%     8.3 h     117.4 m 
+INFO  02:33:58,091 ProgressMeter - ordered_PKNH_13_v2:192567      1.8415289E7     6.4 h           20.7 m       76.5%     8.3 h     117.0 m 
+INFO  02:34:38,091 ProgressMeter - ordered_PKNH_13_v2:224892      1.8415289E7     6.4 h           20.7 m       76.6%     8.3 h     116.4 m 
+INFO  02:35:08,092 ProgressMeter - ordered_PKNH_13_v2:232973      1.8415289E7     6.4 h           20.8 m       76.7%     8.3 h     116.3 m 
+INFO  02:35:38,093 ProgressMeter - ordered_PKNH_13_v2:260040      1.8415289E7     6.4 h           20.8 m       76.8%     8.3 h     115.7 m 
+INFO  02:36:18,093 ProgressMeter - ordered_PKNH_13_v2:290171      1.8415289E7     6.4 h           20.8 m       76.9%     8.3 h     115.1 m 
+INFO  02:36:48,094 ProgressMeter - ordered_PKNH_13_v2:318655      1.8415289E7     6.4 h           20.9 m       77.0%     8.3 h     114.5 m 
+INFO  02:37:28,094 ProgressMeter - ordered_PKNH_13_v2:337510      1.8415289E7     6.4 h           20.9 m       77.1%     8.3 h     114.2 m 
+INFO  02:37:58,095 ProgressMeter - ordered_PKNH_13_v2:358995      1.8415289E7     6.4 h           20.9 m       77.2%     8.3 h     113.8 m 
+INFO  02:38:38,095 ProgressMeter - ordered_PKNH_13_v2:406866      1.8415289E7     6.4 h           21.0 m       77.4%     8.3 h     112.7 m 
+INFO  02:39:08,096 ProgressMeter - ordered_PKNH_13_v2:442301      1.8415289E7     6.4 h           21.0 m       77.5%     8.3 h     111.9 m 
+WARN  02:39:42,963 ExactAFCalc - this tool is currently set to genotype at most 3 alternate alleles in a given context, but the context at ordered_PKNH_13_v2:460424 has 5 alternate alleles so only the top alleles will be used; see the --max_alternate_alleles argument 
+INFO  02:39:48,097 ProgressMeter - ordered_PKNH_13_v2:463488      1.8415289E7     6.5 h           21.0 m       77.6%     8.3 h     111.6 m 
+INFO  02:40:18,097 ProgressMeter - ordered_PKNH_13_v2:465429      1.8415289E7     6.5 h           21.0 m       77.6%     8.3 h     111.6 m 
+INFO  02:40:58,098 ProgressMeter - ordered_PKNH_13_v2:493614      1.8415289E7     6.5 h           21.1 m       77.7%     8.3 h     111.1 m 
+WARN  02:41:22,911 ExactAFCalc - this tool is currently set to genotype at most 3 alternate alleles in a given context, but the context at ordered_PKNH_13_v2:519782 has 5 alternate alleles so only the top alleles will be used; see the --max_alternate_alleles argument 
+INFO  02:41:38,098 ProgressMeter - ordered_PKNH_13_v2:531512      1.8415289E7     6.5 h           21.1 m       77.9%     8.3 h     110.3 m 
+INFO  02:42:08,099 ProgressMeter - ordered_PKNH_13_v2:573763      1.8415289E7     6.5 h           21.1 m       78.1%     8.3 h     109.3 m 
+INFO  02:42:48,099 ProgressMeter - ordered_PKNH_13_v2:619394      1.8415289E7     6.5 h           21.2 m       78.3%     8.3 h     108.3 m 
+INFO  02:43:18,100 ProgressMeter - ordered_PKNH_13_v2:630012      1.8415289E7     6.5 h           21.2 m       78.3%     8.3 h     108.2 m 
+INFO  02:43:58,100 ProgressMeter - ordered_PKNH_13_v2:647012      1.8415289E7     6.5 h           21.2 m       78.4%     8.3 h     107.9 m 
+INFO  02:44:28,101 ProgressMeter - ordered_PKNH_13_v2:664736      1.8415289E7     6.5 h           21.3 m       78.5%     8.3 h     107.6 m 
+INFO  02:45:08,101 ProgressMeter - ordered_PKNH_13_v2:687653      1.8415289E7     6.5 h           21.3 m       78.5%     8.3 h     107.2 m 
+INFO  02:45:38,109 ProgressMeter - ordered_PKNH_13_v2:711927      1.8415289E7     6.5 h           21.3 m       78.6%     8.3 h     106.7 m 
+INFO  02:46:08,110 ProgressMeter - ordered_PKNH_13_v2:730788      1.8415289E7     6.6 h           21.4 m       78.7%     8.3 h     106.3 m 
+INFO  02:46:48,111 ProgressMeter - ordered_PKNH_13_v2:750396      1.8415289E7     6.6 h           21.4 m       78.8%     8.3 h     106.0 m 
+INFO  02:47:18,111 ProgressMeter - ordered_PKNH_13_v2:781313      1.8415289E7     6.6 h           21.4 m       78.9%     8.3 h     105.3 m 
+INFO  02:47:58,112 ProgressMeter - ordered_PKNH_13_v2:805882      1.8415289E7     6.6 h           21.5 m       79.0%     8.3 h     104.8 m 
+INFO  02:48:28,112 ProgressMeter - ordered_PKNH_13_v2:829873      1.8415289E7     6.6 h           21.5 m       79.1%     8.3 h     104.3 m 
+INFO  02:48:58,113 ProgressMeter - ordered_PKNH_13_v2:882009      1.8415289E7     6.6 h           21.5 m       79.3%     8.3 h     103.1 m 
+INFO  02:49:38,113 ProgressMeter - ordered_PKNH_13_v2:915428      1.8415289E7     6.6 h           21.6 m       79.5%     8.3 h     102.4 m 
+INFO  02:50:08,114 ProgressMeter - ordered_PKNH_13_v2:943467      1.8415289E7     6.6 h           21.6 m       79.6%     8.3 h     101.8 m 
+INFO  02:50:48,114 ProgressMeter - ordered_PKNH_13_v2:975509      1.8415289E7     6.6 h           21.6 m       79.7%     8.3 h     101.2 m 
+INFO  02:51:18,115 ProgressMeter - ordered_PKNH_13_v2:1003870      1.8415289E7     6.6 h           21.6 m       79.8%     8.3 h     100.6 m 
+INFO  02:51:58,115 ProgressMeter - ordered_PKNH_13_v2:1040584      1.8415289E7     6.7 h           21.7 m       80.0%     8.3 h      99.8 m 
+INFO  02:52:28,116 ProgressMeter - ordered_PKNH_13_v2:1068211      1.8415289E7     6.7 h           21.7 m       80.1%     8.3 h      99.2 m 
+INFO  02:53:08,117 ProgressMeter - ordered_PKNH_13_v2:1150796      1.8415289E7     6.7 h           21.7 m       80.5%     8.3 h      97.3 m 
+INFO  02:53:38,117 ProgressMeter - ordered_PKNH_13_v2:1200391      1.8415289E7     6.7 h           21.8 m       80.7%     8.3 h      96.1 m 
+INFO  02:54:18,118 ProgressMeter - ordered_PKNH_13_v2:1263069      1.8415289E7     6.7 h           21.8 m       80.9%     8.3 h      94.7 m 
+INFO  02:54:58,118 ProgressMeter - ordered_PKNH_13_v2:1289604      1.8415289E7     6.7 h           21.8 m       81.0%     8.3 h      94.2 m 
+INFO  02:55:28,119 ProgressMeter - ordered_PKNH_13_v2:1309169      1.8415289E7     6.7 h           21.9 m       81.1%     8.3 h      93.8 m 
+INFO  02:56:08,119 ProgressMeter - ordered_PKNH_13_v2:1343111      1.8415289E7     6.7 h           21.9 m       81.2%     8.3 h      93.1 m 
+INFO  02:56:38,120 ProgressMeter - ordered_PKNH_13_v2:1364095      1.8415289E7     6.7 h           21.9 m       81.3%     8.3 h      92.7 m 
+INFO  02:57:08,126 ProgressMeter - ordered_PKNH_13_v2:1379644      1.8415289E7     6.7 h           22.0 m       81.4%     8.3 h      92.4 m 
+INFO  02:57:38,127 ProgressMeter - ordered_PKNH_13_v2:1394537      1.8415289E7     6.7 h           22.0 m       81.5%     8.3 h      92.2 m 
+INFO  02:58:18,127 ProgressMeter - ordered_PKNH_13_v2:1449531      1.8415289E7     6.8 h           22.0 m       81.7%     8.3 h      91.0 m 
+INFO  02:58:48,128 ProgressMeter - ordered_PKNH_13_v2:1501800      1.8415289E7     6.8 h           22.0 m       81.9%     8.3 h      89.8 m 
+INFO  02:59:28,128 ProgressMeter - ordered_PKNH_13_v2:1541040      1.8415289E7     6.8 h           22.1 m       82.1%     8.3 h      88.9 m 
+INFO  02:59:58,129 ProgressMeter - ordered_PKNH_13_v2:1567949      1.8415289E7     6.8 h           22.1 m       82.2%     8.3 h      88.4 m 
+INFO  03:00:38,130 ProgressMeter - ordered_PKNH_13_v2:1589722      1.8415289E7     6.8 h           22.1 m       82.3%     8.3 h      88.0 m 
+INFO  03:01:08,130 ProgressMeter - ordered_PKNH_13_v2:1602649      1.8415289E7     6.8 h           22.2 m       82.3%     8.3 h      87.8 m 
+WARN  03:01:46,587 ExactAFCalc - this tool is currently set to genotype at most 3 alternate alleles in a given context, but the context at ordered_PKNH_13_v2:1631710 has 5 alternate alleles so only the top alleles will be used; see the --max_alternate_alleles argument 
+INFO  03:01:48,131 ProgressMeter - ordered_PKNH_13_v2:1633768      1.8415289E7     6.8 h           22.2 m       82.4%     8.3 h      87.1 m 
+INFO  03:02:18,131 ProgressMeter - ordered_PKNH_13_v2:1655427      1.8415289E7     6.8 h           22.2 m       82.5%     8.3 h      86.7 m 
+INFO  03:02:58,132 ProgressMeter - ordered_PKNH_13_v2:1689182      1.8415289E7     6.8 h           22.3 m       82.7%     8.3 h      86.0 m 
+INFO  03:03:38,132 ProgressMeter - ordered_PKNH_13_v2:1716353      1.8415289E7     6.8 h           22.3 m       82.8%     8.3 h      85.5 m 
+INFO  03:04:08,133 ProgressMeter - ordered_PKNH_13_v2:1748973      1.8415289E7     6.9 h           22.3 m       82.9%     8.3 h      84.8 m 
+INFO  03:04:48,133 ProgressMeter - ordered_PKNH_13_v2:1793158      1.8415289E7     6.9 h           22.4 m       83.1%     8.3 h      83.8 m 
+INFO  03:05:18,134 ProgressMeter - ordered_PKNH_13_v2:1817765      1.8415289E7     6.9 h           22.4 m       83.2%     8.3 h      83.3 m 
+WARN  03:05:24,556 ExactAFCalc - this tool is currently set to genotype at most 3 alternate alleles in a given context, but the context at ordered_PKNH_13_v2:1822134 has 5 alternate alleles so only the top alleles will be used; see the --max_alternate_alleles argument 
+INFO  03:05:58,134 ProgressMeter - ordered_PKNH_13_v2:1838020      1.8415289E7     6.9 h           22.4 m       83.3%     8.3 h      83.0 m 
+INFO  03:06:28,135 ProgressMeter - ordered_PKNH_13_v2:1870911      1.8415289E7     6.9 h           22.5 m       83.4%     8.3 h      82.3 m 
+INFO  03:07:08,135 ProgressMeter - ordered_PKNH_13_v2:1888722      1.8415289E7     6.9 h           22.5 m       83.5%     8.3 h      82.0 m 
+INFO  03:07:38,144 ProgressMeter - ordered_PKNH_13_v2:1904517      1.8415289E7     6.9 h           22.5 m       83.6%     8.3 h      81.7 m 
+INFO  03:08:18,144 ProgressMeter - ordered_PKNH_13_v2:1947375      1.8415289E7     6.9 h           22.6 m       83.7%     8.3 h      80.8 m 
+INFO  03:08:48,145 ProgressMeter - ordered_PKNH_13_v2:1979524      1.8415289E7     6.9 h           22.6 m       83.9%     8.3 h      80.1 m 
+INFO  03:09:28,146 ProgressMeter - ordered_PKNH_13_v2:1995742      1.8415289E7     6.9 h           22.6 m       83.9%     8.3 h      79.8 m 
+WARN  03:09:51,803 ExactAFCalc - this tool is currently set to genotype at most 3 alternate alleles in a given context, but the context at ordered_PKNH_13_v2:2024343 has 5 alternate alleles so only the top alleles will be used; see the --max_alternate_alleles argument 
+INFO  03:09:58,146 ProgressMeter - ordered_PKNH_13_v2:2026370      1.8415289E7     7.0 h           22.7 m       84.1%     8.3 h      79.2 m 
+INFO  03:10:38,147 ProgressMeter - ordered_PKNH_13_v2:2063415      1.8415289E7     7.0 h           22.7 m       84.2%     8.3 h      78.4 m 
+INFO  03:11:18,147 ProgressMeter - ordered_PKNH_13_v2:2087907      1.8415289E7     7.0 h           22.7 m       84.3%     8.3 h      77.9 m 
+INFO  03:11:48,148 ProgressMeter - ordered_PKNH_13_v2:2121574      1.8415289E7     7.0 h           22.8 m       84.4%     8.3 h      77.2 m 
+INFO  03:12:28,148 ProgressMeter - ordered_PKNH_13_v2:2147100      1.8415289E7     7.0 h           22.8 m       84.5%     8.3 h      76.7 m 
+INFO  03:12:58,149 ProgressMeter - ordered_PKNH_13_v2:2182690      1.8415289E7     7.0 h           22.8 m       84.7%     8.3 h      75.9 m 
+INFO  03:13:38,149 ProgressMeter - ordered_PKNH_13_v2:2228858      1.8415289E7     7.0 h           22.9 m       84.9%     8.3 h      74.9 m 
+INFO  03:14:08,150 ProgressMeter - ordered_PKNH_13_v2:2237329      1.8415289E7     7.0 h           22.9 m       84.9%     8.3 h      74.8 m 
+INFO  03:14:48,150 ProgressMeter - ordered_PKNH_13_v2:2294290      1.8415289E7     7.0 h           22.9 m       85.2%     8.3 h      73.6 m 
+INFO  03:15:18,151 ProgressMeter - ordered_PKNH_13_v2:2329168      1.8415289E7     7.0 h           22.9 m       85.3%     8.3 h      72.8 m 
+INFO  03:15:58,152 ProgressMeter - ordered_PKNH_13_v2:2361473      1.8415289E7     7.1 h           23.0 m       85.4%     8.3 h      72.2 m 
+INFO  03:16:28,162 ProgressMeter - ordered_PKNH_13_v2:2377623      1.8415289E7     7.1 h           23.0 m       85.5%     8.3 h      71.9 m 
+INFO  03:16:58,162 ProgressMeter - ordered_PKNH_13_v2:2390194      1.8415289E7     7.1 h           23.0 m       85.5%     8.3 h      71.7 m 
+INFO  03:17:28,163 ProgressMeter - ordered_PKNH_13_v2:2412752      1.8415289E7     7.1 h           23.1 m       85.6%     8.3 h      71.2 m 
+INFO  03:18:08,163 ProgressMeter - ordered_PKNH_13_v2:2437648      1.8415289E7     7.1 h           23.1 m       85.7%     8.3 h      70.7 m 
+INFO  03:18:38,164 ProgressMeter - ordered_PKNH_13_v2:2458141      1.8415289E7     7.1 h           23.1 m       85.8%     8.3 h      70.3 m 
+INFO  03:19:18,164 ProgressMeter - ordered_PKNH_13_v2:2487868      1.8415289E7     7.1 h           23.2 m       85.9%     8.3 h      69.7 m 
+INFO  03:19:48,165 ProgressMeter - ordered_PKNH_13_v2:2522936      1.8415289E7     7.1 h           23.2 m       86.1%     8.3 h      69.0 m 
+INFO  03:20:28,166 ProgressMeter - ordered_PKNH_13_v2:2584565      1.8415289E7     7.1 h           23.2 m       86.3%     8.3 h      67.6 m 
+INFO  03:20:58,166 ProgressMeter - ordered_PKNH_14_v2:29898        2.10123E7     7.1 h           20.4 m       86.5%     8.2 h      66.7 m 
+INFO  03:21:28,167 ProgressMeter - ordered_PKNH_14_v2:95283        2.10123E7     7.1 h           20.4 m       86.8%     8.2 h      65.3 m 
+INFO  03:22:08,167 ProgressMeter - ordered_PKNH_14_v2:162973        2.10123E7     7.2 h           20.4 m       87.1%     8.2 h      63.8 m 
+INFO  03:22:38,168 ProgressMeter - ordered_PKNH_14_v2:201656        2.10123E7     7.2 h           20.5 m       87.2%     8.2 h      62.9 m 
+INFO  03:23:18,168 ProgressMeter - ordered_PKNH_14_v2:251910        2.10123E7     7.2 h           20.5 m       87.4%     8.2 h      61.9 m 
+INFO  03:23:48,169 ProgressMeter - ordered_PKNH_14_v2:268535        2.10123E7     7.2 h           20.5 m       87.5%     8.2 h      61.6 m 
+INFO  03:24:28,169 ProgressMeter - ordered_PKNH_14_v2:315986        2.10123E7     7.2 h           20.5 m       87.7%     8.2 h      60.6 m 
+INFO  03:24:58,170 ProgressMeter - ordered_PKNH_14_v2:352545        2.10123E7     7.2 h           20.6 m       87.8%     8.2 h      59.8 m 
+INFO  03:25:38,170 ProgressMeter - ordered_PKNH_14_v2:395203        2.10123E7     7.2 h           20.6 m       88.0%     8.2 h      58.9 m 
+INFO  03:26:08,171 ProgressMeter - ordered_PKNH_14_v2:436452        2.10123E7     7.2 h           20.6 m       88.2%     8.2 h      58.0 m 
+INFO  03:26:48,171 ProgressMeter - ordered_PKNH_14_v2:457779        2.10123E7     7.2 h           20.7 m       88.3%     8.2 h      57.6 m 
+INFO  03:27:18,172 ProgressMeter - ordered_PKNH_14_v2:494914        2.10123E7     7.2 h           20.7 m       88.4%     8.2 h      56.8 m 
+INFO  03:27:58,173 ProgressMeter - ordered_PKNH_14_v2:532244        2.10123E7     7.3 h           20.7 m       88.6%     8.2 h      56.1 m 
+INFO  03:28:38,173 ProgressMeter - ordered_PKNH_14_v2:580792        2.10123E7     7.3 h           20.7 m       88.8%     8.2 h      55.1 m 
+INFO  03:29:08,174 ProgressMeter - ordered_PKNH_14_v2:610608        2.10123E7     7.3 h           20.8 m       88.9%     8.2 h      54.4 m 
+INFO  03:29:48,174 ProgressMeter - ordered_PKNH_14_v2:666628        2.10123E7     7.3 h           20.8 m       89.1%     8.2 h      53.2 m 
+INFO  03:30:18,175 ProgressMeter - ordered_PKNH_14_v2:703912        2.10123E7     7.3 h           20.8 m       89.3%     8.2 h      52.5 m 
+INFO  03:30:58,176 ProgressMeter - ordered_PKNH_14_v2:736689        2.10123E7     7.3 h           20.9 m       89.4%     8.2 h      51.8 m 
+INFO  03:31:38,176 ProgressMeter - ordered_PKNH_14_v2:775108        2.10123E7     7.3 h           20.9 m       89.6%     8.2 h      51.0 m 
+INFO  03:32:08,177 ProgressMeter - ordered_PKNH_14_v2:805831        2.10123E7     7.3 h           20.9 m       89.7%     8.2 h      50.4 m 
+INFO  03:32:48,177 ProgressMeter - ordered_PKNH_14_v2:845554        2.10123E7     7.3 h           20.9 m       89.9%     8.2 h      49.6 m 
+INFO  03:33:18,178 ProgressMeter - ordered_PKNH_14_v2:884809        2.10123E7     7.3 h           21.0 m       90.0%     8.2 h      48.8 m 
+INFO  03:33:58,178 ProgressMeter - ordered_PKNH_14_v2:929174        2.10123E7     7.4 h           21.0 m       90.2%     8.2 h      47.8 m 
+INFO  03:34:28,210 ProgressMeter - ordered_PKNH_14_v2:966280        2.10123E7     7.4 h           21.0 m       90.4%     8.1 h      47.1 m 
+INFO  03:34:58,211 ProgressMeter - ordered_PKNH_14_v2:999486        2.10123E7     7.4 h           21.0 m       90.5%     8.1 h      46.4 m 
+INFO  03:35:28,211 ProgressMeter - ordered_PKNH_14_v2:1043984        2.10123E7     7.4 h           21.1 m       90.7%     8.1 h      45.4 m 
+INFO  03:36:08,212 ProgressMeter - ordered_PKNH_14_v2:1092564        2.10123E7     7.4 h           21.1 m       90.9%     8.1 h      44.4 m 
+INFO  03:36:48,212 ProgressMeter - ordered_PKNH_14_v2:1158414        2.10123E7     7.4 h           21.1 m       91.2%     8.1 h      43.1 m 
+INFO  03:37:18,213 ProgressMeter - ordered_PKNH_14_v2:1191707        2.10123E7     7.4 h           21.2 m       91.3%     8.1 h      42.4 m 
+INFO  03:37:58,213 ProgressMeter - ordered_PKNH_14_v2:1202843        2.10123E7     7.4 h           21.2 m       91.3%     8.1 h      42.2 m 
+INFO  03:38:28,214 ProgressMeter - ordered_PKNH_14_v2:1202843        2.10123E7     7.4 h           21.2 m       91.3%     8.1 h      42.2 m 
+INFO  03:39:08,214 ProgressMeter - ordered_PKNH_14_v2:1225482        2.10123E7     7.4 h           21.2 m       91.4%     8.1 h      41.8 m 
+INFO  03:39:38,215 ProgressMeter - ordered_PKNH_14_v2:1258320        2.10123E7     7.4 h           21.3 m       91.6%     8.1 h      41.1 m 
+INFO  03:40:18,215 ProgressMeter - ordered_PKNH_14_v2:1305905        2.10123E7     7.5 h           21.3 m       91.8%     8.1 h      40.1 m 
+INFO  03:40:48,216 ProgressMeter - ordered_PKNH_14_v2:1338049        2.10123E7     7.5 h           21.3 m       91.9%     8.1 h      39.5 m 
+INFO  03:41:28,216 ProgressMeter - ordered_PKNH_14_v2:1397268        2.10123E7     7.5 h           21.4 m       92.1%     8.1 h      38.3 m 
+WARN  03:41:44,719 ExactAFCalc - this tool is currently set to genotype at most 3 alternate alleles in a given context, but the context at ordered_PKNH_14_v2:1408985 has 5 alternate alleles so only the top alleles will be used; see the --max_alternate_alleles argument 
+INFO  03:41:58,225 ProgressMeter - ordered_PKNH_14_v2:1435597        2.10123E7     7.5 h           21.4 m       92.3%     8.1 h      37.5 m 
+INFO  03:42:28,226 ProgressMeter - ordered_PKNH_14_v2:1483638        2.10123E7     7.5 h           21.4 m       92.5%     8.1 h      36.5 m 
+WARN  03:42:30,871 ExactAFCalc - this tool is currently set to genotype at most 3 alternate alleles in a given context, but the context at ordered_PKNH_14_v2:1486625 has 6 alternate alleles so only the top alleles will be used; see the --max_alternate_alleles argument 
+INFO  03:43:08,226 ProgressMeter - ordered_PKNH_14_v2:1514802        2.10123E7     7.5 h           21.4 m       92.6%     8.1 h      35.9 m 
+INFO  03:43:38,227 ProgressMeter - ordered_PKNH_14_v2:1548688        2.10123E7     7.5 h           21.5 m       92.8%     8.1 h      35.2 m 
+INFO  03:44:18,227 ProgressMeter - ordered_PKNH_14_v2:1592354        2.10123E7     7.5 h           21.5 m       92.9%     8.1 h      34.3 m 
+INFO  03:44:48,228 ProgressMeter - ordered_PKNH_14_v2:1637902        2.10123E7     7.5 h           21.5 m       93.1%     8.1 h      33.3 m 
+INFO  03:45:28,229 ProgressMeter - ordered_PKNH_14_v2:1664612        2.10123E7     7.5 h           21.5 m       93.2%     8.1 h      32.8 m 
+INFO  03:45:58,229 ProgressMeter - ordered_PKNH_14_v2:1682890        2.10123E7     7.6 h           21.6 m       93.3%     8.1 h      32.5 m 
+INFO  03:46:38,230 ProgressMeter - ordered_PKNH_14_v2:1746595        2.10123E7     7.6 h           21.6 m       93.6%     8.1 h      31.1 m 
+INFO  03:47:18,230 ProgressMeter - ordered_PKNH_14_v2:1780249        2.10123E7     7.6 h           21.6 m       93.7%     8.1 h      30.5 m 
+INFO  03:47:48,231 ProgressMeter - ordered_PKNH_14_v2:1801743        2.10123E7     7.6 h           21.7 m       93.8%     8.1 h      30.0 m 
+INFO  03:48:28,231 ProgressMeter - ordered_PKNH_14_v2:1826709        2.10123E7     7.6 h           21.7 m       93.9%     8.1 h      29.6 m 
+INFO  03:48:58,232 ProgressMeter - ordered_PKNH_14_v2:1844908        2.10123E7     7.6 h           21.7 m       94.0%     8.1 h      29.2 m 
+INFO  03:49:38,232 ProgressMeter - ordered_PKNH_14_v2:1876089        2.10123E7     7.6 h           21.7 m       94.1%     8.1 h      28.6 m 
+INFO  03:50:08,233 ProgressMeter - ordered_PKNH_14_v2:1893639        2.10123E7     7.6 h           21.8 m       94.2%     8.1 h      28.2 m 
+INFO  03:50:48,233 ProgressMeter - ordered_PKNH_14_v2:1923262        2.10123E7     7.6 h           21.8 m       94.3%     8.1 h      27.7 m 
+WARN  03:50:48,681 ExactAFCalc - this tool is currently set to genotype at most 3 alternate alleles in a given context, but the context at ordered_PKNH_14_v2:1923375 has 5 alternate alleles so only the top alleles will be used; see the --max_alternate_alleles argument 
+INFO  03:51:18,234 ProgressMeter - ordered_PKNH_14_v2:1932662        2.10123E7     7.6 h           21.8 m       94.3%     8.1 h      27.5 m 
+INFO  03:51:58,235 ProgressMeter - ordered_PKNH_14_v2:1950219        2.10123E7     7.7 h           21.9 m       94.4%     8.1 h      27.2 m 
+INFO  03:52:28,235 ProgressMeter - ordered_PKNH_14_v2:1964099        2.10123E7     7.7 h           21.9 m       94.5%     8.1 h      26.9 m 
+INFO  03:52:58,236 ProgressMeter - ordered_PKNH_14_v2:1988245        2.10123E7     7.7 h           21.9 m       94.6%     8.1 h      26.4 m 
+INFO  03:53:38,236 ProgressMeter - ordered_PKNH_14_v2:2016897        2.10123E7     7.7 h           21.9 m       94.7%     8.1 h      25.8 m 
+INFO  03:54:08,237 ProgressMeter - ordered_PKNH_14_v2:2034880        2.10123E7     7.7 h           22.0 m       94.8%     8.1 h      25.5 m 
+INFO  03:54:48,237 ProgressMeter - ordered_PKNH_14_v2:2060233        2.10123E7     7.7 h           22.0 m       94.9%     8.1 h      25.0 m 
+INFO  03:55:18,238 ProgressMeter - ordered_PKNH_14_v2:2072897        2.10123E7     7.7 h           22.0 m       94.9%     8.1 h      24.7 m 
+INFO  03:55:58,238 ProgressMeter - ordered_PKNH_14_v2:2092251        2.10123E7     7.7 h           22.0 m       95.0%     8.1 h      24.4 m 
+INFO  03:56:28,239 ProgressMeter - ordered_PKNH_14_v2:2102423        2.10123E7     7.7 h           22.1 m       95.0%     8.1 h      24.2 m 
+INFO  03:57:08,239 ProgressMeter - ordered_PKNH_14_v2:2124576        2.10123E7     7.7 h           22.1 m       95.1%     8.1 h      23.8 m 
+INFO  03:57:38,240 ProgressMeter - ordered_PKNH_14_v2:2142594        2.10123E7     7.7 h           22.1 m       95.2%     8.1 h      23.4 m 
+INFO  03:58:18,241 ProgressMeter - ordered_PKNH_14_v2:2163416        2.10123E7     7.8 h           22.2 m       95.3%     8.1 h      23.0 m 
+WARN  03:58:45,084 ExactAFCalc - this tool is currently set to genotype at most 3 alternate alleles in a given context, but the context at ordered_PKNH_14_v2:2174228 has 5 alternate alleles so only the top alleles will be used; see the --max_alternate_alleles argument 
+INFO  03:58:48,241 ProgressMeter - ordered_PKNH_14_v2:2178563        2.10123E7     7.8 h           22.2 m       95.4%     8.1 h      22.7 m 
+WARN  03:58:52,625 ExactAFCalc - this tool is currently set to genotype at most 3 alternate alleles in a given context, but the context at ordered_PKNH_14_v2:2181365 has 6 alternate alleles so only the top alleles will be used; see the --max_alternate_alleles argument 
+INFO  03:59:28,242 ProgressMeter - ordered_PKNH_14_v2:2231578        2.10123E7     7.8 h           22.2 m       95.6%     8.1 h      21.6 m 
+INFO  04:00:08,242 ProgressMeter - ordered_PKNH_14_v2:2265367        2.10123E7     7.8 h           22.2 m       95.7%     8.1 h      20.9 m 
+INFO  04:00:38,243 ProgressMeter - ordered_PKNH_14_v2:2285933        2.10123E7     7.8 h           22.3 m       95.8%     8.1 h      20.5 m 
+INFO  04:01:18,243 ProgressMeter - ordered_PKNH_14_v2:2316514        2.10123E7     7.8 h           22.3 m       95.9%     8.1 h      19.9 m 
+INFO  04:01:48,244 ProgressMeter - ordered_PKNH_14_v2:2335071        2.10123E7     7.8 h           22.3 m       96.0%     8.1 h      19.5 m 
+INFO  04:02:28,244 ProgressMeter - ordered_PKNH_14_v2:2349164        2.10123E7     7.8 h           22.4 m       96.1%     8.1 h      19.3 m 
+INFO  04:02:58,251 ProgressMeter - ordered_PKNH_14_v2:2370675        2.10123E7     7.8 h           22.4 m       96.1%     8.2 h      18.9 m 
+INFO  04:03:38,251 ProgressMeter - ordered_PKNH_14_v2:2397994        2.10123E7     7.8 h           22.4 m       96.3%     8.2 h      18.3 m 
+WARN  04:03:58,540 ExactAFCalc - this tool is currently set to genotype at most 3 alternate alleles in a given context, but the context at ordered_PKNH_14_v2:2431740 has 5 alternate alleles so only the top alleles will be used; see the --max_alternate_alleles argument 
+INFO  04:04:08,252 ProgressMeter - ordered_PKNH_14_v2:2446857        2.10123E7     7.9 h           22.4 m       96.5%     8.1 h      17.3 m 
+INFO  04:04:48,253 ProgressMeter - ordered_PKNH_14_v2:2471093        2.10123E7     7.9 h           22.5 m       96.6%     8.1 h      16.8 m 
+INFO  04:05:18,253 ProgressMeter - ordered_PKNH_14_v2:2499324        2.10123E7     7.9 h           22.5 m       96.7%     8.1 h      16.3 m 
+INFO  04:05:58,254 ProgressMeter - ordered_PKNH_14_v2:2530205        2.10123E7     7.9 h           22.5 m       96.8%     8.1 h      15.6 m 
+INFO  04:06:28,254 ProgressMeter - ordered_PKNH_14_v2:2542232        2.10123E7     7.9 h           22.5 m       96.9%     8.2 h      15.4 m 
+INFO  04:07:08,255 ProgressMeter - ordered_PKNH_14_v2:2574595        2.10123E7     7.9 h           22.6 m       97.0%     8.2 h      14.8 m 
+INFO  04:07:48,255 ProgressMeter - ordered_PKNH_14_v2:2614450        2.10123E7     7.9 h           22.6 m       97.1%     8.1 h      13.9 m 
+INFO  04:08:18,256 ProgressMeter - ordered_PKNH_14_v2:2651515        2.10123E7     7.9 h           22.6 m       97.3%     8.1 h      13.2 m 
+INFO  04:08:58,256 ProgressMeter - ordered_PKNH_14_v2:2697363        2.10123E7     7.9 h           22.7 m       97.5%     8.1 h      12.3 m 
+INFO  04:09:28,257 ProgressMeter - ordered_PKNH_14_v2:2730086        2.10123E7     7.9 h           22.7 m       97.6%     8.1 h      11.6 m 
+INFO  04:10:08,257 ProgressMeter - ordered_PKNH_14_v2:2770895        2.10123E7     8.0 h           22.7 m       97.8%     8.1 h      10.8 m 
+INFO  04:10:38,258 ProgressMeter - ordered_PKNH_14_v2:2795652        2.10123E7     8.0 h           22.7 m       97.9%     8.1 h      10.3 m 
+INFO  04:11:18,259 ProgressMeter - ordered_PKNH_14_v2:2816673        2.10123E7     8.0 h           22.8 m       98.0%     8.1 h       9.9 m 
+INFO  04:11:48,259 ProgressMeter - ordered_PKNH_14_v2:2835029        2.10123E7     8.0 h           22.8 m       98.1%     8.1 h       9.5 m 
+INFO  04:12:28,282 ProgressMeter - ordered_PKNH_14_v2:2856258        2.10123E7     8.0 h           22.8 m       98.1%     8.1 h       9.1 m 
+INFO  04:12:58,283 ProgressMeter - ordered_PKNH_14_v2:2911098        2.10123E7     8.0 h           22.9 m       98.4%     8.1 h       8.0 m 
+INFO  04:13:28,283 ProgressMeter - ordered_PKNH_14_v2:2929302        2.10123E7     8.0 h           22.9 m       98.4%     8.1 h       7.6 m 
+INFO  04:13:58,292 ProgressMeter - ordered_PKNH_14_v2:2953740        2.10123E7     8.0 h           22.9 m       98.5%     8.1 h       7.1 m 
+INFO  04:14:38,293 ProgressMeter - ordered_PKNH_14_v2:2961566        2.10123E7     8.0 h           22.9 m       98.6%     8.1 h       7.0 m 
+INFO  04:15:08,293 ProgressMeter - ordered_PKNH_14_v2:2978374        2.10123E7     8.0 h           23.0 m       98.6%     8.1 h       6.6 m 
+INFO  04:15:48,294 ProgressMeter - ordered_PKNH_14_v2:3012415        2.10123E7     8.1 h           23.0 m       98.8%     8.1 h       5.9 m 
+INFO  04:16:28,294 ProgressMeter - ordered_PKNH_14_v2:3032560        2.10123E7     8.1 h           23.0 m       98.9%     8.2 h       5.5 m 
+INFO  04:16:58,295 ProgressMeter - ordered_PKNH_14_v2:3050849        2.10123E7     8.1 h           23.0 m       98.9%     8.2 h       5.2 m 
+INFO  04:17:38,295 ProgressMeter - ordered_PKNH_14_v2:3081579        2.10123E7     8.1 h           23.1 m       99.1%     8.2 h       4.6 m 
+INFO  04:18:08,296 ProgressMeter - ordered_PKNH_14_v2:3089710        2.10123E7     8.1 h           23.1 m       99.1%     8.2 h       4.4 m 
+INFO  04:18:48,296 ProgressMeter - ordered_PKNH_14_v2:3128953        2.10123E7     8.1 h           23.1 m       99.3%     8.2 h       3.6 m 
+INFO  04:19:18,297 ProgressMeter - ordered_PKNH_14_v2:3148117        2.10123E7     8.1 h           23.2 m       99.3%     8.2 h       3.2 m 
+INFO  04:19:58,297 ProgressMeter - ordered_PKNH_14_v2:3187548        2.10123E7     8.1 h           23.2 m       99.5%     8.2 h       2.4 m 
+INFO  04:20:28,298 ProgressMeter - ordered_PKNH_14_v2:3240504        2.10123E7     8.1 h           23.2 m       99.7%     8.2 h      81.0 s 
+INFO  04:21:08,299 ProgressMeter - ordered_PKNH_14_v2:3241205        2.10123E7     8.1 h           23.2 m       99.7%     8.2 h      80.0 s 
+INFO  04:21:38,299 ProgressMeter - ordered_PKNH_14_v2:3241455        2.10123E7     8.1 h           23.3 m       99.7%     8.2 h      80.0 s 
+Time spent in setup for JNI call : 9.038767448
+Total compute time in PairHMM computeLikelihoods() : 9060.542259011001
+INFO  04:22:09,649 HaplotypeCaller - Ran local assembly on 193181 active regions 
+INFO  04:22:09,710 ProgressMeter -            done      2.4320447E7     8.2 h           20.1 m      100.0%     8.2 h       0.0 s 
+INFO  04:22:09,710 ProgressMeter - Total runtime 29362.64 secs, 489.38 min, 8.16 hours 
+INFO  04:22:09,710 MicroScheduler - 8871611 reads were filtered out during the traversal out of approximately 18058681 total reads (49.13%) 
+INFO  04:22:09,711 MicroScheduler -   -> 3800295 reads (21.04% of total) failing DuplicateReadFilter 
+INFO  04:22:09,711 MicroScheduler -   -> 0 reads (0.00% of total) failing FailsVendorQualityCheckFilter 
+INFO  04:22:09,711 MicroScheduler -   -> 4918949 reads (27.24% of total) failing HCMappingQualityFilter 
+INFO  04:22:09,711 MicroScheduler -   -> 0 reads (0.00% of total) failing MalformedReadFilter 
+INFO  04:22:09,711 MicroScheduler -   -> 0 reads (0.00% of total) failing MappingQualityUnavailableFilter 
+INFO  04:22:09,711 MicroScheduler -   -> 152367 reads (0.84% of total) failing NotPrimaryAlignmentFilter 
+INFO  04:22:09,712 MicroScheduler -   -> 0 reads (0.00% of total) failing UnmappedReadFilter 
+---------------------------------------------------------------------------------------------------------------------
+FINISHED
+---------------------------------------------------------------------------------------------------------------------

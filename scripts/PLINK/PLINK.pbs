@@ -1,0 +1,60 @@
+#!/bin/bash
+#PBS -N Filter_variants
+#PBS -j oe
+#PBS -m ae
+#PBS -l nodes=1
+#PBS -l ncpus=16
+#PBS -l mem=50gb
+#PBS -l walltime=12:00:00
+#PBS -M jacob.westaway@menzies.edu.au
+
+echo "---------------------------------------"
+echo "PBS: Job identifier is $PBS_JOBID"
+echo "PBS: Job name is $PBS_JOBNAME"
+
+export PATH=$PATH:/home/jwestaway/pk_pipeline/tools/plink2
+
+cd /home/jwestaway/pk_pipeline/Initial_Pk_subset/outputs/variant_calling/consensus
+
+INDIR="/home/jwestaway/pk_pipeline/Initial_Pk_subset/outputs/variant_calling/filtered"
+OUTDIR="/home/jwestaway/pk_pipeline/Initial_Pk_subset/outputs/variant_calling/PLINK"
+
+#### PLAY
+
+/home/jwestaway/pk_pipeline/tools/plink2/plink2 --vcf FILTERED_SNPs.vcf --allow-extra-chr
+/home/jwestaway/pk_pipeline/tools/plink2/plink --vcf FILTERED_SNPs.vcf --double-id --allow-extra-chr
+
+/home/jwestaway/pk_pipeline/tools/plink2/plink --vcf FILTERED_SNPs.vcf --double-id --allow-extra-chr --recode # this produces the map and ped file - ped and bam are not supported by plink2 yet
+
+#####
+
+
+
+./plink2 --vcf $INDIR/FILTERED_SNPs.vcf \
+    --double-id \
+    --set-missing-var-ids @:#\
+    --allow-extra-chr \
+    --indep-pairwise 50 10 0.1 \
+    --out $OUTDIR/binary_fileset
+
+
+/home/jwestaway/pk_pipeline/tools/plink2/plink2 --vcf $INDIR/FILTERED_SNPs.vcf \
+    --double-id \
+    --set-missing-var-ids @:#\
+    --allow-extra-chr \
+    --indep-pairwise 50 10 0.1 \
+    --out $OUTDIR/linkage
+
+/home/jwestaway/pk_pipeline/tools/plink2/plink2 --vcf $INDIR/FILTERED_SNPs.vcf  \
+     --double-id --allow-extra-chr --set-missing-var-ids @:# \
+    --make-bed --pca --out $OUTDIR/PCA
+
+cd /home/jwestaway/pk_pipeline/Initial_Pk_subset/outputs/variant_calling/PLINK
+
+module load software/R_3.6.2
+R 
+library(ggplot2)
+library(dplyr)
+library(readr)
+library(tidyr)
+

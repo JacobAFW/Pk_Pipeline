@@ -1,0 +1,53 @@
+#!/bin/bash
+#PBS -N Variant_calling
+#PBS -j oe
+#PBS -m ae
+#PBS -l nodes=1
+#PBS -l ncpus=11
+#PBS -l mem=50gb
+#PBS -l walltime=48:00:00
+#PBS -M jacob.westaway@menzies.edu.au
+
+echo "---------------------------------------"
+echo "PBS: Job identifier is $PBS_JOBID"
+echo "PBS: Job name is $PBS_JOBNAME"
+
+echo "---------------------------------------"
+echo "Define paths"
+export PATH=$PATH:/usr/local/jdk1.8.0_131/bin
+export PATH=$PATH:/usr/local/jre1.8.0_111/bin
+export PATH=$PATH:/usr/local/GenomeAnalysisTK-3.2.2 
+export PATH=$PATH:/usr/local/miniconda3/envs/assembly/bin/
+
+
+echo "---------------------------------------"
+echo "---------------------------------------"
+echo 'Change to working directory and set env variables'
+PICARD="/usr/local/miniconda3/pkgs/picard-2.21.9-0/share/picard-2.21.9-0/picard.jar"
+INDEXTDIR="/home/jwestaway/pk_pipeline/ref_genomes/PKA1H1/fasta/strain_A1_H.1.Icor.fasta"
+INTERVALS="/home/jwestaway/pk_pipeline/ref_genomes/PKA1H1/strain_A1_H.1.Icor.fasta.bed"
+OUTDIR="/home/jwestaway/pk_pipeline/Initial_Pk_subset/outputs/variant_calling/GATK/haplotypecaller"
+INDIR="/home/jwestaway/pk_pipeline/Initial_Pk_subset/outputs/variant_calling/final_bams"
+
+mkdir $OUTDIR
+
+echo "---------------------------------------------------------------------------------------------------------------------"
+echo "GATK"
+echo "---------------------------------------------------------------------------------------------------------------------"
+/usr/local/jdk1.8.0_131/bin/java -Djava.iodir=$PBS_JOBFS -Xms3200m -Xmx3600m -jar /usr/local/GenomeAnalysisTK-3.2.2/GenomeAnalysisTK.jar \
+    -T HaplotypeCaller \
+    -ERC GVCF \
+    --minPruning 3 \
+    --maxNumHaplotypesInPopulation 200 \
+    --max_alternate_alleles 3 \
+    --variant_index_type LINEAR \
+    --variant_index_parameter 128000 \
+    -contamination 0.0 \
+    -G Standard \
+    -R $INDEXTDIR \
+    -I $INDIR/PK_SB_DNA_068_DKDL210002197-1a_HWHGKDSXY_L4.dupmarked.realigned.recal.bam \
+    -o $OUTDIR/PK_SB_DNA_068_DKDL210002197-1a_HWHGKDSXY_L4.dupmarked.realigned.recal.g.vcf.gz
+
+echo "---------------------------------------------------------------------------------------------------------------------"
+echo "FINISHED"
+echo "---------------------------------------------------------------------------------------------------------------------"

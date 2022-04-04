@@ -1,0 +1,76 @@
+---------------------------------------
+PBS: Job identifier is 1317055.cheetah
+PBS: Job name is Variant_calling
+---------------------------------------
+Define paths
+---------------------------------------
+---------------------------------------
+Change to working directory and set env variables
+---------------------------------------------------------------------------------------------------------------------
+Create consensus VCF
+---------------------------------------------------------------------------------------------------------------------
+---------------------------------------
+Merge variants from the two variant callers
+[W::bcf_hdr_merge] Trying to combine "MQ" tag definitions of different types
+---------------------------------------
+Query VCF files to get a list of 'variant IDs' from each tool
+---------------------------------------
+Execute R script - performs an inner join on the 'variant IDs' above to find the overlapping variants
+
+Attaching package: ‘dplyr’
+
+The following objects are masked from ‘package:stats’:
+
+    filter, lag
+
+The following objects are masked from ‘package:base’:
+
+    intersect, setdiff, setequal, union
+
+
+Attaching package: ‘data.table’
+
+The following objects are masked from ‘package:dplyr’:
+
+    between, first, last
+
+Parsed with column specification:
+cols(
+  .default = col_character(),
+  POS = col_double(),
+  QUAL = col_double()
+)
+See spec(...) for full column specifications.
+Joining, by = c("variant_name", "sample")
+Warning messages:
+1: Expected 7 pieces. Additional pieces discarded in 142 rows [1827553, 1827554, 1827555, 1827556, 1827557, 1827558, 1827559, 1827560, 1827561, 1827562, 1827563, 1827564, 1827565, 1827566, 1827567, 1827568, 1827569, 1827570, 1827571, 1827572, ...]. 
+2: Expected 7 pieces. Missing pieces filled with `NA` in 42 rows [1827511, 1827512, 1827513, 1827514, 1827515, 1827516, 1827517, 1827518, 1827519, 1827520, 1827521, 1827522, 1827523, 1827524, 1827525, 1827526, 1827527, 1827528, 1827529, 1827530, ...]. 
+---------------------------------------
+Create a seperate file that contains all the header information for the vcf
+[main_vcfview] Error: cannot write to (null)
+---------------------------------------
+Remove the column names from the variant names document to create a list of grep patterns
+---------------------------------------
+Filter for variants from the original vcf that are called by both callers by using grep to match patterns created above
+---------------------------------------
+Concatenate the vcf header in the variants called by both callers
+---------------------------------------
+Remove duplicate sample names from VCF
+##### ERROR ------------------------------------------------------------------------------------------
+##### ERROR A USER ERROR has occurred (version 3.2-2-gec30cee): 
+##### ERROR
+##### ERROR This means that one or more arguments or inputs in your command are incorrect.
+##### ERROR The error message below tells you what is the problem.
+##### ERROR
+##### ERROR If the problem is an invalid argument, please check the online documentation guide
+##### ERROR (or rerun your command with --help) to view allowable command-line arguments for this tool.
+##### ERROR
+##### ERROR Visit our website and forum for extensive documentation and answers to 
+##### ERROR commonly asked questions http://www.broadinstitute.org/gatk
+##### ERROR
+##### ERROR Please do NOT post this error to the GATK forum unless you have really tried to fix it yourself.
+##### ERROR
+##### ERROR MESSAGE: Argument with name 'xl_se' isn't defined.
+##### ERROR ------------------------------------------------------------------------------------------
+---------------------------------------
+Finished 

@@ -1,0 +1,97 @@
+---------------------------------------
+PBS: Job identifier is 1314299.cheetah
+PBS: Job name is Variant_calling
+---------------------------------------
+Define paths
+---------------------------------------
+---------------------------------------
+Change to working directory and set env variables
+mkdir: cannot create directory `/home/jwestaway/pk_pipeline/Initial_Pk_subset/outputs/variant_calling/GATK/haplotypecaller': File exists
+---------------------------------------------------------------------------------------------------------------------
+GATK
+---------------------------------------------------------------------------------------------------------------------
+INFO  14:53:30,177 HelpFormatter - -------------------------------------------------------------------------------- 
+INFO  14:53:30,180 HelpFormatter - The Genome Analysis Toolkit (GATK) v3.2-2-gec30cee, Compiled 2014/07/17 15:22:03 
+INFO  14:53:30,181 HelpFormatter - Copyright (c) 2010 The Broad Institute 
+INFO  14:53:30,181 HelpFormatter - For support and documentation go to http://www.broadinstitute.org/gatk 
+INFO  14:53:30,198 HelpFormatter - Program Args: -T HaplotypeCaller -ERC GVCF --minPruning 3 --maxNumHaplotypesInPopulation 200 --max_alternate_alleles 3 --variant_index_type LINEAR --variant_index_parameter 128000 -contamination 0.0 -G Standard -R /home/jwestaway/pk_pipeline/ref_genomes/PKA1H1/fasta/strain_A1_H.1.Icor.fasta -I /home/jwestaway/pk_pipeline/Initial_Pk_subset/outputs/variant_calling/final_bams/PK_SB_DNA_022_DKDL210002151-1a_HWHGKDSXY_L4.dupmarked.realigned.recal.bam -o /home/jwestaway/pk_pipeline/Initial_Pk_subset/outputs/variant_calling/GATK/haplotypecaller/PK_SB_DNA_022_DKDL210002151-1a_HWHGKDSXY_L4.dupmarked.realigned.recal.g.vcf.gz 
+INFO  14:53:30,206 HelpFormatter - Executing as jwestaway@cheetah04 on Linux 2.6.32-754.14.2.el6.x86_64 amd64; Java HotSpot(TM) 64-Bit Server VM 1.8.0_131-b11. 
+INFO  14:53:30,207 HelpFormatter - Date/Time: 2022/02/08 14:53:30 
+INFO  14:53:30,218 HelpFormatter - -------------------------------------------------------------------------------- 
+INFO  14:53:30,219 HelpFormatter - -------------------------------------------------------------------------------- 
+WARN  14:53:30,229 GATKVCFUtils - Creating Tabix index for /home/jwestaway/pk_pipeline/Initial_Pk_subset/outputs/variant_calling/GATK/haplotypecaller/PK_SB_DNA_022_DKDL210002151-1a_HWHGKDSXY_L4.dupmarked.realigned.recal.g.vcf.gz, ignoring user-specified index type and parameter 
+INFO  14:53:31,770 GenomeAnalysisEngine - Strictness is SILENT 
+INFO  14:53:32,014 GenomeAnalysisEngine - Downsampling Settings: Method: BY_SAMPLE, Target Coverage: 250 
+INFO  14:53:32,034 SAMDataSource$SAMReaders - Initializing SAMRecords in serial 
+INFO  14:53:32,090 SAMDataSource$SAMReaders - Done initializing BAM readers: total time 0.05 
+INFO  14:53:32,134 HCMappingQualityFilter - Filtering out reads with MAPQ < 20 
+INFO  14:53:32,367 GenomeAnalysisEngine - Preparing for traversal over 1 BAM files 
+INFO  14:53:32,423 GenomeAnalysisEngine - Done preparing for traversal 
+INFO  14:53:32,424 ProgressMeter - [INITIALIZATION COMPLETE; STARTING PROCESSING] 
+INFO  14:53:32,425 ProgressMeter -                 |      processed |    time |         per 1M |           |   total | remaining 
+INFO  14:53:32,426 ProgressMeter -        Location | active regions | elapsed | active regions | completed | runtime |   runtime 
+INFO  14:53:32,428 HaplotypeCaller - Standard Emitting and Calling confidence set to 0.0 for reference-model confidence output 
+INFO  14:53:32,428 HaplotypeCaller - All sites annotated with PLs forced to true for reference-model confidence output 
+INFO  14:53:32,631 HaplotypeCaller - Using global mismapping rate of 45 => -4.5 in log10 likelihood units 
+Using AVX accelerated implementation of PairHMM
+INFO  14:53:38,250 VectorLoglessPairHMM - libVectorLoglessPairHMM unpacked successfully from GATK jar file 
+INFO  14:53:38,250 VectorLoglessPairHMM - Using vectorized implementation of PairHMM 
+INFO  14:54:02,471 ProgressMeter - ordered_PKNH_01_v2:190318              0.0    30.0 s           49.7 w        0.8%    63.9 m      63.4 m 
+INFO  14:54:32,473 ProgressMeter - ordered_PKNH_01_v2:450175              0.0    60.0 s           99.3 w        1.9%    54.0 m      53.0 m 
+INFO  14:55:02,474 ProgressMeter - ordered_PKNH_02_v2:1453         892570.0    90.0 s          100.0 s        3.7%    40.8 m      39.3 m 
+INFO  14:55:32,474 ProgressMeter - ordered_PKNH_02_v2:504472         892570.0   120.0 s            2.2 m        5.7%    34.8 m      32.8 m 
+INFO  14:56:02,475 ProgressMeter - ordered_PKNH_03_v2:180652        1680216.0     2.5 m           89.0 s        7.7%    32.7 m      30.2 m 
+INFO  14:56:32,476 ProgressMeter - ordered_PKNH_03_v2:637840        1680216.0     3.0 m          107.0 s        9.5%    31.5 m      28.5 m 
+INFO  14:57:02,477 ProgressMeter - ordered_PKNH_03_v2:732545        1680216.0     3.5 m            2.1 m        9.9%    35.3 m      31.8 m 
+INFO  14:57:32,478 ProgressMeter - ordered_PKNH_04_v2:228781        2730786.0     4.0 m           87.0 s       12.2%    32.9 m      28.9 m 
+INFO  14:58:12,479 ProgressMeter - ordered_PKNH_04_v2:861480        2730786.0     4.7 m          102.0 s       14.8%    31.6 m      26.9 m 
+INFO  14:58:42,479 ProgressMeter - ordered_PKNH_05_v2:231113        3862810.0     5.2 m           80.0 s       16.8%    30.7 m      25.5 m 
+INFO  14:59:12,480 ProgressMeter - ordered_PKNH_05_v2:772793        3862810.0     5.7 m           88.0 s       19.1%    29.7 m      24.1 m 
+INFO  14:59:42,481 ProgressMeter - ordered_PKNH_06_v2:534172        4645255.0     6.2 m           79.0 s       21.3%    29.0 m      22.8 m 
+INFO  15:00:12,482 ProgressMeter - ordered_PKNH_07_v2:68316        5725911.0     6.7 m           69.0 s       23.8%    28.0 m      21.3 m 
+INFO  15:00:52,483 ProgressMeter - ordered_PKNH_07_v2:726476        5725911.0     7.3 m           76.0 s       26.5%    27.6 m      20.3 m 
+INFO  15:01:22,483 ProgressMeter - ordered_PKNH_07_v2:1313328        5725911.0     7.8 m           82.0 s       28.9%    27.1 m      19.2 m 
+INFO  15:01:52,484 ProgressMeter - ordered_PKNH_08_v2:353393        7247987.0     8.3 m           68.0 s       31.3%    26.7 m      18.3 m 
+INFO  15:02:22,485 ProgressMeter - ordered_PKNH_08_v2:916336        7247987.0     8.8 m           73.0 s       33.6%    26.3 m      17.5 m 
+INFO  15:03:02,486 ProgressMeter - ordered_PKNH_08_v2:1681628        7247987.0     9.5 m           78.0 s       36.7%    25.9 m      16.4 m 
+INFO  15:03:42,486 ProgressMeter - ordered_PKNH_09_v2:532599        9172442.0    10.2 m           66.0 s       39.9%    25.5 m      15.3 m 
+INFO  15:04:12,487 ProgressMeter - ordered_PKNH_09_v2:1083046        9172442.0    10.7 m           69.0 s       42.2%    25.3 m      14.6 m 
+INFO  15:04:42,494 ProgressMeter - ordered_PKNH_09_v2:1592930        9172442.0    11.2 m           73.0 s       44.3%    25.2 m      14.1 m 
+INFO  15:05:12,495 ProgressMeter - ordered_PKNH_09_v2:2143424        9172442.0    11.7 m           76.0 s       46.5%    25.1 m      13.4 m 
+INFO  15:05:42,496 ProgressMeter - ordered_PKNH_10_v2:538682      1.1367931E7    12.2 m           64.0 s       49.0%    24.9 m      12.7 m 
+INFO  15:06:22,497 ProgressMeter - ordered_PKNH_10_v2:1223836      1.1367931E7    12.8 m           67.0 s       51.8%    24.8 m      12.0 m 
+INFO  15:07:02,498 ProgressMeter - ordered_PKNH_11_v2:414015      1.2884913E7    13.5 m           62.0 s       54.7%    24.7 m      11.2 m 
+INFO  15:07:32,498 ProgressMeter - ordered_PKNH_11_v2:1030967      1.2884913E7    14.0 m           65.0 s       57.2%    24.5 m      10.5 m 
+INFO  15:08:02,499 ProgressMeter - ordered_PKNH_11_v2:1585625      1.2884913E7    14.5 m           67.0 s       59.5%    24.4 m       9.9 m 
+INFO  15:08:32,500 ProgressMeter - ordered_PKNH_11_v2:2071326      1.2884913E7    15.0 m           69.0 s       61.5%    24.4 m       9.4 m 
+INFO  15:09:02,501 ProgressMeter - ordered_PKNH_12_v2:272367       1.525358E7    15.5 m           60.0 s       63.8%    24.3 m       8.8 m 
+INFO  15:09:42,501 ProgressMeter - ordered_PKNH_12_v2:984988       1.525358E7    16.2 m           63.0 s       66.8%    24.2 m       8.0 m 
+INFO  15:10:12,502 ProgressMeter - ordered_PKNH_12_v2:1429790       1.525358E7    16.7 m           65.0 s       68.6%    24.3 m       7.6 m 
+INFO  15:10:42,503 ProgressMeter - ordered_PKNH_12_v2:1981027       1.525358E7    17.2 m           67.0 s       70.9%    24.2 m       7.1 m 
+INFO  15:11:12,504 ProgressMeter - ordered_PKNH_12_v2:2557537       1.525358E7    17.7 m           69.0 s       73.2%    24.1 m       6.5 m 
+INFO  15:11:52,505 ProgressMeter - ordered_PKNH_13_v2:122885      1.8415289E7    18.3 m           59.0 s       76.2%    24.1 m       5.7 m 
+INFO  15:12:32,506 ProgressMeter - ordered_PKNH_13_v2:892092      1.8415289E7    19.0 m           61.0 s       79.4%    23.9 m       4.9 m 
+INFO  15:13:02,506 ProgressMeter - ordered_PKNH_13_v2:1493266      1.8415289E7    19.5 m           63.0 s       81.9%    23.8 m       4.3 m 
+INFO  15:13:32,507 ProgressMeter - ordered_PKNH_13_v2:2051117      1.8415289E7    20.0 m           65.0 s       84.2%    23.8 m       3.8 m 
+INFO  15:14:02,508 ProgressMeter - ordered_PKNH_13_v2:2563454      1.8415289E7    20.5 m           66.0 s       86.3%    23.8 m       3.3 m 
+INFO  15:14:32,509 ProgressMeter - ordered_PKNH_14_v2:536681        2.10123E7    21.0 m           59.0 s       88.6%    23.7 m       2.7 m 
+INFO  15:15:12,510 ProgressMeter - ordered_PKNH_14_v2:1297777        2.10123E7    21.7 m           61.0 s       91.7%    23.6 m     117.0 s 
+INFO  15:15:42,517 ProgressMeter - ordered_PKNH_14_v2:1838198        2.10123E7    22.2 m           63.0 s       94.0%    23.6 m      85.0 s 
+INFO  15:16:12,517 ProgressMeter - ordered_PKNH_14_v2:2354518        2.10123E7    22.7 m           64.0 s       96.1%    23.6 m      55.0 s 
+INFO  15:16:42,518 ProgressMeter - ordered_PKNH_14_v2:2964047        2.10123E7    23.2 m           66.0 s       98.6%    23.5 m      19.0 s 
+Time spent in setup for JNI call : 0.046132468
+Total compute time in PairHMM computeLikelihoods() : 8.224731501
+INFO  15:17:01,093 HaplotypeCaller - Ran local assembly on 180802 active regions 
+INFO  15:17:01,161 ProgressMeter -            done      2.4320447E7    23.5 m           57.0 s      100.0%    23.5 m       0.0 s 
+INFO  15:17:01,162 ProgressMeter - Total runtime 1408.74 secs, 23.48 min, 0.39 hours 
+INFO  15:17:01,162 MicroScheduler - 10273171 reads were filtered out during the traversal out of approximately 11455653 total reads (89.68%) 
+INFO  15:17:01,163 MicroScheduler -   -> 2940385 reads (25.67% of total) failing DuplicateReadFilter 
+INFO  15:17:01,163 MicroScheduler -   -> 0 reads (0.00% of total) failing FailsVendorQualityCheckFilter 
+INFO  15:17:01,164 MicroScheduler -   -> 7330602 reads (63.99% of total) failing HCMappingQualityFilter 
+INFO  15:17:01,167 MicroScheduler -   -> 0 reads (0.00% of total) failing MalformedReadFilter 
+INFO  15:17:01,167 MicroScheduler -   -> 0 reads (0.00% of total) failing MappingQualityUnavailableFilter 
+INFO  15:17:01,172 MicroScheduler -   -> 2184 reads (0.02% of total) failing NotPrimaryAlignmentFilter 
+INFO  15:17:01,173 MicroScheduler -   -> 0 reads (0.00% of total) failing UnmappedReadFilter 
+---------------------------------------------------------------------------------------------------------------------
+FINISHED
+---------------------------------------------------------------------------------------------------------------------

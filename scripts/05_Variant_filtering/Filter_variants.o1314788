@@ -1,0 +1,566 @@
+---------------------------------------
+PBS: Job identifier is 1314788.cheetah
+PBS: Job name is Filter_variants
+---------------------------------------
+Define paths and change to working directory
+---------------------------------------
+SELECT VARIANT TYPES
+---------------------------------------
+---------------------------------------
+SNPs
+09:15:30.867 INFO  NativeLibraryLoader - Loading libgkl_compression.so from jar:file:/home/jwestaway/pk_pipeline/tools/gatk-4.2.2.0/gatk-package-4.2.2.0-local.jar!/com/intel/gkl/native/libgkl_compression.so
+09:15:30.945 WARN  NativeLibraryLoader - Unable to load libgkl_compression.so from native/libgkl_compression.so (/tmp/libgkl_compression6964659441514088237.so: /lib64/libc.so.6: version `GLIBC_2.14' not found (required by /tmp/libgkl_compression6964659441514088237.so))
+09:15:30.957 INFO  NativeLibraryLoader - Loading libgkl_compression.so from jar:file:/home/jwestaway/pk_pipeline/tools/gatk-4.2.2.0/gatk-package-4.2.2.0-local.jar!/com/intel/gkl/native/libgkl_compression.so
+09:15:30.966 WARN  NativeLibraryLoader - Unable to load libgkl_compression.so from native/libgkl_compression.so (/tmp/libgkl_compression2058566144605450362.so: /lib64/libc.so.6: version `GLIBC_2.14' not found (required by /tmp/libgkl_compression2058566144605450362.so))
+Feb 15, 2022 9:15:31 AM shaded.cloud_nio.com.google.auth.oauth2.ComputeEngineCredentials runningOnComputeEngine
+INFO: Failed to detect whether we are running on Google Compute Engine.
+09:15:31.456 INFO  SelectVariants - ------------------------------------------------------------
+09:15:31.471 INFO  SelectVariants - The Genome Analysis Toolkit (GATK) v4.2.2.0
+09:15:31.471 INFO  SelectVariants - For support and documentation go to https://software.broadinstitute.org/gatk/
+09:15:31.474 INFO  SelectVariants - Executing as jwestaway@cheetah06 on Linux v2.6.32-754.14.2.el6.x86_64 amd64
+09:15:31.474 INFO  SelectVariants - Java runtime: Java HotSpot(TM) 64-Bit Server VM v1.8.0_131-b11
+09:15:31.474 INFO  SelectVariants - Start Date/Time: 15 February 2022 9:15:30 AM
+09:15:31.474 INFO  SelectVariants - ------------------------------------------------------------
+09:15:31.475 INFO  SelectVariants - ------------------------------------------------------------
+09:15:31.476 INFO  SelectVariants - HTSJDK Version: 2.24.1
+09:15:31.476 INFO  SelectVariants - Picard Version: 2.25.4
+09:15:31.476 INFO  SelectVariants - Built for Spark Version: 2.4.5
+09:15:31.476 INFO  SelectVariants - HTSJDK Defaults.COMPRESSION_LEVEL : 2
+09:15:31.477 INFO  SelectVariants - HTSJDK Defaults.USE_ASYNC_IO_READ_FOR_SAMTOOLS : false
+09:15:31.477 INFO  SelectVariants - HTSJDK Defaults.USE_ASYNC_IO_WRITE_FOR_SAMTOOLS : true
+09:15:31.477 INFO  SelectVariants - HTSJDK Defaults.USE_ASYNC_IO_WRITE_FOR_TRIBBLE : false
+09:15:31.478 INFO  SelectVariants - Deflater: JdkDeflater
+09:15:31.478 INFO  SelectVariants - Inflater: JdkInflater
+09:15:31.478 INFO  SelectVariants - GCS max retries/reopens: 20
+09:15:31.478 INFO  SelectVariants - Requester pays: disabled
+09:15:31.478 INFO  SelectVariants - Initializing engine
+09:15:32.640 INFO  FeatureManager - Using codec VCFCodec to read file file:///home/jwestaway/pk_pipeline/Initial_Pk_subset/outputs/variant_calling/consensus/Initial_Pk_dataset_consensus.vcf
+09:15:32.711 INFO  SelectVariants - Done initializing engine
+09:15:32.924 INFO  ProgressMeter - Starting traversal
+09:15:32.925 INFO  ProgressMeter -        Current Locus  Elapsed Minutes    Variants Processed  Variants/Minute
+09:15:44.711 INFO  ProgressMeter - ordered_PKNH_01_v2:81333              0.2                  5000          25453.9
+09:15:55.532 INFO  ProgressMeter - ordered_PKNH_01_v2:176816              0.4                 12000          31848.5
+09:16:05.612 INFO  ProgressMeter - ordered_PKNH_01_v2:336173              0.5                 26000          47726.9
+09:16:15.992 INFO  ProgressMeter - ordered_PKNH_01_v2:535902              0.7                 43000          59908.0
+09:16:26.218 INFO  ProgressMeter - ordered_PKNH_01_v2:752142              0.9                 60000          67551.1
+09:16:36.392 INFO  ProgressMeter - ordered_PKNH_02_v2:113231              1.1                 76000          71848.4
+09:16:46.541 INFO  ProgressMeter - ordered_PKNH_02_v2:311423              1.2                 93000          75798.7
+09:16:56.780 INFO  ProgressMeter - ordered_PKNH_02_v2:518150              1.4                110000          78708.2
+09:17:07.216 INFO  ProgressMeter - ordered_PKNH_02_v2:750115              1.6                127000          80814.5
+09:17:17.448 INFO  ProgressMeter - ordered_PKNH_03_v2:191568              1.7                144000          82661.2
+09:17:27.670 INFO  ProgressMeter - ordered_PKNH_03_v2:398434              1.9                161000          84186.7
+09:17:37.916 INFO  ProgressMeter - ordered_PKNH_03_v2:605923              2.1                178000          85446.2
+09:17:48.023 INFO  ProgressMeter - ordered_PKNH_03_v2:844457              2.3                195000          86603.8
+09:17:58.038 INFO  ProgressMeter - ordered_PKNH_04_v2:11726              2.4                212000          87655.8
+09:18:08.183 INFO  ProgressMeter - ordered_PKNH_04_v2:234352              2.6                229000          88497.9
+09:18:18.275 INFO  ProgressMeter - ordered_PKNH_04_v2:473095              2.8                246000          89265.2
+09:18:28.517 INFO  ProgressMeter - ordered_PKNH_04_v2:679512              2.9                263000          89867.4
+09:18:38.970 INFO  ProgressMeter - ordered_PKNH_04_v2:886180              3.1                280000          90300.7
+09:18:49.148 INFO  ProgressMeter - ordered_PKNH_04_v2:1084779              3.3                297000          90830.3
+09:18:59.162 INFO  ProgressMeter - ordered_PKNH_05_v2:170283              3.4                314000          91351.2
+09:19:09.226 INFO  ProgressMeter - ordered_PKNH_05_v2:424112              3.6                331000          91816.5
+09:19:19.443 INFO  ProgressMeter - ordered_PKNH_05_v2:629213              3.8                348000          92178.1
+09:19:29.517 INFO  ProgressMeter - ordered_PKNH_06_v2:69978              3.9                365000          92564.4
+09:19:39.815 INFO  ProgressMeter - ordered_PKNH_06_v2:265425              4.1                382000          92834.9
+09:19:50.038 INFO  ProgressMeter - ordered_PKNH_06_v2:488058              4.3                399000          93110.8
+09:20:00.191 INFO  ProgressMeter - ordered_PKNH_06_v2:702904              4.5                416000          93390.1
+09:20:10.347 INFO  ProgressMeter - ordered_PKNH_06_v2:907913              4.6                433000          93647.9
+09:20:20.353 INFO  ProgressMeter - ordered_PKNH_07_v2:76986              4.8                450000          93936.6
+09:20:30.461 INFO  ProgressMeter - ordered_PKNH_07_v2:313221              5.0                467000          94173.5
+09:20:40.661 INFO  ProgressMeter - ordered_PKNH_07_v2:531014              5.1                484000          94366.6
+09:20:50.840 INFO  ProgressMeter - ordered_PKNH_07_v2:736045              5.3                501000          94553.6
+09:21:01.055 INFO  ProgressMeter - ordered_PKNH_07_v2:939810              5.5                518000          94718.6
+09:21:11.197 INFO  ProgressMeter - ordered_PKNH_07_v2:1145043              5.6                535000          94894.0
+09:21:21.288 INFO  ProgressMeter - ordered_PKNH_07_v2:1374158              5.8                552000          95073.5
+09:21:31.323 INFO  ProgressMeter - ordered_PKNH_08_v2:92618              6.0                569000          95257.2
+09:21:41.519 INFO  ProgressMeter - ordered_PKNH_08_v2:302429              6.1                586000          95389.5
+09:21:51.559 INFO  ProgressMeter - ordered_PKNH_08_v2:527025              6.3                603000          95554.3
+09:22:01.659 INFO  ProgressMeter - ordered_PKNH_08_v2:730833              6.5                620000          95695.3
+09:22:12.115 INFO  ProgressMeter - ordered_PKNH_08_v2:926691              6.7                637000          95743.9
+09:22:22.239 INFO  ProgressMeter - ordered_PKNH_08_v2:1131917              6.8                654000          95868.0
+09:22:32.347 INFO  ProgressMeter - ordered_PKNH_08_v2:1366616              7.0                671000          95989.2
+09:22:42.879 INFO  ProgressMeter - ordered_PKNH_08_v2:1586728              7.2                688000          96010.3
+09:22:53.069 INFO  ProgressMeter - ordered_PKNH_08_v2:1805990              7.3                705000          96104.9
+09:23:03.576 INFO  ProgressMeter - ordered_PKNH_09_v2:168001              7.5                723000          96260.7
+09:23:13.750 INFO  ProgressMeter - ordered_PKNH_09_v2:408954              7.7                740000          96348.9
+09:23:23.846 INFO  ProgressMeter - ordered_PKNH_09_v2:637973              7.8                757000          96449.3
+09:23:34.055 INFO  ProgressMeter - ordered_PKNH_09_v2:862489              8.0                774000          96522.8
+09:23:44.264 INFO  ProgressMeter - ordered_PKNH_09_v2:1091129              8.2                791000          96593.2
+09:23:54.425 INFO  ProgressMeter - ordered_PKNH_09_v2:1293719              8.4                808000          96670.0
+09:24:04.555 INFO  ProgressMeter - ordered_PKNH_09_v2:1501291              8.5                825000          96749.6
+09:24:14.771 INFO  ProgressMeter - ordered_PKNH_09_v2:1721337              8.7                842000          96810.2
+09:24:24.902 INFO  ProgressMeter - ordered_PKNH_09_v2:1931475              8.9                859000          96884.1
+09:24:35.512 INFO  ProgressMeter - ordered_PKNH_09_v2:2177562              9.0                877000          96980.0
+09:24:46.000 INFO  ProgressMeter - ordered_PKNH_10_v2:232161              9.2                895000          97093.5
+09:24:56.066 INFO  ProgressMeter - ordered_PKNH_10_v2:455171              9.4                912000          97169.3
+09:25:06.469 INFO  ProgressMeter - ordered_PKNH_10_v2:658414              9.6                929000          97185.4
+09:25:16.631 INFO  ProgressMeter - ordered_PKNH_10_v2:859269              9.7                946000          97240.7
+09:25:26.762 INFO  ProgressMeter - ordered_PKNH_10_v2:1076923              9.9                963000          97299.6
+09:25:37.324 INFO  ProgressMeter - ordered_PKNH_10_v2:1280367             10.1                980000          97286.9
+09:25:47.345 INFO  ProgressMeter - ordered_PKNH_10_v2:1491371             10.2                997000          97360.1
+09:25:57.870 INFO  ProgressMeter - ordered_PKNH_11_v2:198850             10.4               1015000          97448.6
+09:26:08.070 INFO  ProgressMeter - ordered_PKNH_11_v2:426232             10.6               1032000          97489.5
+09:26:18.111 INFO  ProgressMeter - ordered_PKNH_11_v2:656235             10.8               1049000          97553.4
+09:26:28.178 INFO  ProgressMeter - ordered_PKNH_11_v2:873746             10.9               1066000          97611.2
+09:26:38.531 INFO  ProgressMeter - ordered_PKNH_11_v2:1137320             11.1               1083000          97625.3
+09:26:48.652 INFO  ProgressMeter - ordered_PKNH_11_v2:1343556             11.3               1100000          97672.6
+09:26:58.808 INFO  ProgressMeter - ordered_PKNH_11_v2:1549537             11.4               1117000          97713.5
+09:27:09.325 INFO  ProgressMeter - ordered_PKNH_11_v2:1738648             11.6               1134000          97702.6
+09:27:19.382 INFO  ProgressMeter - ordered_PKNH_11_v2:1964831             11.8               1151000          97755.4
+09:27:29.520 INFO  ProgressMeter - ordered_PKNH_11_v2:2169620             11.9               1168000          97796.0
+09:27:39.592 INFO  ProgressMeter - ordered_PKNH_12_v2:67632             12.1               1185000          97844.0
+09:27:49.781 INFO  ProgressMeter - ordered_PKNH_12_v2:278223             12.3               1202000          97875.3
+09:27:59.922 INFO  ProgressMeter - ordered_PKNH_12_v2:489590             12.4               1219000          97912.0
+09:28:10.007 INFO  ProgressMeter - ordered_PKNH_12_v2:708378             12.6               1236000          97955.0
+09:28:20.050 INFO  ProgressMeter - ordered_PKNH_12_v2:950095             12.8               1253000          98002.4
+09:28:30.178 INFO  ProgressMeter - ordered_PKNH_12_v2:1184342             13.0               1270000          98037.6
+09:28:40.539 INFO  ProgressMeter - ordered_PKNH_12_v2:1419108             13.1               1287000          98042.9
+09:28:50.726 INFO  ProgressMeter - ordered_PKNH_12_v2:1628384             13.3               1304000          98069.7
+09:29:00.855 INFO  ProgressMeter - ordered_PKNH_12_v2:1847399             13.5               1321000          98102.6
+09:29:10.977 INFO  ProgressMeter - ordered_PKNH_12_v2:2088619             13.6               1338000          98135.6
+09:29:21.546 INFO  ProgressMeter - ordered_PKNH_12_v2:2344003             13.8               1356000          98187.2
+09:29:31.672 INFO  ProgressMeter - ordered_PKNH_12_v2:2562947             14.0               1373000          98217.9
+09:29:42.140 INFO  ProgressMeter - ordered_PKNH_12_v2:2782155             14.2               1390000          98208.3
+09:29:52.321 INFO  ProgressMeter - ordered_PKNH_12_v2:2993907             14.3               1407000          98231.8
+09:30:02.397 INFO  ProgressMeter - ordered_PKNH_13_v2:82320             14.5               1424000          98266.5
+09:30:12.566 INFO  ProgressMeter - ordered_PKNH_13_v2:296736             14.7               1441000          98290.1
+09:30:22.749 INFO  ProgressMeter - ordered_PKNH_13_v2:515992             14.8               1458000          98311.7
+09:30:32.898 INFO  ProgressMeter - ordered_PKNH_13_v2:728857             15.0               1475000          98336.4
+09:30:43.127 INFO  ProgressMeter - ordered_PKNH_13_v2:941766             15.2               1492000          98351.8
+09:30:53.130 INFO  ProgressMeter - ordered_PKNH_13_v2:1198519             15.3               1509000          98391.1
+09:31:03.187 INFO  ProgressMeter - ordered_PKNH_13_v2:1414771             15.5               1526000          98424.0
+09:31:13.549 INFO  ProgressMeter - ordered_PKNH_13_v2:1656113             15.7               1543000          98424.0
+09:31:23.687 INFO  ProgressMeter - ordered_PKNH_13_v2:1872761             15.8               1560000          98447.4
+09:31:33.783 INFO  ProgressMeter - ordered_PKNH_13_v2:2094655             16.0               1577000          98474.5
+09:31:44.222 INFO  ProgressMeter - ordered_PKNH_13_v2:2329189             16.2               1594000          98466.3
+09:31:54.315 INFO  ProgressMeter - ordered_PKNH_13_v2:2557917             16.4               1611000          98493.0
+09:32:04.716 INFO  ProgressMeter - ordered_PKNH_14_v2:236930             16.5               1629000          98549.0
+09:32:14.861 INFO  ProgressMeter - ordered_PKNH_14_v2:475808             16.7               1646000          98569.3
+09:32:24.938 INFO  ProgressMeter - ordered_PKNH_14_v2:709792             16.9               1663000          98595.6
+09:32:35.064 INFO  ProgressMeter - ordered_PKNH_14_v2:930802             17.0               1680000          98616.8
+09:32:45.415 INFO  ProgressMeter - ordered_PKNH_14_v2:1169588             17.2               1697000          98616.0
+09:32:55.477 INFO  ProgressMeter - ordered_PKNH_14_v2:1400833             17.4               1714000          98642.6
+09:33:05.488 INFO  ProgressMeter - ordered_PKNH_14_v2:1644205             17.5               1731000          98673.5
+09:33:15.893 INFO  ProgressMeter - ordered_PKNH_14_v2:1863497             17.7               1748000          98667.1
+09:33:26.083 INFO  ProgressMeter - ordered_PKNH_14_v2:2062588             17.9               1765000          98680.7
+09:33:36.534 INFO  ProgressMeter - ordered_PKNH_14_v2:2289594             18.1               1782000          98670.3
+09:33:46.696 INFO  ProgressMeter - ordered_PKNH_14_v2:2500458             18.2               1799000          98686.1
+09:33:56.783 INFO  ProgressMeter - ordered_PKNH_14_v2:2713795             18.4               1816000          98708.3
+09:34:06.884 INFO  ProgressMeter - ordered_PKNH_14_v2:2942365             18.6               1833000          98728.9
+09:34:17.015 INFO  ProgressMeter - ordered_PKNH_14_v2:3143955             18.7               1850000          98746.5
+09:34:21.863 INFO  ProgressMeter - ordered_PKNH_14_v2:3260316             18.8               1858375          98767.7
+09:34:21.864 INFO  ProgressMeter - Traversal complete. Processed 1858375 total variants in 18.8 minutes.
+09:34:23.718 INFO  SelectVariants - Shutting down engine
+[15 February 2022 9:34:23 AM] org.broadinstitute.hellbender.tools.walkers.variantutils.SelectVariants done. Elapsed time: 18.88 minutes.
+Runtime.totalMemory()=3243769856
+---------------------------------------
+Indels
+09:34:31.125 INFO  NativeLibraryLoader - Loading libgkl_compression.so from jar:file:/home/jwestaway/pk_pipeline/tools/gatk-4.2.2.0/gatk-package-4.2.2.0-local.jar!/com/intel/gkl/native/libgkl_compression.so
+09:34:31.193 WARN  NativeLibraryLoader - Unable to load libgkl_compression.so from native/libgkl_compression.so (/tmp/libgkl_compression5252312631353993981.so: /lib64/libc.so.6: version `GLIBC_2.14' not found (required by /tmp/libgkl_compression5252312631353993981.so))
+09:34:31.202 INFO  NativeLibraryLoader - Loading libgkl_compression.so from jar:file:/home/jwestaway/pk_pipeline/tools/gatk-4.2.2.0/gatk-package-4.2.2.0-local.jar!/com/intel/gkl/native/libgkl_compression.so
+09:34:31.212 WARN  NativeLibraryLoader - Unable to load libgkl_compression.so from native/libgkl_compression.so (/tmp/libgkl_compression5728999286097402832.so: /lib64/libc.so.6: version `GLIBC_2.14' not found (required by /tmp/libgkl_compression5728999286097402832.so))
+Feb 15, 2022 9:34:31 AM shaded.cloud_nio.com.google.auth.oauth2.ComputeEngineCredentials runningOnComputeEngine
+INFO: Failed to detect whether we are running on Google Compute Engine.
+09:34:31.698 INFO  SelectVariants - ------------------------------------------------------------
+09:34:31.710 INFO  SelectVariants - The Genome Analysis Toolkit (GATK) v4.2.2.0
+09:34:31.710 INFO  SelectVariants - For support and documentation go to https://software.broadinstitute.org/gatk/
+09:34:31.713 INFO  SelectVariants - Executing as jwestaway@cheetah06 on Linux v2.6.32-754.14.2.el6.x86_64 amd64
+09:34:31.713 INFO  SelectVariants - Java runtime: Java HotSpot(TM) 64-Bit Server VM v1.8.0_131-b11
+09:34:31.714 INFO  SelectVariants - Start Date/Time: 15 February 2022 9:34:31 AM
+09:34:31.714 INFO  SelectVariants - ------------------------------------------------------------
+09:34:31.714 INFO  SelectVariants - ------------------------------------------------------------
+09:34:31.715 INFO  SelectVariants - HTSJDK Version: 2.24.1
+09:34:31.715 INFO  SelectVariants - Picard Version: 2.25.4
+09:34:31.715 INFO  SelectVariants - Built for Spark Version: 2.4.5
+09:34:31.715 INFO  SelectVariants - HTSJDK Defaults.COMPRESSION_LEVEL : 2
+09:34:31.715 INFO  SelectVariants - HTSJDK Defaults.USE_ASYNC_IO_READ_FOR_SAMTOOLS : false
+09:34:31.715 INFO  SelectVariants - HTSJDK Defaults.USE_ASYNC_IO_WRITE_FOR_SAMTOOLS : true
+09:34:31.716 INFO  SelectVariants - HTSJDK Defaults.USE_ASYNC_IO_WRITE_FOR_TRIBBLE : false
+09:34:31.716 INFO  SelectVariants - Deflater: JdkDeflater
+09:34:31.716 INFO  SelectVariants - Inflater: JdkInflater
+09:34:31.716 INFO  SelectVariants - GCS max retries/reopens: 20
+09:34:31.716 INFO  SelectVariants - Requester pays: disabled
+09:34:31.716 INFO  SelectVariants - Initializing engine
+09:34:32.857 INFO  FeatureManager - Using codec VCFCodec to read file file:///home/jwestaway/pk_pipeline/Initial_Pk_subset/outputs/variant_calling/consensus/Initial_Pk_dataset_consensus.vcf
+09:34:32.927 INFO  SelectVariants - Done initializing engine
+09:34:33.104 INFO  ProgressMeter - Starting traversal
+09:34:33.104 INFO  ProgressMeter -        Current Locus  Elapsed Minutes    Variants Processed  Variants/Minute
+09:36:26.976 INFO  ProgressMeter - ordered_PKNH_05_v2:299797              1.9                  1000            526.9
+09:37:53.789 INFO  ProgressMeter - ordered_PKNH_08_v2:546710              3.3                  2000            598.0
+09:39:23.467 INFO  ProgressMeter - ordered_PKNH_10_v2:249911              4.8                  3000            619.9
+09:40:55.162 INFO  ProgressMeter - ordered_PKNH_12_v2:196016              6.4                  4000            628.2
+09:42:20.796 INFO  ProgressMeter - ordered_PKNH_13_v2:711357              7.8                  5000            641.4
+09:43:36.712 INFO  ProgressMeter - ordered_PKNH_14_v2:1504159              9.1                  6000            662.3
+09:44:19.127 INFO  ProgressMeter - ordered_PKNH_14_v2:1504159              9.8                  6472            662.6
+09:44:19.127 INFO  ProgressMeter - Traversal complete. Processed 6472 total variants in 9.8 minutes.
+09:44:19.171 INFO  SelectVariants - Shutting down engine
+[15 February 2022 9:44:19 AM] org.broadinstitute.hellbender.tools.walkers.variantutils.SelectVariants done. Elapsed time: 9.80 minutes.
+Runtime.totalMemory()=3243769856
+---------------------------------------
+FILTER
+---------------------------------------
+09:44:26.345 INFO  NativeLibraryLoader - Loading libgkl_compression.so from jar:file:/home/jwestaway/pk_pipeline/tools/gatk-4.2.2.0/gatk-package-4.2.2.0-local.jar!/com/intel/gkl/native/libgkl_compression.so
+09:44:26.416 WARN  NativeLibraryLoader - Unable to load libgkl_compression.so from native/libgkl_compression.so (/tmp/libgkl_compression8467853261513251752.so: /lib64/libc.so.6: version `GLIBC_2.14' not found (required by /tmp/libgkl_compression8467853261513251752.so))
+09:44:26.432 INFO  NativeLibraryLoader - Loading libgkl_compression.so from jar:file:/home/jwestaway/pk_pipeline/tools/gatk-4.2.2.0/gatk-package-4.2.2.0-local.jar!/com/intel/gkl/native/libgkl_compression.so
+09:44:26.454 WARN  NativeLibraryLoader - Unable to load libgkl_compression.so from native/libgkl_compression.so (/tmp/libgkl_compression5427044505751377416.so: /lib64/libc.so.6: version `GLIBC_2.14' not found (required by /tmp/libgkl_compression5427044505751377416.so))
+Feb 15, 2022 9:44:26 AM shaded.cloud_nio.com.google.auth.oauth2.ComputeEngineCredentials runningOnComputeEngine
+INFO: Failed to detect whether we are running on Google Compute Engine.
+09:44:26.963 INFO  VariantFiltration - ------------------------------------------------------------
+09:44:26.964 INFO  VariantFiltration - The Genome Analysis Toolkit (GATK) v4.2.2.0
+09:44:26.964 INFO  VariantFiltration - For support and documentation go to https://software.broadinstitute.org/gatk/
+09:44:26.965 INFO  VariantFiltration - Executing as jwestaway@cheetah06 on Linux v2.6.32-754.14.2.el6.x86_64 amd64
+09:44:26.965 INFO  VariantFiltration - Java runtime: Java HotSpot(TM) 64-Bit Server VM v1.8.0_131-b11
+09:44:26.966 INFO  VariantFiltration - Start Date/Time: 15 February 2022 9:44:26 AM
+09:44:26.966 INFO  VariantFiltration - ------------------------------------------------------------
+09:44:26.966 INFO  VariantFiltration - ------------------------------------------------------------
+09:44:26.967 INFO  VariantFiltration - HTSJDK Version: 2.24.1
+09:44:26.967 INFO  VariantFiltration - Picard Version: 2.25.4
+09:44:26.967 INFO  VariantFiltration - Built for Spark Version: 2.4.5
+09:44:26.968 INFO  VariantFiltration - HTSJDK Defaults.COMPRESSION_LEVEL : 2
+09:44:26.968 INFO  VariantFiltration - HTSJDK Defaults.USE_ASYNC_IO_READ_FOR_SAMTOOLS : false
+09:44:26.968 INFO  VariantFiltration - HTSJDK Defaults.USE_ASYNC_IO_WRITE_FOR_SAMTOOLS : true
+09:44:26.979 INFO  VariantFiltration - HTSJDK Defaults.USE_ASYNC_IO_WRITE_FOR_TRIBBLE : false
+09:44:26.980 INFO  VariantFiltration - Deflater: JdkDeflater
+09:44:26.980 INFO  VariantFiltration - Inflater: JdkInflater
+09:44:26.980 INFO  VariantFiltration - GCS max retries/reopens: 20
+09:44:26.980 INFO  VariantFiltration - Requester pays: disabled
+09:44:26.980 INFO  VariantFiltration - Initializing engine
+09:44:28.039 INFO  FeatureManager - Using codec VCFCodec to read file file:///home/jwestaway/pk_pipeline/Initial_Pk_subset/outputs/variant_calling/consensus/Initial_Pk_dataset_consensus.vcf
+09:44:28.154 INFO  VariantFiltration - Done initializing engine
+09:44:28.368 INFO  ProgressMeter - Starting traversal
+09:44:28.368 INFO  ProgressMeter -        Current Locus  Elapsed Minutes    Variants Processed  Variants/Minute
+09:44:36.350 WARN  JexlEngine - ![0,2]: 'QD < 20.0;' undefined variable QD
+09:44:38.893 INFO  ProgressMeter - ordered_PKNH_01_v2:67898              0.2                  4000          22805.0
+09:44:49.097 INFO  ProgressMeter - ordered_PKNH_01_v2:143717              0.3                 10000          28945.0
+09:44:59.368 INFO  ProgressMeter - ordered_PKNH_01_v2:304565              0.5                 23000          44517.6
+09:45:09.398 INFO  ProgressMeter - ordered_PKNH_01_v2:490742              0.7                 39000          57031.4
+09:45:19.851 INFO  ProgressMeter - ordered_PKNH_01_v2:700843              0.9                 56000          65264.3
+09:45:29.091 WARN  JexlEngine - ![0,2]: 'QD < 20.0;' undefined variable QD
+09:45:30.372 INFO  ProgressMeter - ordered_PKNH_02_v2:40503              1.0                 72000          69672.9
+09:45:40.378 INFO  ProgressMeter - ordered_PKNH_02_v2:255737              1.2                 88000          73323.1
+09:45:40.494 WARN  JexlEngine - ![0,2]: 'QD < 20.0;' undefined variable QD
+09:45:50.757 INFO  ProgressMeter - ordered_PKNH_02_v2:462462              1.4                105000          76466.5
+09:45:54.560 WARN  JexlEngine - ![0,2]: 'QD < 20.0;' undefined variable QD
+09:45:54.562 WARN  JexlEngine - ![0,2]: 'QD < 20.0;' undefined variable QD
+09:46:01.210 INFO  ProgressMeter - ordered_PKNH_02_v2:673239              1.5                122000          78843.6
+09:46:11.309 INFO  ProgressMeter - ordered_PKNH_03_v2:117947              1.7                138000          80434.4
+09:46:14.341 WARN  JexlEngine - ![0,2]: 'QD < 20.0;' undefined variable QD
+09:46:21.751 INFO  ProgressMeter - ordered_PKNH_03_v2:323065              1.9                155000          82023.6
+09:46:31.869 INFO  ProgressMeter - ordered_PKNH_03_v2:497155              2.1                171000          83076.3
+09:46:42.143 INFO  ProgressMeter - ordered_PKNH_03_v2:746119              2.2                188000          84320.7
+09:46:44.841 WARN  JexlEngine - ![0,2]: 'QD < 20.0;' undefined variable QD
+09:46:52.652 INFO  ProgressMeter - ordered_PKNH_03_v2:953070              2.4                205000          85249.1
+09:47:02.799 INFO  ProgressMeter - ordered_PKNH_04_v2:139717              2.6                222000          86252.1
+09:47:05.763 WARN  JexlEngine - ![0,2]: 'QD < 20.0;' undefined variable QD
+09:47:13.201 INFO  ProgressMeter - ordered_PKNH_04_v2:359113              2.7                239000          86997.7
+09:47:23.606 INFO  ProgressMeter - ordered_PKNH_04_v2:588699              2.9                256000          87652.2
+09:47:34.062 INFO  ProgressMeter - ordered_PKNH_04_v2:787812              3.1                273000          88209.6
+09:47:35.741 WARN  JexlEngine - ![0,2]: 'QD < 20.0;' undefined variable QD
+09:47:37.523 WARN  JexlEngine - ![0,2]: 'QD < 20.0;' undefined variable QD
+09:47:44.473 INFO  ProgressMeter - ordered_PKNH_04_v2:992682              3.3                290000          88728.0
+09:47:54.749 INFO  ProgressMeter - ordered_PKNH_05_v2:86960              3.4                307000          89252.8
+09:47:56.926 WARN  JexlEngine - ![0,2]: 'QD < 20.0;' undefined variable QD
+09:48:04.915 INFO  ProgressMeter - ordered_PKNH_05_v2:290205              3.6                323000          89496.0
+09:48:09.718 WARN  JexlEngine - ![0,2]: 'QD < 20.0;' undefined variable QD
+09:48:12.346 WARN  JexlEngine - ![0,2]: 'QD < 20.0;' undefined variable QD
+09:48:15.498 INFO  ProgressMeter - ordered_PKNH_05_v2:507119              3.8                339000          89552.2
+09:48:25.518 INFO  ProgressMeter - ordered_PKNH_05_v2:685569              4.0                354000          89563.6
+09:48:36.076 INFO  ProgressMeter - ordered_PKNH_06_v2:113980              4.1                370000          89621.7
+09:48:40.840 WARN  JexlEngine - ![0,2]: 'QD < 20.0;' undefined variable QD
+09:48:46.415 INFO  ProgressMeter - ordered_PKNH_06_v2:288337              4.3                385000          89518.9
+09:48:56.452 INFO  ProgressMeter - ordered_PKNH_06_v2:485687              4.5                400000          89524.2
+09:48:57.888 WARN  JexlEngine - ![0,2]: 'QD < 20.0;' undefined variable QD
+09:49:02.952 WARN  JexlEngine - ![0,2]: 'QD < 20.0;' undefined variable QD
+09:49:07.377 INFO  ProgressMeter - ordered_PKNH_06_v2:687405              4.7                416000          89459.5
+09:49:17.963 INFO  ProgressMeter - ordered_PKNH_06_v2:881234              4.8                432000          89504.6
+09:49:28.467 INFO  ProgressMeter - ordered_PKNH_07_v2:24625              5.0                448000          89570.4
+09:49:38.641 INFO  ProgressMeter - ordered_PKNH_07_v2:241715              5.2                463000          89534.1
+09:49:49.216 INFO  ProgressMeter - ordered_PKNH_07_v2:446334              5.3                479000          89575.1
+09:49:59.878 INFO  ProgressMeter - ordered_PKNH_07_v2:644388              5.5                495000          89590.1
+09:50:10.160 INFO  ProgressMeter - ordered_PKNH_07_v2:827994              5.7                510000          89528.1
+09:50:20.189 INFO  ProgressMeter - ordered_PKNH_07_v2:1001046              5.9                525000          89534.2
+09:50:23.908 WARN  JexlEngine - ![0,2]: 'QD < 20.0;' undefined variable QD
+09:50:29.085 WARN  JexlEngine - ![0,2]: 'QD < 20.0;' undefined variable QD
+09:50:30.773 INFO  ProgressMeter - ordered_PKNH_07_v2:1192097              6.0                541000          89568.3
+09:50:40.940 INFO  ProgressMeter - ordered_PKNH_07_v2:1400903              6.2                556000          89539.7
+09:50:51.434 INFO  ProgressMeter - ordered_PKNH_08_v2:107673              6.4                572000          89592.9
+09:51:02.072 INFO  ProgressMeter - ordered_PKNH_08_v2:303304              6.6                588000          89610.5
+09:51:12.626 INFO  ProgressMeter - ordered_PKNH_08_v2:513888              6.7                604000          89645.9
+09:51:17.897 WARN  JexlEngine - ![0,2]: 'QD < 20.0;' undefined variable QD
+09:51:23.201 INFO  ProgressMeter - ordered_PKNH_08_v2:712008              6.9                620000          89674.6
+09:51:28.401 WARN  JexlEngine - ![0,2]: 'QD < 20.0;' undefined variable QD
+09:51:33.782 INFO  ProgressMeter - ordered_PKNH_08_v2:896673              7.1                636000          89700.9
+09:51:43.818 INFO  ProgressMeter - ordered_PKNH_08_v2:1075226              7.3                651000          89700.7
+09:51:54.410 INFO  ProgressMeter - ordered_PKNH_08_v2:1286659              7.4                667000          89722.5
+09:51:58.895 WARN  JexlEngine - ![0,2]: 'QD < 20.0;' undefined variable QD
+09:52:05.040 INFO  ProgressMeter - ordered_PKNH_08_v2:1508036              7.6                683000          89736.4
+09:52:15.376 INFO  ProgressMeter - ordered_PKNH_08_v2:1677919              7.8                698000          89677.3
+09:52:18.521 WARN  JexlEngine - ![0,2]: 'QD < 20.0;' undefined variable QD
+09:52:25.948 INFO  ProgressMeter - ordered_PKNH_08_v2:1902595              8.0                714000          89702.2
+09:52:26.247 WARN  JexlEngine - ![0,2]: 'QD < 20.0;' undefined variable QD
+09:52:36.388 INFO  ProgressMeter - ordered_PKNH_09_v2:229634              8.1                730000          89750.4
+09:52:47.039 INFO  ProgressMeter - ordered_PKNH_09_v2:454648              8.3                746000          89758.6
+09:52:57.522 WARN  JexlEngine - ![0,2]: 'QD < 20.0;' undefined variable QD
+09:52:57.647 INFO  ProgressMeter - ordered_PKNH_09_v2:671899              8.5                762000          89774.0
+09:53:07.692 INFO  ProgressMeter - ordered_PKNH_09_v2:876582              8.7                777000          89770.5
+09:53:17.714 INFO  ProgressMeter - ordered_PKNH_09_v2:1070827              8.8                792000          89771.2
+09:53:28.381 INFO  ProgressMeter - ordered_PKNH_09_v2:1258697              9.0                808000          89775.8
+09:53:37.048 WARN  JexlEngine - ![0,2]: 'QD < 20.0;' undefined variable QD
+09:53:37.440 WARN  JexlEngine - ![0,2]: 'QD < 20.0;' undefined variable QD
+09:53:39.029 INFO  ProgressMeter - ordered_PKNH_09_v2:1454389              9.2                824000          89783.0
+09:53:49.102 INFO  ProgressMeter - ordered_PKNH_09_v2:1639035              9.3                839000          89775.3
+09:53:59.149 INFO  ProgressMeter - ordered_PKNH_09_v2:1835305              9.5                854000          89771.7
+09:54:09.759 INFO  ProgressMeter - ordered_PKNH_09_v2:2032960              9.7                870000          89784.8
+09:54:20.118 INFO  ProgressMeter - ordered_PKNH_10_v2:87258              9.9                886000          89835.2
+09:54:24.404 WARN  JexlEngine - ![0,2]: 'QD < 20.0;' undefined variable QD
+09:54:30.651 INFO  ProgressMeter - ordered_PKNH_10_v2:281003             10.0                902000          89858.1
+09:54:41.196 INFO  ProgressMeter - ordered_PKNH_10_v2:493718             10.2                918000          89878.4
+09:54:51.845 INFO  ProgressMeter - ordered_PKNH_10_v2:687671             10.4                934000          89883.0
+09:55:02.513 INFO  ProgressMeter - ordered_PKNH_10_v2:868121             10.6                950000          89884.9
+09:55:13.176 INFO  ProgressMeter - ordered_PKNH_10_v2:1074156             10.7                966000          89887.2
+09:55:23.306 INFO  ProgressMeter - ordered_PKNH_10_v2:1252952             10.9                981000          89871.2
+09:55:33.921 INFO  ProgressMeter - ordered_PKNH_10_v2:1448059             11.1                997000          89880.1
+09:55:44.308 INFO  ProgressMeter - ordered_PKNH_11_v2:133147             11.3               1013000          89919.2
+09:55:47.277 WARN  JexlEngine - ![0,2]: 'QD < 20.0;' undefined variable QD
+09:55:54.334 INFO  ProgressMeter - ordered_PKNH_11_v2:326203             11.4               1028000          89917.0
+09:56:04.334 INFO  ProgressMeter - ordered_PKNH_11_v2:523230             11.6               1043000          89918.2
+09:56:14.941 INFO  ProgressMeter - ordered_PKNH_11_v2:730442             11.8               1059000          89927.0
+09:56:25.555 INFO  ProgressMeter - ordered_PKNH_11_v2:951715             12.0               1075000          89934.7
+09:56:25.782 WARN  JexlEngine - ![0,2]: 'QD < 20.0;' undefined variable QD
+09:56:25.784 WARN  JexlEngine - ![0,2]: 'QD < 20.0;' undefined variable QD
+09:56:26.253 WARN  JexlEngine - ![0,2]: 'QD < 20.0;' undefined variable QD
+09:56:36.136 INFO  ProgressMeter - ordered_PKNH_11_v2:1188206             12.1               1091000          89946.2
+09:56:46.755 INFO  ProgressMeter - ordered_PKNH_11_v2:1384532             12.3               1107000          89952.8
+09:56:48.236 WARN  JexlEngine - ![0,2]: 'QD < 20.0;' undefined variable QD
+09:56:48.599 WARN  JexlEngine - ![0,2]: 'QD < 20.0;' undefined variable QD
+09:56:56.786 INFO  ProgressMeter - ordered_PKNH_11_v2:1563766             12.5               1122000          89949.7
+09:57:06.872 INFO  ProgressMeter - ordered_PKNH_11_v2:1729062             12.6               1137000          89940.2
+09:57:14.621 WARN  JexlEngine - ![0,2]: 'QD < 20.0;' undefined variable QD
+09:57:17.404 INFO  ProgressMeter - ordered_PKNH_11_v2:1941148             12.8               1153000          89956.8
+09:57:27.611 INFO  ProgressMeter - ordered_PKNH_11_v2:2124557             13.0               1168000          89933.4
+09:57:37.630 INFO  ProgressMeter - ordered_PKNH_11_v2:2301975             13.2               1183000          89932.1
+09:57:39.827 WARN  JexlEngine - ![0,2]: 'QD < 20.0;' undefined variable QD
+09:57:41.773 WARN  JexlEngine - ![0,2]: 'QD < 20.0;' undefined variable QD
+09:57:42.632 WARN  JexlEngine - ![0,2]: 'QD < 20.0;' undefined variable QD
+09:57:48.420 INFO  ProgressMeter - ordered_PKNH_12_v2:199226             13.3               1199000          89919.3
+09:57:58.444 INFO  ProgressMeter - ordered_PKNH_12_v2:371619             13.5               1214000          89917.5
+09:57:59.808 WARN  JexlEngine - ![0,2]: 'QD < 20.0;' undefined variable QD
+09:58:09.063 INFO  ProgressMeter - ordered_PKNH_12_v2:572201             13.7               1230000          89923.9
+09:58:12.459 WARN  JexlEngine - ![0,2]: 'QD < 20.0;' undefined variable QD
+09:58:19.670 INFO  ProgressMeter - ordered_PKNH_12_v2:788222             13.9               1246000          89931.2
+09:58:24.744 WARN  JexlEngine - ![0,2]: 'QD < 20.0;' undefined variable QD
+09:58:24.953 WARN  JexlEngine - ![0,2]: 'QD < 20.0;' undefined variable QD
+09:58:30.257 INFO  ProgressMeter - ordered_PKNH_12_v2:1015689             14.0               1262000          89940.6
+09:58:38.348 WARN  JexlEngine - ![0,2]: 'QD < 20.0;' undefined variable QD
+09:58:40.855 INFO  ProgressMeter - ordered_PKNH_12_v2:1242305             14.2               1278000          89948.6
+09:58:51.512 INFO  ProgressMeter - ordered_PKNH_12_v2:1452736             14.4               1294000          89950.3
+09:59:01.526 INFO  ProgressMeter - ordered_PKNH_12_v2:1635914             14.6               1309000          89949.4
+09:59:12.090 WARN  JexlEngine - ![0,2]: 'QD < 20.0;' undefined variable QD
+09:59:12.164 INFO  ProgressMeter - ordered_PKNH_12_v2:1841214             14.7               1325000          89953.0
+09:59:22.798 INFO  ProgressMeter - ordered_PKNH_12_v2:2062906             14.9               1341000          89956.8
+09:59:31.535 WARN  JexlEngine - ![0,2]: 'QD < 20.0;' undefined variable QD
+09:59:33.177 INFO  ProgressMeter - ordered_PKNH_12_v2:2296030             15.1               1357000          89985.9
+09:59:41.513 WARN  JexlEngine - ![0,2]: 'QD < 20.0;' undefined variable QD
+09:59:43.801 INFO  ProgressMeter - ordered_PKNH_12_v2:2508030             15.3               1373000          89990.2
+09:59:54.000 INFO  ProgressMeter - ordered_PKNH_12_v2:2695906             15.4               1388000          89971.0
+10:00:04.024 INFO  ProgressMeter - ordered_PKNH_12_v2:2884171             15.6               1403000          89969.0
+10:00:04.906 WARN  JexlEngine - ![0,2]: 'QD < 20.0;' undefined variable QD
+10:00:14.059 INFO  ProgressMeter - ordered_PKNH_12_v2:3069676             15.8               1418000          89966.0
+10:00:18.808 WARN  JexlEngine - ![0,2]: 'QD < 20.0;' undefined variable QD
+10:00:24.622 INFO  ProgressMeter - ordered_PKNH_13_v2:153530             15.9               1434000          89976.1
+10:00:35.259 INFO  ProgressMeter - ordered_PKNH_13_v2:348685             16.1               1450000          89979.1
+10:00:45.294 INFO  ProgressMeter - ordered_PKNH_13_v2:540591             16.3               1465000          89976.1
+10:00:55.941 INFO  ProgressMeter - ordered_PKNH_13_v2:739714             16.5               1481000          89978.2
+10:00:57.101 WARN  JexlEngine - ![0,2]: 'QD < 20.0;' undefined variable QD
+10:01:00.220 WARN  JexlEngine - ![0,2]: 'QD < 20.0;' undefined variable QD
+10:01:05.976 INFO  ProgressMeter - ordered_PKNH_13_v2:929039             16.6               1496000          89975.2
+10:01:14.722 WARN  JexlEngine - ![0,2]: 'QD < 20.0;' undefined variable QD
+10:01:15.249 WARN  JexlEngine - ![0,2]: 'QD < 20.0;' undefined variable QD
+10:01:16.461 INFO  ProgressMeter - ordered_PKNH_13_v2:1159443             16.8               1512000          89991.7
+10:01:18.061 WARN  JexlEngine - ![0,2]: 'QD < 20.0;' undefined variable QD
+10:01:24.462 WARN  JexlEngine - ![0,2]: 'QD < 20.0;' undefined variable QD
+10:01:27.014 INFO  ProgressMeter - ordered_PKNH_13_v2:1380007             17.0               1528000          90001.8
+10:01:28.637 WARN  JexlEngine - ![0,2]: 'QD < 20.0;' undefined variable QD
+10:01:37.566 INFO  ProgressMeter - ordered_PKNH_13_v2:1602492             17.2               1544000          90011.8
+10:01:47.602 INFO  ProgressMeter - ordered_PKNH_13_v2:1800286             17.3               1559000          90008.6
+10:01:57.612 INFO  ProgressMeter - ordered_PKNH_13_v2:1986115             17.5               1574000          90007.7
+10:02:08.224 INFO  ProgressMeter - ordered_PKNH_13_v2:2201026             17.7               1590000          90012.2
+10:02:08.786 WARN  JexlEngine - ![0,2]: 'QD < 20.0;' undefined variable QD
+10:02:18.241 INFO  ProgressMeter - ordered_PKNH_13_v2:2401323             17.8               1605000          90010.7
+10:02:28.679 INFO  ProgressMeter - ordered_PKNH_14_v2:28035             18.0               1621000          90029.6
+10:02:39.069 INFO  ProgressMeter - ordered_PKNH_14_v2:268233             18.2               1637000          90052.2
+10:02:49.720 INFO  ProgressMeter - ordered_PKNH_14_v2:493280             18.4               1653000          90053.0
+10:03:00.273 INFO  ProgressMeter - ordered_PKNH_14_v2:712366             18.5               1669000          90061.7
+10:03:10.273 INFO  ProgressMeter - ordered_PKNH_14_v2:902979             18.7               1684000          90061.1
+10:03:20.830 INFO  ProgressMeter - ordered_PKNH_14_v2:1129054             18.9               1700000          90069.2
+10:03:30.935 INFO  ProgressMeter - ordered_PKNH_14_v2:1331929             19.0               1715000          90060.4
+10:03:38.279 WARN  JexlEngine - ![0,2]: 'QD < 20.0;' undefined variable QD
+10:03:41.408 INFO  ProgressMeter - ordered_PKNH_14_v2:1555172             19.2               1731000          90074.9
+10:03:50.072 WARN  JexlEngine - ![0,2]: 'QD < 20.0;' undefined variable QD
+10:03:52.008 INFO  ProgressMeter - ordered_PKNH_14_v2:1777782             19.4               1747000          90079.4
+10:03:59.214 WARN  JexlEngine - ![0,2]: 'QD < 20.0;' undefined variable QD
+10:04:02.029 INFO  ProgressMeter - ordered_PKNH_14_v2:1955356             19.6               1762000          90077.1
+10:04:12.145 INFO  ProgressMeter - ordered_PKNH_14_v2:2131904             19.7               1777000          90067.6
+10:04:22.800 INFO  ProgressMeter - ordered_PKNH_14_v2:2347117             19.9               1793000          90067.9
+10:04:26.405 WARN  JexlEngine - ![0,2]: 'QD < 20.0;' undefined variable QD
+10:04:33.464 INFO  ProgressMeter - ordered_PKNH_14_v2:2544820             20.1               1809000          90067.5
+10:04:34.463 WARN  JexlEngine - ![0,2]: 'QD < 20.0;' undefined variable QD
+10:04:44.020 INFO  ProgressMeter - ordered_PKNH_14_v2:2744341             20.3               1825000          90075.1
+10:04:54.113 INFO  ProgressMeter - ordered_PKNH_14_v2:2950168             20.4               1840000          90067.7
+10:05:04.698 INFO  ProgressMeter - ordered_PKNH_14_v2:3137936             20.6               1856000          90073.0
+10:05:10.399 INFO  ProgressMeter - ordered_PKNH_14_v2:3254931             20.7               1864847          90087.1
+10:05:10.399 INFO  ProgressMeter - Traversal complete. Processed 1864847 total variants in 20.7 minutes.
+10:05:11.070 INFO  VariantFiltration - Shutting down engine
+[15 February 2022 10:05:11 AM] org.broadinstitute.hellbender.tools.walkers.filters.VariantFiltration done. Elapsed time: 20.75 minutes.
+Runtime.totalMemory()=3243769856
+10:05:18.578 INFO  NativeLibraryLoader - Loading libgkl_compression.so from jar:file:/home/jwestaway/pk_pipeline/tools/gatk-4.2.2.0/gatk-package-4.2.2.0-local.jar!/com/intel/gkl/native/libgkl_compression.so
+10:05:18.661 WARN  NativeLibraryLoader - Unable to load libgkl_compression.so from native/libgkl_compression.so (/tmp/libgkl_compression8023203826834954048.so: /lib64/libc.so.6: version `GLIBC_2.14' not found (required by /tmp/libgkl_compression8023203826834954048.so))
+10:05:18.672 INFO  NativeLibraryLoader - Loading libgkl_compression.so from jar:file:/home/jwestaway/pk_pipeline/tools/gatk-4.2.2.0/gatk-package-4.2.2.0-local.jar!/com/intel/gkl/native/libgkl_compression.so
+10:05:18.682 WARN  NativeLibraryLoader - Unable to load libgkl_compression.so from native/libgkl_compression.so (/tmp/libgkl_compression1776612833247772138.so: /lib64/libc.so.6: version `GLIBC_2.14' not found (required by /tmp/libgkl_compression1776612833247772138.so))
+Feb 15, 2022 10:05:19 AM shaded.cloud_nio.com.google.auth.oauth2.ComputeEngineCredentials runningOnComputeEngine
+INFO: Failed to detect whether we are running on Google Compute Engine.
+10:05:19.186 INFO  VariantFiltration - ------------------------------------------------------------
+10:05:19.187 INFO  VariantFiltration - The Genome Analysis Toolkit (GATK) v4.2.2.0
+10:05:19.187 INFO  VariantFiltration - For support and documentation go to https://software.broadinstitute.org/gatk/
+10:05:19.188 INFO  VariantFiltration - Executing as jwestaway@cheetah06 on Linux v2.6.32-754.14.2.el6.x86_64 amd64
+10:05:19.188 INFO  VariantFiltration - Java runtime: Java HotSpot(TM) 64-Bit Server VM v1.8.0_131-b11
+10:05:19.188 INFO  VariantFiltration - Start Date/Time: 15 February 2022 10:05:18 AM
+10:05:19.188 INFO  VariantFiltration - ------------------------------------------------------------
+10:05:19.189 INFO  VariantFiltration - ------------------------------------------------------------
+10:05:19.189 INFO  VariantFiltration - HTSJDK Version: 2.24.1
+10:05:19.190 INFO  VariantFiltration - Picard Version: 2.25.4
+10:05:19.190 INFO  VariantFiltration - Built for Spark Version: 2.4.5
+10:05:19.190 INFO  VariantFiltration - HTSJDK Defaults.COMPRESSION_LEVEL : 2
+10:05:19.190 INFO  VariantFiltration - HTSJDK Defaults.USE_ASYNC_IO_READ_FOR_SAMTOOLS : false
+10:05:19.190 INFO  VariantFiltration - HTSJDK Defaults.USE_ASYNC_IO_WRITE_FOR_SAMTOOLS : true
+10:05:19.201 INFO  VariantFiltration - HTSJDK Defaults.USE_ASYNC_IO_WRITE_FOR_TRIBBLE : false
+10:05:19.201 INFO  VariantFiltration - Deflater: JdkDeflater
+10:05:19.201 INFO  VariantFiltration - Inflater: JdkInflater
+10:05:19.202 INFO  VariantFiltration - GCS max retries/reopens: 20
+10:05:19.202 INFO  VariantFiltration - Requester pays: disabled
+10:05:19.202 INFO  VariantFiltration - Initializing engine
+10:05:20.251 INFO  FeatureManager - Using codec VCFCodec to read file file:///home/jwestaway/pk_pipeline/Initial_Pk_subset/outputs/variant_calling/filtered/GVCFall_SNPs.vcf
+10:05:20.503 INFO  VariantFiltration - Done initializing engine
+10:05:20.735 INFO  ProgressMeter - Starting traversal
+10:05:20.736 INFO  ProgressMeter -        Current Locus  Elapsed Minutes    Variants Processed  Variants/Minute
+10:05:22.498 WARN  JexlEngine - ![0,2]: 'QD < 20.0;' undefined variable QD
+10:05:30.939 INFO  ProgressMeter - ordered_PKNH_01_v2:348856              0.2                 27000         158808.0
+10:05:41.013 INFO  ProgressMeter - ordered_PKNH_01_v2:764008              0.3                 61000         180517.9
+10:05:42.816 WARN  JexlEngine - ![0,2]: 'QD < 20.0;' undefined variable QD
+10:05:45.480 WARN  JexlEngine - ![0,2]: 'QD < 20.0;' undefined variable QD
+10:05:47.746 WARN  JexlEngine - ![0,2]: 'QD < 20.0;' undefined variable QD
+10:05:47.746 WARN  JexlEngine - ![0,2]: 'QD < 20.0;' undefined variable QD
+10:05:50.786 WARN  JexlEngine - ![0,2]: 'QD < 20.0;' undefined variable QD
+10:05:51.027 INFO  ProgressMeter - ordered_PKNH_03_v2:206513              0.5                145000         287233.0
+10:05:56.730 WARN  JexlEngine - ![0,2]: 'QD < 20.0;' undefined variable QD
+10:06:00.010 WARN  JexlEngine - ![0,2]: 'QD < 20.0;' undefined variable QD
+10:06:01.041 INFO  ProgressMeter - ordered_PKNH_04_v2:337296              0.7                236000         351329.9
+10:06:04.776 WARN  JexlEngine - ![0,2]: 'QD < 20.0;' undefined variable QD
+10:06:05.061 WARN  JexlEngine - ![0,2]: 'QD < 20.0;' undefined variable QD
+10:06:08.092 WARN  JexlEngine - ![0,2]: 'QD < 20.0;' undefined variable QD
+10:06:10.016 WARN  JexlEngine - ![0,2]: 'QD < 20.0;' undefined variable QD
+10:06:10.397 WARN  JexlEngine - ![0,2]: 'QD < 20.0;' undefined variable QD
+10:06:11.056 INFO  ProgressMeter - ordered_PKNH_05_v2:533392              0.8                340000         405413.5
+10:06:14.547 WARN  JexlEngine - ![0,2]: 'QD < 20.0;' undefined variable QD
+10:06:17.094 WARN  JexlEngine - ![0,2]: 'QD < 20.0;' undefined variable QD
+10:06:17.843 WARN  JexlEngine - ![0,2]: 'QD < 20.0;' undefined variable QD
+10:06:21.118 INFO  ProgressMeter - ordered_PKNH_06_v2:1026569              1.0                442000         439211.0
+10:06:29.938 WARN  JexlEngine - ![0,2]: 'QD < 20.0;' undefined variable QD
+10:06:30.703 WARN  JexlEngine - ![0,2]: 'QD < 20.0;' undefined variable QD
+10:06:31.214 INFO  ProgressMeter - ordered_PKNH_07_v2:1229605              1.2                542000         461427.1
+10:06:37.996 WARN  JexlEngine - ![0,2]: 'QD < 20.0;' undefined variable QD
+10:06:41.241 INFO  ProgressMeter - ordered_PKNH_08_v2:991113              1.3                643000         479230.8
+10:06:44.027 WARN  JexlEngine - ![0,2]: 'QD < 20.0;' undefined variable QD
+10:06:46.884 WARN  JexlEngine - ![0,2]: 'QD < 20.0;' undefined variable QD
+10:06:48.020 WARN  JexlEngine - ![0,2]: 'QD < 20.0;' undefined variable QD
+10:06:51.301 INFO  ProgressMeter - ordered_PKNH_09_v2:485776              1.5                746000         494236.1
+10:06:52.588 WARN  JexlEngine - ![0,2]: 'QD < 20.0;' undefined variable QD
+10:06:58.785 WARN  JexlEngine - ![0,2]: 'QD < 20.0;' undefined variable QD
+10:06:58.843 WARN  JexlEngine - ![0,2]: 'QD < 20.0;' undefined variable QD
+10:07:01.360 INFO  ProgressMeter - ordered_PKNH_09_v2:1708030              1.7                841000         501475.8
+10:07:06.073 WARN  JexlEngine - ![0,2]: 'QD < 20.0;' undefined variable QD
+10:07:11.382 INFO  ProgressMeter - ordered_PKNH_10_v2:843881              1.8                944000         511907.5
+10:07:18.236 WARN  JexlEngine - ![0,2]: 'QD < 20.0;' undefined variable QD
+10:07:21.452 INFO  ProgressMeter - ordered_PKNH_11_v2:627305              2.0               1047000         520403.6
+10:07:23.876 WARN  JexlEngine - ![0,2]: 'QD < 20.0;' undefined variable QD
+10:07:23.876 WARN  JexlEngine - ![0,2]: 'QD < 20.0;' undefined variable QD
+10:07:23.946 WARN  JexlEngine - ![0,2]: 'QD < 20.0;' undefined variable QD
+10:07:27.161 WARN  JexlEngine - ![0,2]: 'QD < 20.0;' undefined variable QD
+10:07:27.215 WARN  JexlEngine - ![0,2]: 'QD < 20.0;' undefined variable QD
+10:07:31.334 WARN  JexlEngine - ![0,2]: 'QD < 20.0;' undefined variable QD
+10:07:31.530 INFO  ProgressMeter - ordered_PKNH_11_v2:1918255              2.2               1147000         526179.0
+10:07:35.003 WARN  JexlEngine - ![0,2]: 'QD < 20.0;' undefined variable QD
+10:07:35.281 WARN  JexlEngine - ![0,2]: 'QD < 20.0;' undefined variable QD
+10:07:35.410 WARN  JexlEngine - ![0,2]: 'QD < 20.0;' undefined variable QD
+10:07:37.903 WARN  JexlEngine - ![0,2]: 'QD < 20.0;' undefined variable QD
+10:07:39.755 WARN  JexlEngine - ![0,2]: 'QD < 20.0;' undefined variable QD
+10:07:41.543 WARN  JexlEngine - ![0,2]: 'QD < 20.0;' undefined variable QD
+10:07:41.575 WARN  JexlEngine - ![0,2]: 'QD < 20.0;' undefined variable QD
+10:07:41.592 INFO  ProgressMeter - ordered_PKNH_12_v2:910677              2.3               1250000         532462.5
+10:07:43.538 WARN  JexlEngine - ![0,2]: 'QD < 20.0;' undefined variable QD
+10:07:48.468 WARN  JexlEngine - ![0,2]: 'QD < 20.0;' undefined variable QD
+10:07:51.282 WARN  JexlEngine - ![0,2]: 'QD < 20.0;' undefined variable QD
+10:07:51.675 INFO  ProgressMeter - ordered_PKNH_12_v2:2317539              2.5               1354000         538237.8
+10:07:52.739 WARN  JexlEngine - ![0,2]: 'QD < 20.0;' undefined variable QD
+10:07:56.098 WARN  JexlEngine - ![0,2]: 'QD < 20.0;' undefined variable QD
+10:07:58.121 WARN  JexlEngine - ![0,2]: 'QD < 20.0;' undefined variable QD
+10:08:01.762 INFO  ProgressMeter - ordered_PKNH_13_v2:466320              2.7               1454000         541779.2
+10:08:04.081 WARN  JexlEngine - ![0,2]: 'QD < 20.0;' undefined variable QD
+10:08:04.535 WARN  JexlEngine - ![0,2]: 'QD < 20.0;' undefined variable QD
+10:08:06.649 WARN  JexlEngine - ![0,2]: 'QD < 20.0;' undefined variable QD
+10:08:06.724 WARN  JexlEngine - ![0,2]: 'QD < 20.0;' undefined variable QD
+10:08:07.134 WARN  JexlEngine - ![0,2]: 'QD < 20.0;' undefined variable QD
+10:08:08.074 WARN  JexlEngine - ![0,2]: 'QD < 20.0;' undefined variable QD
+10:08:08.683 WARN  JexlEngine - ![0,2]: 'QD < 20.0;' undefined variable QD
+10:08:11.788 INFO  ProgressMeter - ordered_PKNH_13_v2:1833867              2.9               1557000         546152.9
+10:08:14.544 WARN  JexlEngine - ![0,2]: 'QD < 20.0;' undefined variable QD
+10:08:21.822 INFO  ProgressMeter - ordered_PKNH_14_v2:684555              3.0               1661000         550349.3
+10:08:27.552 WARN  JexlEngine - ![0,2]: 'QD < 20.0;' undefined variable QD
+10:08:29.265 WARN  JexlEngine - ![0,2]: 'QD < 20.0;' undefined variable QD
+10:08:30.914 WARN  JexlEngine - ![0,2]: 'QD < 20.0;' undefined variable QD
+10:08:31.834 INFO  ProgressMeter - ordered_PKNH_14_v2:2017273              3.2               1761000         552912.9
+10:08:34.882 WARN  JexlEngine - ![0,2]: 'QD < 20.0;' undefined variable QD
+10:08:36.068 WARN  JexlEngine - ![0,2]: 'QD < 20.0;' undefined variable QD
+10:08:41.283 INFO  ProgressMeter - ordered_PKNH_14_v2:3260316              3.3               1858375         555994.6
+10:08:41.283 INFO  ProgressMeter - Traversal complete. Processed 1858375 total variants in 3.3 minutes.
+10:08:43.329 INFO  VariantFiltration - Shutting down engine
+[15 February 2022 10:08:43 AM] org.broadinstitute.hellbender.tools.walkers.filters.VariantFiltration done. Elapsed time: 3.41 minutes.
+Runtime.totalMemory()=3243769856
+10:08:50.566 INFO  NativeLibraryLoader - Loading libgkl_compression.so from jar:file:/home/jwestaway/pk_pipeline/tools/gatk-4.2.2.0/gatk-package-4.2.2.0-local.jar!/com/intel/gkl/native/libgkl_compression.so
+10:08:50.644 WARN  NativeLibraryLoader - Unable to load libgkl_compression.so from native/libgkl_compression.so (/tmp/libgkl_compression2888371817233985993.so: /lib64/libc.so.6: version `GLIBC_2.14' not found (required by /tmp/libgkl_compression2888371817233985993.so))
+10:08:50.655 INFO  NativeLibraryLoader - Loading libgkl_compression.so from jar:file:/home/jwestaway/pk_pipeline/tools/gatk-4.2.2.0/gatk-package-4.2.2.0-local.jar!/com/intel/gkl/native/libgkl_compression.so
+10:08:50.665 WARN  NativeLibraryLoader - Unable to load libgkl_compression.so from native/libgkl_compression.so (/tmp/libgkl_compression2253082550778812984.so: /lib64/libc.so.6: version `GLIBC_2.14' not found (required by /tmp/libgkl_compression2253082550778812984.so))
+Feb 15, 2022 10:08:51 AM shaded.cloud_nio.com.google.auth.oauth2.ComputeEngineCredentials runningOnComputeEngine
+INFO: Failed to detect whether we are running on Google Compute Engine.
+10:08:51.174 INFO  VariantFiltration - ------------------------------------------------------------
+10:08:51.186 INFO  VariantFiltration - The Genome Analysis Toolkit (GATK) v4.2.2.0
+10:08:51.186 INFO  VariantFiltration - For support and documentation go to https://software.broadinstitute.org/gatk/
+10:08:51.187 INFO  VariantFiltration - Executing as jwestaway@cheetah06 on Linux v2.6.32-754.14.2.el6.x86_64 amd64
+10:08:51.187 INFO  VariantFiltration - Java runtime: Java HotSpot(TM) 64-Bit Server VM v1.8.0_131-b11
+10:08:51.187 INFO  VariantFiltration - Start Date/Time: 15 February 2022 10:08:50 AM
+10:08:51.187 INFO  VariantFiltration - ------------------------------------------------------------
+10:08:51.187 INFO  VariantFiltration - ------------------------------------------------------------
+10:08:51.188 INFO  VariantFiltration - HTSJDK Version: 2.24.1
+10:08:51.188 INFO  VariantFiltration - Picard Version: 2.25.4
+10:08:51.189 INFO  VariantFiltration - Built for Spark Version: 2.4.5
+10:08:51.189 INFO  VariantFiltration - HTSJDK Defaults.COMPRESSION_LEVEL : 2
+10:08:51.189 INFO  VariantFiltration - HTSJDK Defaults.USE_ASYNC_IO_READ_FOR_SAMTOOLS : false
+10:08:51.189 INFO  VariantFiltration - HTSJDK Defaults.USE_ASYNC_IO_WRITE_FOR_SAMTOOLS : true
+10:08:51.190 INFO  VariantFiltration - HTSJDK Defaults.USE_ASYNC_IO_WRITE_FOR_TRIBBLE : false
+10:08:51.190 INFO  VariantFiltration - Deflater: JdkDeflater
+10:08:51.190 INFO  VariantFiltration - Inflater: JdkInflater
+10:08:51.190 INFO  VariantFiltration - GCS max retries/reopens: 20
+10:08:51.191 INFO  VariantFiltration - Requester pays: disabled
+10:08:51.191 INFO  VariantFiltration - Initializing engine
+10:08:52.301 INFO  FeatureManager - Using codec VCFCodec to read file file:///home/jwestaway/pk_pipeline/Initial_Pk_subset/outputs/variant_calling/filtered/GVCFall_INDELs.vcf
+10:08:52.409 INFO  VariantFiltration - Done initializing engine
+10:08:52.665 INFO  ProgressMeter - Starting traversal
+10:08:52.666 INFO  ProgressMeter -        Current Locus  Elapsed Minutes    Variants Processed  Variants/Minute
+10:08:54.336 WARN  JexlEngine - ![0,2]: 'QD < 20.0;' undefined variable QD
+10:08:55.977 INFO  ProgressMeter - ordered_PKNH_14_v2:1504159              0.1                  6472         117281.8
+10:08:55.977 INFO  ProgressMeter - Traversal complete. Processed 6472 total variants in 0.1 minutes.
+10:08:56.163 INFO  VariantFiltration - Shutting down engine
+[15 February 2022 10:08:56 AM] org.broadinstitute.hellbender.tools.walkers.filters.VariantFiltration done. Elapsed time: 0.09 minutes.
+Runtime.totalMemory()=3243769856
+---------------------------------------
+Finsihed

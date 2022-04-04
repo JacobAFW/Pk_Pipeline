@@ -1,0 +1,47 @@
+#!/bin/bash
+#PBS -N Variant_calling_bcftools
+#PBS -j oe
+#PBS -m ae
+#PBS -l nodes=1
+#PBS -l ncpus=21
+#PBS -l mem=150gb
+#PBS -l pmem=150b
+#PBS -l file=150gb
+#PBS -l walltime=96:00:00
+#PBS -M jacob.westaway@menzies.edu.au
+
+echo "---------------------------------------"
+echo "PBS: Job identifier is $PBS_JOBID"
+echo "PBS: Job name is $PBS_JOBNAME"
+
+echo "---------------------------------------"
+echo "Define paths"
+export PATH=$PATH:/home/jwestaway/pk_pipeline/tools/bcftools-1.13/
+
+echo "---------------------------------------"
+echo "---------------------------------------"
+echo 'Change to working directory and set env variables'
+PICARD="/usr/local/miniconda3/pkgs/picard-2.21.9-0/share/picard-2.21.9-0/picard.jar"
+INDEXTDIR="/home/jwestaway/pk_pipeline/ref_genomes/PKA1H1/fasta/strain_A1_H.1.Icor.fasta"
+OUTDIR="/home/jwestaway/pk_pipeline/Initial_Pk_subset/outputs/variant_calling/bcftools"
+INDIR="/home/jwestaway/pk_pipeline/Initial_Pk_subset/outputs/variant_calling/final_bams"
+
+mkdir $OUTDIR
+
+cd $INDIR
+
+echo "---------------------------------------------------------------------------------------------------------------------"
+echo "bcftools"
+echo "---------------------------------------------------------------------------------------------------------------------"
+
+echo "---------------------------------------------------------------------------------------------------------------------"
+echo "mpileup and call"
+bcftools mpileup --threads 20 -f $INDEXTDIR -b $INDIR/input_bam_files.list \
+   | bcftools call -m -Oz -a FORMAT/GQ,FORMAT/GP,INFO/PV4 -v -o $OUTDIR/bcftools_genotyped.vcf.gz 
+
+echo "---------------------------------------------------------------------------------------------------------------------"
+echo "index"
+bcftools index --threads 20 -t -o $OUTDIR/bcftools_genotyped.vcf.gz.tbi $OUTDIR/bcftools_genotyped.vcf.gz
+
+echo "---------------------------------------"
+echo "Finished "

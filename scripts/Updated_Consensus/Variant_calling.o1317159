@@ -1,0 +1,289 @@
+---------------------------------------
+PBS: Job identifier is 1317159.cheetah
+PBS: Job name is Variant_calling
+---------------------------------------
+Define paths
+---------------------------------------
+---------------------------------------
+Change to working directory and set env variables
+---------------------------------------------------------------------------------------------------------------------
+Create consensus VCF
+---------------------------------------------------------------------------------------------------------------------
+---------------------------------------
+Merge variants from the two variant callers
+[W::bcf_hdr_merge] Trying to combine "MQ" tag definitions of different types
+---------------------------------------
+Query VCF files to get a list of 'variant IDs' from each tool
+---------------------------------------
+Execute R script - performs an inner join on the 'variant IDs' above to find the overlapping variants
+
+Attaching package: ‘dplyr’
+
+The following objects are masked from ‘package:stats’:
+
+    filter, lag
+
+The following objects are masked from ‘package:base’:
+
+    intersect, setdiff, setequal, union
+
+
+Attaching package: ‘data.table’
+
+The following objects are masked from ‘package:dplyr’:
+
+    between, first, last
+
+Parsed with column specification:
+cols(
+  .default = col_character(),
+  POS = col_double(),
+  QUAL = col_double()
+)
+See spec(...) for full column specifications.
+Joining, by = c("variant_name", "sample")
+Joining, by = c("variant_name", "sample")
+Joining, by = c("variant_name", "sample")
+---------------------------------------
+Create a seperate file that contains all the header information for the vcf
+[main_vcfview] Error: cannot write to (null)
+---------------------------------------
+Remove the column names from the variant names document to create a list of grep patterns
+---------------------------------------
+Filter for variants from the original vcf that are called by both callers by using grep to match patterns created above
+---------------------------------------
+Concatenate the vcf header in the variants called by both callers
+---------------------------------------
+Remove duplicate sample names from VCF
+20:43:29.588 INFO  NativeLibraryLoader - Loading libgkl_compression.so from jar:file:/home/jwestaway/pk_pipeline/tools/gatk-4.2.2.0/gatk-package-4.2.2.0-local.jar!/com/intel/gkl/native/libgkl_compression.so
+20:43:29.661 WARN  NativeLibraryLoader - Unable to load libgkl_compression.so from native/libgkl_compression.so (/tmp/libgkl_compression7944647316746077839.so: /lib64/libc.so.6: version `GLIBC_2.14' not found (required by /tmp/libgkl_compression7944647316746077839.so))
+20:43:29.674 INFO  NativeLibraryLoader - Loading libgkl_compression.so from jar:file:/home/jwestaway/pk_pipeline/tools/gatk-4.2.2.0/gatk-package-4.2.2.0-local.jar!/com/intel/gkl/native/libgkl_compression.so
+20:43:29.683 WARN  NativeLibraryLoader - Unable to load libgkl_compression.so from native/libgkl_compression.so (/tmp/libgkl_compression2162125028673139530.so: /lib64/libc.so.6: version `GLIBC_2.14' not found (required by /tmp/libgkl_compression2162125028673139530.so))
+Mar 03, 2022 8:43:30 PM shaded.cloud_nio.com.google.auth.oauth2.ComputeEngineCredentials runningOnComputeEngine
+INFO: Failed to detect whether we are running on Google Compute Engine.
+20:43:30.253 INFO  SelectVariants - ------------------------------------------------------------
+20:43:30.255 INFO  SelectVariants - The Genome Analysis Toolkit (GATK) v4.2.2.0
+20:43:30.255 INFO  SelectVariants - For support and documentation go to https://software.broadinstitute.org/gatk/
+20:43:30.257 INFO  SelectVariants - Executing as jwestaway@cheetah05 on Linux v2.6.32-754.14.2.el6.x86_64 amd64
+20:43:30.269 INFO  SelectVariants - Java runtime: Java HotSpot(TM) 64-Bit Server VM v1.8.0_131-b11
+20:43:30.269 INFO  SelectVariants - Start Date/Time: 3 March 2022 8:43:29 PM
+20:43:30.269 INFO  SelectVariants - ------------------------------------------------------------
+20:43:30.270 INFO  SelectVariants - ------------------------------------------------------------
+20:43:30.270 INFO  SelectVariants - HTSJDK Version: 2.24.1
+20:43:30.271 INFO  SelectVariants - Picard Version: 2.25.4
+20:43:30.271 INFO  SelectVariants - Built for Spark Version: 2.4.5
+20:43:30.271 INFO  SelectVariants - HTSJDK Defaults.COMPRESSION_LEVEL : 2
+20:43:30.271 INFO  SelectVariants - HTSJDK Defaults.USE_ASYNC_IO_READ_FOR_SAMTOOLS : false
+20:43:30.271 INFO  SelectVariants - HTSJDK Defaults.USE_ASYNC_IO_WRITE_FOR_SAMTOOLS : true
+20:43:30.272 INFO  SelectVariants - HTSJDK Defaults.USE_ASYNC_IO_WRITE_FOR_TRIBBLE : false
+20:43:30.272 INFO  SelectVariants - Deflater: JdkDeflater
+20:43:30.272 INFO  SelectVariants - Inflater: JdkInflater
+20:43:30.272 INFO  SelectVariants - GCS max retries/reopens: 20
+20:43:30.272 INFO  SelectVariants - Requester pays: disabled
+20:43:30.272 INFO  SelectVariants - Initializing engine
+20:43:31.335 INFO  FeatureManager - Using codec VCFCodec to read file file:///home/jwestaway/pk_pipeline/Initial_Pk_subset/outputs/variant_calling/consensus/updated/Consensus_with_duplicates.vcf
+20:43:31.403 INFO  SelectVariants - Done initializing engine
+20:43:31.541 INFO  SelectVariants - Including sample 'PK_SB_DNA_001_DKDL210002130-1a_HWHGKDSXY_L4'
+20:43:31.541 INFO  SelectVariants - Including sample 'PK_SB_DNA_002_DKDL210002131-1a_HWHGKDSXY_L4'
+20:43:31.541 INFO  SelectVariants - Including sample 'PK_SB_DNA_003_DKDL210002132-1a_HWHGKDSXY_L4'
+20:43:31.541 INFO  SelectVariants - Including sample 'PK_SB_DNA_004_DKDL210002133-1a_HWHGKDSXY_L4'
+20:43:31.541 INFO  SelectVariants - Including sample 'PK_SB_DNA_005_DKDL210002134-1a_HWHGKDSXY_L4'
+20:43:31.541 INFO  SelectVariants - Including sample 'PK_SB_DNA_006_DKDL210002135-1a_HWHGKDSXY_L4'
+20:43:31.541 INFO  SelectVariants - Including sample 'PK_SB_DNA_007_DKDL210002136-1a_HWHGKDSXY_L4'
+20:43:31.542 INFO  SelectVariants - Including sample 'PK_SB_DNA_008_DKDL210002137-1a_HWHGKDSXY_L4'
+20:43:31.543 INFO  SelectVariants - Including sample 'PK_SB_DNA_009_DKDL210002138-1a_HWHGKDSXY_L4'
+20:43:31.543 INFO  SelectVariants - Including sample 'PK_SB_DNA_010_DKDL210002139-1a_HWHGKDSXY_L4'
+20:43:31.543 INFO  SelectVariants - Including sample 'PK_SB_DNA_011_DKDL210002140-1a_HWHGKDSXY_L4'
+20:43:31.543 INFO  SelectVariants - Including sample 'PK_SB_DNA_012_DKDL210002141-1a_HWHGKDSXY_L4'
+20:43:31.544 INFO  SelectVariants - Including sample 'PK_SB_DNA_013_DKDL210002142-1a_HWHGKDSXY_L4'
+20:43:31.544 INFO  SelectVariants - Including sample 'PK_SB_DNA_014_DKDL210002143-1a_HWHGKDSXY_L4'
+20:43:31.544 INFO  SelectVariants - Including sample 'PK_SB_DNA_015_DKDL210002144-1a_HWHGKDSXY_L4'
+20:43:31.544 INFO  SelectVariants - Including sample 'PK_SB_DNA_016_DKDL210002145-1a_HWHGKDSXY_L4'
+20:43:31.544 INFO  SelectVariants - Including sample 'PK_SB_DNA_017_DKDL210002146-1a_HWHGKDSXY_L4'
+20:43:31.544 INFO  SelectVariants - Including sample 'PK_SB_DNA_018_DKDL210002147-1a_HWHGKDSXY_L4'
+20:43:31.544 INFO  SelectVariants - Including sample 'PK_SB_DNA_019_DKDL210002148-1a_HWHGKDSXY_L4'
+20:43:31.544 INFO  SelectVariants - Including sample 'PK_SB_DNA_020_DKDL210002149-1a_HWHGKDSXY_L4'
+20:43:31.545 INFO  SelectVariants - Including sample 'PK_SB_DNA_021_DKDL210002150-1a_HWHGKDSXY_L4'
+20:43:31.545 INFO  SelectVariants - Including sample 'PK_SB_DNA_022_DKDL210002151-1a_HWHGKDSXY_L4'
+20:43:31.545 INFO  SelectVariants - Including sample 'PK_SB_DNA_023_DKDL210002152-1a_HWHGKDSXY_L4'
+20:43:31.545 INFO  SelectVariants - Including sample 'PK_SB_DNA_024_DKDL210002153-1a_HWHGKDSXY_L4'
+20:43:31.545 INFO  SelectVariants - Including sample 'PK_SB_DNA_025_DKDL210002154-1a_HWHGKDSXY_L4'
+20:43:31.545 INFO  SelectVariants - Including sample 'PK_SB_DNA_026_DKDL210002155-1a_HWHGKDSXY_L4'
+20:43:31.545 INFO  SelectVariants - Including sample 'PK_SB_DNA_027_DKDL210002156-1a_HWHGKDSXY_L4'
+20:43:31.546 INFO  SelectVariants - Including sample 'PK_SB_DNA_028_DKDL210002157-1a_HWHGKDSXY_L4'
+20:43:31.546 INFO  SelectVariants - Including sample 'PK_SB_DNA_029_DKDL210002158-1a_HWHGKDSXY_L4'
+20:43:31.546 INFO  SelectVariants - Including sample 'PK_SB_DNA_030_DKDL210002159-1a_HWHGKDSXY_L4'
+20:43:31.546 INFO  SelectVariants - Including sample 'PK_SB_DNA_031_DKDL210002160-1a_HWHGKDSXY_L4'
+20:43:31.546 INFO  SelectVariants - Including sample 'PK_SB_DNA_032_DKDL210002161-1a_HWHGKDSXY_L4'
+20:43:31.546 INFO  SelectVariants - Including sample 'PK_SB_DNA_033_DKDL210002162-1a_HWHGKDSXY_L4'
+20:43:31.546 INFO  SelectVariants - Including sample 'PK_SB_DNA_034_DKDL210002163-1a_HWHGKDSXY_L4'
+20:43:31.546 INFO  SelectVariants - Including sample 'PK_SB_DNA_035_DKDL210002164-1a_HWHGKDSXY_L4'
+20:43:31.555 INFO  SelectVariants - Including sample 'PK_SB_DNA_036_DKDL210002165-1a_HWHGKDSXY_L4'
+20:43:31.555 INFO  SelectVariants - Including sample 'PK_SB_DNA_037_DKDL210002166-1a_HWHGKDSXY_L4'
+20:43:31.555 INFO  SelectVariants - Including sample 'PK_SB_DNA_038_DKDL210002167-1a_HWHGKDSXY_L4'
+20:43:31.555 INFO  SelectVariants - Including sample 'PK_SB_DNA_039_DKDL210002168-1a_HWHGKDSXY_L4'
+20:43:31.555 INFO  SelectVariants - Including sample 'PK_SB_DNA_040_DKDL210002169-1a_HWHGKDSXY_L4'
+20:43:31.555 INFO  SelectVariants - Including sample 'PK_SB_DNA_041_DKDL210002170-1a_HWHGKDSXY_L4'
+20:43:31.555 INFO  SelectVariants - Including sample 'PK_SB_DNA_042_DKDL210002171-1a_HWHGKDSXY_L4'
+20:43:31.556 INFO  SelectVariants - Including sample 'PK_SB_DNA_043_DKDL210002172-1a_HWHGKDSXY_L4'
+20:43:31.556 INFO  SelectVariants - Including sample 'PK_SB_DNA_044_DKDL210002173-1a_HWHGKDSXY_L4'
+20:43:31.556 INFO  SelectVariants - Including sample 'PK_SB_DNA_045_DKDL210002174-1a_HWHGKDSXY_L4'
+20:43:31.556 INFO  SelectVariants - Including sample 'PK_SB_DNA_046_DKDL210002175-1a_HWHGKDSXY_L4'
+20:43:31.556 INFO  SelectVariants - Including sample 'PK_SB_DNA_047_DKDL210002176-1a_HWHGKDSXY_L4'
+20:43:31.556 INFO  SelectVariants - Including sample 'PK_SB_DNA_048_DKDL210002177-1a_HWHGKDSXY_L4'
+20:43:31.556 INFO  SelectVariants - Including sample 'PK_SB_DNA_049_DKDL210002178-1a_HWHGKDSXY_L4'
+20:43:31.557 INFO  SelectVariants - Including sample 'PK_SB_DNA_050_DKDL210002179-1a_HWHGKDSXY_L4'
+20:43:31.557 INFO  SelectVariants - Including sample 'PK_SB_DNA_051_DKDL210002180-1a_HWHGKDSXY_L4'
+20:43:31.557 INFO  SelectVariants - Including sample 'PK_SB_DNA_052_DKDL210002181-1a_HWHGKDSXY_L4'
+20:43:31.557 INFO  SelectVariants - Including sample 'PK_SB_DNA_053_DKDL210002182-1a_HWHGKDSXY_L4'
+20:43:31.557 INFO  SelectVariants - Including sample 'PK_SB_DNA_054_DKDL210002183-1a_HWHGKDSXY_L4'
+20:43:31.557 INFO  SelectVariants - Including sample 'PK_SB_DNA_055_DKDL210002184-1a_HWHGKDSXY_L4'
+20:43:31.557 INFO  SelectVariants - Including sample 'PK_SB_DNA_056_DKDL210002185-1a_HWHGKDSXY_L4'
+20:43:31.557 INFO  SelectVariants - Including sample 'PK_SB_DNA_057_DKDL210002186-1a_HWHGKDSXY_L4'
+20:43:31.558 INFO  SelectVariants - Including sample 'PK_SB_DNA_058_DKDL210002187-1a_HWHGKDSXY_L4'
+20:43:31.558 INFO  SelectVariants - Including sample 'PK_SB_DNA_059_DKDL210002188-1a_HWHGKDSXY_L4'
+20:43:31.558 INFO  SelectVariants - Including sample 'PK_SB_DNA_060_DKDL210002189-1a_HWHGKDSXY_L4'
+20:43:31.558 INFO  SelectVariants - Including sample 'PK_SB_DNA_061_DKDL210002190-1a_HWHGKDSXY_L4'
+20:43:31.558 INFO  SelectVariants - Including sample 'PK_SB_DNA_062_DKDL210002191-1a_HWHGKDSXY_L4'
+20:43:31.558 INFO  SelectVariants - Including sample 'PK_SB_DNA_063_DKDL210002192-1a_HWHGKDSXY_L4'
+20:43:31.558 INFO  SelectVariants - Including sample 'PK_SB_DNA_064_DKDL210002193-1a_HWHGKDSXY_L4'
+20:43:31.559 INFO  SelectVariants - Including sample 'PK_SB_DNA_065_DKDL210002194-1a_HWHGKDSXY_L4'
+20:43:31.559 INFO  SelectVariants - Including sample 'PK_SB_DNA_066_DKDL210002195-1a_HWHGKDSXY_L4'
+20:43:31.559 INFO  SelectVariants - Including sample 'PK_SB_DNA_067_DKDL210002196-1a_HWHGKDSXY_L4'
+20:43:31.559 INFO  SelectVariants - Including sample 'PK_SB_DNA_068_DKDL210002197-1a_HWHGKDSXY_L4'
+20:43:31.559 INFO  SelectVariants - Including sample 'PK_SB_DNA_069_DKDL210002198-1a_HWHGKDSXY_L4'
+20:43:31.559 INFO  SelectVariants - Including sample 'PK_SB_DNA_070_DKDL210002199-1a_HWHGKDSXY_L4'
+20:43:31.559 INFO  SelectVariants - Including sample 'PK_SB_DNA_071_DKDL210002200-1a_HWHGKDSXY_L4'
+20:43:31.559 INFO  SelectVariants - Including sample 'PK_SB_DNA_072_DKDL210002201-1a_HWHGKDSXY_L4'
+20:43:31.560 INFO  SelectVariants - Including sample 'PK_SB_DNA_073_DKDL210002202-1a_HWHGKDSXY_L4'
+20:43:31.560 INFO  SelectVariants - Including sample 'PK_SB_DNA_074_DKDL210002203-1a_HWHGKDSXY_L4'
+20:43:31.560 INFO  SelectVariants - Including sample 'PK_SB_DNA_075_DKDL210002204-1a_HWHGKDSXY_L4'
+20:43:31.560 INFO  SelectVariants - Including sample 'PK_SB_DNA_076_DKDL210002205-1a_HWHGKDSXY_L4'
+20:43:31.560 INFO  SelectVariants - Including sample 'PK_SB_DNA_077_DKDL210002206-1a_HWHGKDSXY_L4'
+20:43:31.560 INFO  SelectVariants - Including sample 'PK_SB_DNA_078_DKDL210002207-1a_HWHGKDSXY_L4'
+20:43:31.560 INFO  SelectVariants - Including sample 'PK_SB_DNA_079_DKDL210002208-1a_HWHGKDSXY_L4'
+20:43:31.561 INFO  SelectVariants - Including sample 'PK_SB_DNA_080_DKDL210002209-1a_HWHGKDSXY_L4'
+20:43:31.561 INFO  SelectVariants - Including sample 'PK_SB_DNA_081_DKDL210002210-1a_HWHGKDSXY_L4'
+20:43:31.561 INFO  SelectVariants - Including sample 'PK_SB_DNA_082_DKDL210002211-1a_HWHGKDSXY_L4'
+20:43:31.561 INFO  SelectVariants - Including sample 'PK_SB_DNA_083_DKDL210002212-1a_HWHGKDSXY_L4'
+20:43:31.561 INFO  SelectVariants - Including sample 'PK_SB_DNA_084_DKDL210002213-1a_HWHGKDSXY_L4'
+20:43:31.561 INFO  SelectVariants - Including sample 'PK_SB_DNA_085_DKDL210002214-1a_HWHGKDSXY_L4'
+20:43:31.561 INFO  SelectVariants - Including sample 'PK_SB_DNA_086_DKDL210002215-1a_HWHGKDSXY_L4'
+20:43:31.561 INFO  SelectVariants - Including sample 'PK_SB_DNA_087_DKDL210002216-1a_HWHGKDSXY_L4'
+20:43:31.562 INFO  SelectVariants - Including sample 'PK_SB_DNA_088_DKDL210002217-1a_HWHGKDSXY_L4'
+20:43:31.562 INFO  SelectVariants - Including sample 'PK_SB_DNA_089_DKDL210002218-1a_HWHGKDSXY_L4'
+20:43:31.562 INFO  SelectVariants - Including sample 'PK_SB_DNA_090_DKDL210002219-1a_HWHGKDSXY_L4'
+20:43:31.562 INFO  SelectVariants - Including sample 'PK_SB_DNA_091_DKDL210002220-1a_HWHGKDSXY_L4'
+20:43:31.562 INFO  SelectVariants - Including sample 'PK_SB_DNA_092_DKDL210002221-1a_HWHGKDSXY_L4'
+20:43:31.562 INFO  SelectVariants - Including sample 'PK_SB_DNA_093_DKDL210002222-1a_HWHGKDSXY_L4'
+20:43:31.562 INFO  SelectVariants - Including sample 'PK_SB_DNA_094_DKDL210002223-1a_HWHGKDSXY_L4'
+20:43:31.609 INFO  ProgressMeter - Starting traversal
+20:43:31.609 INFO  ProgressMeter -        Current Locus  Elapsed Minutes    Variants Processed  Variants/Minute
+20:43:42.413 INFO  ProgressMeter - ordered_PKNH_01_v2:83344              0.2                  5000          27770.1
+20:43:52.948 INFO  ProgressMeter - ordered_PKNH_01_v2:192654              0.4                 13000          36552.8
+20:44:03.125 INFO  ProgressMeter - ordered_PKNH_01_v2:332397              0.5                 25000          47594.9
+20:44:13.355 INFO  ProgressMeter - ordered_PKNH_01_v2:534946              0.7                 42000          60365.1
+20:44:23.788 INFO  ProgressMeter - ordered_PKNH_01_v2:763620              0.9                 60000          68993.3
+20:44:33.887 INFO  ProgressMeter - ordered_PKNH_02_v2:127163              1.0                 76000          73220.1
+20:44:44.082 INFO  ProgressMeter - ordered_PKNH_02_v2:333426              1.2                 94000          77822.1
+20:44:54.592 INFO  ProgressMeter - ordered_PKNH_02_v2:565824              1.4                113000          81703.5
+20:45:04.726 INFO  ProgressMeter - ordered_PKNH_03_v2:60220              1.6                131000          84411.7
+20:45:14.952 INFO  ProgressMeter - ordered_PKNH_03_v2:277346              1.7                149000          86508.0
+20:45:25.041 INFO  ProgressMeter - ordered_PKNH_03_v2:479482              1.9                166000          87805.9
+20:45:35.475 INFO  ProgressMeter - ordered_PKNH_03_v2:747640              2.1                185000          89613.0
+20:45:45.590 INFO  ProgressMeter - ordered_PKNH_03_v2:971641              2.2                203000          90908.4
+20:45:56.010 INFO  ProgressMeter - ordered_PKNH_04_v2:172137              2.4                221000          91827.6
+20:46:06.015 INFO  ProgressMeter - ordered_PKNH_04_v2:388267              2.6                238000          92483.5
+20:46:16.187 INFO  ProgressMeter - ordered_PKNH_04_v2:633025              2.7                256000          93329.6
+20:46:26.674 INFO  ProgressMeter - ordered_PKNH_04_v2:869671              2.9                275000          94251.2
+20:46:36.850 INFO  ProgressMeter - ordered_PKNH_04_v2:1083791              3.1                293000          94903.4
+20:46:47.217 INFO  ProgressMeter - ordered_PKNH_05_v2:177923              3.3                311000          95394.9
+20:46:57.717 INFO  ProgressMeter - ordered_PKNH_05_v2:445597              3.4                329000          95775.0
+20:47:07.955 INFO  ProgressMeter - ordered_PKNH_05_v2:667696              3.6                347000          96234.7
+20:47:18.342 INFO  ProgressMeter - ordered_PKNH_06_v2:131500              3.8                366000          96854.0
+20:47:28.600 INFO  ProgressMeter - ordered_PKNH_06_v2:358750              3.9                384000          97218.9
+20:47:38.678 INFO  ProgressMeter - ordered_PKNH_06_v2:570151              4.1                402000          97624.6
+20:47:49.102 INFO  ProgressMeter - ordered_PKNH_06_v2:807011              4.3                420000          97867.1
+20:47:59.312 INFO  ProgressMeter - ordered_PKNH_06_v2:1044606              4.5                438000          98168.5
+20:48:09.549 INFO  ProgressMeter - ordered_PKNH_07_v2:264733              4.6                457000          98654.4
+20:48:19.861 INFO  ProgressMeter - ordered_PKNH_07_v2:510828              4.8                476000          99080.0
+20:48:30.400 INFO  ProgressMeter - ordered_PKNH_07_v2:746054              5.0                495000          99400.6
+20:48:40.524 INFO  ProgressMeter - ordered_PKNH_07_v2:964816              5.1                513000          99639.1
+20:48:50.910 INFO  ProgressMeter - ordered_PKNH_07_v2:1182394              5.3                531000          99780.5
+20:49:01.347 INFO  ProgressMeter - ordered_PKNH_07_v2:1429543              5.5                549000          99897.5
+20:49:11.543 INFO  ProgressMeter - ordered_PKNH_08_v2:176417              5.7                568000         100254.8
+20:49:21.690 INFO  ProgressMeter - ordered_PKNH_08_v2:402916              5.8                586000         100433.9
+20:49:31.824 INFO  ProgressMeter - ordered_PKNH_08_v2:648674              6.0                604000         100606.6
+20:49:42.017 INFO  ProgressMeter - ordered_PKNH_08_v2:855017              6.2                622000         100753.8
+20:49:52.369 INFO  ProgressMeter - ordered_PKNH_08_v2:1068489              6.3                640000         100851.2
+20:50:02.809 INFO  ProgressMeter - ordered_PKNH_08_v2:1332412              6.5                659000         101073.6
+20:50:12.822 INFO  ProgressMeter - ordered_PKNH_08_v2:1561872              6.7                677000         101243.0
+20:50:23.249 INFO  ProgressMeter - ordered_PKNH_08_v2:1787178              6.9                695000         101302.4
+20:50:33.432 INFO  ProgressMeter - ordered_PKNH_09_v2:157986              7.0                713000         101416.9
+20:50:43.642 INFO  ProgressMeter - ordered_PKNH_09_v2:411803              7.2                731000         101520.0
+20:50:53.755 INFO  ProgressMeter - ordered_PKNH_09_v2:660183              7.4                749000         101640.6
+20:51:04.077 INFO  ProgressMeter - ordered_PKNH_09_v2:922888              7.5                768000         101841.5
+20:51:14.221 INFO  ProgressMeter - ordered_PKNH_09_v2:1145827              7.7                786000         101942.9
+20:51:24.255 INFO  ProgressMeter - ordered_PKNH_09_v2:1351949              7.9                803000         101936.8
+20:51:34.386 INFO  ProgressMeter - ordered_PKNH_09_v2:1583015              8.0                821000         102034.7
+20:51:44.916 INFO  ProgressMeter - ordered_PKNH_09_v2:1840461              8.2                840000         102167.6
+20:51:55.151 INFO  ProgressMeter - ordered_PKNH_09_v2:2081266              8.4                859000         102354.9
+20:52:05.624 INFO  ProgressMeter - ordered_PKNH_10_v2:159314              8.6                877000         102370.6
+20:52:15.799 INFO  ProgressMeter - ordered_PKNH_10_v2:390176              8.7                895000         102443.8
+20:52:25.942 INFO  ProgressMeter - ordered_PKNH_10_v2:626236              8.9                913000         102520.3
+20:52:36.490 INFO  ProgressMeter - ordered_PKNH_10_v2:844132              9.1                931000         102524.6
+20:52:46.917 INFO  ProgressMeter - ordered_PKNH_10_v2:1079431              9.3                950000         102645.7
+20:52:56.969 INFO  ProgressMeter - ordered_PKNH_10_v2:1295388              9.4                968000         102731.0
+20:53:07.443 INFO  ProgressMeter - ordered_PKNH_11_v2:16478              9.6                986000         102737.9
+20:53:17.810 INFO  ProgressMeter - ordered_PKNH_11_v2:231523              9.8               1004000         102763.4
+20:53:27.952 INFO  ProgressMeter - ordered_PKNH_11_v2:479735              9.9               1022000         102826.7
+20:53:38.122 INFO  ProgressMeter - ordered_PKNH_11_v2:724751             10.1               1040000         102883.2
+20:53:48.402 INFO  ProgressMeter - ordered_PKNH_11_v2:1017227             10.3               1059000         103016.7
+20:53:58.519 INFO  ProgressMeter - ordered_PKNH_11_v2:1272813             10.4               1078000         103172.9
+20:54:08.884 INFO  ProgressMeter - ordered_PKNH_11_v2:1496994             10.6               1096000         103189.5
+20:54:19.035 INFO  ProgressMeter - ordered_PKNH_11_v2:1702734             10.8               1114000         103239.6
+20:54:29.172 INFO  ProgressMeter - ordered_PKNH_11_v2:1922972             11.0               1131000         103199.2
+20:54:39.566 INFO  ProgressMeter - ordered_PKNH_11_v2:2143957             11.1               1149000         103210.2
+20:54:49.639 INFO  ProgressMeter - ordered_PKNH_12_v2:45098             11.3               1167000         103269.9
+20:55:00.042 INFO  ProgressMeter - ordered_PKNH_12_v2:291715             11.5               1186000         103365.2
+20:55:10.240 INFO  ProgressMeter - ordered_PKNH_12_v2:516811             11.6               1204000         103402.2
+20:55:20.731 INFO  ProgressMeter - ordered_PKNH_12_v2:775913             11.8               1223000         103480.1
+20:55:30.797 INFO  ProgressMeter - ordered_PKNH_12_v2:1038553             12.0               1241000         103533.4
+20:55:40.906 INFO  ProgressMeter - ordered_PKNH_12_v2:1313129             12.2               1260000         103661.5
+20:55:51.428 INFO  ProgressMeter - ordered_PKNH_12_v2:1556656             12.3               1279000         103728.1
+20:56:01.958 INFO  ProgressMeter - ordered_PKNH_12_v2:1808646             12.5               1298000         103791.7
+20:56:12.027 INFO  ProgressMeter - ordered_PKNH_12_v2:2067452             12.7               1316000         103837.8
+20:56:22.335 INFO  ProgressMeter - ordered_PKNH_12_v2:2325908             12.8               1334000         103850.1
+20:56:32.455 INFO  ProgressMeter - ordered_PKNH_12_v2:2575331             13.0               1353000         103964.3
+20:56:42.943 INFO  ProgressMeter - ordered_PKNH_12_v2:2824697             13.2               1372000         104026.9
+20:56:52.976 INFO  ProgressMeter - ordered_PKNH_12_v2:3055319             13.4               1390000         104072.2
+20:57:03.193 INFO  ProgressMeter - ordered_PKNH_13_v2:166876             13.5               1408000         104092.7
+20:57:13.490 INFO  ProgressMeter - ordered_PKNH_13_v2:395596             13.7               1426000         104102.7
+20:57:23.889 INFO  ProgressMeter - ordered_PKNH_13_v2:654955             13.9               1445000         104171.7
+20:57:34.193 INFO  ProgressMeter - ordered_PKNH_13_v2:883408             14.0               1464000         104250.9
+20:57:44.853 INFO  ProgressMeter - ordered_PKNH_13_v2:1149295             14.2               1483000         104284.4
+20:57:54.976 INFO  ProgressMeter - ordered_PKNH_13_v2:1381526             14.4               1500000         104243.0
+20:58:05.330 INFO  ProgressMeter - ordered_PKNH_13_v2:1631542             14.6               1518000         104243.8
+20:58:15.677 INFO  ProgressMeter - ordered_PKNH_13_v2:1863324             14.7               1536000         104245.5
+20:58:26.223 INFO  ProgressMeter - ordered_PKNH_13_v2:2129735             14.9               1556000         104358.0
+20:58:36.557 INFO  ProgressMeter - ordered_PKNH_13_v2:2398732             15.1               1575000         104425.9
+20:58:46.675 INFO  ProgressMeter - ordered_PKNH_14_v2:67706             15.3               1593000         104451.5
+20:58:57.236 INFO  ProgressMeter - ordered_PKNH_14_v2:352815             15.4               1612000         104491.3
+20:59:07.399 INFO  ProgressMeter - ordered_PKNH_14_v2:625751             15.6               1630000         104510.6
+20:59:17.736 INFO  ProgressMeter - ordered_PKNH_14_v2:884973             15.8               1650000         104637.1
+20:59:27.805 INFO  ProgressMeter - ordered_PKNH_14_v2:1150315             15.9               1668000         104664.7
+20:59:37.857 INFO  ProgressMeter - ordered_PKNH_14_v2:1403292             16.1               1686000         104693.6
+20:59:47.935 INFO  ProgressMeter - ordered_PKNH_14_v2:1667141             16.3               1704000         104719.1
+20:59:57.992 INFO  ProgressMeter - ordered_PKNH_14_v2:1903404             16.4               1722000         104746.3
+21:00:08.029 INFO  ProgressMeter - ordered_PKNH_14_v2:2114381             16.6               1740000         104775.1
+21:00:18.341 INFO  ProgressMeter - ordered_PKNH_14_v2:2370952             16.8               1759000         104834.4
+21:00:28.703 INFO  ProgressMeter - ordered_PKNH_14_v2:2592054             17.0               1777000         104828.1
+21:00:39.074 INFO  ProgressMeter - ordered_PKNH_14_v2:2836812             17.1               1795000         104821.1
+21:00:49.381 INFO  ProgressMeter - ordered_PKNH_14_v2:3070036             17.3               1813000         104820.7
+21:00:57.728 INFO  ProgressMeter - ordered_PKNH_14_v2:3258241             17.4               1827686         104826.7
+21:00:57.728 INFO  ProgressMeter - Traversal complete. Processed 1827686 total variants in 17.4 minutes.
+21:00:58.414 INFO  SelectVariants - Shutting down engine
+[3 March 2022 9:00:58 PM] org.broadinstitute.hellbender.tools.walkers.variantutils.SelectVariants done. Elapsed time: 17.48 minutes.
+Runtime.totalMemory()=3243769856
+---------------------------------------
+Finished 

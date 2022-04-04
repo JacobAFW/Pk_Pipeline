@@ -1,0 +1,346 @@
+---------------------------------------
+PBS: Job identifier is 1314284.cheetah
+PBS: Job name is Variant_calling
+---------------------------------------
+Define paths
+---------------------------------------
+---------------------------------------
+Change to working directory and set env variables
+mkdir: cannot create directory `/home/jwestaway/pk_pipeline/Initial_Pk_subset/outputs/variant_calling/GATK/haplotypecaller': File exists
+---------------------------------------------------------------------------------------------------------------------
+GATK
+---------------------------------------------------------------------------------------------------------------------
+INFO  13:37:13,655 HelpFormatter - -------------------------------------------------------------------------------- 
+INFO  13:37:13,658 HelpFormatter - The Genome Analysis Toolkit (GATK) v3.2-2-gec30cee, Compiled 2014/07/17 15:22:03 
+INFO  13:37:13,659 HelpFormatter - Copyright (c) 2010 The Broad Institute 
+INFO  13:37:13,659 HelpFormatter - For support and documentation go to http://www.broadinstitute.org/gatk 
+INFO  13:37:13,669 HelpFormatter - Program Args: -T HaplotypeCaller -ERC GVCF --minPruning 3 --maxNumHaplotypesInPopulation 200 --max_alternate_alleles 3 --variant_index_type LINEAR --variant_index_parameter 128000 -contamination 0.0 -G Standard -R /home/jwestaway/pk_pipeline/ref_genomes/PKA1H1/fasta/strain_A1_H.1.Icor.fasta -I /home/jwestaway/pk_pipeline/Initial_Pk_subset/outputs/variant_calling/final_bams/PK_SB_DNA_007_DKDL210002136-1a_HWHGKDSXY_L4.dupmarked.realigned.recal.bam -o /home/jwestaway/pk_pipeline/Initial_Pk_subset/outputs/variant_calling/GATK/haplotypecaller/PK_SB_DNA_007_DKDL210002136-1a_HWHGKDSXY_L4.dupmarked.realigned.recal.g.vcf.gz 
+INFO  13:37:13,676 HelpFormatter - Executing as jwestaway@cheetah03 on Linux 2.6.32-754.14.2.el6.x86_64 amd64; Java HotSpot(TM) 64-Bit Server VM 1.8.0_131-b11. 
+INFO  13:37:13,678 HelpFormatter - Date/Time: 2022/02/08 13:37:13 
+INFO  13:37:13,679 HelpFormatter - -------------------------------------------------------------------------------- 
+INFO  13:37:13,680 HelpFormatter - -------------------------------------------------------------------------------- 
+WARN  13:37:13,713 GATKVCFUtils - Creating Tabix index for /home/jwestaway/pk_pipeline/Initial_Pk_subset/outputs/variant_calling/GATK/haplotypecaller/PK_SB_DNA_007_DKDL210002136-1a_HWHGKDSXY_L4.dupmarked.realigned.recal.g.vcf.gz, ignoring user-specified index type and parameter 
+INFO  13:37:15,007 GenomeAnalysisEngine - Strictness is SILENT 
+INFO  13:37:15,240 GenomeAnalysisEngine - Downsampling Settings: Method: BY_SAMPLE, Target Coverage: 250 
+INFO  13:37:15,277 SAMDataSource$SAMReaders - Initializing SAMRecords in serial 
+INFO  13:37:15,313 SAMDataSource$SAMReaders - Done initializing BAM readers: total time 0.04 
+INFO  13:37:15,326 HCMappingQualityFilter - Filtering out reads with MAPQ < 20 
+INFO  13:37:15,543 GenomeAnalysisEngine - Preparing for traversal over 1 BAM files 
+INFO  13:37:15,617 GenomeAnalysisEngine - Done preparing for traversal 
+INFO  13:37:15,618 ProgressMeter - [INITIALIZATION COMPLETE; STARTING PROCESSING] 
+INFO  13:37:15,623 ProgressMeter -                 |      processed |    time |         per 1M |           |   total | remaining 
+INFO  13:37:15,624 ProgressMeter -        Location | active regions | elapsed | active regions | completed | runtime |   runtime 
+INFO  13:37:15,626 HaplotypeCaller - Standard Emitting and Calling confidence set to 0.0 for reference-model confidence output 
+INFO  13:37:15,626 HaplotypeCaller - All sites annotated with PLs forced to true for reference-model confidence output 
+INFO  13:37:15,826 HaplotypeCaller - Using global mismapping rate of 45 => -4.5 in log10 likelihood units 
+Using AVX accelerated implementation of PairHMM
+INFO  13:37:21,590 VectorLoglessPairHMM - libVectorLoglessPairHMM unpacked successfully from GATK jar file 
+INFO  13:37:21,590 VectorLoglessPairHMM - Using vectorized implementation of PairHMM 
+INFO  13:37:45,680 ProgressMeter - ordered_PKNH_01_v2:75357              0.0    30.0 s           49.7 w        0.3%     2.7 h       2.7 h 
+INFO  13:38:15,681 ProgressMeter - ordered_PKNH_01_v2:121362              0.0    60.0 s           99.3 w        0.5%     3.3 h       3.3 h 
+INFO  13:38:45,682 ProgressMeter - ordered_PKNH_01_v2:200986              0.0    90.0 s          148.9 w        0.8%     3.0 h       3.0 h 
+INFO  13:39:15,683 ProgressMeter - ordered_PKNH_01_v2:246905              0.0   120.0 s          198.5 w        1.0%     3.3 h       3.3 h 
+INFO  13:39:45,688 ProgressMeter - ordered_PKNH_01_v2:300803              0.0     2.5 m          248.1 w        1.2%     3.4 h       3.3 h 
+INFO  13:40:15,697 ProgressMeter - ordered_PKNH_01_v2:345063              0.0     3.0 m          297.8 w        1.4%     3.5 h       3.5 h 
+INFO  13:40:45,698 ProgressMeter - ordered_PKNH_01_v2:403922              0.0     3.5 m          347.4 w        1.7%     3.5 h       3.5 h 
+INFO  13:41:15,699 ProgressMeter - ordered_PKNH_01_v2:463361              0.0     4.0 m          397.0 w        1.9%     3.5 h       3.4 h 
+INFO  13:41:45,700 ProgressMeter - ordered_PKNH_01_v2:504464              0.0     4.5 m          446.6 w        2.1%     3.6 h       3.5 h 
+INFO  13:42:25,701 ProgressMeter - ordered_PKNH_01_v2:561738              0.0     5.2 m          512.7 w        2.3%     3.7 h       3.6 h 
+INFO  13:42:55,701 ProgressMeter - ordered_PKNH_01_v2:654013              0.0     5.7 m          562.3 w        2.7%     3.5 h       3.4 h 
+INFO  13:43:25,702 ProgressMeter - ordered_PKNH_01_v2:723877              0.0     6.2 m          611.9 w        3.0%     3.5 h       3.4 h 
+INFO  13:43:55,703 ProgressMeter - ordered_PKNH_01_v2:772164              0.0     6.7 m          661.5 w        3.2%     3.5 h       3.4 h 
+INFO  13:44:25,704 ProgressMeter - ordered_PKNH_01_v2:883375              0.0     7.2 m          711.1 w        3.6%     3.3 h       3.2 h 
+INFO  13:44:55,705 ProgressMeter - ordered_PKNH_02_v2:161895         892570.0     7.7 m            8.6 m        4.3%     2.9 h       2.8 h 
+INFO  13:45:35,706 ProgressMeter - ordered_PKNH_02_v2:223999         892570.0     8.3 m            9.3 m        4.6%     3.0 h       2.9 h 
+INFO  13:46:05,707 ProgressMeter - ordered_PKNH_02_v2:294717         892570.0     8.8 m            9.9 m        4.9%     3.0 h       2.9 h 
+INFO  13:46:45,708 ProgressMeter - ordered_PKNH_02_v2:415488         892570.0     9.5 m           10.6 m        5.4%     2.9 h       2.8 h 
+INFO  13:47:15,708 ProgressMeter - ordered_PKNH_02_v2:467128         892570.0    10.0 m           11.2 m        5.6%     3.0 h       2.8 h 
+INFO  13:47:45,709 ProgressMeter - ordered_PKNH_02_v2:508952         892570.0    10.5 m           11.8 m        5.8%     3.0 h       2.9 h 
+INFO  13:48:15,721 ProgressMeter - ordered_PKNH_02_v2:583724         892570.0    11.0 m           12.3 m        6.1%     3.0 h       2.8 h 
+INFO  13:48:55,722 ProgressMeter - ordered_PKNH_02_v2:725748         892570.0    11.7 m           13.1 m        6.7%     2.9 h       2.7 h 
+INFO  13:49:25,723 ProgressMeter - ordered_PKNH_03_v2:88956        1680216.0    12.2 m            7.2 m        7.3%     2.8 h       2.6 h 
+INFO  13:49:55,723 ProgressMeter - ordered_PKNH_03_v2:147806        1680216.0    12.7 m            7.5 m        7.5%     2.8 h       2.6 h 
+INFO  13:50:25,724 ProgressMeter - ordered_PKNH_03_v2:192369        1680216.0    13.2 m            7.8 m        7.7%     2.9 h       2.6 h 
+INFO  13:50:55,725 ProgressMeter - ordered_PKNH_03_v2:259715        1680216.0    13.7 m            8.1 m        8.0%     2.9 h       2.6 h 
+INFO  13:51:25,726 ProgressMeter - ordered_PKNH_03_v2:327295        1680216.0    14.2 m            8.4 m        8.3%     2.9 h       2.6 h 
+INFO  13:51:55,727 ProgressMeter - ordered_PKNH_03_v2:388973        1680216.0    14.7 m            8.7 m        8.5%     2.9 h       2.6 h 
+INFO  13:52:25,732 ProgressMeter - ordered_PKNH_03_v2:443258        1680216.0    15.2 m            9.0 m        8.7%     2.9 h       2.6 h 
+INFO  13:52:55,732 ProgressMeter - ordered_PKNH_03_v2:494740        1680216.0    15.7 m            9.3 m        8.9%     2.9 h       2.7 h 
+INFO  13:53:25,733 ProgressMeter - ordered_PKNH_03_v2:568031        1680216.0    16.2 m            9.6 m        9.2%     2.9 h       2.6 h 
+INFO  13:53:55,734 ProgressMeter - ordered_PKNH_03_v2:678059        1680216.0    16.7 m            9.9 m        9.7%     2.9 h       2.6 h 
+INFO  13:54:25,735 ProgressMeter - ordered_PKNH_03_v2:787351        1680216.0    17.2 m           10.2 m       10.1%     2.8 h       2.5 h 
+INFO  13:54:55,736 ProgressMeter - ordered_PKNH_03_v2:832997        1680216.0    17.7 m           10.5 m       10.3%     2.8 h       2.6 h 
+INFO  13:55:25,737 ProgressMeter - ordered_PKNH_03_v2:884015        1680216.0    18.2 m           10.8 m       10.5%     2.9 h       2.6 h 
+INFO  13:55:55,738 ProgressMeter - ordered_PKNH_03_v2:952918        1680216.0    18.7 m           11.1 m       10.8%     2.9 h       2.6 h 
+INFO  13:56:35,739 ProgressMeter - ordered_PKNH_04_v2:106288        2730786.0    19.3 m            7.1 m       11.7%     2.8 h       2.4 h 
+WARN  13:56:47,146 ExactAFCalc - this tool is currently set to genotype at most 3 alternate alleles in a given context, but the context at ordered_PKNH_04_v2:123060 has 5 alternate alleles so only the top alleles will be used; see the --max_alternate_alleles argument 
+INFO  13:57:05,739 ProgressMeter - ordered_PKNH_04_v2:158615        2730786.0    19.8 m            7.3 m       11.9%     2.8 h       2.5 h 
+INFO  13:57:35,740 ProgressMeter - ordered_PKNH_04_v2:232575        2730786.0    20.3 m            7.4 m       12.2%     2.8 h       2.4 h 
+INFO  13:58:05,767 ProgressMeter - ordered_PKNH_04_v2:340049        2730786.0    20.8 m            7.6 m       12.6%     2.7 h       2.4 h 
+INFO  13:58:35,768 ProgressMeter - ordered_PKNH_04_v2:405070        2730786.0    21.3 m            7.8 m       12.9%     2.8 h       2.4 h 
+INFO  13:59:05,769 ProgressMeter - ordered_PKNH_04_v2:483372        2730786.0    21.8 m            8.0 m       13.2%     2.8 h       2.4 h 
+INFO  13:59:35,770 ProgressMeter - ordered_PKNH_04_v2:560793        2730786.0    22.3 m            8.2 m       13.5%     2.8 h       2.4 h 
+INFO  14:00:05,771 ProgressMeter - ordered_PKNH_04_v2:586189        2730786.0    22.8 m            8.4 m       13.6%     2.8 h       2.4 h 
+INFO  14:00:45,772 ProgressMeter - ordered_PKNH_04_v2:642347        2730786.0    23.5 m            8.6 m       13.9%     2.8 h       2.4 h 
+INFO  14:01:15,772 ProgressMeter - ordered_PKNH_04_v2:695446        2730786.0    24.0 m            8.8 m       14.1%     2.8 h       2.4 h 
+INFO  14:01:45,773 ProgressMeter - ordered_PKNH_04_v2:766535        2730786.0    24.5 m            9.0 m       14.4%     2.8 h       2.4 h 
+INFO  14:02:15,774 ProgressMeter - ordered_PKNH_04_v2:836589        2730786.0    25.0 m            9.2 m       14.7%     2.8 h       2.4 h 
+INFO  14:02:45,775 ProgressMeter - ordered_PKNH_04_v2:873957        2730786.0    25.5 m            9.3 m       14.8%     2.9 h       2.4 h 
+WARN  14:02:58,449 ExactAFCalc - this tool is currently set to genotype at most 3 alternate alleles in a given context, but the context at ordered_PKNH_04_v2:883789 has 9 alternate alleles so only the top alleles will be used; see the --max_alternate_alleles argument 
+INFO  14:03:15,776 ProgressMeter - ordered_PKNH_04_v2:913422        2730786.0    26.0 m            9.5 m       15.0%     2.9 h       2.5 h 
+INFO  14:03:55,777 ProgressMeter - ordered_PKNH_04_v2:1008628        2730786.0    26.7 m            9.8 m       15.4%     2.9 h       2.4 h 
+INFO  14:04:35,778 ProgressMeter - ordered_PKNH_04_v2:1088730        2730786.0    27.3 m           10.0 m       15.7%     2.9 h       2.4 h 
+INFO  14:05:05,779 ProgressMeter - ordered_PKNH_05_v2:74490        3862810.0    27.8 m            7.2 m       16.2%     2.9 h       2.4 h 
+INFO  14:05:35,779 ProgressMeter - ordered_PKNH_05_v2:120415        3862810.0    28.3 m            7.3 m       16.4%     2.9 h       2.4 h 
+INFO  14:06:05,780 ProgressMeter - ordered_PKNH_05_v2:157128        3862810.0    28.8 m            7.5 m       16.5%     2.9 h       2.4 h 
+INFO  14:06:35,781 ProgressMeter - ordered_PKNH_05_v2:201345        3862810.0    29.3 m            7.6 m       16.7%     2.9 h       2.4 h 
+INFO  14:07:05,782 ProgressMeter - ordered_PKNH_05_v2:290008        3862810.0    29.8 m            7.7 m       17.1%     2.9 h       2.4 h 
+INFO  14:07:45,783 ProgressMeter - ordered_PKNH_05_v2:417198        3862810.0    30.5 m            7.9 m       17.6%     2.9 h       2.4 h 
+INFO  14:08:15,792 ProgressMeter - ordered_PKNH_05_v2:464335        3862810.0    31.0 m            8.0 m       17.8%     2.9 h       2.4 h 
+INFO  14:08:45,828 ProgressMeter - ordered_PKNH_05_v2:503492        3862810.0    31.5 m            8.2 m       18.0%     2.9 h       2.4 h 
+INFO  14:09:15,829 ProgressMeter - ordered_PKNH_05_v2:552018        3862810.0    32.0 m            8.3 m       18.2%     2.9 h       2.4 h 
+INFO  14:09:45,830 ProgressMeter - ordered_PKNH_05_v2:598479        3862810.0    32.5 m            8.4 m       18.3%     3.0 h       2.4 h 
+INFO  14:10:15,831 ProgressMeter - ordered_PKNH_05_v2:645931        3862810.0    33.0 m            8.5 m       18.5%     3.0 h       2.4 h 
+INFO  14:10:45,832 ProgressMeter - ordered_PKNH_05_v2:696963        3862810.0    33.5 m            8.7 m       18.7%     3.0 h       2.4 h 
+INFO  14:11:25,833 ProgressMeter - ordered_PKNH_06_v2:48196        4645255.0    34.2 m            7.4 m       19.3%     3.0 h       2.4 h 
+INFO  14:11:55,834 ProgressMeter - ordered_PKNH_06_v2:99276        4645255.0    34.7 m            7.5 m       19.5%     3.0 h       2.4 h 
+INFO  14:12:25,839 ProgressMeter - ordered_PKNH_06_v2:143948        4645255.0    35.2 m            7.6 m       19.7%     3.0 h       2.4 h 
+INFO  14:12:55,840 ProgressMeter - ordered_PKNH_06_v2:186734        4645255.0    35.7 m            7.7 m       19.9%     3.0 h       2.4 h 
+INFO  14:13:25,841 ProgressMeter - ordered_PKNH_06_v2:254642        4645255.0    36.2 m            7.8 m       20.1%     3.0 h       2.4 h 
+INFO  14:13:55,842 ProgressMeter - ordered_PKNH_06_v2:371364        4645255.0    36.7 m            7.9 m       20.6%     3.0 h       2.4 h 
+INFO  14:14:25,860 ProgressMeter - ordered_PKNH_06_v2:458170        4645255.0    37.2 m            8.0 m       21.0%     3.0 h       2.3 h 
+INFO  14:14:55,860 ProgressMeter - ordered_PKNH_06_v2:504152        4645255.0    37.7 m            8.1 m       21.2%     3.0 h       2.3 h 
+INFO  14:15:25,861 ProgressMeter - ordered_PKNH_06_v2:554859        4645255.0    38.2 m            8.2 m       21.4%     3.0 h       2.3 h 
+INFO  14:15:55,862 ProgressMeter - ordered_PKNH_06_v2:660300        4645255.0    38.7 m            8.3 m       21.8%     3.0 h       2.3 h 
+INFO  14:16:25,863 ProgressMeter - ordered_PKNH_06_v2:715302        4645255.0    39.2 m            8.4 m       22.0%     3.0 h       2.3 h 
+INFO  14:16:55,864 ProgressMeter - ordered_PKNH_06_v2:785013        4645255.0    39.7 m            8.5 m       22.3%     3.0 h       2.3 h 
+INFO  14:17:35,865 ProgressMeter - ordered_PKNH_06_v2:871924        4645255.0    40.3 m            8.7 m       22.7%     3.0 h       2.3 h 
+INFO  14:18:15,866 ProgressMeter - ordered_PKNH_06_v2:937130        4645255.0    41.0 m            8.8 m       23.0%     3.0 h       2.3 h 
+INFO  14:18:45,876 ProgressMeter - ordered_PKNH_07_v2:3403        5725911.0    41.5 m            7.2 m       23.6%     2.9 h       2.2 h 
+INFO  14:19:25,877 ProgressMeter - ordered_PKNH_07_v2:199331        5725911.0    42.2 m            7.4 m       24.4%     2.9 h       2.2 h 
+INFO  14:20:05,878 ProgressMeter - ordered_PKNH_07_v2:282219        5725911.0    42.8 m            7.5 m       24.7%     2.9 h       2.2 h 
+INFO  14:20:45,903 ProgressMeter - ordered_PKNH_07_v2:393476        5725911.0    43.5 m            7.6 m       25.2%     2.9 h       2.2 h 
+INFO  14:21:15,904 ProgressMeter - ordered_PKNH_07_v2:476744        5725911.0    44.0 m            7.7 m       25.5%     2.9 h       2.1 h 
+INFO  14:21:45,905 ProgressMeter - ordered_PKNH_07_v2:547710        5725911.0    44.5 m            7.8 m       25.8%     2.9 h       2.1 h 
+INFO  14:22:15,906 ProgressMeter - ordered_PKNH_07_v2:619257        5725911.0    45.0 m            7.9 m       26.1%     2.9 h       2.1 h 
+INFO  14:22:55,907 ProgressMeter - ordered_PKNH_07_v2:717931        5725911.0    45.7 m            8.0 m       26.5%     2.9 h       2.1 h 
+INFO  14:23:25,907 ProgressMeter - ordered_PKNH_07_v2:796588        5725911.0    46.2 m            8.1 m       26.8%     2.9 h       2.1 h 
+INFO  14:23:55,908 ProgressMeter - ordered_PKNH_07_v2:869233        5725911.0    46.7 m            8.2 m       27.1%     2.9 h       2.1 h 
+INFO  14:24:25,909 ProgressMeter - ordered_PKNH_07_v2:939484        5725911.0    47.2 m            8.2 m       27.4%     2.9 h       2.1 h 
+INFO  14:24:55,910 ProgressMeter - ordered_PKNH_07_v2:996073        5725911.0    47.7 m            8.3 m       27.6%     2.9 h       2.1 h 
+INFO  14:25:35,929 ProgressMeter - ordered_PKNH_07_v2:1098084        5725911.0    48.3 m            8.4 m       28.1%     2.9 h       2.1 h 
+INFO  14:26:05,930 ProgressMeter - ordered_PKNH_07_v2:1165387        5725911.0    48.8 m            8.5 m       28.3%     2.9 h       2.1 h 
+INFO  14:26:35,938 ProgressMeter - ordered_PKNH_07_v2:1264390        5725911.0    49.3 m            8.6 m       28.7%     2.9 h       2.0 h 
+INFO  14:27:05,938 ProgressMeter - ordered_PKNH_07_v2:1363704        5725911.0    49.8 m            8.7 m       29.2%     2.8 h       2.0 h 
+INFO  14:27:35,939 ProgressMeter - ordered_PKNH_07_v2:1400693        5725911.0    50.3 m            8.8 m       29.3%     2.9 h       2.0 h 
+INFO  14:28:05,940 ProgressMeter - ordered_PKNH_07_v2:1465700        5725911.0    50.8 m            8.9 m       29.6%     2.9 h       2.0 h 
+INFO  14:28:35,941 ProgressMeter - ordered_PKNH_08_v2:102453        7247987.0    51.3 m            7.1 m       30.2%     2.8 h     118.5 m 
+INFO  14:29:15,942 ProgressMeter - ordered_PKNH_08_v2:204681        7247987.0    52.0 m            7.2 m       30.6%     2.8 h     117.7 m 
+INFO  14:29:45,945 ProgressMeter - ordered_PKNH_08_v2:265634        7247987.0    52.5 m            7.2 m       30.9%     2.8 h     117.4 m 
+INFO  14:30:25,963 ProgressMeter - ordered_PKNH_08_v2:445454        7247987.0    53.2 m            7.3 m       31.6%     2.8 h     114.9 m 
+INFO  14:30:55,963 ProgressMeter - ordered_PKNH_08_v2:572078        7247987.0    53.7 m            7.4 m       32.2%     2.8 h     113.2 m 
+INFO  14:31:25,964 ProgressMeter - ordered_PKNH_08_v2:652554        7247987.0    54.2 m            7.5 m       32.5%     2.8 h     112.6 m 
+INFO  14:31:55,965 ProgressMeter - ordered_PKNH_08_v2:716934        7247987.0    54.7 m            7.5 m       32.7%     2.8 h     112.3 m 
+INFO  14:32:25,966 ProgressMeter - ordered_PKNH_08_v2:776529        7247987.0    55.2 m            7.6 m       33.0%     2.8 h     112.0 m 
+INFO  14:33:05,967 ProgressMeter - ordered_PKNH_08_v2:893348        7247987.0    55.8 m            7.7 m       33.5%     2.8 h     111.0 m 
+INFO  14:33:35,968 ProgressMeter - ordered_PKNH_08_v2:956661        7247987.0    56.3 m            7.8 m       33.7%     2.8 h     110.7 m 
+INFO  14:34:05,968 ProgressMeter - ordered_PKNH_08_v2:1051042        7247987.0    56.8 m            7.8 m       34.1%     2.8 h     109.7 m 
+INFO  14:34:35,969 ProgressMeter - ordered_PKNH_08_v2:1115904        7247987.0    57.3 m            7.9 m       34.4%     2.8 h     109.4 m 
+INFO  14:35:05,970 ProgressMeter - ordered_PKNH_08_v2:1152175        7247987.0    57.8 m            8.0 m       34.5%     2.8 h     109.6 m 
+INFO  14:35:35,971 ProgressMeter - ordered_PKNH_08_v2:1224169        7247987.0    58.3 m            8.0 m       34.8%     2.8 h     109.1 m 
+WARN  14:36:01,279 ExactAFCalc - this tool is currently set to genotype at most 3 alternate alleles in a given context, but the context at ordered_PKNH_08_v2:1303167 has 5 alternate alleles so only the top alleles will be used; see the --max_alternate_alleles argument 
+INFO  14:36:15,972 ProgressMeter - ordered_PKNH_08_v2:1347831        7247987.0    59.0 m            8.1 m       35.3%     2.8 h     107.9 m 
+INFO  14:36:45,972 ProgressMeter - ordered_PKNH_08_v2:1425162        7247987.0    59.5 m            8.2 m       35.7%     2.8 h     107.3 m 
+INFO  14:37:15,973 ProgressMeter - ordered_PKNH_08_v2:1494871        7247987.0    60.0 m            8.3 m       35.9%     2.8 h     106.9 m 
+INFO  14:37:45,974 ProgressMeter - ordered_PKNH_08_v2:1528992        7247987.0    60.5 m            8.3 m       36.1%     2.8 h     107.1 m 
+INFO  14:38:25,975 ProgressMeter - ordered_PKNH_08_v2:1578216        7247987.0    61.2 m            8.4 m       36.3%     2.8 h     107.4 m 
+INFO  14:39:05,976 ProgressMeter - ordered_PKNH_08_v2:1611593        7247987.0    61.8 m            8.5 m       36.4%     2.8 h     107.9 m 
+INFO  14:39:35,976 ProgressMeter - ordered_PKNH_08_v2:1657150        7247987.0    62.3 m            8.6 m       36.6%     2.8 h     107.9 m 
+INFO  14:40:05,986 ProgressMeter - ordered_PKNH_08_v2:1697861        7247987.0    62.8 m            8.7 m       36.8%     2.8 h     108.0 m 
+INFO  14:40:35,987 ProgressMeter - ordered_PKNH_08_v2:1807351        7247987.0    63.3 m            8.7 m       37.2%     2.8 h     106.8 m 
+INFO  14:41:16,054 ProgressMeter - ordered_PKNH_09_v2:96800        9172442.0    64.0 m            7.0 m       38.1%     2.8 h     103.9 m 
+INFO  14:41:46,055 ProgressMeter - ordered_PKNH_09_v2:173090        9172442.0    64.5 m            7.0 m       38.4%     2.8 h     103.4 m 
+INFO  14:42:16,056 ProgressMeter - ordered_PKNH_09_v2:248447        9172442.0    65.0 m            7.1 m       38.7%     2.8 h     102.8 m 
+INFO  14:42:46,057 ProgressMeter - ordered_PKNH_09_v2:300045        9172442.0    65.5 m            7.1 m       38.9%     2.8 h     102.7 m 
+INFO  14:43:16,058 ProgressMeter - ordered_PKNH_09_v2:367719        9172442.0    66.0 m            7.2 m       39.2%     2.8 h     102.3 m 
+INFO  14:43:56,059 ProgressMeter - ordered_PKNH_09_v2:487158        9172442.0    66.7 m            7.3 m       39.7%     2.8 h     101.2 m 
+INFO  14:44:26,059 ProgressMeter - ordered_PKNH_09_v2:555238        9172442.0    67.2 m            7.3 m       40.0%     2.8 h     100.8 m 
+INFO  14:44:56,060 ProgressMeter - ordered_PKNH_09_v2:642325        9172442.0    67.7 m            7.4 m       40.4%     2.8 h     100.0 m 
+INFO  14:45:26,061 ProgressMeter - ordered_PKNH_09_v2:715538        9172442.0    68.2 m            7.4 m       40.7%     2.8 h      99.5 m 
+INFO  14:45:56,062 ProgressMeter - ordered_PKNH_09_v2:775757        9172442.0    68.7 m            7.5 m       40.9%     2.8 h      99.2 m 
+INFO  14:46:36,063 ProgressMeter - ordered_PKNH_09_v2:915244        9172442.0    69.3 m            7.6 m       41.5%     2.8 h      97.8 m 
+INFO  14:47:06,063 ProgressMeter - ordered_PKNH_09_v2:958894        9172442.0    69.8 m            7.6 m       41.7%     2.8 h      97.8 m 
+INFO  14:47:36,064 ProgressMeter - ordered_PKNH_09_v2:1034532        9172442.0    70.3 m            7.7 m       42.0%     2.8 h      97.3 m 
+INFO  14:48:06,065 ProgressMeter - ordered_PKNH_09_v2:1114966        9172442.0    70.8 m            7.7 m       42.3%     2.8 h      96.6 m 
+INFO  14:48:46,066 ProgressMeter - ordered_PKNH_09_v2:1225666        9172442.0    71.5 m            7.8 m       42.8%     2.8 h      95.7 m 
+INFO  14:49:16,066 ProgressMeter - ordered_PKNH_09_v2:1306586        9172442.0    72.0 m            7.9 m       43.1%     2.8 h      95.1 m 
+INFO  14:49:46,067 ProgressMeter - ordered_PKNH_09_v2:1389256        9172442.0    72.5 m            7.9 m       43.4%     2.8 h      94.4 m 
+INFO  14:50:16,068 ProgressMeter - ordered_PKNH_09_v2:1483324        9172442.0    73.0 m            8.0 m       43.8%     2.8 h      93.6 m 
+INFO  14:50:46,076 ProgressMeter - ordered_PKNH_09_v2:1533780        9172442.0    73.5 m            8.0 m       44.0%     2.8 h      93.5 m 
+INFO  14:51:26,076 ProgressMeter - ordered_PKNH_09_v2:1632708        9172442.0    74.2 m            8.1 m       44.4%     2.8 h      92.8 m 
+INFO  14:51:56,077 ProgressMeter - ordered_PKNH_09_v2:1733506        9172442.0    74.7 m            8.1 m       44.8%     2.8 h      91.8 m 
+INFO  14:52:26,078 ProgressMeter - ordered_PKNH_09_v2:1809091        9172442.0    75.2 m            8.2 m       45.2%     2.8 h      91.3 m 
+INFO  14:53:06,079 ProgressMeter - ordered_PKNH_09_v2:1949225        9172442.0    75.8 m            8.3 m       45.7%     2.8 h      90.0 m 
+INFO  14:53:46,079 ProgressMeter - ordered_PKNH_09_v2:2086238        9172442.0    76.5 m            8.3 m       46.3%     2.8 h      88.8 m 
+INFO  14:54:16,080 ProgressMeter - ordered_PKNH_10_v2:110777      1.1367931E7    77.0 m            6.8 m       47.2%     2.7 h      86.1 m 
+INFO  14:54:46,081 ProgressMeter - ordered_PKNH_10_v2:255963      1.1367931E7    77.5 m            6.8 m       47.8%     2.7 h      84.7 m 
+INFO  14:55:16,082 ProgressMeter - ordered_PKNH_10_v2:363408      1.1367931E7    78.0 m            6.9 m       48.2%     2.7 h      83.7 m 
+INFO  14:55:46,083 ProgressMeter - ordered_PKNH_10_v2:487057      1.1367931E7    78.5 m            6.9 m       48.7%     2.7 h      82.5 m 
+INFO  14:56:26,083 ProgressMeter - ordered_PKNH_10_v2:585349      1.1367931E7    79.2 m            7.0 m       49.1%     2.7 h      81.9 m 
+INFO  14:56:56,084 ProgressMeter - ordered_PKNH_10_v2:688512      1.1367931E7    79.7 m            7.0 m       49.6%     2.7 h      81.0 m 
+INFO  14:57:26,085 ProgressMeter - ordered_PKNH_10_v2:750743      1.1367931E7    80.2 m            7.1 m       49.8%     2.7 h      80.7 m 
+INFO  14:57:56,086 ProgressMeter - ordered_PKNH_10_v2:825089      1.1367931E7    80.7 m            7.1 m       50.1%     2.7 h      80.2 m 
+INFO  14:58:36,086 ProgressMeter - ordered_PKNH_10_v2:877735      1.1367931E7    81.3 m            7.2 m       50.4%     2.7 h      80.2 m 
+INFO  14:59:06,087 ProgressMeter - ordered_PKNH_10_v2:934206      1.1367931E7    81.8 m            7.2 m       50.6%     2.7 h      79.9 m 
+INFO  14:59:36,097 ProgressMeter - ordered_PKNH_10_v2:1012331      1.1367931E7    82.3 m            7.2 m       50.9%     2.7 h      79.4 m 
+INFO  15:00:06,098 ProgressMeter - ordered_PKNH_10_v2:1099730      1.1367931E7    82.8 m            7.3 m       51.3%     2.7 h      78.7 m 
+INFO  15:00:36,099 ProgressMeter - ordered_PKNH_10_v2:1152171      1.1367931E7    83.3 m            7.3 m       51.5%     2.7 h      78.5 m 
+INFO  15:01:16,100 ProgressMeter - ordered_PKNH_10_v2:1218265      1.1367931E7    84.0 m            7.4 m       51.8%     2.7 h      78.3 m 
+INFO  15:01:46,107 ProgressMeter - ordered_PKNH_10_v2:1273586      1.1367931E7    84.5 m            7.4 m       52.0%     2.7 h      78.1 m 
+INFO  15:02:16,107 ProgressMeter - ordered_PKNH_10_v2:1307709      1.1367931E7    85.0 m            7.5 m       52.1%     2.7 h      78.1 m 
+INFO  15:02:46,108 ProgressMeter - ordered_PKNH_10_v2:1377813      1.1367931E7    85.5 m            7.5 m       52.4%     2.7 h      77.6 m 
+INFO  15:03:16,109 ProgressMeter - ordered_PKNH_11_v2:4453      1.2884913E7    86.0 m            6.7 m       53.0%     2.7 h      76.3 m 
+INFO  15:03:56,110 ProgressMeter - ordered_PKNH_11_v2:159772      1.2884913E7    86.7 m            6.7 m       53.6%     2.7 h      74.9 m 
+INFO  15:04:36,111 ProgressMeter - ordered_PKNH_11_v2:300150      1.2884913E7    87.3 m            6.8 m       54.2%     2.7 h      73.8 m 
+INFO  15:05:06,111 ProgressMeter - ordered_PKNH_11_v2:379597      1.2884913E7    87.8 m            6.8 m       54.5%     2.7 h      73.2 m 
+INFO  15:05:36,120 ProgressMeter - ordered_PKNH_11_v2:493686      1.2884913E7    88.3 m            6.9 m       55.0%     2.7 h      72.2 m 
+INFO  15:06:06,121 ProgressMeter - ordered_PKNH_11_v2:602947      1.2884913E7    88.8 m            6.9 m       55.5%     2.7 h      71.3 m 
+INFO  15:06:36,122 ProgressMeter - ordered_PKNH_11_v2:672782      1.2884913E7    89.3 m            6.9 m       55.7%     2.7 h      70.9 m 
+INFO  15:07:16,122 ProgressMeter - ordered_PKNH_11_v2:804899      1.2884913E7    90.0 m            7.0 m       56.3%     2.7 h      69.9 m 
+INFO  15:07:46,123 ProgressMeter - ordered_PKNH_11_v2:900554      1.2884913E7    90.5 m            7.0 m       56.7%     2.7 h      69.2 m 
+INFO  15:08:16,148 ProgressMeter - ordered_PKNH_11_v2:1019231      1.2884913E7    91.0 m            7.1 m       57.2%     2.7 h      68.2 m 
+INFO  15:08:46,148 ProgressMeter - ordered_PKNH_11_v2:1115027      1.2884913E7    91.5 m            7.1 m       57.6%     2.6 h      67.5 m 
+INFO  15:09:16,149 ProgressMeter - ordered_PKNH_11_v2:1215508      1.2884913E7    92.0 m            7.1 m       58.0%     2.6 h      66.7 m 
+INFO  15:09:46,150 ProgressMeter - ordered_PKNH_11_v2:1313278      1.2884913E7    92.5 m            7.2 m       58.4%     2.6 h      65.9 m 
+INFO  15:10:16,151 ProgressMeter - ordered_PKNH_11_v2:1369666      1.2884913E7    93.0 m            7.2 m       58.6%     2.6 h      65.7 m 
+INFO  15:10:56,152 ProgressMeter - ordered_PKNH_11_v2:1464700      1.2884913E7    93.7 m            7.3 m       59.0%     2.6 h      65.1 m 
+WARN  15:11:06,300 ExactAFCalc - this tool is currently set to genotype at most 3 alternate alleles in a given context, but the context at ordered_PKNH_11_v2:1481564 has 5 alternate alleles so only the top alleles will be used; see the --max_alternate_alleles argument 
+INFO  15:11:26,152 ProgressMeter - ordered_PKNH_11_v2:1533745      1.2884913E7    94.2 m            7.3 m       59.3%     2.6 h      64.7 m 
+INFO  15:11:56,160 ProgressMeter - ordered_PKNH_11_v2:1586764      1.2884913E7    94.7 m            7.3 m       59.5%     2.7 h      64.4 m 
+INFO  15:12:36,161 ProgressMeter - ordered_PKNH_11_v2:1652885      1.2884913E7    95.3 m            7.4 m       59.8%     2.7 h      64.2 m 
+INFO  15:13:06,161 ProgressMeter - ordered_PKNH_11_v2:1695746      1.2884913E7    95.8 m            7.4 m       60.0%     2.7 h      64.0 m 
+INFO  15:13:36,162 ProgressMeter - ordered_PKNH_11_v2:1743520      1.2884913E7    96.3 m            7.5 m       60.1%     2.7 h      63.8 m 
+INFO  15:14:06,163 ProgressMeter - ordered_PKNH_11_v2:1859483      1.2884913E7    96.8 m            7.5 m       60.6%     2.7 h      62.9 m 
+INFO  15:14:46,164 ProgressMeter - ordered_PKNH_11_v2:1957502      1.2884913E7    97.5 m            7.6 m       61.0%     2.7 h      62.3 m 
+INFO  15:15:26,165 ProgressMeter - ordered_PKNH_11_v2:2033284      1.2884913E7    98.2 m            7.6 m       61.3%     2.7 h      61.9 m 
+INFO  15:15:56,165 ProgressMeter - ordered_PKNH_11_v2:2080055      1.2884913E7    98.7 m            7.7 m       61.5%     2.7 h      61.7 m 
+WARN  15:16:23,051 ExactAFCalc - this tool is currently set to genotype at most 3 alternate alleles in a given context, but the context at ordered_PKNH_11_v2:2149490 has 5 alternate alleles so only the top alleles will be used; see the --max_alternate_alleles argument 
+INFO  15:16:26,166 ProgressMeter - ordered_PKNH_11_v2:2150621      1.2884913E7    99.2 m            7.7 m       61.8%     2.7 h      61.2 m 
+INFO  15:16:56,167 ProgressMeter - ordered_PKNH_11_v2:2180945      1.2884913E7    99.7 m            7.7 m       61.9%     2.7 h      61.2 m 
+INFO  15:17:36,168 ProgressMeter - ordered_PKNH_11_v2:2260720      1.2884913E7   100.3 m            7.8 m       62.3%     2.7 h      60.8 m 
+INFO  15:18:06,168 ProgressMeter - ordered_PKNH_12_v2:60211       1.525358E7   100.8 m            6.6 m       63.0%     2.7 h      59.3 m 
+INFO  15:18:36,169 ProgressMeter - ordered_PKNH_12_v2:147568       1.525358E7   101.3 m            6.6 m       63.3%     2.7 h      58.7 m 
+INFO  15:19:06,170 ProgressMeter - ordered_PKNH_12_v2:203926       1.525358E7   101.8 m            6.7 m       63.6%     2.7 h      58.4 m 
+INFO  15:19:36,171 ProgressMeter - ordered_PKNH_12_v2:234137       1.525358E7   102.3 m            6.7 m       63.7%     2.7 h      58.4 m 
+INFO  15:20:16,171 ProgressMeter - ordered_PKNH_12_v2:303533       1.525358E7   103.0 m            6.8 m       64.0%     2.7 h      58.0 m 
+INFO  15:20:46,172 ProgressMeter - ordered_PKNH_12_v2:351714       1.525358E7   103.5 m            6.8 m       64.2%     2.7 h      57.8 m 
+INFO  15:21:16,173 ProgressMeter - ordered_PKNH_12_v2:408666       1.525358E7   104.0 m            6.8 m       64.4%     2.7 h      57.5 m 
+INFO  15:21:46,174 ProgressMeter - ordered_PKNH_12_v2:497217       1.525358E7   104.5 m            6.9 m       64.8%     2.7 h      56.9 m 
+INFO  15:22:16,183 ProgressMeter - ordered_PKNH_12_v2:571118       1.525358E7   105.0 m            6.9 m       65.1%     2.7 h      56.4 m 
+INFO  15:22:46,184 ProgressMeter - ordered_PKNH_12_v2:668857       1.525358E7   105.5 m            6.9 m       65.5%     2.7 h      55.6 m 
+INFO  15:23:16,185 ProgressMeter - ordered_PKNH_12_v2:760535       1.525358E7   106.0 m            6.9 m       65.8%     2.7 h      55.0 m 
+INFO  15:23:56,186 ProgressMeter - ordered_PKNH_12_v2:928703       1.525358E7   106.7 m            7.0 m       66.5%     2.7 h      53.6 m 
+INFO  15:24:26,186 ProgressMeter - ordered_PKNH_12_v2:1003506       1.525358E7   107.2 m            7.0 m       66.8%     2.7 h      53.2 m 
+INFO  15:24:56,187 ProgressMeter - ordered_PKNH_12_v2:1096820       1.525358E7   107.7 m            7.1 m       67.2%     2.7 h      52.5 m 
+INFO  15:25:26,188 ProgressMeter - ordered_PKNH_12_v2:1164199       1.525358E7   108.2 m            7.1 m       67.5%     2.7 h      52.1 m 
+INFO  15:26:06,189 ProgressMeter - ordered_PKNH_12_v2:1277929       1.525358E7   108.8 m            7.1 m       68.0%     2.7 h      51.3 m 
+WARN  15:26:20,423 ExactAFCalc - this tool is currently set to genotype at most 3 alternate alleles in a given context, but the context at ordered_PKNH_12_v2:1298097 has 5 alternate alleles so only the top alleles will be used; see the --max_alternate_alleles argument 
+INFO  15:26:36,189 ProgressMeter - ordered_PKNH_12_v2:1359674       1.525358E7   109.3 m            7.2 m       68.3%     2.7 h      50.7 m 
+INFO  15:27:06,190 ProgressMeter - ordered_PKNH_12_v2:1442875       1.525358E7   109.8 m            7.2 m       68.7%     2.7 h      50.2 m 
+INFO  15:27:36,191 ProgressMeter - ordered_PKNH_12_v2:1530236       1.525358E7   110.3 m            7.2 m       69.0%     2.7 h      49.5 m 
+INFO  15:28:06,192 ProgressMeter - ordered_PKNH_12_v2:1610879       1.525358E7   110.8 m            7.3 m       69.3%     2.7 h      49.0 m 
+INFO  15:28:36,193 ProgressMeter - ordered_PKNH_12_v2:1749968       1.525358E7   111.3 m            7.3 m       69.9%     2.7 h      47.9 m 
+INFO  15:29:16,194 ProgressMeter - ordered_PKNH_12_v2:1888988       1.525358E7   112.0 m            7.3 m       70.5%     2.6 h      46.9 m 
+INFO  15:29:46,194 ProgressMeter - ordered_PKNH_12_v2:1978599       1.525358E7   112.5 m            7.4 m       70.9%     2.6 h      46.3 m 
+INFO  15:30:16,195 ProgressMeter - ordered_PKNH_12_v2:2110327       1.525358E7   113.0 m            7.4 m       71.4%     2.6 h      45.3 m 
+INFO  15:30:46,196 ProgressMeter - ordered_PKNH_12_v2:2290357       1.525358E7   113.5 m            7.4 m       72.1%     2.6 h      43.8 m 
+INFO  15:31:16,197 ProgressMeter - ordered_PKNH_12_v2:2360993       1.525358E7   114.0 m            7.5 m       72.4%     2.6 h      43.4 m 
+INFO  15:31:46,198 ProgressMeter - ordered_PKNH_12_v2:2486436       1.525358E7   114.5 m            7.5 m       72.9%     2.6 h      42.5 m 
+INFO  15:32:16,207 ProgressMeter - ordered_PKNH_12_v2:2576264       1.525358E7   115.0 m            7.5 m       73.3%     2.6 h      41.9 m 
+INFO  15:32:46,208 ProgressMeter - ordered_PKNH_12_v2:2668993       1.525358E7   115.5 m            7.6 m       73.7%     2.6 h      41.2 m 
+INFO  15:33:26,209 ProgressMeter - ordered_PKNH_12_v2:2803798       1.525358E7   116.2 m            7.6 m       74.2%     2.6 h      40.3 m 
+INFO  15:34:06,210 ProgressMeter - ordered_PKNH_12_v2:2925732       1.525358E7   116.8 m            7.7 m       74.7%     2.6 h      39.5 m 
+INFO  15:34:36,210 ProgressMeter - ordered_PKNH_12_v2:2992088       1.525358E7   117.3 m            7.7 m       75.0%     2.6 h      39.1 m 
+INFO  15:35:06,211 ProgressMeter - ordered_PKNH_12_v2:3061024       1.525358E7   117.8 m            7.7 m       75.3%     2.6 h      38.6 m 
+INFO  15:35:36,212 ProgressMeter - ordered_PKNH_12_v2:3122109       1.525358E7   118.3 m            7.8 m       75.6%     2.6 h      38.3 m 
+INFO  15:36:16,213 ProgressMeter - ordered_PKNH_13_v2:148979      1.8415289E7   119.0 m            6.5 m       76.3%     2.6 h      36.9 m 
+INFO  15:36:46,213 ProgressMeter - ordered_PKNH_13_v2:200369      1.8415289E7   119.5 m            6.5 m       76.5%     2.6 h      36.6 m 
+INFO  15:37:16,214 ProgressMeter - ordered_PKNH_13_v2:261954      1.8415289E7   120.0 m            6.5 m       76.8%     2.6 h      36.3 m 
+INFO  15:37:46,215 ProgressMeter - ordered_PKNH_13_v2:337428      1.8415289E7     2.0 h            6.5 m       77.1%     2.6 h      35.8 m 
+INFO  15:38:16,216 ProgressMeter - ordered_PKNH_13_v2:411534      1.8415289E7     2.0 h            6.6 m       77.4%     2.6 h      35.3 m 
+INFO  15:38:56,217 ProgressMeter - ordered_PKNH_13_v2:506820      1.8415289E7     2.0 h            6.6 m       77.8%     2.6 h      34.7 m 
+INFO  15:39:36,218 ProgressMeter - ordered_PKNH_13_v2:614814      1.8415289E7     2.0 h            6.6 m       78.2%     2.6 h      34.0 m 
+INFO  15:40:06,218 ProgressMeter - ordered_PKNH_13_v2:656878      1.8415289E7     2.0 h            6.7 m       78.4%     2.6 h      33.8 m 
+INFO  15:40:36,219 ProgressMeter - ordered_PKNH_13_v2:709161      1.8415289E7     2.1 h            6.7 m       78.6%     2.6 h      33.5 m 
+INFO  15:41:06,220 ProgressMeter - ordered_PKNH_13_v2:768327      1.8415289E7     2.1 h            6.7 m       78.9%     2.6 h      33.2 m 
+INFO  15:41:46,221 ProgressMeter - ordered_PKNH_13_v2:871041      1.8415289E7     2.1 h            6.8 m       79.3%     2.6 h      32.5 m 
+INFO  15:42:16,221 ProgressMeter - ordered_PKNH_13_v2:929772      1.8415289E7     2.1 h            6.8 m       79.5%     2.6 h      32.1 m 
+INFO  15:42:46,222 ProgressMeter - ordered_PKNH_13_v2:971774      1.8415289E7     2.1 h            6.8 m       79.7%     2.6 h      31.9 m 
+INFO  15:43:16,231 ProgressMeter - ordered_PKNH_13_v2:1053245      1.8415289E7     2.1 h            6.8 m       80.1%     2.6 h      31.4 m 
+INFO  15:43:46,231 ProgressMeter - ordered_PKNH_13_v2:1284009      1.8415289E7     2.1 h            6.9 m       81.0%     2.6 h      29.7 m 
+INFO  15:44:16,232 ProgressMeter - ordered_PKNH_13_v2:1344626      1.8415289E7     2.1 h            6.9 m       81.2%     2.6 h      29.3 m 
+INFO  15:44:46,233 ProgressMeter - ordered_PKNH_13_v2:1418010      1.8415289E7     2.1 h            6.9 m       81.5%     2.6 h      28.8 m 
+INFO  15:45:16,234 ProgressMeter - ordered_PKNH_13_v2:1538953      1.8415289E7     2.1 h            7.0 m       82.0%     2.6 h      28.0 m 
+INFO  15:45:56,234 ProgressMeter - ordered_PKNH_13_v2:1626759      1.8415289E7     2.1 h            7.0 m       82.4%     2.6 h      27.5 m 
+INFO  15:46:26,235 ProgressMeter - ordered_PKNH_13_v2:1713192      1.8415289E7     2.2 h            7.0 m       82.8%     2.6 h      26.9 m 
+INFO  15:46:56,236 ProgressMeter - ordered_PKNH_13_v2:1815304      1.8415289E7     2.2 h            7.0 m       83.2%     2.6 h      26.2 m 
+INFO  15:47:26,237 ProgressMeter - ordered_PKNH_13_v2:1887575      1.8415289E7     2.2 h            7.1 m       83.5%     2.6 h      25.8 m 
+INFO  15:48:06,238 ProgressMeter - ordered_PKNH_13_v2:1983822      1.8415289E7     2.2 h            7.1 m       83.9%     2.6 h      25.2 m 
+INFO  15:48:46,238 ProgressMeter - ordered_PKNH_13_v2:2098199      1.8415289E7     2.2 h            7.1 m       84.3%     2.6 h      24.4 m 
+INFO  15:49:16,239 ProgressMeter - ordered_PKNH_13_v2:2166657      1.8415289E7     2.2 h            7.2 m       84.6%     2.6 h      24.0 m 
+INFO  15:49:46,240 ProgressMeter - ordered_PKNH_13_v2:2238334      1.8415289E7     2.2 h            7.2 m       84.9%     2.6 h      23.5 m 
+INFO  15:50:26,241 ProgressMeter - ordered_PKNH_13_v2:2366353      1.8415289E7     2.2 h            7.2 m       85.4%     2.6 h      22.7 m 
+INFO  15:51:06,242 ProgressMeter - ordered_PKNH_13_v2:2488846      1.8415289E7     2.2 h            7.3 m       86.0%     2.6 h      21.9 m 
+INFO  15:51:36,242 ProgressMeter - ordered_PKNH_14_v2:145500        2.10123E7     2.2 h            6.4 m       87.0%     2.6 h      20.1 m 
+INFO  15:52:06,243 ProgressMeter - ordered_PKNH_14_v2:268678        2.10123E7     2.2 h            6.4 m       87.5%     2.6 h      19.3 m 
+INFO  15:52:36,244 ProgressMeter - ordered_PKNH_14_v2:392485        2.10123E7     2.3 h            6.4 m       88.0%     2.6 h      18.4 m 
+INFO  15:53:16,245 ProgressMeter - ordered_PKNH_14_v2:518406        2.10123E7     2.3 h            6.5 m       88.5%     2.6 h      17.6 m 
+INFO  15:53:46,245 ProgressMeter - ordered_PKNH_14_v2:625977        2.10123E7     2.3 h            6.5 m       89.0%     2.6 h      16.9 m 
+INFO  15:54:16,255 ProgressMeter - ordered_PKNH_14_v2:710936        2.10123E7     2.3 h            6.5 m       89.3%     2.6 h      16.4 m 
+INFO  15:54:46,255 ProgressMeter - ordered_PKNH_14_v2:783295        2.10123E7     2.3 h            6.5 m       89.6%     2.6 h      15.9 m 
+INFO  15:55:16,256 ProgressMeter - ordered_PKNH_14_v2:871615        2.10123E7     2.3 h            6.6 m       90.0%     2.6 h      15.4 m 
+INFO  15:55:46,257 ProgressMeter - ordered_PKNH_14_v2:1008302        2.10123E7     2.3 h            6.6 m       90.5%     2.5 h      14.5 m 
+INFO  15:56:16,258 ProgressMeter - ordered_PKNH_14_v2:1102973        2.10123E7     2.3 h            6.6 m       90.9%     2.5 h      13.9 m 
+INFO  15:56:56,280 ProgressMeter - ordered_PKNH_14_v2:1263210        2.10123E7     2.3 h            6.6 m       91.6%     2.5 h      12.8 m 
+INFO  15:57:26,280 ProgressMeter - ordered_PKNH_14_v2:1361931        2.10123E7     2.3 h            6.7 m       92.0%     2.5 h      12.2 m 
+INFO  15:57:56,281 ProgressMeter - ordered_PKNH_14_v2:1504695        2.10123E7     2.3 h            6.7 m       92.6%     2.5 h      11.3 m 
+INFO  15:58:26,282 ProgressMeter - ordered_PKNH_14_v2:1606844        2.10123E7     2.4 h            6.7 m       93.0%     2.5 h      10.6 m 
+INFO  15:59:06,283 ProgressMeter - ordered_PKNH_14_v2:1768586        2.10123E7     2.4 h            6.8 m       93.7%     2.5 h       9.6 m 
+INFO  15:59:36,283 ProgressMeter - ordered_PKNH_14_v2:1828828        2.10123E7     2.4 h            6.8 m       93.9%     2.5 h       9.2 m 
+INFO  16:00:06,284 ProgressMeter - ordered_PKNH_14_v2:1893214        2.10123E7     2.4 h            6.8 m       94.2%     2.5 h       8.8 m 
+INFO  16:00:36,285 ProgressMeter - ordered_PKNH_14_v2:1964340        2.10123E7     2.4 h            6.8 m       94.5%     2.5 h       8.4 m 
+INFO  16:01:16,286 ProgressMeter - ordered_PKNH_14_v2:2048922        2.10123E7     2.4 h            6.9 m       94.8%     2.5 h       7.9 m 
+INFO  16:01:46,286 ProgressMeter - ordered_PKNH_14_v2:2092253        2.10123E7     2.4 h            6.9 m       95.0%     2.5 h       7.6 m 
+INFO  16:02:16,287 ProgressMeter - ordered_PKNH_14_v2:2123517        2.10123E7     2.4 h            6.9 m       95.1%     2.5 h       7.4 m 
+INFO  16:02:46,288 ProgressMeter - ordered_PKNH_14_v2:2179753        2.10123E7     2.4 h            6.9 m       95.4%     2.5 h       7.1 m 
+INFO  16:03:26,288 ProgressMeter - ordered_PKNH_14_v2:2310477        2.10123E7     2.4 h            7.0 m       95.9%     2.5 h       6.3 m 
+INFO  16:03:56,289 ProgressMeter - ordered_PKNH_14_v2:2351700        2.10123E7     2.4 h            7.0 m       96.1%     2.5 h       6.0 m 
+INFO  16:04:26,290 ProgressMeter - ordered_PKNH_14_v2:2426931        2.10123E7     2.5 h            7.0 m       96.4%     2.5 h       5.5 m 
+INFO  16:04:56,297 ProgressMeter - ordered_PKNH_14_v2:2472233        2.10123E7     2.5 h            7.0 m       96.6%     2.5 h       5.3 m 
+INFO  16:05:36,298 ProgressMeter - ordered_PKNH_14_v2:2542983        2.10123E7     2.5 h            7.1 m       96.9%     2.6 h       4.8 m 
+INFO  16:06:16,298 ProgressMeter - ordered_PKNH_14_v2:2615622        2.10123E7     2.5 h            7.1 m       97.2%     2.6 h       4.4 m 
+INFO  16:06:46,299 ProgressMeter - ordered_PKNH_14_v2:2700023        2.10123E7     2.5 h            7.1 m       97.5%     2.6 h       3.8 m 
+INFO  16:07:16,300 ProgressMeter - ordered_PKNH_14_v2:2813251        2.10123E7     2.5 h            7.1 m       98.0%     2.6 h       3.1 m 
+INFO  16:07:46,301 ProgressMeter - ordered_PKNH_14_v2:2909936        2.10123E7     2.5 h            7.2 m       98.4%     2.6 h       2.5 m 
+INFO  16:08:26,301 ProgressMeter - ordered_PKNH_14_v2:2998396        2.10123E7     2.5 h            7.2 m       98.7%     2.6 h     117.0 s 
+INFO  16:08:56,302 ProgressMeter - ordered_PKNH_14_v2:3060248        2.10123E7     2.5 h            7.2 m       99.0%     2.6 h      93.0 s 
+WARN  16:09:20,988 ExactAFCalc - this tool is currently set to genotype at most 3 alternate alleles in a given context, but the context at ordered_PKNH_14_v2:3141331 has 6 alternate alleles so only the top alleles will be used; see the --max_alternate_alleles argument 
+WARN  16:09:21,009 ExactAFCalc - this tool is currently set to genotype at most 3 alternate alleles in a given context, but the context at ordered_PKNH_14_v2:3141337 has 5 alternate alleles so only the top alleles will be used; see the --max_alternate_alleles argument 
+WARN  16:09:21,014 ExactAFCalc - this tool is currently set to genotype at most 3 alternate alleles in a given context, but the context at ordered_PKNH_14_v2:3141342 has 5 alternate alleles so only the top alleles will be used; see the --max_alternate_alleles argument 
+INFO  16:09:26,303 ProgressMeter - ordered_PKNH_14_v2:3159631        2.10123E7     2.5 h            7.2 m       99.4%     2.6 h      56.0 s 
+Time spent in setup for JNI call : 0.9775563060000001
+Total compute time in PairHMM computeLikelihoods() : 943.1896352040001
+INFO  16:09:51,718 HaplotypeCaller - Ran local assembly on 186949 active regions 
+INFO  16:09:51,797 ProgressMeter -            done      2.4320447E7     2.5 h            6.3 m      100.0%     2.5 h       0.0 s 
+INFO  16:09:51,797 ProgressMeter - Total runtime 9156.18 secs, 152.60 min, 2.54 hours 
+INFO  16:09:51,799 MicroScheduler - 6142216 reads were filtered out during the traversal out of approximately 7898455 total reads (77.76%) 
+INFO  16:09:51,800 MicroScheduler -   -> 2058133 reads (26.06% of total) failing DuplicateReadFilter 
+INFO  16:09:51,800 MicroScheduler -   -> 0 reads (0.00% of total) failing FailsVendorQualityCheckFilter 
+INFO  16:09:51,801 MicroScheduler -   -> 4070842 reads (51.54% of total) failing HCMappingQualityFilter 
+INFO  16:09:51,801 MicroScheduler -   -> 0 reads (0.00% of total) failing MalformedReadFilter 
+INFO  16:09:51,801 MicroScheduler -   -> 0 reads (0.00% of total) failing MappingQualityUnavailableFilter 
+INFO  16:09:51,802 MicroScheduler -   -> 13241 reads (0.17% of total) failing NotPrimaryAlignmentFilter 
+INFO  16:09:51,802 MicroScheduler -   -> 0 reads (0.00% of total) failing UnmappedReadFilter 
+---------------------------------------------------------------------------------------------------------------------
+FINISHED
+---------------------------------------------------------------------------------------------------------------------

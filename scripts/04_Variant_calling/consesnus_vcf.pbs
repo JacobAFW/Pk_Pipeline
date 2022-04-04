@@ -1,0 +1,72 @@
+#!/bin/bash
+#PBS -N Variant_calling
+#PBS -j oe
+#PBS -m ae
+#PBS -l nodes=1
+#PBS -l ncpus=21
+#PBS -l mem=150gb
+#PBS -l walltime=168:00:00
+#PBS -M jacob.westaway@menzies.edu.au
+
+echo "---------------------------------------"
+echo "PBS: Job identifier is $PBS_JOBID"
+echo "PBS: Job name is $PBS_JOBNAME"
+
+echo "---------------------------------------"
+echo "Define paths"
+export PATH=$PATH:/home/jwestaway/pk_pipeline/tools/bcftools-1.13/
+module load software/R_3.6.2
+
+echo "---------------------------------------"
+echo "---------------------------------------"
+echo 'Change to working directory and set env variables'
+PICARD="/usr/local/miniconda3/pkgs/picard-2.21.9-0/share/picard-2.21.9-0/picard.jar"
+INDEXTDIR="/home/jwestaway/pk_pipeline/ref_genomes/PKA1H1/fasta/strain_A1_H.1.Icor.fasta"
+OUTDIR="/home/jwestaway/pk_pipeline/Initial_Pk_subset/outputs/variant_calling/consensus"
+INDIR="/home/jwestaway/pk_pipeline/Initial_Pk_subset/outputs/variant_calling/"
+
+mkdir $OUTDIR
+
+cd $OUTDIR
+echo "---------------------------------------------------------------------------------------------------------------------"
+echo "Create consensus VCF"
+echo "---------------------------------------------------------------------------------------------------------------------"
+
+echo "---------------------------------------"
+echo 'Merge variants from the two variant callers'
+bcftools merge --threads 20 --force-samples -o merged_variants_only.vcf.gz $INDIR/GATK/GATK_genotyped.vcf.gz $INDIR/bcftools/bcftools_genotyped.vcf.gz
+
+echo "---------------------------------------"
+echo "Query VCF files to get a list of 'variant IDs' from each tool"
+bcftools query -f '%CHROM %POS %ID %REF %ALT [\t%SAMPLE DP=%DP GQ=%GQ MQ=%MQ PL=%PL]\n' $INDIR/GATK/GATK_genotyped.vcf.gz > GATK_query.tsv
+bcftools query -f '%CHROM %POS %ID %REF %ALT [\t%SAMPLE DP=%DP GQ=%GQ MQ=%MQ PL=%PL]\n' $INDIR/bcftools/bcftools_genotyped.vcf.gz > bcftools_query.tsv
+
+echo "---------------------------------------"
+echo "Execute R script - performs an inner join on the 'variant IDs' above to find the overlapping variants"
+source /usr/local/miniconda3/etc/profile.d/conda.sh
+conda activate R_3.6.2
+Rscript /home/jwestaway/pk_pipeline/Initial_Pk_subset/scripts/04_Variant_calling/vcf_wrangle_2.R
+conda deactivate
+
+echo "---------------------------------------"
+echo "Create a seperate file that contains all the header information for the vcf"
+bcftools view merged_variants_only.vcf.gz | sed '/#CHROM/q' > vcf_head.vcf
+
+echo "---------------------------------------"
+echo "Remove the column names from the variant names document to create a list of grep patterns"
+tail -n +2 vcf_variant_names.tsv > grep_patterns.txt 
+
+echo "---------------------------------------"
+echo "Change default language to ASCII - fewer characters than UTF8"
+LC_ALL=C
+
+echo "---------------------------------------"
+echo "Filter for variants from the original vcf that are called by both callers by using grep to match patterns created above" 
+bcftools view merged_variants_only.vcf.gz | fgrep -f grep_patterns.txt - > filtered.vcf
+
+echo "---------------------------------------"
+echo "Concatenate the vcf header in the variants called by both callers"
+cat vcf_head.vcf filtered.vcf > Initial_Pk_dataset_consensus.vcf
+
+echo "---------------------------------------"
+echo "Finished "

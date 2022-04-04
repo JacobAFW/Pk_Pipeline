@@ -1,0 +1,274 @@
+---------------------------------------
+PBS: Job identifier is 1317202.cheetah
+PBS: Job name is Filter_variants
+---------------------------------------
+Define paths and change to working directory
+---------------------------------------
+SELECT VARIANT TYPES
+---------------------------------------
+---------------------------------------
+SNPs
+08:49:58.701 INFO  NativeLibraryLoader - Loading libgkl_compression.so from jar:file:/home/jwestaway/pk_pipeline/tools/gatk-4.2.2.0/gatk-package-4.2.2.0-local.jar!/com/intel/gkl/native/libgkl_compression.so
+08:49:58.777 WARN  NativeLibraryLoader - Unable to load libgkl_compression.so from native/libgkl_compression.so (/tmp/libgkl_compression8845267002825260485.so: /lib64/libc.so.6: version `GLIBC_2.14' not found (required by /tmp/libgkl_compression8845267002825260485.so))
+08:49:58.803 INFO  NativeLibraryLoader - Loading libgkl_compression.so from jar:file:/home/jwestaway/pk_pipeline/tools/gatk-4.2.2.0/gatk-package-4.2.2.0-local.jar!/com/intel/gkl/native/libgkl_compression.so
+08:49:58.823 WARN  NativeLibraryLoader - Unable to load libgkl_compression.so from native/libgkl_compression.so (/tmp/libgkl_compression545863657734027368.so: /lib64/libc.so.6: version `GLIBC_2.14' not found (required by /tmp/libgkl_compression545863657734027368.so))
+Mar 04, 2022 8:49:59 AM shaded.cloud_nio.com.google.auth.oauth2.ComputeEngineCredentials runningOnComputeEngine
+INFO: Failed to detect whether we are running on Google Compute Engine.
+08:49:59.278 INFO  SelectVariants - ------------------------------------------------------------
+08:49:59.279 INFO  SelectVariants - The Genome Analysis Toolkit (GATK) v4.2.2.0
+08:49:59.279 INFO  SelectVariants - For support and documentation go to https://software.broadinstitute.org/gatk/
+08:49:59.292 INFO  SelectVariants - Executing as jwestaway@cheetah05 on Linux v2.6.32-754.14.2.el6.x86_64 amd64
+08:49:59.293 INFO  SelectVariants - Java runtime: Java HotSpot(TM) 64-Bit Server VM v1.8.0_131-b11
+08:49:59.293 INFO  SelectVariants - Start Date/Time: 4 March 2022 8:49:58 AM
+08:49:59.293 INFO  SelectVariants - ------------------------------------------------------------
+08:49:59.294 INFO  SelectVariants - ------------------------------------------------------------
+08:49:59.294 INFO  SelectVariants - HTSJDK Version: 2.24.1
+08:49:59.295 INFO  SelectVariants - Picard Version: 2.25.4
+08:49:59.295 INFO  SelectVariants - Built for Spark Version: 2.4.5
+08:49:59.295 INFO  SelectVariants - HTSJDK Defaults.COMPRESSION_LEVEL : 2
+08:49:59.295 INFO  SelectVariants - HTSJDK Defaults.USE_ASYNC_IO_READ_FOR_SAMTOOLS : false
+08:49:59.295 INFO  SelectVariants - HTSJDK Defaults.USE_ASYNC_IO_WRITE_FOR_SAMTOOLS : true
+08:49:59.296 INFO  SelectVariants - HTSJDK Defaults.USE_ASYNC_IO_WRITE_FOR_TRIBBLE : false
+08:49:59.296 INFO  SelectVariants - Deflater: JdkDeflater
+08:49:59.296 INFO  SelectVariants - Inflater: JdkInflater
+08:49:59.296 INFO  SelectVariants - GCS max retries/reopens: 20
+08:49:59.296 INFO  SelectVariants - Requester pays: disabled
+08:49:59.296 INFO  SelectVariants - Initializing engine
+08:50:00.447 INFO  FeatureManager - Using codec VCFCodec to read file file:///home/jwestaway/pk_pipeline/Initial_Pk_subset/outputs/variant_calling/consensus/updated/Consensus.vcf
+08:50:00.688 INFO  SelectVariants - Done initializing engine
+08:50:00.870 INFO  ProgressMeter - Starting traversal
+08:50:00.871 INFO  ProgressMeter -        Current Locus  Elapsed Minutes    Variants Processed  Variants/Minute
+08:50:10.920 INFO  ProgressMeter - ordered_PKNH_01_v2:715079              0.2                 53000         316480.9
+08:50:20.943 INFO  ProgressMeter - ordered_PKNH_03_v2:703853              0.3                171000         511185.3
+08:50:30.973 INFO  ProgressMeter - ordered_PKNH_06_v2:183818              0.5                348000         693664.7
+08:50:40.992 INFO  ProgressMeter - ordered_PKNH_08_v2:10359              0.7                522000         780638.6
+08:50:51.002 INFO  ProgressMeter - ordered_PKNH_09_v2:649109              0.8                702000         840198.7
+08:51:01.037 INFO  ProgressMeter - ordered_PKNH_10_v2:943161              1.0                883000         880563.8
+08:51:11.038 INFO  ProgressMeter - ordered_PKNH_11_v2:1969120              1.2               1065000         910684.5
+08:51:21.041 INFO  ProgressMeter - ordered_PKNH_12_v2:2327700              1.3               1253000         937757.3
+08:51:31.098 INFO  ProgressMeter - ordered_PKNH_13_v2:1764739              1.5               1435000         954270.4
+08:51:41.128 INFO  ProgressMeter - ordered_PKNH_14_v2:1833293              1.7               1613000         965319.1
+08:51:46.934 INFO  ProgressMeter - ordered_PKNH_14_v2:3259326              1.8               1717402         971536.9
+08:51:46.935 INFO  ProgressMeter - Traversal complete. Processed 1717402 total variants in 1.8 minutes.
+08:51:47.618 INFO  SelectVariants - Shutting down engine
+[4 March 2022 8:51:47 AM] org.broadinstitute.hellbender.tools.walkers.variantutils.SelectVariants done. Elapsed time: 1.82 minutes.
+Runtime.totalMemory()=3243769856
+---------------------------------------
+Indels
+08:51:54.914 INFO  NativeLibraryLoader - Loading libgkl_compression.so from jar:file:/home/jwestaway/pk_pipeline/tools/gatk-4.2.2.0/gatk-package-4.2.2.0-local.jar!/com/intel/gkl/native/libgkl_compression.so
+08:51:54.969 WARN  NativeLibraryLoader - Unable to load libgkl_compression.so from native/libgkl_compression.so (/tmp/libgkl_compression7582446079689448811.so: /lib64/libc.so.6: version `GLIBC_2.14' not found (required by /tmp/libgkl_compression7582446079689448811.so))
+08:51:54.981 INFO  NativeLibraryLoader - Loading libgkl_compression.so from jar:file:/home/jwestaway/pk_pipeline/tools/gatk-4.2.2.0/gatk-package-4.2.2.0-local.jar!/com/intel/gkl/native/libgkl_compression.so
+08:51:54.992 WARN  NativeLibraryLoader - Unable to load libgkl_compression.so from native/libgkl_compression.so (/tmp/libgkl_compression9211426339151851572.so: /lib64/libc.so.6: version `GLIBC_2.14' not found (required by /tmp/libgkl_compression9211426339151851572.so))
+Mar 04, 2022 8:51:55 AM shaded.cloud_nio.com.google.auth.oauth2.ComputeEngineCredentials runningOnComputeEngine
+INFO: Failed to detect whether we are running on Google Compute Engine.
+08:51:55.465 INFO  SelectVariants - ------------------------------------------------------------
+08:51:55.467 INFO  SelectVariants - The Genome Analysis Toolkit (GATK) v4.2.2.0
+08:51:55.467 INFO  SelectVariants - For support and documentation go to https://software.broadinstitute.org/gatk/
+08:51:55.470 INFO  SelectVariants - Executing as jwestaway@cheetah05 on Linux v2.6.32-754.14.2.el6.x86_64 amd64
+08:51:55.471 INFO  SelectVariants - Java runtime: Java HotSpot(TM) 64-Bit Server VM v1.8.0_131-b11
+08:51:55.471 INFO  SelectVariants - Start Date/Time: 4 March 2022 8:51:54 AM
+08:51:55.471 INFO  SelectVariants - ------------------------------------------------------------
+08:51:55.472 INFO  SelectVariants - ------------------------------------------------------------
+08:51:55.472 INFO  SelectVariants - HTSJDK Version: 2.24.1
+08:51:55.473 INFO  SelectVariants - Picard Version: 2.25.4
+08:51:55.473 INFO  SelectVariants - Built for Spark Version: 2.4.5
+08:51:55.473 INFO  SelectVariants - HTSJDK Defaults.COMPRESSION_LEVEL : 2
+08:51:55.484 INFO  SelectVariants - HTSJDK Defaults.USE_ASYNC_IO_READ_FOR_SAMTOOLS : false
+08:51:55.485 INFO  SelectVariants - HTSJDK Defaults.USE_ASYNC_IO_WRITE_FOR_SAMTOOLS : true
+08:51:55.485 INFO  SelectVariants - HTSJDK Defaults.USE_ASYNC_IO_WRITE_FOR_TRIBBLE : false
+08:51:55.485 INFO  SelectVariants - Deflater: JdkDeflater
+08:51:55.485 INFO  SelectVariants - Inflater: JdkInflater
+08:51:55.485 INFO  SelectVariants - GCS max retries/reopens: 20
+08:51:55.486 INFO  SelectVariants - Requester pays: disabled
+08:51:55.486 INFO  SelectVariants - Initializing engine
+08:51:56.571 INFO  FeatureManager - Using codec VCFCodec to read file file:///home/jwestaway/pk_pipeline/Initial_Pk_subset/outputs/variant_calling/consensus/updated/Consensus.vcf
+08:51:56.817 INFO  SelectVariants - Done initializing engine
+08:51:56.976 INFO  ProgressMeter - Starting traversal
+08:51:56.977 INFO  ProgressMeter -        Current Locus  Elapsed Minutes    Variants Processed  Variants/Minute
+08:52:08.009 INFO  ProgressMeter - ordered_PKNH_03_v2:127722              0.2                  4000          21754.9
+08:52:18.342 INFO  ProgressMeter - ordered_PKNH_04_v2:849996              0.4                  8000          22466.7
+08:52:29.153 INFO  ProgressMeter - ordered_PKNH_07_v2:1184107              0.5                 16000          29835.9
+08:52:39.250 INFO  ProgressMeter - ordered_PKNH_09_v2:1895589              0.7                 26000          36903.0
+08:52:49.824 INFO  ProgressMeter - ordered_PKNH_12_v2:182643              0.9                 36000          40873.5
+08:53:00.013 INFO  ProgressMeter - ordered_PKNH_13_v2:1343477              1.1                 47000          44737.1
+08:53:10.062 INFO  ProgressMeter - ordered_PKNH_14_v2:2974543              1.2                 57898          47532.1
+08:53:10.064 INFO  ProgressMeter - Traversal complete. Processed 57898 total variants in 1.2 minutes.
+08:53:10.400 INFO  SelectVariants - Shutting down engine
+[4 March 2022 8:53:10 AM] org.broadinstitute.hellbender.tools.walkers.variantutils.SelectVariants done. Elapsed time: 1.26 minutes.
+Runtime.totalMemory()=3243769856
+---------------------------------------
+FILTER
+---------------------------------------
+08:53:17.285 INFO  NativeLibraryLoader - Loading libgkl_compression.so from jar:file:/home/jwestaway/pk_pipeline/tools/gatk-4.2.2.0/gatk-package-4.2.2.0-local.jar!/com/intel/gkl/native/libgkl_compression.so
+08:53:17.346 WARN  NativeLibraryLoader - Unable to load libgkl_compression.so from native/libgkl_compression.so (/tmp/libgkl_compression4032830899940729852.so: /lib64/libc.so.6: version `GLIBC_2.14' not found (required by /tmp/libgkl_compression4032830899940729852.so))
+08:53:17.378 INFO  NativeLibraryLoader - Loading libgkl_compression.so from jar:file:/home/jwestaway/pk_pipeline/tools/gatk-4.2.2.0/gatk-package-4.2.2.0-local.jar!/com/intel/gkl/native/libgkl_compression.so
+08:53:17.390 WARN  NativeLibraryLoader - Unable to load libgkl_compression.so from native/libgkl_compression.so (/tmp/libgkl_compression6319450691928535221.so: /lib64/libc.so.6: version `GLIBC_2.14' not found (required by /tmp/libgkl_compression6319450691928535221.so))
+Mar 04, 2022 8:53:17 AM shaded.cloud_nio.com.google.auth.oauth2.ComputeEngineCredentials runningOnComputeEngine
+INFO: Failed to detect whether we are running on Google Compute Engine.
+08:53:17.871 INFO  VariantFiltration - ------------------------------------------------------------
+08:53:17.872 INFO  VariantFiltration - The Genome Analysis Toolkit (GATK) v4.2.2.0
+08:53:17.872 INFO  VariantFiltration - For support and documentation go to https://software.broadinstitute.org/gatk/
+08:53:17.873 INFO  VariantFiltration - Executing as jwestaway@cheetah05 on Linux v2.6.32-754.14.2.el6.x86_64 amd64
+08:53:17.873 INFO  VariantFiltration - Java runtime: Java HotSpot(TM) 64-Bit Server VM v1.8.0_131-b11
+08:53:17.873 INFO  VariantFiltration - Start Date/Time: 4 March 2022 8:53:17 AM
+08:53:17.873 INFO  VariantFiltration - ------------------------------------------------------------
+08:53:17.873 INFO  VariantFiltration - ------------------------------------------------------------
+08:53:17.874 INFO  VariantFiltration - HTSJDK Version: 2.24.1
+08:53:17.874 INFO  VariantFiltration - Picard Version: 2.25.4
+08:53:17.874 INFO  VariantFiltration - Built for Spark Version: 2.4.5
+08:53:17.875 INFO  VariantFiltration - HTSJDK Defaults.COMPRESSION_LEVEL : 2
+08:53:17.875 INFO  VariantFiltration - HTSJDK Defaults.USE_ASYNC_IO_READ_FOR_SAMTOOLS : false
+08:53:17.875 INFO  VariantFiltration - HTSJDK Defaults.USE_ASYNC_IO_WRITE_FOR_SAMTOOLS : true
+08:53:17.886 INFO  VariantFiltration - HTSJDK Defaults.USE_ASYNC_IO_WRITE_FOR_TRIBBLE : false
+08:53:17.886 INFO  VariantFiltration - Deflater: JdkDeflater
+08:53:17.887 INFO  VariantFiltration - Inflater: JdkInflater
+08:53:17.887 INFO  VariantFiltration - GCS max retries/reopens: 20
+08:53:17.887 INFO  VariantFiltration - Requester pays: disabled
+08:53:17.887 INFO  VariantFiltration - Initializing engine
+08:53:18.926 INFO  FeatureManager - Using codec VCFCodec to read file file:///home/jwestaway/pk_pipeline/Initial_Pk_subset/outputs/variant_calling/consensus/updated/Consensus.vcf
+08:53:19.165 INFO  VariantFiltration - Done initializing engine
+08:53:19.456 INFO  ProgressMeter - Starting traversal
+08:53:19.456 INFO  ProgressMeter -        Current Locus  Elapsed Minutes    Variants Processed  Variants/Minute
+08:53:29.611 INFO  ProgressMeter - ordered_PKNH_01_v2:523903              0.2                 41000         242245.2
+08:53:37.025 WARN  JexlEngine - ![0,2]: 'QD < 20.0;' undefined variable QD
+08:53:39.626 INFO  ProgressMeter - ordered_PKNH_02_v2:474226              0.3                105000         312360.6
+08:53:45.570 WARN  JexlEngine - ![0,2]: 'QD < 20.0;' undefined variable QD
+08:53:47.798 WARN  JexlEngine - ![0,2]: 'QD < 20.0;' undefined variable QD
+08:53:49.667 INFO  ProgressMeter - ordered_PKNH_04_v2:588669              0.5                252000         500480.0
+08:53:51.126 WARN  JexlEngine - ![0,2]: 'QD < 20.0;' undefined variable QD
+08:53:53.130 WARN  JexlEngine - ![0,2]: 'QD < 20.0;' undefined variable QD
+08:53:54.789 WARN  JexlEngine - ![0,2]: 'QD < 20.0;' undefined variable QD
+08:53:57.610 WARN  JexlEngine - ![0,2]: 'QD < 20.0;' undefined variable QD
+08:53:59.541 WARN  JexlEngine - ![0,2]: 'QD < 20.0;' undefined variable QD
+08:53:59.716 INFO  ProgressMeter - ordered_PKNH_06_v2:597454              0.7                403000         600596.1
+08:53:59.781 WARN  JexlEngine - ![0,2]: 'QD < 20.0;' undefined variable QD
+08:54:00.461 WARN  JexlEngine - ![0,2]: 'QD < 20.0;' undefined variable QD
+08:54:08.739 WARN  JexlEngine - ![0,2]: 'QD < 20.0;' undefined variable QD
+08:54:09.751 INFO  ProgressMeter - ordered_PKNH_08_v2:222931              0.8                572000         682374.0
+08:54:11.571 WARN  JexlEngine - ![0,2]: 'QD < 20.0;' undefined variable QD
+08:54:19.814 INFO  ProgressMeter - ordered_PKNH_09_v2:411803              1.0                731000         726664.2
+08:54:20.982 WARN  JexlEngine - ![0,2]: 'QD < 20.0;' undefined variable QD
+08:54:29.238 WARN  JexlEngine - ![0,2]: 'QD < 20.0;' undefined variable QD
+08:54:29.856 INFO  ProgressMeter - ordered_PKNH_10_v2:275783              1.2                886000         755113.6
+08:54:39.868 INFO  ProgressMeter - ordered_PKNH_11_v2:764344              1.3               1044000         778988.2
+08:54:47.815 WARN  JexlEngine - ![0,2]: 'QD < 20.0;' undefined variable QD
+08:54:49.891 INFO  ProgressMeter - ordered_PKNH_12_v2:483157              1.5               1201000         796815.4
+08:54:54.709 WARN  JexlEngine - ![0,2]: 'QD < 20.0;' undefined variable QD
+08:54:59.892 INFO  ProgressMeter - ordered_PKNH_12_v2:2624334              1.7               1357000         810665.5
+08:55:06.030 WARN  JexlEngine - ![0,2]: 'QD < 20.0;' undefined variable QD
+08:55:08.151 WARN  JexlEngine - ![0,2]: 'QD < 20.0;' undefined variable QD
+08:55:09.933 INFO  ProgressMeter - ordered_PKNH_13_v2:1737844              1.8               1526000         828769.8
+08:55:13.862 WARN  JexlEngine - ![0,2]: 'QD < 20.0;' undefined variable QD
+08:55:19.970 INFO  ProgressMeter - ordered_PKNH_14_v2:1415309              2.0               1687000         839902.4
+08:55:21.332 WARN  JexlEngine - ![0,2]: 'QD < 20.0;' undefined variable QD
+08:55:24.725 WARN  JexlEngine - ![0,2]: 'QD < 20.0;' undefined variable QD
+08:55:28.806 INFO  ProgressMeter - ordered_PKNH_14_v2:3258241              2.2               1827686         847792.9
+08:55:28.807 INFO  ProgressMeter - Traversal complete. Processed 1827686 total variants in 2.2 minutes.
+08:55:34.436 INFO  VariantFiltration - Shutting down engine
+[4 March 2022 8:55:34 AM] org.broadinstitute.hellbender.tools.walkers.filters.VariantFiltration done. Elapsed time: 2.29 minutes.
+Runtime.totalMemory()=3243769856
+08:55:41.728 INFO  NativeLibraryLoader - Loading libgkl_compression.so from jar:file:/home/jwestaway/pk_pipeline/tools/gatk-4.2.2.0/gatk-package-4.2.2.0-local.jar!/com/intel/gkl/native/libgkl_compression.so
+08:55:41.794 WARN  NativeLibraryLoader - Unable to load libgkl_compression.so from native/libgkl_compression.so (/tmp/libgkl_compression62073128422912256.so: /lib64/libc.so.6: version `GLIBC_2.14' not found (required by /tmp/libgkl_compression62073128422912256.so))
+08:55:41.827 INFO  NativeLibraryLoader - Loading libgkl_compression.so from jar:file:/home/jwestaway/pk_pipeline/tools/gatk-4.2.2.0/gatk-package-4.2.2.0-local.jar!/com/intel/gkl/native/libgkl_compression.so
+08:55:41.838 WARN  NativeLibraryLoader - Unable to load libgkl_compression.so from native/libgkl_compression.so (/tmp/libgkl_compression6315045413328327349.so: /lib64/libc.so.6: version `GLIBC_2.14' not found (required by /tmp/libgkl_compression6315045413328327349.so))
+Mar 04, 2022 8:55:42 AM shaded.cloud_nio.com.google.auth.oauth2.ComputeEngineCredentials runningOnComputeEngine
+INFO: Failed to detect whether we are running on Google Compute Engine.
+08:55:42.320 INFO  VariantFiltration - ------------------------------------------------------------
+08:55:42.321 INFO  VariantFiltration - The Genome Analysis Toolkit (GATK) v4.2.2.0
+08:55:42.321 INFO  VariantFiltration - For support and documentation go to https://software.broadinstitute.org/gatk/
+08:55:42.322 INFO  VariantFiltration - Executing as jwestaway@cheetah05 on Linux v2.6.32-754.14.2.el6.x86_64 amd64
+08:55:42.322 INFO  VariantFiltration - Java runtime: Java HotSpot(TM) 64-Bit Server VM v1.8.0_131-b11
+08:55:42.322 INFO  VariantFiltration - Start Date/Time: 4 March 2022 8:55:41 AM
+08:55:42.323 INFO  VariantFiltration - ------------------------------------------------------------
+08:55:42.323 INFO  VariantFiltration - ------------------------------------------------------------
+08:55:42.324 INFO  VariantFiltration - HTSJDK Version: 2.24.1
+08:55:42.324 INFO  VariantFiltration - Picard Version: 2.25.4
+08:55:42.324 INFO  VariantFiltration - Built for Spark Version: 2.4.5
+08:55:42.324 INFO  VariantFiltration - HTSJDK Defaults.COMPRESSION_LEVEL : 2
+08:55:42.324 INFO  VariantFiltration - HTSJDK Defaults.USE_ASYNC_IO_READ_FOR_SAMTOOLS : false
+08:55:42.324 INFO  VariantFiltration - HTSJDK Defaults.USE_ASYNC_IO_WRITE_FOR_SAMTOOLS : true
+08:55:42.325 INFO  VariantFiltration - HTSJDK Defaults.USE_ASYNC_IO_WRITE_FOR_TRIBBLE : false
+08:55:42.325 INFO  VariantFiltration - Deflater: JdkDeflater
+08:55:42.325 INFO  VariantFiltration - Inflater: JdkInflater
+08:55:42.325 INFO  VariantFiltration - GCS max retries/reopens: 20
+08:55:42.325 INFO  VariantFiltration - Requester pays: disabled
+08:55:42.325 INFO  VariantFiltration - Initializing engine
+08:55:43.419 INFO  FeatureManager - Using codec VCFCodec to read file file:///home/jwestaway/pk_pipeline/Initial_Pk_subset/outputs/variant_calling/consensus/updated/filtered/GVCFall_SNPs.vcf
+08:55:43.644 INFO  VariantFiltration - Done initializing engine
+08:55:43.883 INFO  ProgressMeter - Starting traversal
+08:55:43.884 INFO  ProgressMeter -        Current Locus  Elapsed Minutes    Variants Processed  Variants/Minute
+08:55:54.032 INFO  ProgressMeter - ordered_PKNH_01_v2:536349              0.2                 40000         236499.8
+08:55:58.818 WARN  JexlEngine - ![0,2]: 'QD < 20.0;' undefined variable QD
+08:56:04.035 INFO  ProgressMeter - ordered_PKNH_03_v2:604126              0.3                165000         491315.1
+08:56:04.975 WARN  JexlEngine - ![0,2]: 'QD < 20.0;' undefined variable QD
+08:56:06.775 WARN  JexlEngine - ![0,2]: 'QD < 20.0;' undefined variable QD
+08:56:09.456 WARN  JexlEngine - ![0,2]: 'QD < 20.0;' undefined variable QD
+08:56:11.091 WARN  JexlEngine - ![0,2]: 'QD < 20.0;' undefined variable QD
+08:56:12.443 WARN  JexlEngine - ![0,2]: 'QD < 20.0;' undefined variable QD
+08:56:14.038 INFO  ProgressMeter - ordered_PKNH_06_v2:26802              0.5                335000         666578.2
+08:56:14.984 WARN  JexlEngine - ![0,2]: 'QD < 20.0;' undefined variable QD
+08:56:16.973 WARN  JexlEngine - ![0,2]: 'QD < 20.0;' undefined variable QD
+08:56:17.566 WARN  JexlEngine - ![0,2]: 'QD < 20.0;' undefined variable QD
+08:56:24.040 INFO  ProgressMeter - ordered_PKNH_07_v2:1176788              0.7                498000         744098.0
+08:56:25.299 WARN  JexlEngine - ![0,2]: 'QD < 20.0;' undefined variable QD
+08:56:27.965 WARN  JexlEngine - ![0,2]: 'QD < 20.0;' undefined variable QD
+08:56:34.092 INFO  ProgressMeter - ordered_PKNH_09_v2:130511              0.8                667000         797100.0
+08:56:36.254 WARN  JexlEngine - ![0,2]: 'QD < 20.0;' undefined variable QD
+08:56:44.092 INFO  ProgressMeter - ordered_PKNH_10_v2:319152              1.0                835000         832115.3
+08:56:54.103 INFO  ProgressMeter - ordered_PKNH_11_v2:1102011              1.2                999000         853615.1
+08:56:59.950 WARN  JexlEngine - ![0,2]: 'QD < 20.0;' undefined variable QD
+08:57:04.156 INFO  ProgressMeter - ordered_PKNH_12_v2:1066724              1.3               1167000         872295.1
+08:57:05.932 WARN  JexlEngine - ![0,2]: 'QD < 20.0;' undefined variable QD
+08:57:14.205 INFO  ProgressMeter - ordered_PKNH_13_v2:510689              1.5               1348000         895472.8
+08:57:15.772 WARN  JexlEngine - ![0,2]: 'QD < 20.0;' undefined variable QD
+08:57:17.775 WARN  JexlEngine - ![0,2]: 'QD < 20.0;' undefined variable QD
+08:57:23.047 WARN  JexlEngine - ![0,2]: 'QD < 20.0;' undefined variable QD
+08:57:24.221 INFO  ProgressMeter - ordered_PKNH_14_v2:366691              1.7               1515000         905947.0
+08:57:29.311 WARN  JexlEngine - ![0,2]: 'QD < 20.0;' undefined variable QD
+08:57:32.335 WARN  JexlEngine - ![0,2]: 'QD < 20.0;' undefined variable QD
+08:57:34.266 INFO  ProgressMeter - ordered_PKNH_14_v2:2873877              1.8               1689000         918084.5
+08:57:35.922 INFO  ProgressMeter - ordered_PKNH_14_v2:3259326              1.9               1717402         919724.7
+08:57:35.923 INFO  ProgressMeter - Traversal complete. Processed 1717402 total variants in 1.9 minutes.
+08:57:37.134 INFO  VariantFiltration - Shutting down engine
+[4 March 2022 8:57:37 AM] org.broadinstitute.hellbender.tools.walkers.filters.VariantFiltration done. Elapsed time: 1.92 minutes.
+Runtime.totalMemory()=3243769856
+08:57:44.399 INFO  NativeLibraryLoader - Loading libgkl_compression.so from jar:file:/home/jwestaway/pk_pipeline/tools/gatk-4.2.2.0/gatk-package-4.2.2.0-local.jar!/com/intel/gkl/native/libgkl_compression.so
+08:57:44.470 WARN  NativeLibraryLoader - Unable to load libgkl_compression.so from native/libgkl_compression.so (/tmp/libgkl_compression3003218725456641494.so: /lib64/libc.so.6: version `GLIBC_2.14' not found (required by /tmp/libgkl_compression3003218725456641494.so))
+08:57:44.483 INFO  NativeLibraryLoader - Loading libgkl_compression.so from jar:file:/home/jwestaway/pk_pipeline/tools/gatk-4.2.2.0/gatk-package-4.2.2.0-local.jar!/com/intel/gkl/native/libgkl_compression.so
+08:57:44.494 WARN  NativeLibraryLoader - Unable to load libgkl_compression.so from native/libgkl_compression.so (/tmp/libgkl_compression7718198843859250963.so: /lib64/libc.so.6: version `GLIBC_2.14' not found (required by /tmp/libgkl_compression7718198843859250963.so))
+Mar 04, 2022 8:57:44 AM shaded.cloud_nio.com.google.auth.oauth2.ComputeEngineCredentials runningOnComputeEngine
+INFO: Failed to detect whether we are running on Google Compute Engine.
+08:57:44.989 INFO  VariantFiltration - ------------------------------------------------------------
+08:57:44.990 INFO  VariantFiltration - The Genome Analysis Toolkit (GATK) v4.2.2.0
+08:57:44.991 INFO  VariantFiltration - For support and documentation go to https://software.broadinstitute.org/gatk/
+08:57:45.003 INFO  VariantFiltration - Executing as jwestaway@cheetah05 on Linux v2.6.32-754.14.2.el6.x86_64 amd64
+08:57:45.003 INFO  VariantFiltration - Java runtime: Java HotSpot(TM) 64-Bit Server VM v1.8.0_131-b11
+08:57:45.003 INFO  VariantFiltration - Start Date/Time: 4 March 2022 8:57:44 AM
+08:57:45.004 INFO  VariantFiltration - ------------------------------------------------------------
+08:57:45.004 INFO  VariantFiltration - ------------------------------------------------------------
+08:57:45.005 INFO  VariantFiltration - HTSJDK Version: 2.24.1
+08:57:45.005 INFO  VariantFiltration - Picard Version: 2.25.4
+08:57:45.005 INFO  VariantFiltration - Built for Spark Version: 2.4.5
+08:57:45.005 INFO  VariantFiltration - HTSJDK Defaults.COMPRESSION_LEVEL : 2
+08:57:45.005 INFO  VariantFiltration - HTSJDK Defaults.USE_ASYNC_IO_READ_FOR_SAMTOOLS : false
+08:57:45.006 INFO  VariantFiltration - HTSJDK Defaults.USE_ASYNC_IO_WRITE_FOR_SAMTOOLS : true
+08:57:45.006 INFO  VariantFiltration - HTSJDK Defaults.USE_ASYNC_IO_WRITE_FOR_TRIBBLE : false
+08:57:45.006 INFO  VariantFiltration - Deflater: JdkDeflater
+08:57:45.007 INFO  VariantFiltration - Inflater: JdkInflater
+08:57:45.007 INFO  VariantFiltration - GCS max retries/reopens: 20
+08:57:45.007 INFO  VariantFiltration - Requester pays: disabled
+08:57:45.007 INFO  VariantFiltration - Initializing engine
+08:57:46.104 INFO  FeatureManager - Using codec VCFCodec to read file file:///home/jwestaway/pk_pipeline/Initial_Pk_subset/outputs/variant_calling/consensus/updated/filtered/GVCFall_INDELs.vcf
+08:57:46.213 INFO  VariantFiltration - Done initializing engine
+08:57:46.467 INFO  ProgressMeter - Starting traversal
+08:57:46.467 INFO  ProgressMeter -        Current Locus  Elapsed Minutes    Variants Processed  Variants/Minute
+08:57:50.574 WARN  JexlEngine - ![0,2]: 'QD < 20.0;' undefined variable QD
+08:57:54.521 WARN  JexlEngine - ![0,2]: 'QD < 20.0;' undefined variable QD
+08:57:56.562 INFO  ProgressMeter - ordered_PKNH_11_v2:2115966              0.2                 35000         208065.0
+08:58:01.303 INFO  ProgressMeter - ordered_PKNH_14_v2:2974543              0.2                 57898         234183.6
+08:58:01.303 INFO  ProgressMeter - Traversal complete. Processed 57898 total variants in 0.2 minutes.
+08:58:01.623 INFO  VariantFiltration - Shutting down engine
+[4 March 2022 8:58:01 AM] org.broadinstitute.hellbender.tools.walkers.filters.VariantFiltration done. Elapsed time: 0.29 minutes.
+Runtime.totalMemory()=3243769856
+---------------------------------------
+Finsihed

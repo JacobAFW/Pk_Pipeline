@@ -1,0 +1,56 @@
+#!/bin/bash
+#PBS -N QC_Trim
+#PBS -j oe
+#PBS -m ae
+#PBS -l nodes=1
+#PBS -l ncpus=21
+#PBS -l mem=150gb
+#PBS -l walltime=96:00:00
+#PBS -M jacob.westaway@menzies.edu.au
+
+echo "---------------------------------------"
+echo "PBS: Job identifier is $PBS_JOBID"
+echo "PBS: Job name is $PBS_JOBNAME"
+
+echo "---------------------------------------"
+echo "Create paths to required software"
+export PATH=$PATH:/usr/local/singularity/latest/bin/
+export PATH=$PATH:/usr/local/FastQC/
+export PATH=$PATH:/usr/local/parallel_20171222/bin/
+
+echo "---------------------------------------"
+echo 'Change to working directory' 
+cd /home/jwestaway/pk_pipeline/Initial_Pk_subset
+
+echo "---------------------------------------"
+echo "Set environment variable"
+MULTIQC="/home/jwestaway/pk_pipeline/tools/singularity/multiqc_v0.1.9.sif"
+QC_OUTDIR="/home/jwestaway/pk_pipeline/Initial_Pk_subset/outputs/batch2/fastqc"
+TRIM_OUTDIR="/home/jwestaway/pk_pipeline/Initial_Pk_subset/outputs/batch2/trimmed_fastq"
+mkdir /home/jwestaway/pk_pipeline/Initial_Pk_subset/outputs/batch2/
+mkdir $QC_OUTDIR
+mkdir $TRIM_OUTDIR
+
+echo "---------------------------------------"
+echo "Unzip batch"
+unzip -j "data/ZB/batch2.zip" "batch2/*/*fq.gz" -d "data/"
+
+echo "---------------------------------------"
+echo "QC"
+fastqc -t 10 -o $QC_OUTDIR data/*.fq.gz
+singularity exec $MULTIQC multiqc $QC_OUTDIR/. -o $QC_OUTDIR
+
+echo "---------------------------------------"
+echo "Trim"
+parallel -j20 --xapply singularity exec ~/pk_pipeline/tools/singularity/trim-galore_0.6.4.sif trim_galore --illumina --paired --fastqc -o $TRIM_OUTDIR ::: data/*1.fq.gz ::: data/*2.fq.gz
+
+echo "---------------------------------------"
+echo "QC on Trimmed"
+singularity exec $MULTIQC multiqc $TRIM_OUTDIR/. -o $TRIM_OUTDIR
+
+echo "---------------------------------------"
+echo "Clean up"
+rm -f data/*fq.gz
+
+echo "---------------------------------------"
+echo "Finished"
